@@ -48,7 +48,15 @@
       "btn--primary",
       "btn--accent"
     ],
-    "contarBotonesSubmitDeFormulario": true
+    "excepciones": [
+      {
+        "id": "boton-submit-formulario",
+        "aplicaA": "<button type=\"submit\">, <button> dentro de un <form> e <input type=\"submit|image\">",
+        "explicacion": "Decisión del CEO: la regla del CTA único aplica a los llamados a la acción de MARKETING (solo WhatsApp), NO a los botones de envío de formularios. Un botón que envía un formulario (p. ej. «Enviar» en el formulario de contacto) no es un CTA de marketing y no cuenta como CTA primario ni se compara contra la etiqueta/href aprobados. Un enlace <a> con clase btn--primary/btn--accent sigue contando como CTA aunque esté dentro de un formulario. Para volver a contar los submit, eliminar esta entrada.",
+        "aprobadoPor": "CEO",
+        "fecha": "2026-10-10"
+      }
+    ]
   },
   "whatsapp": {
     "numero": "2227097945",

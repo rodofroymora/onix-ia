@@ -8,7 +8,7 @@
 - [ ] **Plazos:** no hay plazos/tiempos nuevos, o están en `plazosAprobados`.
 - [ ] **Precios:** no hay precios nuevos, o están en `preciosAprobados`.
 - [ ] **Sectores:** solo se mencionan sectores de `sectoresPermitidos`.
-- [ ] **Un solo CTA:** cada página tiene un único CTA primario (misma etiqueta y mismo destino: WhatsApp 2227097945).
+- [ ] **Un solo CTA:** cada página tiene un único CTA primario (misma etiqueta y mismo destino: WhatsApp 2227097945). Los botones de envío de formularios no cuentan como CTA.
 - [ ] **Enlaces:** enlaces internos, anclas y assets funcionan (check 03 en verde).
 - [ ] **QA:** title, meta description, lang, un h1, imágenes con alt, sin TODO/lorem/placeholder (check 04 en verde).
 - [ ] **Screenshot de preview:** adjunto abajo (escritorio y móvil) de la URL de preview/DEV.
