@@ -5,6 +5,14 @@
  * CTA primario = <a>/<button> con clase en cta.clasesCtaPrimario (por defecto btn--primary / btn--accent).
  * Repetir el mismo CTA (cabecera, hero, pie, flotante) es válido; dos CTAs DISTINTOS no.
  * Además, el CTA debe coincidir con cta.etiqueta + cta.href de release-rules.json.
+ *
+ * EXCEPCIÓN (decisión del CEO): la regla del CTA único aplica a los llamados a la acción de MARKETING
+ * (solo WhatsApp), NO a los botones de envío de formularios. Quedan excluidos de este check:
+ *   · <button type="submit"> (o <button> sin type, que por defecto es submit) y <input type="submit|image">;
+ *   · cualquier <button> que esté dentro de un <form>.
+ * Esta excepción está documentada en release-rules.json → cta.excepciones (id "boton-submit-formulario")
+ * y en CONTRIBUTING.md. Si se quita esa entrada de "excepciones", los submit vuelven a contarse como CTA.
+ * Un <a class="btn--primary"> sigue contando como CTA aunque esté dentro de un <form>.
  */
 const L = require('./lib');
 const reglas = L.leerReglas();
@@ -12,6 +20,8 @@ const R = new L.Reporte('Un solo CTA primario por página');
 const cfg = reglas.cta || {};
 const clases = cfg.clasesCtaPrimario || ['btn--primary', 'btn--accent'];
 const norm = (s) => s.replace(/\s+/g, ' ').trim();
+const EXC_SUBMIT = 'boton-submit-formulario';
+const excluirSubmit = Array.isArray(cfg.excepciones) && cfg.excepciones.some((e) => e && e.id === EXC_SUBMIT);
 
 if (!cfg.etiqueta || !cfg.href) R.aviso('release-rules.json', null, 'cta.etiqueta / cta.href vacíos (TODO CEO/Marketing): solo se valida que haya un único CTA por página.');
 
@@ -19,20 +29,26 @@ for (const f of L.listarHtml()) {
   const nombre = L.rel(f);
   const limpio = L.sinComentariosScriptsEstilos(L.leer(f));
   const tags = L.etiquetas(limpio);
+  // Rangos <form>…</form> para saber si un botón está dentro de un formulario
+  const formularios = [];
+  { const re = /<form\b[^>]*>([\s\S]*?)<\/form\s*>/gi; let m; while ((m = re.exec(limpio))) formularios.push([m.index, m.index + m[0].length]); }
+  const dentroDeForm = (t) => formularios.some(([a, b]) => t.index > a && t.index < b);
   const ctas = [];
+  let excluidos = 0;
   for (const t of tags) {
+    if (t.tag === 'input' && excluirSubmit && ['submit', 'image'].includes((t.attrs.type || '').toLowerCase()) && clases.some((c) => (t.attrs.class || '').split(/\s+/).includes(c))) { excluidos++; continue; }
     if (t.tag !== 'a' && t.tag !== 'button') continue;
     const cls = (t.attrs.class || '').split(/\s+/);
     if (!clases.some((c) => cls.includes(c))) continue;
+    if (t.tag === 'button' && excluirSubmit && ((t.attrs.type || 'submit').toLowerCase() === 'submit' || dentroDeForm(t))) { excluidos++; continue; }
     const etiqueta = norm(L.textoSinSrOnly(L.contenidoElemento(limpio, t)));
     let href;
     if (t.tag === 'a') href = t.attrs.href || '(sin href)';
     else {
       const esSubmit = (t.attrs.type || 'submit').toLowerCase() === 'submit';
       if (!esSubmit) href = '(botón sin enlace)';
-      else if (cfg.contarBotonesSubmitDeFormulario === false) continue;
       else {
-        // busca el <form> anterior más cercano
+        // (solo llega aquí si la excepción de submit fue retirada de release-rules.json) busca el <form> anterior más cercano
         let accion = '(formulario)';
         for (let i = tags.indexOf(t) - 1; i >= 0; i--) if (tags[i].tag === 'form') { accion = tags[i].attrs.action || '(formulario)'; break; }
         href = 'submit → ' + accion;
@@ -59,6 +75,6 @@ for (const f of L.listarHtml()) {
       }
     }
   }
-  R.nota(`${nombre}: ${ctas.length} aparición(es) de CTA primario, ${distintos.size} distinto(s).`);
+  R.nota(`${nombre}: ${ctas.length} aparición(es) de CTA primario, ${distintos.size} distinto(s)` + (excluidos ? `; ${excluidos} botón(es)/input(s) de envío de formulario excluido(s) por excepción (cta.excepciones).` : '.'));
 }
 R.terminar();

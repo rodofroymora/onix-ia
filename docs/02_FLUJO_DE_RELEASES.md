@@ -35,7 +35,7 @@ Copias antiguas (`/workspace/agency-landing` = recuperación de prod; `/workspac
 | Check | Falla si… |
 |---|---|
 | 01 Cifras | Hay cifra/precio/plazo/sector en el HTML que no esté en `release-rules.json` (solo cuando esa lista no está vacía); WhatsApp distinto de 2227097945 / `wa.me/522227097945` |
-| 02 CTA único | Una página tiene 0 CTAs o más de un CTA primario distinto (etiqueta/href), o no coincide con el CTA aprobado |
+| 02 CTA único | Una página tiene 0 CTAs o más de un CTA primario de marketing distinto (etiqueta/href), o no coincide con el CTA aprobado. **Excepción (decisión del CEO):** los botones de envío de formulario (`type=submit`, `<button>` dentro de `<form>`) no cuentan; ver `release-rules.json` → `cta.excepciones` |
 | 03 Enlaces | Enlace interno, ancla `#id` o asset (css/js/img/font) roto |
 | 04 QA smoke | Falta `lang`, `<title>`, meta description o `<h1>` (exactamente uno); `<img>` sin `alt`; texto TODO/lorem/placeholder; regla robots/noindex incorrecta para la rama (`dev` = noindex, `main` = index, configurable en `release-rules.json`) |
 También: nombre de rama (`cambio/*` → `dev`, solo `dev` → `main`) y que no haya `.env*`/`.vercel/` versionados. Los checks **no arreglan contenido**: solo reportan.
@@ -43,7 +43,7 @@ También: nombre de rama (`cambio/*` → `dev`, solo `dev` → `main`) y que no 
 ## 5. Reglas
 1. **Producción no se toca sin aprobación.** Nada de `vercel deploy`, `--prod`, `vercel promote`, cambios de settings/dominios del proyecto `agency-landing` por fuera del workflow aprobado.
 2. **Nunca secretos en chats, PRs, issues ni docs** (tokens de Vercel/GitHub, `.env*`, `VERCEL_OIDC_TOKEN`). No copiar `.env*` ni `.vercel/` a ningún repo. Si se expone uno, avisar al CEO para rotarlo.
-3. Cifras, plazos, precios y sectores: solo los aprobados por CEO/Marketing en `release-rules.json`. Un solo CTA primario por página.
+3. Cifras, plazos, precios y sectores: solo los aprobados por CEO/Marketing en `release-rules.json`. Un solo CTA primario de marketing por página (los botones de envío de formularios están exceptuados; ver `cta.excepciones` en `release-rules.json`).
 4. Sin push directo a `dev`/`main`, sin force-push.
 5. El contenido (copy) lo arreglan los agentes de contenido; el pipeline solo detecta.
 
@@ -72,5 +72,5 @@ Producción = proyecto `agency-landing`. Los deployments anteriores siguen dispo
 7. **Decisión noindex en producción:** `vercel.json`, `robots.txt` y cada `<meta robots>` del sitio actual tienen `noindex`. El check de `main` exige `index`, así que fallará hasta que el CEO decida el lanzamiento y se retire el `noindex` en el release. Sugerido: aplicar noindex solo en el deploy DEV (no versionado en el contenido) cuando se defina.
 8. CEO/Marketing: llenar `release-rules.json` (cifras, plazos, precios, sectores, CTA).
 9. Rodolfo/CEO: confirmar plan de GitHub (protección de ramas en repos privados requiere plan de pago).
-10. Resolver hallazgos actuales del sitio (ver reporte de checks): CTA doble en `index.html` (botón "Enviar" del formulario), `noindex` en main; avisos de longitud de title/description.
+10. Resolver hallazgos actuales del sitio (ver reporte de checks): ~~CTA doble en `index.html` (botón "Enviar" del formulario)~~ (resuelto: los submit de formulario quedan exceptuados), `noindex` en main; avisos de longitud de title/description.
 11. Separar definitivamente DEV de PROD en Vercel y dejar de usar previews del proyecto `agency-landing` como "DEV".
