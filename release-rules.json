@@ -1,0 +1,80 @@
+{
+  "_LEEME": "Reglas de release de ONIX. Las listas VACÍAS no se validan (check desactivado). TODO: el CEO / Marketing debe llenar cada campo marcado TODO ANTES del primer release a producción. Cualquier cifra, precio, plazo o sector que aparezca en el HTML y NO esté aprobado aquí hará fallar el PR (solo cuando la lista correspondiente tiene elementos).",
+  "_ultimaRevision": "TODO: fecha y quién aprobó (CEO/Marketing)",
+  "cifrasAprobadas": [],
+  "_cifrasAprobadas_TODO": "TODO (CEO/Marketing): lista de cifras/estadísticas aprobadas tal como aparecen en el sitio, p. ej. \"30%\", \"3x\", \"+50 clientes\". Vacío = no se valida.",
+  "plazosAprobados": [],
+  "_plazosAprobados_TODO": "TODO (CEO/Marketing): plazos/tiempos aprobados tal como aparecen, p. ej. \"2 semanas\", \"30 días\", \"24 horas\". Vacío = no se valida.",
+  "preciosAprobados": [],
+  "_preciosAprobados_TODO": "TODO (CEO/Marketing): precios aprobados tal como aparecen, p. ej. \"$5,000 MXN\". Vacío = no se valida. (Hoy el sitio no debería publicar precios.)",
+  "sectoresPermitidos": [],
+  "_sectoresPermitidos_TODO": "TODO (CEO/Marketing): sectores/industrias que ONIX puede mencionar, p. ej. \"escuelas\", \"clínicas\", \"corporativos\". Vacío = no se valida.",
+  "sectoresVocabulario": [
+    "escuelas",
+    "escuela",
+    "colegios",
+    "universidades",
+    "corporativos",
+    "corporativo",
+    "clínicas",
+    "clínica",
+    "hospitales",
+    "despachos",
+    "restaurantes",
+    "hoteles",
+    "inmobiliarias",
+    "inmobiliario",
+    "retail",
+    "manufactura",
+    "logística",
+    "construcción",
+    "agroindustria",
+    "banca",
+    "fintech",
+    "aseguradoras",
+    "salud",
+    "educación",
+    "turismo",
+    "automotriz",
+    "farmacéuticas",
+    "e-commerce"
+  ],
+  "_sectoresVocabulario_NOTA": "Palabras que el check reconoce como 'sector'. Se puede ampliar. Solo se marca lo que esté en este vocabulario y NO esté en sectoresPermitidos.",
+  "cta": {
+    "etiqueta": "Escríbenos por WhatsApp",
+    "href": "https://wa.me/522227097945",
+    "_TODO": "TODO (CEO/Marketing): confirmar etiqueta y destino del ÚNICO CTA primario permitido. Se toma como CTA primario todo <a>/<button> con clase btn--primary o btn--accent.",
+    "clasesCtaPrimario": [
+      "btn--primary",
+      "btn--accent"
+    ],
+    "contarBotonesSubmitDeFormulario": true
+  },
+  "whatsapp": {
+    "numero": "2227097945",
+    "waMe": "wa.me/522227097945",
+    "formatosVisiblesPermitidos": [
+      "222 709 7945",
+      "2227097945",
+      "+52 222 709 7945",
+      "52 222 709 7945"
+    ]
+  },
+  "robots": {
+    "_NOTA": "Regla de indexación esperada según la rama BASE del PR (o CHECK_BRANCH). 'noindex' = header X-Robots-Tag noindex en vercel.json + robots.txt Disallow:/ ; 'index' = sin noindex en el sitio. TODO (CEO): confirmar 'main' (producción) = 'index' para salir a buscadores.",
+    "dev": "noindex",
+    "main": "index"
+  },
+  "marcadoresProhibidos": [
+    "TODO",
+    "FIXME",
+    "lorem",
+    "ipsum",
+    "placeholder",
+    "xxx",
+    "próximamente",
+    "tbd",
+    "pendiente de definir"
+  ],
+  "_marcadoresProhibidos_NOTA": "Los escritos en MAYÚSCULAS (TODO, FIXME, XXX, TBD) se buscan solo en mayúsculas (\"todo\" es una palabra normal en español); el resto sin distinguir mayúsculas. Se buscan en texto visible y atributos (alt/title/placeholder-text). El atributo placeholder='Tu nombre' de <input> NO se marca (es un hint legítimo de formulario)."
+}

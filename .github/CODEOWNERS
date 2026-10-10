@@ -1,0 +1,6 @@
+# PLACEHOLDER: confirmar el usuario real de GitHub de Rodolfo al crear el repo.
+# Con "Require review from Code Owners" en main, su aprobación será obligatoria.
+* @rodofroymora
+/.github/ @rodofroymora
+/release-rules.json @rodofroymora
+/vercel.json @rodofroymora

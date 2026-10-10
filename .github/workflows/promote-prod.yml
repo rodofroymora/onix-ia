@@ -1,0 +1,127 @@
+name: Promote to PROD (onix-ia.com)
+
+# ÚNICA vía para publicar en producción. Solo manual (workflow_dispatch).
+# Merge a main NO publica nada. Requiere:
+#  1) OK escrito de Rodolfo (referencia en `approval_text`, queda en el resumen del run)
+#  2) Checks en verde sobre main
+#  3) Aprobación del GitHub Environment `production` (revisor requerido: Rodolfo)
+on:
+  workflow_dispatch:
+    inputs:
+      approval_text:
+        description: 'Referencia del OK ESCRITO de Rodolfo (p. ej. "OK Rodolfo 2026-10-12, mensaje WhatsApp CEO #123"). Sin secretos.'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: promote-prod
+  cancel-in-progress: false
+
+jobs:
+  checks:
+    name: Checks sobre main
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Solo desde main
+        env:
+          REF: ${{ github.ref }}
+        run: |
+          if [ "$REF" != "refs/heads/main" ]; then
+            echo "::error::Este workflow solo se puede ejecutar sobre main (ref actual: $REF)."
+            exit 1
+          fi
+
+      - name: Validar y registrar OK escrito
+        env:
+          APPROVAL_TEXT: ${{ inputs.approval_text }}
+          ACTOR: ${{ github.actor }}
+        run: |
+          if [ "${#APPROVAL_TEXT}" -lt 10 ]; then
+            echo "::error::approval_text es obligatorio (mín. 10 caracteres): referencia del OK escrito de Rodolfo."
+            exit 1
+          fi
+          {
+            echo "## Promoción a PRODUCCIÓN (onix-ia.com)"
+            echo "- Solicitada por: \`$ACTOR\`"
+            echo "- Commit de main: \`${GITHUB_SHA}\`"
+            echo "- Fecha (UTC): $(date -u +'%Y-%m-%d %H:%M:%S')"
+            echo "- **OK escrito (referencia):** ${APPROVAL_TEXT}"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Checks automáticos sobre main
+        env:
+          CHECK_BRANCH: main
+        run: node scripts/checks/run-all.js
+
+  deploy:
+    name: Deploy a producción
+    needs: checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # Environment con revisor requerido (Rodolfo): el job queda en espera hasta que él apruebe.
+    environment:
+      name: production
+      url: https://onix-ia.com
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROD_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Verificar secretos
+        run: |
+          faltan=""
+          [ -z "$VERCEL_TOKEN" ] && faltan="$faltan VERCEL_TOKEN"
+          [ -z "$VERCEL_ORG_ID" ] && faltan="$faltan VERCEL_ORG_ID"
+          [ -z "$VERCEL_PROJECT_ID" ] && faltan="$faltan VERCEL_PROD_PROJECT_ID"
+          if [ -n "$faltan" ]; then
+            echo "::error::Faltan secretos en el Environment production:$faltan"
+            exit 1
+          fi
+
+      - name: Instalar Vercel CLI
+        run: npm install --global vercel@59
+
+      - name: Registrar deployment de producción ACTUAL (para rollback)
+        run: |
+          {
+            echo "### Deployment de producción ANTES de esta promoción (para rollback)"
+            echo '```'
+            vercel inspect onix-ia.com --scope="$VERCEL_ORG_ID" --token="$VERCEL_TOKEN" 2>&1 | grep -E 'id|url|created' | head -5 || true
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Dejar solo archivos públicos
+        run: node scripts/prepare-deploy.js
+
+      - name: vercel pull (production)
+        run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+
+      - name: vercel build
+        run: vercel build --prod --token="$VERCEL_TOKEN"
+
+      - name: vercel deploy --prod
+        run: |
+          url=$(vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN")
+          {
+            echo "### Producción actualizada"
+            echo "- Deployment: $url"
+            echo "- Dominio: https://onix-ia.com"
+            echo "- Rollback: ver docs/02_FLUJO_DE_RELEASES.md → Rollback"
+          } >> "$GITHUB_STEP_SUMMARY"

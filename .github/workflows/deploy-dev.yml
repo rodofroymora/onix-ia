@@ -1,0 +1,89 @@
+name: Deploy DEV
+
+# Push a dev → deploy al proyecto Vercel de DEV (SEPARADO de producción).
+# NUNCA toca el proyecto de producción `agency-landing` / onix-ia.com.
+# Requiere (Settings → Secrets and variables → Actions): VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_DEV_PROJECT_ID.
+on:
+  push:
+    branches: [dev]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-dev
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Checks de release (dev)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: node scripts/checks/run-all.js
+        env:
+          CHECK_BRANCH: dev
+
+  deploy:
+    name: Deploy a proyecto DEV
+    needs: checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: dev
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_DEV_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Verificar secretos y que NO sea el proyecto de producción
+        run: |
+          faltan=""
+          [ -z "$VERCEL_TOKEN" ] && faltan="$faltan VERCEL_TOKEN"
+          [ -z "$VERCEL_ORG_ID" ] && faltan="$faltan VERCEL_ORG_ID"
+          [ -z "$VERCEL_PROJECT_ID" ] && faltan="$faltan VERCEL_DEV_PROJECT_ID"
+          if [ -n "$faltan" ]; then
+            echo "::error::Faltan secretos en GitHub:$faltan. Pendiente: crear el proyecto Vercel DEV (separado de producción) y cargar los secretos. Ver docs/02_FLUJO_DE_RELEASES.md → Pendientes."
+            exit 1
+          fi
+          # prj_Jz0E... = proyecto de PRODUCCIÓN agency-landing (onix-ia.com). Jamás desde este workflow.
+          if [ "$VERCEL_PROJECT_ID" = "prj_Jz0EnuwRpBxTt3QhLCV4lJhfUbvt" ]; then
+            echo "::error::VERCEL_DEV_PROJECT_ID apunta al proyecto de PRODUCCIÓN. Abortando: DEV debe ser un proyecto Vercel distinto."
+            exit 1
+          fi
+          echo "✔ Secretos presentes y proyecto distinto de producción"
+
+      - name: Instalar Vercel CLI
+        run: npm install --global vercel@59
+
+      - name: Dejar solo archivos públicos
+        run: node scripts/prepare-deploy.js
+
+      # El proyecto DEV usa su propio "production" (URL estable *.vercel.app del proyecto DEV).
+      # Eso NO es producción de onix-ia.com: es otro proyecto. noindex lo da vercel.json en la rama dev.
+      - name: vercel pull
+        run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+
+      - name: vercel build
+        run: vercel build --prod --token="$VERCEL_TOKEN"
+
+      - name: vercel deploy (proyecto DEV)
+        id: deploy
+        run: |
+          url=$(vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN")
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          {
+            echo "### DEV actualizado"
+            echo "- Commit: \`${GITHUB_SHA}\`"
+            echo "- Deployment: $url"
+            echo "- Proyecto DEV: separado de producción (onix-ia.com no se toca)"
+          } >> "$GITHUB_STEP_SUMMARY"
