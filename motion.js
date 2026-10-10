@@ -1,4 +1,4 @@
-/* Ónix v3 · scroll motion layer (vanilla, no dependencies).
+/* ONIX v3 · scroll motion layer (vanilla, no dependencies).
    Runs only when <html> has the .js class (set in <head> when
    prefers-reduced-motion is not "reduce"). Animates transform/opacity/filter only. */
 (function () {
@@ -107,6 +107,7 @@
       ? { msg: node.querySelector('.msg'), typing: node.querySelector('.typing') }
       : { msg: node, typing: null };
   }) : [];
+  PIN_N = Math.max(3, waSteps.length - 1);   // scroll steps follow the number of WhatsApp messages (was 7 for 8 messages)
   var pill = chat && chat.querySelector('.pill');
   var waK = 0, callStage = 0, callC = 0;   // callStage: 0 ringing, 1 answered
 

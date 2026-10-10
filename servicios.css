@@ -237,3 +237,28 @@
 @media (max-width: 1000px) { .footer__layers { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .footer__layers { grid-template-columns: 1fr; } }
 .hero h1 em { display: inline; }
+
+/* Demo pin track: (PIN_N + hold) steps x 40svh + 100svh. The demo now has 6 WhatsApp messages -> PIN_N = 5. */
+.js .sa-pin .sa-stage { height: calc(324vh - var(--nav-h) - 20px); height: calc(324svh - var(--nav-h) - 20px); }
+
+/* ── Privacidad (Legal): avisos junto a CTA de WhatsApp, aviso simplificado + casilla en el formulario, leyenda de demo, página del aviso */
+.cta__act { display: flex; flex-direction: column; align-items: flex-start; gap: .75rem; max-width: 26rem; }
+.priv-note, .cta .priv-note { margin: 0; max-width: 38ch; font-size: .8125rem; line-height: 1.5; color: inherit; opacity: .74; }
+.priv-note a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.priv-note a:hover, .priv-note a:focus-visible { opacity: 1; text-decoration-thickness: 2px; }
+@media (max-width: 600px) { .cta__act { width: 100%; max-width: none; } .hero__actions .cta__act { align-items: stretch; } }
+.form__notice { font-size: .8125rem; line-height: 1.55; color: var(--muted, #55555c); margin: 0; }
+.form__notice a { color: var(--accent-ink, inherit); text-decoration: underline; text-underline-offset: 3px; }
+.form__check { display: flex; align-items: flex-start; gap: .625rem; font-size: .875rem; line-height: 1.45; cursor: pointer; }
+.form__check input { flex: none; width: 1.125rem; height: 1.125rem; margin-top: .125rem; accent-color: var(--accent); }
+.demo-legend { margin: 0 0 .75rem; max-width: 34ch; text-align: center; font-size: .75rem; line-height: 1.45; color: var(--on-dark-muted, #9A9AA2); }
+.wrap.legal { max-width: none; }
+.legal > * { max-width: 46rem; }
+.legal h2.legal-h { font-family: var(--sans); font-weight: 600; letter-spacing: -.02em; font-size: clamp(1.25rem, 2.2vw, 1.625rem); margin: 2.5rem 0 .75rem; }
+.legal h3.legal-h3 { font-size: 1.0625rem; font-weight: 600; margin: 1.75rem 0 .5rem; }
+.legal p, .legal li { line-height: 1.65; margin-block: .6rem; }
+.legal ul, .legal ol { padding-left: 1.4rem; }
+.legal ul { list-style: disc; } .legal ol { list-style: decimal; }
+.legal mark.pending { background: color-mix(in srgb, var(--accent) 22%, transparent); color: inherit; padding: .05em .3em; border-radius: 4px; font-weight: 600; }
+.demo-legend { margin: .625rem auto .25rem; }
+.js .sa-pin .sa-devices .phone__screen { height: min(600px, calc(100vh - var(--nav-h) - 235px)); height: min(600px, calc(100svh - var(--nav-h) - 235px)); }
