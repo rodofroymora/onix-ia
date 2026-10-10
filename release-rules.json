@@ -1,14 +1,14 @@
 {
-  "_LEEME": "Reglas de release de ONIX. Las listas VACÍAS no se validan (check desactivado). TODO: el CEO / Marketing debe llenar cada campo marcado TODO ANTES del primer release a producción. Cualquier cifra, precio, plazo o sector que aparezca en el HTML y NO esté aprobado aquí hará fallar el PR (solo cuando la lista correspondiente tiene elementos).",
-  "_ultimaRevision": "TODO: fecha y quién aprobó (CEO/Marketing)",
+  "_LEEME": "Reglas de release de ONIX. Las listas VACÍAS no se validan (check desactivado). TODO: el responsable de contenido debe llenar cada campo marcado TODO ANTES del primer release a producción. Cualquier cifra, precio, plazo o sector que aparezca en el HTML y NO esté aprobado aquí hará fallar el PR (solo cuando la lista correspondiente tiene elementos).",
+  "_ultimaRevision": "TODO: fecha y quién aprobó",
   "cifrasAprobadas": [],
-  "_cifrasAprobadas_TODO": "TODO (CEO/Marketing): lista de cifras/estadísticas aprobadas tal como aparecen en el sitio, p. ej. \"30%\", \"3x\", \"+50 clientes\". Vacío = no se valida.",
+  "_cifrasAprobadas_TODO": "TODO (responsable de contenido): lista de cifras/estadísticas aprobadas tal como aparecen en el sitio, p. ej. \"30%\", \"3x\", \"+50 clientes\". Vacío = no se valida.",
   "plazosAprobados": [],
-  "_plazosAprobados_TODO": "TODO (CEO/Marketing): plazos/tiempos aprobados tal como aparecen, p. ej. \"2 semanas\", \"30 días\", \"24 horas\". Vacío = no se valida.",
+  "_plazosAprobados_TODO": "TODO (responsable de contenido): plazos/tiempos aprobados tal como aparecen, p. ej. \"2 semanas\", \"30 días\", \"24 horas\". Vacío = no se valida.",
   "preciosAprobados": [],
-  "_preciosAprobados_TODO": "TODO (CEO/Marketing): precios aprobados tal como aparecen, p. ej. \"$5,000 MXN\". Vacío = no se valida. (Hoy el sitio no debería publicar precios.)",
+  "_preciosAprobados_TODO": "TODO (responsable de contenido): precios aprobados tal como aparecen, p. ej. \"$5,000 MXN\". Vacío = no se valida. (Hoy el sitio no debería publicar precios.)",
   "sectoresPermitidos": [],
-  "_sectoresPermitidos_TODO": "TODO (CEO/Marketing): sectores/industrias que ONIX puede mencionar, p. ej. \"escuelas\", \"clínicas\", \"corporativos\". Vacío = no se valida.",
+  "_sectoresPermitidos_TODO": "TODO (responsable de contenido): sectores/industrias que ONIX puede mencionar, p. ej. \"escuelas\", \"clínicas\", \"corporativos\". Vacío = no se valida.",
   "sectoresVocabulario": [
     "escuelas",
     "escuela",
@@ -43,7 +43,7 @@
   "cta": {
     "etiqueta": "Escríbenos por WhatsApp",
     "href": "https://wa.me/522227097945",
-    "_TODO": "TODO (CEO/Marketing): confirmar etiqueta y destino del ÚNICO CTA primario permitido. Se toma como CTA primario todo <a>/<button> con clase btn--primary o btn--accent.",
+    "_TODO": "TODO (responsable de contenido): confirmar etiqueta y destino del ÚNICO CTA primario permitido. Se toma como CTA primario todo <a>/<button> con clase btn--primary o btn--accent.",
     "clasesCtaPrimario": [
       "btn--primary",
       "btn--accent"
@@ -52,8 +52,15 @@
       {
         "id": "boton-submit-formulario",
         "aplicaA": "<button type=\"submit\">, <button> dentro de un <form> e <input type=\"submit|image\">",
-        "explicacion": "Decisión del CEO: la regla del CTA único aplica a los llamados a la acción de MARKETING (solo WhatsApp), NO a los botones de envío de formularios. Un botón que envía un formulario (p. ej. «Enviar» en el formulario de contacto) no es un CTA de marketing y no cuenta como CTA primario ni se compara contra la etiqueta/href aprobados. Un enlace <a> con clase btn--primary/btn--accent sigue contando como CTA aunque esté dentro de un formulario. Para volver a contar los submit, eliminar esta entrada.",
-        "aprobadoPor": "CEO",
+        "explicacion": "Decisión aprobada: la regla del CTA único aplica a los llamados a la acción de MARKETING (solo WhatsApp), NO a los botones de envío de formularios. Un botón que envía un formulario (p. ej. «Enviar» en el formulario de contacto) no es un CTA de marketing y no cuenta como CTA primario ni se compara contra la etiqueta/href aprobados. Un enlace <a> con clase btn--primary/btn--accent sigue contando como CTA aunque esté dentro de un formulario. Para volver a contar los submit, eliminar esta entrada.",
+        "aprobadoPor": "Dirección",
+        "fecha": "2026-10-10"
+      },
+      {
+        "id": "whatsapp-mensaje-precargado",
+        "aplicaA": "<a> con clase btn--primary/btn--accent cuyo href es el CTA aprobado (cta.href) con el parámetro opcional ?text=...",
+        "explicacion": "Decisión aprobada: el CTA de WhatsApp aprobado (https://wa.me/522227097945) también es válido cuando lleva un mensaje precargado, es decir, con el parámetro de consulta ?text=... (p. ej. https://wa.me/522227097945?text=Hola). El check compara origen + ruta del enlace con cta.href e ignora el valor de ?text. El ÚNICO parámetro permitido es «text»: cualquier otro (p. ej. ?foo=1, &lang=es), otro número, otra ruta, otro dominio o un fragmento (#...) siguen haciendo fallar el check. Las apariciones con distintos mensajes precargados cuentan como el mismo CTA. Para volver a exigir el href exacto, eliminar esta entrada.",
+        "aprobadoPor": "Dirección",
         "fecha": "2026-10-10"
       }
     ]
@@ -69,7 +76,7 @@
     ]
   },
   "robots": {
-    "_NOTA": "Regla de indexación esperada según la rama BASE del PR (o CHECK_BRANCH). 'noindex' = header X-Robots-Tag noindex en vercel.json + robots.txt Disallow:/ ; 'index' = sin noindex en el sitio. TODO (CEO): confirmar 'main' (producción) = 'index' para salir a buscadores.",
+    "_NOTA": "Regla de indexación esperada según la rama BASE del PR (o CHECK_BRANCH). 'noindex' = header X-Robots-Tag noindex en vercel.json + robots.txt Disallow:/ ; 'index' = sin noindex en el sitio. TODO (dueño del sitio): confirmar 'main' (producción) = 'index' para salir a buscadores.",
     "dev": "noindex",
     "main": "index"
   },

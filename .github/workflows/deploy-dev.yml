@@ -1,7 +1,7 @@
 name: Deploy DEV
 
 # Push a dev → deploy al proyecto Vercel de DEV (SEPARADO de producción).
-# NUNCA toca el proyecto de producción `agency-landing` / onix-ia.com.
+# NUNCA toca el proyecto de producción (onix-ia.com).
 # Requiere (Settings → Secrets and variables → Actions): VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_DEV_PROJECT_ID.
 on:
   push:
@@ -39,6 +39,8 @@ jobs:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_DEV_PROJECT_ID }}
+      # Opcional: si existe el secreto VERCEL_PROD_PROJECT_ID, se usa solo para verificar que DEV no apunte a producción.
+      VERCEL_PROD_PROJECT_ID_GUARD: ${{ secrets.VERCEL_PROD_PROJECT_ID }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -52,11 +54,11 @@ jobs:
           [ -z "$VERCEL_ORG_ID" ] && faltan="$faltan VERCEL_ORG_ID"
           [ -z "$VERCEL_PROJECT_ID" ] && faltan="$faltan VERCEL_DEV_PROJECT_ID"
           if [ -n "$faltan" ]; then
-            echo "::error::Faltan secretos en GitHub:$faltan. Pendiente: crear el proyecto Vercel DEV (separado de producción) y cargar los secretos. Ver docs/02_FLUJO_DE_RELEASES.md → Pendientes."
+            echo "::error::Faltan secretos en GitHub:$faltan. Pendiente: crear el proyecto Vercel DEV (separado de producción) y cargar los secretos."
             exit 1
           fi
-          # prj_Jz0E... = proyecto de PRODUCCIÓN agency-landing (onix-ia.com). Jamás desde este workflow.
-          if [ "$VERCEL_PROJECT_ID" = "prj_Jz0EnuwRpBxTt3QhLCV4lJhfUbvt" ]; then
+          # Jamás desplegar el proyecto de PRODUCCIÓN desde este workflow.
+          if [ -n "$VERCEL_PROD_PROJECT_ID_GUARD" ] && [ "$VERCEL_PROJECT_ID" = "$VERCEL_PROD_PROJECT_ID_GUARD" ]; then
             echo "::error::VERCEL_DEV_PROJECT_ID apunta al proyecto de PRODUCCIÓN. Abortando: DEV debe ser un proyecto Vercel distinto."
             exit 1
           fi

@@ -191,8 +191,27 @@ class Reporte {
   }
 }
 
+/**
+ * ¿El href de un CTA coincide con el href aprobado?
+ * Coincidencia exacta, o (si la excepción "whatsapp-mensaje-precargado" está activa) mismo origen + ruta
+ * con, como ÚNICO parámetro de consulta permitido, `text` (mensaje precargado). Se compara origen+ruta;
+ * otro número, otra ruta, otro parámetro (p. ej. ?foo=1, &lang=es) o un fragmento (#...) NO coinciden.
+ */
+function hrefCtaCoincide(href, aprobado, permitirTexto) {
+  if (href === aprobado) return true;
+  if (!permitirTexto || typeof href !== 'string' || typeof aprobado !== 'string') return false;
+  let u, a;
+  try { u = new URL(href); a = new URL(aprobado); } catch (e) { return false; }
+  if (a.search || a.hash) return false;
+  if (u.origin !== a.origin || u.pathname !== a.pathname) return false;
+  if (u.hash || u.username || u.password) return false;
+  for (const k of u.searchParams.keys()) if (k !== 'text') return false;
+  if (u.searchParams.getAll('text').length > 1) return false;
+  return true;
+}
+
 module.exports = {
-  ROOT, leerReglas, listarArchivos, listarHtml, rel, leer, urlDePagina,
+  hrefCtaCoincide, ROOT, leerReglas, listarArchivos, listarHtml, rel, leer, urlDePagina,
   enmascarar, sinComentariosScriptsEstilos, etiquetas, atributos, lineaDe, decodificar, aTexto,
   textoVisible, contenidoElemento, textoSinSrOnly, normalizar, normalizarPalabra, ramaObjetivo, Reporte,
 };

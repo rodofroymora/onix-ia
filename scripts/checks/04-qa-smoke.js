@@ -116,7 +116,7 @@ if (!rama) {
       if (!disallowTodo) R.error('robots.txt', null, 'Rama con regla "noindex": robots.txt debe tener "User-agent: *" y "Disallow: /".');
       if (paginasNoindex.length !== todas) R.error(null, null, `Rama con regla "noindex": ${todas - paginasNoindex.length} página(s) sin <meta name="robots" content="noindex">.`);
     } else {
-      if (hayNoindexHeader) R.error('vercel.json', null, `Rama "${clave}" debe ser indexable ("index") pero vercel.json envía X-Robots-Tag noindex: al promover a producción onix-ia.com quedaría fuera de Google. Decisión del CEO: ajustar antes del release (ver docs/02_FLUJO_DE_RELEASES.md → Pendientes).`);
+      if (hayNoindexHeader) R.error('vercel.json', null, `Rama "${clave}" debe ser indexable ("index") pero vercel.json envía X-Robots-Tag noindex: al promover a producción onix-ia.com quedaría fuera de Google. Requiere decisión del dueño del sitio: ajustar antes del release.`);
       if (disallowTodo) R.error('robots.txt', null, `Rama "${clave}" debe ser indexable pero robots.txt tiene "Disallow: /".`);
       if (paginasNoindex.length) R.error(null, null, `Rama "${clave}" debe ser indexable pero ${paginasNoindex.length} página(s) tienen <meta name="robots" content="noindex">: ${paginasNoindex.join(', ')}.`);
     }
