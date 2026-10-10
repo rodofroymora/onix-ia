@@ -1,10 +1,10 @@
 ## ¿Qué cambia y por qué?
-<!-- 1-3 líneas. Enlaza la solicitud del CEO si existe. -->
+<!-- 1-3 líneas. Enlaza la solicitud original si existe. -->
 
-**Tipo de PR:** [ ] `cambio/*` → `dev`   [ ] `dev` → `main` (release; requiere OK escrito de Rodolfo)
+**Tipo de PR:** [ ] `cambio/*` → `dev`   [ ] `dev` → `main` (release; requiere OK escrito del dueño del sitio)
 
 ## Checklist (marca TODO o explica por qué no aplica)
-- [ ] **Cifras:** no hay cifras/estadísticas nuevas, o todas están en `release-rules.json` → `cifrasAprobadas` (aprobadas por CEO/Marketing).
+- [ ] **Cifras:** no hay cifras/estadísticas nuevas, o todas están en `release-rules.json` → `cifrasAprobadas` (aprobadas).
 - [ ] **Plazos:** no hay plazos/tiempos nuevos, o están en `plazosAprobados`.
 - [ ] **Precios:** no hay precios nuevos, o están en `preciosAprobados`.
 - [ ] **Sectores:** solo se mencionan sectores de `sectoresPermitidos`.
@@ -18,5 +18,5 @@
 <!-- Arrastra aquí las capturas (desktop + móvil) y pega la URL de preview/DEV. -->
 
 ## Solo para `dev` → `main`
-- Referencia del OK escrito de Rodolfo (mensaje/fecha): 
+- Referencia del OK escrito del dueño del sitio (mensaje/fecha): 
 - Cambios incluidos desde el último release: 

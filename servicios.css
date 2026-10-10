@@ -201,7 +201,7 @@
 .layers p { margin-top: .25rem; }
 @media (max-width: 960px) { .layers li { border-top-color: var(--line); padding-block: 1.1rem; } .layers li:first-child { border-top-color: var(--ink); } }
 
-/* ── Home (CEO decision) ───────────────────────────────── */
+/* ── Home ───────────────────────────────── */
 .hero__grid--solo { grid-template-columns: 1fr; }
 .hero__grid--solo .hero h1, .hero h1 { max-width: 22ch; font-size: clamp(2.375rem, 5vw, 4.25rem); }
 .hero__grid--solo .hero__sub { max-width: 34em; }

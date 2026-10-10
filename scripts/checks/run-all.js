@@ -23,7 +23,7 @@ for (const [archivo, titulo] of checks) {
 console.log('\n══════════ RESUMEN ══════════');
 for (const [, titulo] of checks) console.log((fallos.includes(titulo) ? '✖ FALLÓ  ' : '✔ OK     ') + titulo);
 if (fallos.length) {
-  console.log(`\n✖ ${fallos.length} de ${checks.length} checks fallaron. El PR NO se puede fusionar hasta corregirlos (o, si la regla es incorrecta, actualizar release-rules.json con aprobación del CEO).`);
+  console.log(`\n✖ ${fallos.length} de ${checks.length} checks fallaron. El PR NO se puede fusionar hasta corregirlos (o, si la regla es incorrecta, actualizar release-rules.json con aprobación del dueño del sitio).`);
   process.exit(1);
 }
 console.log('\n✔ Todos los checks pasaron.');

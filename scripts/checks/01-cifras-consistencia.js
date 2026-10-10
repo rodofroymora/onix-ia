@@ -2,7 +2,7 @@
 'use strict';
 /**
  * Check 1 · Consistencia de cifras, plazos, precios, sectores y WhatsApp.
- * Fuente de verdad: release-rules.json (el CEO/Marketing llena los TODO).
+ * Fuente de verdad: release-rules.json (el responsable de contenido llena los TODO).
  * Regla: si una lista aprobada NO está vacía, todo lo detectado en el HTML que no esté en ella falla.
  * Lista vacía = validación desactivada (solo se imprime el inventario detectado).
  * El número de WhatsApp SIEMPRE se valida (es dato fijo).
@@ -59,7 +59,7 @@ for (const f of L.listarHtml()) {
       anotar(tipo, v, nombre);
       if (aprobado[tipo].length && !aprobado[tipo].some((a) => L.normalizar(v) === a || L.normalizar(v).includes(a) && a.length >= L.normalizar(v).length)) {
         const campo = { precios: 'preciosAprobados', plazos: 'plazosAprobados', cifras: 'cifrasAprobadas' }[tipo];
-        R.error(nombre, null, `${{ precios: 'Precio no aprobado', plazos: 'Plazo no aprobado', cifras: 'Cifra no aprobada' }[tipo]}: "${v}". Si es correcto, el CEO/Marketing debe agregarlo a "${campo}" en release-rules.json; si no, corregir el texto.`);
+        R.error(nombre, null, `${{ precios: 'Precio no aprobado', plazos: 'Plazo no aprobado', cifras: 'Cifra no aprobada' }[tipo]}: "${v}". Si es correcto, el responsable de contenido debe agregarlo a "${campo}" en release-rules.json; si no, corregir el texto.`);
       }
     }
   }
@@ -69,7 +69,7 @@ for (const f of L.listarHtml()) {
     if (re.test(texto)) {
       anotar('sectores', w, nombre);
       if (aprobado.sectores.length && !aprobado.sectores.includes(L.normalizarPalabra(w))) {
-        R.error(nombre, null, `Sector no permitido mencionado: "${w}". Agregarlo a "sectoresPermitidos" (aprobación CEO/Marketing) o quitar la mención.`);
+        R.error(nombre, null, `Sector no permitido mencionado: "${w}". Agregarlo a "sectoresPermitidos" (requiere aprobación) o quitar la mención.`);
       }
     }
   }
@@ -104,7 +104,7 @@ const resumen = (tipo, campo) => {
   const aprob = (reglas[campo] || []).length;
   const items = [...inventario[tipo].entries()].map(([v, p]) => `"${v}" [${[...p].join(', ')}]`);
   R.nota(`${tipo.toUpperCase()} detectados: ${items.length ? items.join('; ') : '(ninguno)'}`);
-  if (!aprob) R.aviso(null, null, `"${campo}" está vacía en release-rules.json (TODO CEO/Marketing): no se valida ${tipo}.`);
+  if (!aprob) R.aviso(null, null, `"${campo}" está vacía en release-rules.json (pendiente de aprobación): no se valida ${tipo}.`);
 };
 resumen('cifras', 'cifrasAprobadas');
 resumen('plazos', 'plazosAprobados');

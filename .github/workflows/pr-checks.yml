@@ -1,7 +1,7 @@
 name: PR checks
 
 # Se ejecuta en todo PR hacia dev o main. El job "Checks de release" debe marcarse como
-# status check REQUERIDO en la protección de ramas (ver docs/BRANCH_PROTECTION.md);
+# status check REQUERIDO en la protección de ramas;
 # así un fallo bloquea el merge.
 on:
   pull_request:
@@ -57,6 +57,9 @@ jobs:
           # La regla robots/noindex depende de la rama DESTINO del PR (dev o main)
           CHECK_BRANCH: ${{ github.base_ref }}
         run: node scripts/checks/run-all.js
+
+      - name: Pruebas de la regla CTA (WhatsApp con ?text=)
+        run: node scripts/tests/cta-href.test.js
 
       - name: Resumen
         if: always()

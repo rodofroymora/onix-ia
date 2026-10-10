@@ -2,14 +2,14 @@ name: Promote to PROD (onix-ia.com)
 
 # ÚNICA vía para publicar en producción. Solo manual (workflow_dispatch).
 # Merge a main NO publica nada. Requiere:
-#  1) OK escrito de Rodolfo (referencia en `approval_text`, queda en el resumen del run)
+#  1) OK escrito del dueño del sitio (referencia en `approval_text`, queda en el resumen del run)
 #  2) Checks en verde sobre main
-#  3) Aprobación del GitHub Environment `production` (revisor requerido: Rodolfo)
+#  3) Aprobación del GitHub Environment `production` (revisor requerido: el dueño del sitio)
 on:
   workflow_dispatch:
     inputs:
       approval_text:
-        description: 'Referencia del OK ESCRITO de Rodolfo (p. ej. "OK Rodolfo 2026-10-12, mensaje WhatsApp CEO #123"). Sin secretos.'
+        description: 'Referencia del OK ESCRITO del dueño del sitio (p. ej. fecha y medio de la aprobación). Sin secretos.'
         required: true
         type: string
 
@@ -41,7 +41,7 @@ jobs:
           ACTOR: ${{ github.actor }}
         run: |
           if [ "${#APPROVAL_TEXT}" -lt 10 ]; then
-            echo "::error::approval_text es obligatorio (mín. 10 caracteres): referencia del OK escrito de Rodolfo."
+            echo "::error::approval_text es obligatorio (mín. 10 caracteres): referencia del OK escrito del dueño del sitio."
             exit 1
           fi
           {
@@ -68,7 +68,7 @@ jobs:
     needs: checks
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    # Environment con revisor requerido (Rodolfo): el job queda en espera hasta que él apruebe.
+    # Environment con revisor requerido (dueño del sitio): el job queda en espera hasta que lo apruebe.
     environment:
       name: production
       url: https://onix-ia.com
@@ -123,5 +123,5 @@ jobs:
             echo "### Producción actualizada"
             echo "- Deployment: $url"
             echo "- Dominio: https://onix-ia.com"
-            echo "- Rollback: ver docs/02_FLUJO_DE_RELEASES.md → Rollback"
+            echo "- Rollback: usar el deployment anterior registrado al inicio de este resumen"
           } >> "$GITHUB_STEP_SUMMARY"
