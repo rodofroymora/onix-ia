@@ -27,3 +27,5 @@ Nombre: `cambio/<corto>` en minúsculas con guiones, p. ej. `cambio/hero-copy-es
 - No hacer `vercel deploy` / `--prod` a mano. Solo los workflows.
 - No hacer push directo a `dev` ni `main`; no force-push.
 - Reportar al CEO; Rodolfo habla solo con el CEO.
+
+<!-- prueba de pipeline -->
