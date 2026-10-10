@@ -1,0 +1,19 @@
+# Secretos y config local de Vercel: NUNCA al repo
+.env
+.env.*
+!.env.example
+.vercel/
+.vercel
+
+# Dependencias / builds
+node_modules/
+.next/
+dist/
+.output/
+
+# Otros
+*.log
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
