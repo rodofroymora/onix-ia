@@ -26,6 +26,7 @@ Nombre de la rama: `cambio/<corto>`, en minúsculas y con guiones, p. ej. `cambi
 - **Un solo CTA:** un único CTA primario de marketing por página (WhatsApp, con la misma etiqueta y destino).
 - **Enlaces y assets:** enlaces internos, anclas e imágenes/archivos deben existir.
 - **QA smoke:** title, meta description, `lang`, un solo `h1`, imágenes con `alt`, sin texto residual (TODO, lorem, placeholder) y regla de indexación según la rama.
+- **Frases prohibidas:** `release-rules.json` → `frasesProhibidas`. Las de nivel `bloqueante` hacen fallar el PR; las de nivel `advertencia` se muestran para revisión manual y no bloquean.
 - **Higiene:** no se versionan `.env*`, `.vercel/` ni `node_modules/`.
 
 ## Reglas

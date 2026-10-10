@@ -14,6 +14,7 @@ const checks = [
   ['02-cta-unico.js', 'Un solo CTA primario por página'],
   ['03-enlaces-y-assets.js', 'Enlaces internos, anclas y assets'],
   ['04-qa-smoke.js', 'QA smoke (title, description, lang, h1, alt, residuos, robots)'],
+  ['05-frases-prohibidas.js', 'Frases prohibidas (bloqueantes y advertencias)'],
 ];
 const fallos = [];
 for (const [archivo, titulo] of checks) {

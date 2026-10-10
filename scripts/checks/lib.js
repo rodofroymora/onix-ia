@@ -191,6 +191,65 @@ class Reporte {
   }
 }
 
+/** Centinela "__NINGUNA_APROBADA__" / "__NINGUNO_APROBADO__": activa la validación de una lista sin aprobar nada. */
+const CENTINELA = /^__NINGUN[AO]_APROBAD[AO]__$/;
+const esCentinela = (v) => CENTINELA.test(String(v).trim());
+/**
+ * Interpreta una lista de aprobados de release-rules.json.
+ * activa = la lista tiene algún elemento (incluido el centinela) → se valida.
+ * valores = elementos realmente aprobados (sin centinelas). Lista vacía = validación desactivada.
+ */
+function listaAprobada(arr) {
+  const a = Array.isArray(arr) ? arr : [];
+  return { activa: a.length > 0, valores: a.filter((v) => !esCentinela(v)), soloCentinela: a.length > 0 && a.every(esCentinela) };
+}
+/** Sector exacto: sin acentos ni mayúsculas, pero SIN quitar plural ("clínica" ≠ "clínicas"). */
+function normalizarSector(s) {
+  return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' ').trim();
+}
+const escRe = (m) => String(m).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+/**
+ * Quita del texto los formatos visibles APROBADOS del WhatsApp (whatsapp.formatosVisiblesPermitidos), p. ej.
+ * "+52 222 709 7945", para que no se detecten como cifra ("+52"). Solo coincide si no hay dígitos pegados.
+ */
+function quitarFormatosWhatsapp(texto, formatos) {
+  let t = texto;
+  for (const f of [...(formatos || [])].sort((a, b) => b.length - a.length)) {
+    const re = new RegExp('(?<![\\d+])' + escRe(f).replace(/\\ /g, '\\s') + '(?!\\d)', 'g');
+    t = t.replace(re, ' ');
+  }
+  return t;
+}
+/** Texto auditable de una página: visible + title + meta descriptions/títulos + alt/aria-label/title. */
+function textoAuditable(html) {
+  const limpio = sinComentariosScriptsEstilos(html);
+  const tags = etiquetas(limpio);
+  let texto = textoVisible(html);
+  const tit = limpio.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+  if (tit) texto += ' ' + aTexto(tit[1]);
+  for (const t of tags) {
+    if (t.tag === 'meta' && /^(description|og:description|twitter:description|og:title|twitter:title)$/i.test(t.attrs.name || t.attrs.property || '') && t.attrs.content) texto += ' ' + decodificar(t.attrs.content);
+    for (const a of ['alt', 'aria-label', 'title']) if (t.attrs[a] && t.tag !== 'title') texto += ' ' + decodificar(t.attrs[a]);
+  }
+  return texto;
+}
+/** Mejor esfuerzo: línea del HTML donde aparece un fragmento de texto auditable (null si no se localiza). */
+function lineaDeFragmento(html, fragmento) {
+  const norm = (x) => x.replace(/\s+/g, ' ').trim().toLowerCase();
+  const f = norm(fragmento);
+  if (!f) return null;
+  const lineas = html.split('\n');
+  const plano = lineas.map((l) => norm(decodificar(l.replace(/<[^>]*>/g, ' '))));
+  const crudo = lineas.map((l) => norm(decodificar(l)));
+  for (const cand of [f, f.slice(0, 25)]) {
+    if (cand.length < 3) continue;
+    let i = plano.findIndex((l) => l.includes(cand));
+    if (i < 0) i = crudo.findIndex((l) => l.includes(cand));
+    if (i >= 0) return i + 1;
+  }
+  return null;
+}
+
 /**
  * ¿El href de un CTA coincide con el href aprobado?
  * Coincidencia exacta, o (si la excepción "whatsapp-mensaje-precargado" está activa) mismo origen + ruta
@@ -211,7 +270,7 @@ function hrefCtaCoincide(href, aprobado, permitirTexto) {
 }
 
 module.exports = {
-  hrefCtaCoincide, ROOT, leerReglas, listarArchivos, listarHtml, rel, leer, urlDePagina,
+  esCentinela, listaAprobada, normalizarSector, quitarFormatosWhatsapp, textoAuditable, lineaDeFragmento, hrefCtaCoincide, ROOT, leerReglas, listarArchivos, listarHtml, rel, leer, urlDePagina,
   enmascarar, sinComentariosScriptsEstilos, etiquetas, atributos, lineaDe, decodificar, aTexto,
   textoVisible, contenidoElemento, textoSinSrOnly, normalizar, normalizarPalabra, ramaObjetivo, Reporte,
 };
