@@ -55,164 +55,124 @@
   <div class="mm-cta"><a href="#escribenos" class="btn btn--goac">Contáctanos</a></div>
 </nav>
 <main id="main">
-<section class="sec dca">
+<section class="sec dc">
   <div class="wrap">
 
     <nav class="crumbs" aria-label="Migas de pan"><ol><li><a href="/">Inicio</a></li><li><a href="/servicios">Servicios</a></li><li><a href="/servicios/contabilidad-asistida">Contabilidad Asistida</a></li><li><span aria-current="page">Demostración</span></li></ol></nav>
 
-    <div class="dca-intro">
+    <header class="dc-hero">
       <p class="layer-tag">Capa 2 · Datos y documentos</p>
-      <h1 class="display svc-h1">Así se ve Contabilidad Asistida.</h1>
-      <p class="lead">Recorre las cuatro pantallas y mira cómo se reúnen tus comprobantes, cómo una persona confirma lo dudoso y cómo tu contador recibe el paquete del mes listo para revisar.</p>
-      <p class="dca-aviso">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 8h.01M11 12h1v4h1"/></svg>
-        <span><strong>ONIX no presta servicios contables ni fiscales y no sustituye a tu contador.</strong> Automatizamos y asistimos procesos administrativos; la revisión, las declaraciones y la responsabilidad fiscal se mantienen con profesionales de la contabilidad. La regla es simple: la IA prepara y ordena, el contador revisa y decide.</span>
-      </p>
-    </div>
+      <h1 class="display svc-h1">Tu contador pide los comprobantes del mes. Tú los buscas en cuatro lugares.</h1>
+      <p class="lead">Uno llegó por correo, otro es la foto de un ticket en WhatsApp, un tercero está en una carpeta compartida y del cuarto nadie se acuerda. Contabilidad Asistida los junta, los lee, los cruza contra tu estado de cuenta y le entrega a tu contador un paquete que ya está en orden.</p>
+      <p class="dc-nota">ÓNIX no presta servicios contables ni fiscales y no sustituye a tu contador. La IA prepara y ordena; tu contador revisa y decide.</p>
+    </header>
 
-    <div class="dca-rail" id="dca-rail" role="tablist" aria-label="Pantallas de la demostración">
-      <button type="button" role="tab" aria-selected="true" aria-controls="dca-p1" id="dca-t1" data-win="Expediente del mes">
-        <span class="dca-rail__k">Entrada</span>
-        <span class="dca-rail__t">Llegan los comprobantes</span>
-      </button>
-      <button type="button" role="tab" aria-selected="false" aria-controls="dca-p2" id="dca-t2" tabindex="-1" data-win="Datos extraídos">
-        <span class="dca-rail__k">Lectura</span>
-        <span class="dca-rail__t">Una persona confirma lo dudoso</span>
-      </button>
-      <button type="button" role="tab" aria-selected="false" aria-controls="dca-p3" id="dca-t3" tabindex="-1" data-win="Papel de trabajo">
-        <span class="dca-rail__k">Cruce</span>
-        <span class="dca-rail__t">Movimientos contra comprobantes</span>
-      </button>
-      <button type="button" role="tab" aria-selected="false" aria-controls="dca-p4" id="dca-t4" tabindex="-1" data-win="Asistente virtual">
-        <span class="dca-rail__k">Consultas</span>
-        <span class="dca-rail__t">Preguntas sobre lo ya ordenado</span>
-      </button>
-    </div>
+    <div class="dc-stage">
 
-    <div class="dca-win">
-      <div class="dca-win__bar">
-        <span class="dca-win__dots" aria-hidden="true"><i></i><i></i><i></i></span>
-        <span class="dca-win__name" id="dca-win-name" data-base="Negocio Ejemplo">Negocio Ejemplo · Expediente del mes</span>
-        <span class="dca-tag">Ilustrativo</span>
+      <div class="dc-steps">
+        <article class="dc-step" data-escena="1">
+          <p class="dc-step__k">Centralización</p>
+          <h2 class="dc-step__h">Dejan de estar en cuatro lugares.</h2>
+          <p class="dc-step__p">Conectamos los canales por donde ya te llegan los comprobantes —correo, WhatsApp, la carpeta compartida— y todo cae a un mismo expediente del mes. <b>Los duplicados se descartan solos</b>, que es de donde sale buena parte del trabajo repetido.</p>
+        </article>
+
+        <article class="dc-step" data-escena="2">
+          <p class="dc-step__k">Lectura</p>
+          <h2 class="dc-step__h">La IA extrae los datos y te dice de cuáles no está segura.</h2>
+          <p class="dc-step__p">Emisor, fecha, conceptos e importes salen del documento tal como aparecen. Cada campo lleva su <b>nivel de confianza</b>: lo que sale claro avanza, lo que sale dudoso se detiene y espera a una persona. Nada se da por bueno porque sí.</p>
+        </article>
+
+        <article class="dc-step" data-escena="3">
+          <p class="dc-step__k">Reconciliación</p>
+          <h2 class="dc-step__h">Cada movimiento del banco, con su comprobante al lado.</h2>
+          <p class="dc-step__p">Tú exportas de tu estado de cuenta solo las columnas necesarias. Nosotros cruzamos movimientos contra comprobantes y <b>señalamos los que se quedaron sin pareja</b>. Es un dato administrativo —falta un papel—, no un juicio sobre tus impuestos.</p>
+        </article>
+
+        <article class="dc-step" data-escena="4">
+          <p class="dc-step__k">Integración y consulta</p>
+          <h2 class="dc-step__h">Pregúntale en español, sin abrir una hoja de cálculo.</h2>
+          <p class="dc-step__p">La asistente virtual responde sobre lo que ya está ordenado y <b>siempre cita el documento</b>. Si la pregunta es de materia fiscal, te manda con tu contador sin opinar. No improvisa y no inventa importes.</p>
+        </article>
       </div>
 
-      <div class="dca-win__body">
+      <div class="dc-sticky">
+        <div class="dc-panel">
+          <div class="dc-bar">
+            <span class="dc-bar__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="dc-bar__n" id="dc-titulo">Negocio Ejemplo · Expediente del mes</span>
+            <span class="dc-ilu">Ilustrativo</span>
+          </div>
 
-        <!-- Pantalla 1 -->
-        <div class="dca-panel" id="dca-p1" role="tabpanel" aria-labelledby="dca-t1">
-          <p class="dca-panel__h">Los comprobantes llegan por donde ya llegan hoy.</p>
-          <p class="dca-panel__s">Correo, WhatsApp y fotos de tickets caen al expediente del mes. Los duplicados se descartan solos.</p>
-          <div class="dca-flow">
-            <div class="dca-in">
-              <span class="dca-src"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="M3 7l9 6 9-6"/></svg><span>Factura por correo</span><span>Proveedor Ejemplo</span></span>
-              <span class="dca-src"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.7 7.4L3.5 20.5l1.7-4.6A8.5 8.5 0 1 1 21 11.5z"/></svg><span>Foto de ticket</span><span>Compras</span></span>
-              <span class="dca-src"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg><span>Archivo XML</span><span>Servicios Ejemplo</span></span>
-              <span class="dca-src"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.7 7.4L3.5 20.5l1.7-4.6A8.5 8.5 0 1 1 21 11.5z"/></svg><span>Ticket repetido</span><span>Descartado</span></span>
-            </div>
-            <span class="dca-arrow" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-            <div class="dca-box">
-              <p class="dca-box__h">Expediente del mes</p>
-              <p class="dca-box__n">14 comprobantes ordenados · 1 duplicado fuera</p>
-              <div class="dca-chips">
-                <span class="dca-chip">Negocio Ejemplo</span>
-                <span class="dca-chip">RFC-EJEMPLO</span>
-                <span class="dca-chip">Sin datos reales</span>
+          <div class="dc-body" aria-live="polite">
+
+            <section class="dc-scene on" id="dc-e1" aria-label="Centralización de comprobantes">
+              <p class="dc-scene__h">Todo entra al mismo expediente</p>
+              <div class="dc-fuentes">
+                <span class="dc-fuente"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="M3 7l9 6 9-6"/></svg>Factura por correo<span>Proveedor Ejemplo</span></span>
+                <span class="dc-fuente"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.7 7.4L3.5 20.5l1.7-4.6A8.5 8.5 0 1 1 21 11.5z"/></svg>Foto de un ticket<span>WhatsApp</span></span>
+                <span class="dc-fuente"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>Archivo XML<span>Carpeta compartida</span></span>
+                <span class="dc-fuente dc-fuente--out"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.7 7.4L3.5 20.5l1.7-4.6A8.5 8.5 0 1 1 21 11.5z"/></svg>El mismo ticket, otra vez<span>Duplicado, fuera</span></span>
               </div>
-            </div>
-          </div>
-        </div>
+              <div class="dc-caja">
+                <b>Expediente del mes</b>
+                <span>14 comprobantes ordenados · 1 duplicado descartado · RFC-EJEMPLO</span>
+              </div>
+            </section>
 
-        <!-- Pantalla 2 -->
-        <div class="dca-panel" id="dca-p2" role="tabpanel" aria-labelledby="dca-t2" hidden>
-          <p class="dca-panel__h">Se extraen los datos tal como aparecen en el documento.</p>
-          <p class="dca-panel__s">Los importes van ocultos: esta demostración no publica cifras. Dos renglones salieron con baja confianza y quedan marcados para que los vea una persona. La categoría viene del catálogo que entrega tu contador; sin ese catálogo no se propone ninguna.</p>
-          <div class="dca-tablewrap">
-            <table class="dca-table">
-              <caption class="sr-only">Datos extraídos de los comprobantes del mes, con su estado de revisión. Datos ficticios; los importes se ocultan en la demostración.</caption>
-              <thead><tr><th scope="col">Comprobante</th><th scope="col">Emisor</th><th scope="col">Importe</th><th scope="col">Categoría sugerida</th><th scope="col">Estado</th></tr></thead>
-              <tbody>
-                <tr data-rev="no"><td>FOLIO-XXXX</td><td>Proveedor Ejemplo</td><td class="dca-oculto">importe oculto</td><td>Insumos</td><td><span class="dca-state dca-state--ok"><i></i>Datos claros</span></td></tr>
-                <tr data-rev="no"><td>FOLIO-XXXX</td><td>Servicios Ejemplo</td><td class="dca-oculto">importe oculto</td><td>Servicios</td><td><span class="dca-state dca-state--ok"><i></i>Datos claros</span></td></tr>
-                <tr data-rev="si"><td>FOLIO-XXXX</td><td>Ticket sin emisor legible</td><td class="dca-oculto">importe oculto</td><td>Sin categoría</td><td><span class="dca-state dca-state--rev"><i></i>Revisar: documento ilegible</span></td></tr>
-                <tr data-rev="si"><td>FOLIO-XXXX</td><td>Proveedor Ejemplo</td><td class="dca-oculto">importe oculto</td><td>Sin categoría</td><td><span class="dca-state dca-state--rev"><i></i>Revisar: importe distinto entre XML y PDF</span></td></tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="dca-human">
-            <p>Dos renglones esperan a una persona. Nada avanza solo.</p>
-            <button type="button" class="dca-btn" id="dca-confirmar">Confirmar como administración</button>
-            <span class="dca-done" id="dca-confirmado" hidden>Listo: los dos renglones quedaron confirmados por una persona.</span>
-          </div>
-        </div>
+            <section class="dc-scene" id="dc-e2" aria-label="Lectura de un comprobante">
+              <p class="dc-scene__h">Leyendo FOLIO-XXXX</p>
+              <div class="dc-lee">
+                <div class="dc-doc" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><span class="dc-doc__scan"></span></div>
+                <dl class="dc-campos">
+                  <div class="dc-campo"><dt>Emisor</dt><dd>Proveedor Ejemplo</dd><span class="dc-conf dc-conf--alta"><i></i>claro</span></div>
+                  <div class="dc-campo"><dt>Fecha</dt><dd>día 12</dd><span class="dc-conf dc-conf--alta"><i></i>claro</span></div>
+                  <div class="dc-campo"><dt>Concepto</dt><dd>Insumos</dd><span class="dc-conf dc-conf--alta"><i></i>claro</span></div>
+                  <div class="dc-campo"><dt>Importe</dt><dd>oculto en la demostración</dd><span class="dc-conf dc-conf--baja"><i></i>dudoso</span></div>
+                </dl>
+              </div>
+              <p class="dc-humano"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg><span><b>Se detiene aquí.</b> El importe no coincide entre el XML y el PDF, así que no avanza hasta que alguien de administración lo confirme.</span></p>
+            </section>
 
-        <!-- Pantalla 3 -->
-        <div class="dca-panel" id="dca-p3" role="tabpanel" aria-labelledby="dca-t3" hidden>
-          <p class="dca-panel__h">Cruce de movimientos y comprobantes, papel de trabajo para revisión de tu contador.</p>
-          <p class="dca-panel__s">Tú exportas de tu estado de cuenta solo las columnas necesarias. Nosotros no entramos por nuestra cuenta a ningún portal: ni al de tu banco ni al del SAT, y nunca te pedimos tu e.firma ni tu contraseña del SAT.</p>
-          <div class="dca-cross">
-            <div class="dca-row">
-              <span class="dca-row__m">Movimiento del día 03<small class="dca-oculto">importe oculto</small></span>
-              <span class="dca-row__link" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg></span>
-              <span class="dca-row__c">FOLIO-XXXX · Proveedor Ejemplo<small>Insumos</small></span>
-              <span class="dca-badge">Coincide</span>
-            </div>
-            <div class="dca-row">
-              <span class="dca-row__m">Movimiento del día 09<small class="dca-oculto">importe oculto</small></span>
-              <span class="dca-row__link" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg></span>
-              <span class="dca-row__c">FOLIO-XXXX · Servicios Ejemplo<small>Servicios</small></span>
-              <span class="dca-badge">Coincide</span>
-            </div>
-            <div class="dca-row dca-row--falta">
-              <span class="dca-row__m">Movimiento del día 12<small class="dca-oculto">importe oculto</small></span>
-              <span class="dca-row__link" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg></span>
-              <span class="dca-row__c">Sin comprobante en el expediente<small>Dato administrativo, no un juicio fiscal</small></span>
-              <span class="dca-badge dca-badge--falta">Falta comprobante</span>
-            </div>
-            <div class="dca-row dca-row--falta">
-              <span class="dca-row__m">Movimiento del día 27<small class="dca-oculto">importe oculto</small></span>
-              <span class="dca-row__link" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg></span>
-              <span class="dca-row__c">Sin comprobante en el expediente<small>Dato administrativo, no un juicio fiscal</small></span>
-              <span class="dca-badge dca-badge--falta">Falta comprobante</span>
-            </div>
-          </div>
-          <p class="dca-handoff">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1z"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-            <span><strong>Para revisión de tu contador.</strong> El paquete del mes sale con el expediente, las categorías sugeridas, el cruce y la bitácora. El C.P. Demo revisa, corrige y decide. Todo lo fiscal lo hace tu contador en sus propios sistemas.</span>
-          </p>
-        </div>
+            <section class="dc-scene" id="dc-e3" aria-label="Reconciliación de movimientos">
+              <p class="dc-scene__h">Movimientos del mes contra comprobantes</p>
+              <div class="dc-rec">
+                <div class="dc-par"><div>Movimiento del día 03<small>cargo</small></div><span class="dc-par__u" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg></span><div>FOLIO-XXXX<small>Proveedor Ejemplo</small></div><span class="dc-et dc-et--ok">pareja</span></div>
+                <div class="dc-par"><div>Movimiento del día 09<small>cargo</small></div><span class="dc-par__u" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg></span><div>FOLIO-XXXX<small>Servicios Ejemplo</small></div><span class="dc-et dc-et--ok">pareja</span></div>
+                <div class="dc-par dc-par--falta"><div>Movimiento del día 12<small>cargo</small></div><span class="dc-par__u" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg></span><div>Sin comprobante<small>dato administrativo</small></div><span class="dc-et dc-et--falta">falta papel</span></div>
+                <div class="dc-par dc-par--falta"><div>Movimiento del día 27<small>cargo</small></div><span class="dc-par__u" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg></span><div>Sin comprobante<small>dato administrativo</small></div><span class="dc-et dc-et--falta">falta papel</span></div>
+              </div>
+              <p class="dc-entrega"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1z"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg><span><b>Para revisión de tu contador.</b> El paquete del mes sale con el expediente, el cruce y la bitácora. El C.P. Demo revisa, corrige y decide.</span></p>
+            </section>
 
-        <!-- Pantalla 4 -->
-        <div class="dca-panel" id="dca-p4" role="tabpanel" aria-labelledby="dca-t4" hidden>
-          <p class="dca-panel__h">Pregúntale a la asistente virtual sobre lo que ya está ordenado.</p>
-          <p class="dca-panel__s">Responde citando el documento. Si la pregunta es de materia fiscal, la remite a tu contador sin dar ninguna orientación.</p>
-          <div class="dca-chat" id="dca-chat">
-            <p class="dca-msg dca-msg--out">¿Qué comprobantes faltan este mes?</p>
-            <p class="dca-msg dca-msg--in">Del expediente de este mes faltan dos comprobantes: uno del movimiento del día 12 y uno del día 27.<span class="dca-msg__ref">Referencia: papel de trabajo del mes, renglones 4 y 7.</span></p>
-            <p class="dca-msg dca-msg--out">¿Cómo aplica esto en mis impuestos?</p>
-            <p class="dca-msg dca-msg--in">Esa pregunta la resuelve tu contador. Yo no doy orientación en materia fiscal.<span class="dca-msg__esc">Te paso con una persona de administración para que lo canalice con el C.P. Demo.</span></p>
-          </div>
-          <div class="dca-ask">
-            <div class="dca-quick">
-              <button type="button">¿Hay algún comprobante duplicado?</button>
-              <button type="button">¿Cuántos comprobantes llegaron?</button>
-              <button type="button">¿Cuánto IVA pagué?</button>
-            </div>
-            <form class="dca-field" id="dca-form" autocomplete="off">
-              <label class="sr-only" for="dca-pregunta">Escribe tu pregunta para la asistente virtual</label>
-              <input type="text" id="dca-pregunta" name="pregunta" placeholder="Escribe tu pregunta" maxlength="140" />
-              <button type="submit" class="dca-btn">Preguntar</button>
-            </form>
-            <p class="dca-warn">Datos ficticios, no escribas datos reales. Nada de lo que escribas aquí se guarda ni se envía.</p>
-          </div>
-        </div>
+            <section class="dc-scene" id="dc-e4" aria-label="Consultas a la asistente virtual">
+              <p class="dc-scene__h">Asistente virtual</p>
+              <div class="dc-chat" id="dc-chat">
+                <p class="dc-msg dc-msg--out">¿Qué comprobantes faltan este mes?</p>
+                <p class="dc-msg dc-msg--in">Faltan dos: el del movimiento del día 12 y el del día 27.<small>Según el cruce del mes, renglones 4 y 7.</small></p>
+              </div>
+              <div class="dc-quick">
+                <button type="button">¿Hay algo duplicado?</button>
+                <button type="button">¿Cuántos llegaron?</button>
+                <button type="button">¿Cuánto IVA pagué?</button>
+              </div>
+              <form class="dc-form" id="dc-form" autocomplete="off">
+                <label class="sr-only" for="dc-q">Escribe tu pregunta para la asistente virtual</label>
+                <input type="text" id="dc-q" name="q" placeholder="Escribe tu pregunta" maxlength="140" />
+                <button type="submit">Preguntar</button>
+              </form>
+              <p class="dc-aviso-campo">Datos ficticios, no escribas datos reales. Nada de lo que escribas se guarda ni se envía.</p>
+            </section>
 
+          </div>
+
+          <p class="dc-foot">ÓNIX no presta servicios contables ni fiscales y no sustituye a tu contador. Negocio y contador ficticios.</p>
+        </div>
       </div>
 
-      <div class="dca-win__foot">ONIX no presta servicios contables ni fiscales y no sustituye a tu contador. Negocio y contador ficticios; ningún dato de esta pantalla es real.</div>
     </div>
-
   </div>
 </section>
+
 <section class="cta dark" aria-labelledby="cta-title"><div class="wrap cta__in"><div><h2 id="cta-title">¿Quieres ver esto con los documentos de tu negocio?</h2><p>Lo revisamos juntos y te decimos qué se puede ordenar primero.</p></div><div class="cta__act" id="escribenos"><a href="https://wa.me/522227097945?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20los%20servicios%20de%20%C3%93NIX.%20Aviso%20de%20privacidad%3A%20https%3A%2F%2Fwww.onix-ia.com%2Faviso-de-privacidad" class="btn btn--accent" target="_blank" rel="noopener noreferrer">Escríbenos por WhatsApp<span class="sr-only"> (abre WhatsApp)</span></a><p class="priv-note">Al escribirnos por WhatsApp, ÓNIX (Rodolfo Mora) usará tu número y tu mensaje para responderte y darte seguimiento. WhatsApp (Meta) trata los datos de la conversación bajo sus propias condiciones. <a href="/aviso-de-privacidad">Aviso de privacidad de ÓNIX</a></p></div></div></section>
 </main>
 
