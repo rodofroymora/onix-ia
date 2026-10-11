@@ -276,3 +276,24 @@
 .demo-note { margin: .75rem auto 0; max-width: 46ch; text-align: center; font-size: .75rem; line-height: 1.45; color: var(--on-dark-muted, #9A9AA2); }
 /* mobile: keep the literal demo legend clear of the "Ilustrativo" pill */
 @media (max-width: 600px) { .js .product .demo-legend { max-width: calc(100% - 8.75rem); margin: .625rem auto .25rem .5rem; text-align: left; } }
+/* /salud (prototype): review table "qué se automatiza / qué se revisa / quién aprueba" */
+.rtable-wrap { margin-top: clamp(2rem, 4vw, 3rem); }
+.rtable { width: 100%; border-collapse: collapse; font-size: 1rem; line-height: 1.5; }
+.rtable th, .rtable td { text-align: left; vertical-align: top; padding: 1rem 1.25rem 1rem 0; border-top: 1px solid var(--line); }
+.rtable thead th { border-top: 0; border-bottom: 1px solid var(--ink); font-size: .8125rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+.rtable tbody th { font-weight: 600; letter-spacing: -.01em; width: 16%; }
+.rtable td { color: var(--muted); }
+.rtable tbody tr:last-child th, .rtable tbody tr:last-child td { border-bottom: 1px solid var(--line); }
+.rtable-note { margin-top: 1.5rem; max-width: 46em; color: var(--muted); font-size: 1.0625rem; line-height: 1.55; }
+@media (max-width: 760px) {
+  .rtable thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .rtable, .rtable tbody, .rtable tr, .rtable th, .rtable td { display: block; width: 100%; }
+  .rtable tr { padding: 1rem 0; border-top: 1px solid var(--line); }
+  .rtable th, .rtable td { border: 0; padding: .25rem 0; }
+  .rtable tbody th { width: 100%; font-size: 1.125rem; }
+  .rtable td::before { content: attr(data-label); display: block; font-size: .75rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--ink); margin-top: .5rem; }
+}
+#salud-marcas { margin: 0 0 2rem; }
+
+/* v15 · enlace dentro de un mensaje de la demo (aviso de privacidad) */
+.msg a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
