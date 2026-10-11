@@ -1,0 +1,196 @@
+/* ───────────────────────────────────────────────────────────────────────
+   Demostración · Documentos Vivos
+   Misma estructura que la demo de Contabilidad Asistida: el scroll conduce,
+   el panel queda fijo y cambia de escena. Cuando las dos estén fusionadas
+   conviene extraer lo común a una sola hoja.
+   ─────────────────────────────────────────────────────────────────────── */
+
+.dv { --dv-r: 16px; }
+
+.dv-hero { max-width: 54rem; padding-bottom: clamp(2rem, 5vw, 3.5rem); }
+.dv-hero h1 { margin: 0; }
+.dv-hero .lead { margin-top: 1rem; max-width: 42rem; }
+.dv-nota {
+  margin: 1.4rem 0 0; font-size: .8125rem; line-height: 1.5; color: var(--muted);
+  max-width: 42rem; padding-left: .8rem; border-left: 2px solid var(--line);
+}
+
+.dv-stage {
+  display: grid; grid-template-columns: minmax(0, 23rem) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem); align-items: start;
+}
+.dv-steps { display: flex; flex-direction: column; }
+.dv-step { min-height: 78vh; display: flex; flex-direction: column; justify-content: center; padding: 2rem 0; gap: .7rem; }
+.dv-step:first-child { justify-content: flex-start; padding-top: 0; min-height: 68vh; }
+.dv-step:last-child { min-height: 62vh; }
+.dv-step__k {
+  font-family: var(--mono); font-size: .7rem; letter-spacing: .13em;
+  text-transform: uppercase; color: var(--muted);
+  transition: color var(--dur-media, 240ms) var(--ease);
+}
+.dv-step.on .dv-step__k { color: var(--accent-ink); }
+.dv-step__h {
+  margin: 0; font-size: clamp(1.35rem, 2.3vw, 1.75rem); line-height: 1.18;
+  letter-spacing: -.022em; font-weight: 600; color: var(--ink); text-wrap: balance;
+}
+.dv-step__p { margin: 0; color: var(--ink-2); line-height: 1.6; max-width: 32rem; }
+.dv-step__p b { color: var(--ink); font-weight: 500; }
+.dv-sticky { position: sticky; top: calc(var(--nav-h) + 1.5rem); }
+
+.dv-panel {
+  background: var(--paper); border: 1px solid var(--line); border-radius: var(--dv-r);
+  overflow: hidden; box-shadow: var(--sombra);
+  transition: box-shadow var(--dur-lenta, 320ms) var(--ease);
+}
+.dv-panel.cambia { box-shadow: 0 2px 4px rgba(38,38,44,.05), 0 20px 42px -20px rgba(109,40,217,.32); }
+.dv-bar { display: flex; align-items: center; gap: .6rem; padding: .7rem 1rem; border-bottom: 1px solid var(--line); background: var(--paper-2); }
+.dv-bar__dots { display: inline-flex; gap: .35rem; }
+.dv-bar__dots i { width: .5rem; height: .5rem; border-radius: 50%; background: var(--line); }
+.dv-bar__n { font-size: .8125rem; color: var(--muted); }
+.dv-avance { display: inline-flex; gap: .3rem; margin-left: auto; }
+.dv-avance i {
+  width: 1.1rem; height: .18rem; border-radius: 2px; background: var(--line);
+  transition: background var(--dur-media, 240ms) var(--ease), width var(--dur-media, 240ms) var(--ease);
+}
+.dv-avance i.on { background: var(--accent); width: 1.8rem; }
+.dv-body { position: relative; }
+.dv-foot { padding: .7rem 1rem; border-top: 1px solid var(--line); background: var(--paper-2); font-size: .75rem; color: var(--muted); line-height: 1.45; }
+
+.dv-scene { padding: clamp(1rem, 2.4vw, 1.5rem); }
+.js-dv .dv-body { min-height: 27rem; }
+.js-dv .dv-scene {
+  position: absolute; inset: 0; overflow: auto;
+  opacity: 0; visibility: hidden; transform: translateY(14px) scale(.985); filter: blur(3px);
+  transition: opacity var(--dur-media, 240ms) var(--ease),
+              transform var(--dur-lenta, 320ms) var(--ease),
+              filter var(--dur-media, 240ms) var(--ease),
+              visibility 0s linear var(--dur-media, 240ms);
+}
+.js-dv .dv-scene.on { opacity: 1; visibility: visible; transform: none; filter: none; transition-delay: 0s; z-index: 1; }
+.js-dv .dv-scene.sale { transform: translateY(-14px) scale(.985); }
+.js-dv .dv-scene.on > * { animation: dv-entra var(--dur-lenta, 320ms) var(--ease) backwards; animation-delay: calc(60ms + var(--i, 0) * 55ms); }
+@keyframes dv-entra { from { opacity: 0; transform: translateY(10px); } }
+.dv-scene__h { margin: 0 0 1rem; font-size: .9375rem; font-weight: 600; color: var(--ink); }
+
+/* ── Escena 1 · los documentos viajan al repositorio ─────────────────── */
+.dv-flujo { display: grid; grid-template-columns: 1fr 1.05fr; gap: 1rem; align-items: center; min-height: 15rem; }
+.dv-origen { display: grid; gap: .45rem; }
+.dv-doc {
+  display: flex; align-items: center; gap: .6rem; padding: .55rem .7rem;
+  background: var(--paper); border: 1px solid var(--line); border-radius: 10px;
+  font-size: .8125rem; color: var(--ink-2); box-shadow: 0 1px 2px rgba(38,38,44,.04);
+}
+.dv-doc svg { flex: none; color: var(--accent-ink); }
+.dv-doc span:last-child { margin-left: auto; font-size: .72rem; color: var(--muted); }
+.js-dv .dv-scene.on .dv-doc { animation: dv-viaja 3.4s var(--ease) infinite; }
+.dv-doc:nth-child(1){animation-delay:0s} .dv-doc:nth-child(2){animation-delay:.42s}
+.dv-doc:nth-child(3){animation-delay:.84s} .dv-doc:nth-child(4){animation-delay:1.26s}
+@keyframes dv-viaja {
+  0%, 62%   { transform: none; opacity: 1; }
+  74%       { transform: translateX(34%) translateY(-6%) scale(.94); opacity: .55; }
+  82%, 100% { transform: translateX(0) translateY(0) scale(1); opacity: 1; }
+}
+.dv-repo {
+  border: 1px dashed var(--accent-line); background: var(--accent-wash);
+  border-radius: 12px; padding: 1rem; display: grid; gap: .5rem; align-content: center; min-height: 11rem;
+}
+.dv-repo b { font-size: .9375rem; }
+.dv-repo__n { font-size: .8125rem; color: var(--ink-2); }
+.dv-pilas { display: flex; gap: .3rem; }
+.dv-pilas i {
+  flex: 1; height: 2.2rem; border-radius: 5px; background: var(--paper);
+  border: 1px solid var(--accent-line); transform-origin: bottom;
+}
+.js-dv .dv-scene.on .dv-pilas i { animation: dv-apila 3.4s var(--ease) infinite; }
+.dv-pilas i:nth-child(1){animation-delay:.3s} .dv-pilas i:nth-child(2){animation-delay:.72s}
+.dv-pilas i:nth-child(3){animation-delay:1.14s} .dv-pilas i:nth-child(4){animation-delay:1.56s}
+@keyframes dv-apila { 0%,70%{transform:scaleY(1)} 80%{transform:scaleY(1.14)} 90%,100%{transform:scaleY(1)} }
+
+/* ── Escena 2 · el documento se vuelve consultable ───────────────────── */
+.dv-lee { display: grid; grid-template-columns: 9rem minmax(0,1fr); gap: 1rem; }
+.dv-hoja { position: relative; background: var(--paper-2); border: 1px solid var(--line); border-radius: 8px; padding: .7rem; display: grid; gap: .3rem; align-content: start; overflow: hidden; }
+.dv-hoja i { display: block; height: .3rem; background: var(--line); border-radius: 2px; }
+.dv-hoja i:nth-child(2){width:72%} .dv-hoja i:nth-child(4){width:88%} .dv-hoja i:nth-child(5){width:47%}
+.dv-hoja i:nth-child(7){width:64%} .dv-hoja i:nth-child(8){width:80%}
+.dv-hoja .dv-marca { background: var(--accent); opacity: .55; }
+.js-dv .dv-scene.on .dv-hoja::after {
+  content: ""; position: absolute; left: 0; right: 0; height: 2px;
+  background: var(--accent); box-shadow: 0 0 10px 1px var(--accent);
+  animation: dv-barre 2.4s var(--ease) infinite;
+}
+@keyframes dv-barre { 0%{top:4%} 50%{top:92%} 100%{top:4%} }
+.dv-trozos { display: grid; gap: .4rem; align-content: start; }
+.dv-trozo {
+  border: 1px solid var(--line); border-radius: 8px; padding: .5rem .65rem;
+  background: var(--paper); display: grid; gap: .2rem;
+  opacity: 0; transform: translateX(-8px); animation: dv-pop .5s var(--ease) forwards;
+}
+.dv-trozo:nth-child(1){animation-delay:.2s} .dv-trozo:nth-child(2){animation-delay:.6s} .dv-trozo:nth-child(3){animation-delay:1s}
+@keyframes dv-pop { to { opacity: 1; transform: none; } }
+.dv-trozo b { font-size: .8125rem; color: var(--ink); font-weight: 500; }
+.dv-trozo span { font-size: .75rem; color: var(--muted); font-family: var(--mono); }
+
+/* ── Escena 3 · quién puede ver qué ──────────────────────────────────── */
+.dv-perm { display: grid; gap: .45rem; }
+.dv-fila {
+  display: grid; grid-template-columns: minmax(0,1fr) auto auto; gap: .7rem; align-items: center;
+  padding: .6rem .75rem; border: 1px solid var(--line); border-radius: 10px; font-size: .8125rem;
+}
+.dv-fila > div { display: grid; gap: .1rem; min-width: 0; }
+.dv-fila small { color: var(--muted); font-size: .72rem; }
+.dv-quien { font-family: var(--mono); font-size: .72rem; color: var(--ink-2); }
+.dv-et { font-size: .7rem; padding: .18rem .5rem; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
+.dv-et--si { color: var(--estado-ok); } .dv-et--no { color: var(--estado-alto); }
+.dv-fila--no { background: var(--estado-alto-wash); border-color: var(--estado-alto); }
+.dv-pie { margin-top: .9rem; display: flex; gap: .65rem; align-items: center; padding: .8rem .95rem; border-radius: 10px; background: var(--ink); color: var(--on-dark); font-size: .8125rem; }
+.dv-pie b { color: #fff; font-weight: 500; }
+.dv-pie svg { flex: none; color: var(--accent-on-dark); }
+
+/* ── Escena 4 · preguntar ────────────────────────────────────────────── */
+.dv-chat { display: grid; gap: .5rem; margin-bottom: .9rem; }
+.dv-msg { max-width: 88%; padding: .6rem .8rem; border-radius: 13px; font-size: .875rem; line-height: 1.5; margin: 0; }
+.dv-msg--out { justify-self: end; background: var(--ink); color: var(--on-dark); border-bottom-right-radius: 4px; }
+.dv-msg--in { justify-self: start; background: var(--paper-2); border: 1px solid var(--line); color: var(--ink-2); border-bottom-left-radius: 4px; }
+.dv-cita {
+  display: block; margin-top: .45rem; padding: .4rem .55rem; border-left: 2px solid var(--accent);
+  background: var(--accent-wash); border-radius: 0 6px 6px 0; font-size: .75rem; color: var(--accent-ink);
+}
+.dv-msg--in.sin small { display: block; margin-top: .35rem; font-size: .75rem; color: var(--muted); }
+.dv-esc { display: inline-flex; gap: .3rem; align-items: center; }
+.dv-esc i { width: .3rem; height: .3rem; border-radius: 50%; background: currentColor; opacity: .35; animation: dv-pulse 1.1s infinite; }
+.dv-esc i:nth-child(2){animation-delay:.18s} .dv-esc i:nth-child(3){animation-delay:.36s}
+@keyframes dv-pulse { 0%,60%,100%{opacity:.25} 30%{opacity:.9} }
+.dv-quick { display: flex; flex-wrap: wrap; gap: .35rem; margin-bottom: .5rem; }
+.dv-quick button {
+  cursor: pointer; font: inherit; font-size: .8125rem; padding: .35rem .75rem; border-radius: 999px;
+  background: var(--paper); border: 1px solid var(--line); color: var(--ink-2);
+  transition: border-color var(--dur-rapida, 180ms) var(--ease), color var(--dur-rapida, 180ms) var(--ease);
+}
+.dv-quick button:hover { border-color: var(--accent); color: var(--accent-ink); }
+.dv-form { display: flex; gap: .45rem; }
+.dv-form input { flex: 1 1 auto; min-width: 0; font: inherit; font-size: .8125rem; padding: .5rem .7rem; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); color: var(--ink); }
+.dv-form input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
+.dv-form button { cursor: pointer; font: inherit; font-size: .8125rem; font-weight: 500; padding: .5rem .95rem; border-radius: 999px; background: var(--ink); color: var(--on-dark); border: 1px solid var(--ink); }
+.dv-aviso-campo { margin: .55rem 0 0; font-size: .75rem; color: var(--estado-rev); font-weight: 500; }
+
+@media (max-width: 1100px) { .dv-lee { grid-template-columns: 1fr; } }
+@media (max-width: 900px) {
+  .dv-stage { grid-template-columns: 1fr; }
+  .dv-sticky { position: sticky; top: var(--nav-h); z-index: 2; padding: .5rem 0; background: var(--paper); }
+  .dv-step { min-height: 0; padding: 1.5rem 0; }
+  .js-dv .dv-body { min-height: 23rem; }
+  .dv-flujo { grid-template-columns: 1fr; }
+  .dv-fila { grid-template-columns: minmax(0,1fr) auto; }
+  .dv-quien { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .js-dv .dv-scene.on .dv-doc,
+  .js-dv .dv-scene.on .dv-pilas i,
+  .js-dv .dv-scene.on .dv-hoja::after,
+  .dv-trozo, .dv-esc i { animation: none; }
+  .dv-trozo { opacity: 1; transform: none; }
+  .js-dv .dv-scene { transition: none; filter: none; transform: none; }
+  .js-dv .dv-scene.sale { transform: none; }
+  .js-dv .dv-scene.on > * { animation: none; }
+  .dv-panel.cambia { box-shadow: var(--sombra); }
+}
