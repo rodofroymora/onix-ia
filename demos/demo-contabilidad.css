@@ -226,7 +226,7 @@
   padding: .5rem .95rem; border-radius: 999px;
   background: var(--ink); color: var(--on-dark); border: 1px solid var(--ink);
 }
-.dc-aviso-campo { margin: .55rem 0 0; font-size: .75rem; color: var(--estado-rev, #A8661C); font-weight: 500; }
+.dc-aviso-campo { margin: .5rem 0 0; font-size: .72rem; line-height: 1.45; color: var(--muted); font-weight: 400; }
 
 /* ── Móvil: el panel deja de ser fijo y se intercala ─────────────────── */
 @media (max-width: 900px) {
