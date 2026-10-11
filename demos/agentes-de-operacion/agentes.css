@@ -1,4 +1,4 @@
-/* Agentes de Operación · demo ilustrativa (misma base visual que Radar de Leads). Tokens y estilo tomados de site.css del sitio ONIX (paleta v1, Geist autoalojada, OFL).
+/* Agentes de Operación · demostración (misma base visual que Radar de Leads). Tokens y estilo tomados de site.css del sitio ÓNIX (paleta v1, Geist autoalojada, OFL).
    Autocontenida: no depende de site.css. Para integrarla basta copiar esta carpeta. */
 @font-face { font-family: 'Geist'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('/demos/agentes-de-operacion/fonts/geist-latin-wght-normal.woff2') format('woff2'); }
 @font-face { font-family: 'Geist'; font-style: italic; font-weight: 100 900; font-display: swap; src: url('/demos/agentes-de-operacion/fonts/geist-latin-wght-italic.woff2') format('woff2'); }
@@ -46,7 +46,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .h2 + .lead { margin-top: 1rem; }
 .dark .lead { color: var(--on-dark-muted); }
 
-/* Barra superior con leyenda "Ilustrativo" siempre visible */
+/* Barra superior con la leyenda de la demostración */
 .bar { position: sticky; top: 0; z-index: 100; background: color-mix(in srgb, var(--paper) 90%, transparent); -webkit-backdrop-filter: saturate(160%) blur(16px); backdrop-filter: saturate(160%) blur(16px); border-bottom: 1px solid var(--line); min-height: var(--bar-h); }
 .bar__inner { min-height: var(--bar-h); display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-block: .4rem; }
 .logo { font-weight: 700; letter-spacing: .2em; font-size: .95rem; }
