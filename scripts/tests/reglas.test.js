@@ -100,6 +100,9 @@ prueba('impuestos-calculo: «no solo calculamos tus impuestos» BLOQUEADA', bloq
 prueba('credenciales-sat: «Nunca solicitamos ni guardamos tu e.firma ni tu CIEC» permitido', bloqueado('Nunca solicitamos ni guardamos tu e.firma ni tu CIEC', 'credenciales-sat'), false);
 prueba('credenciales-sat: afirmación BLOQUEADA', bloqueado('Compártenos tu e.firma y tu CIEC', 'credenciales-sat'), true);
 prueba('credenciales-sat: «No dudes: compártenos tu e.firma» BLOQUEADA', bloqueado('No dudes: compártenos tu e.firma', 'credenciales-sat'), true);
+prueba('credenciales-sat: pregunta con «e.firma o CIEC» (el punto de e.firma no corta la pregunta) permitida', bloqueado('¿Necesitan mi e.firma o mi CIEC? No. Nunca solicitamos ni guardamos tu e.firma ni tu CIEC.', 'credenciales-sat'), false);
+prueba('credenciales-sat: «Nunca … tu e.firma ni tu CIEC» permitido (cada mención)', aplicarReglas(reglas, 'Nunca solicitamos ni guardamos tu e.firma ni tu CIEC.', { negacion: base.negacionPermitida }).length, 0);
+prueba('credenciales-sat: afirmación con e.firma y CIEC BLOQUEADA', aplicarReglas(reglas, 'Envíanos tu e.firma y tu CIEC.', { negacion: base.negacionPermitida }).length, 2);
 // reglas SIN el flag no admiten negación ni pregunta
 prueba('absoluto-cobertura sigue BLOQUEADA aunque haya negación', bloqueado('No dejes que ningún cliente se quede sin respuesta', 'absoluto-cobertura'), true);
 prueba('absoluto-cobertura sigue BLOQUEADA en pregunta', bloqueado('¿Quieres que ningún cliente se quede sin respuesta?', 'absoluto-cobertura'), true);

@@ -49,8 +49,9 @@ function compilarReglas(lista) {
   return { reglas, errores };
 }
 
-const TERMINADORES = /[.!?;]/g;
-const SEPARADORES_CLAUSULA = /[,;:.!?¿]|(?<![\p{L}\p{N}])(?:pero|sino|aunque|excepto|salvo|mientras)(?![\p{L}\p{N}])/giu;
+// El punto solo termina oración si va seguido de espacio o fin de texto (no en «e.firma» ni «3.5»).
+const TERMINADORES = /\.(?=\s|$)|[!?;]/g;
+const SEPARADORES_CLAUSULA = /[,;:!?¿]|\.(?=\s|$)|(?<![\p{L}\p{N}])(?:pero|sino|aunque|excepto|salvo|mientras)(?![\p{L}\p{N}])/giu;
 function ultimoIndice(texto, re, hasta) {
   re.lastIndex = 0;
   let ult = -1, fin = 0, m;
