@@ -40,78 +40,70 @@ prueba('quita "+52 222 709 7945"', L.quitarFormatosWhatsapp('Escribe al +52 222 
 prueba('no quita número distinto', L.quitarFormatosWhatsapp('Llama al +52 222 709 7946', fmt).includes('+52'), true);
 prueba('no quita si hay dígitos pegados', L.quitarFormatosWhatsapp('12227097945', fmt), '12227097945');
 
-// ── 4) Reglas de frases (con las reglas reales)
-const { reglas, errores } = compilarReglas(base.frasesProhibidas);
-prueba('todas las reglas compilan', errores, []);
-prueba('hay reglas bloqueantes y advertencias', [reglas.some((r) => r.nivel === 'bloqueante'), reglas.some((r) => r.nivel === 'advertencia')], [true, true]);
-const hits = (t) => aplicarReglas(reglas, t, { negacion: base.negacionPermitida }).map((h) => h.id + ':' + h.nivel[0]);
+// ── 4) Reglas de frases (reglas reales; los casos del Arquitecto v3 están en 05-frases-arquitecto-v3.test.js)
+const { compilar, revisarTexto, estaNegada } = require('../checks/05-frases-prohibidas');
+const comp = compilar(base);
+prueba('todas las reglas compilan', comp.errores, []);
+prueba('hay reglas bloqueantes y advertencias', [comp.patrones.some((r) => r.nivel === 'bloqueante'), comp.patrones.some((r) => r.nivel === 'advertencia')], [true, true]);
+const rev = (t, ruta) => revisarTexto(t, comp, ruta || '/');
+const hits = (t, ruta) => rev(t, ruta).map((h) => h.id + ':' + h.nivel[0]);
+const bloqueado = (t, id, ruta) => hits(t, ruta).includes(id + ':b');
+const detecta = (t, id, ruta) => hits(t, ruta).some((h) => h.startsWith(id + ':'));
 const casos = [
-  ['reduce 30% el tiempo', 'porcentaje:b'],
-  ['3x más prospectos', 'multiplicador:b'],
-  ['+50 clientes', 'conteo-clientes:b'],
-  ['ahorra hasta 40 horas al mes', 'ahorro-o-resultado:b'],
-  ['desde $5,000 MXN', 'precio:b'],
-  ['entrega en 4–6 semanas', 'plazo-numerico:b'],
-  ['Pedir diagnóstico Fase 0', 'fase-numerada:b'],
-  ['Atención 24/7', '24-7:b'],
-  ['pausa inmediata del asistente', 'inmediatez:b'],
-  ['ningún mensaje perdido', 'absoluto-cobertura:b'],
-  ['nadie se quede sin respuesta', 'claim-nadie-se-quede:a'],
-  ['verificamos que tus CFDI estén vigentes', 'fiscal-juicio:b'],
-  ['compártenos tu e.firma', 'credenciales-sat:b'],
-  ['calculamos tus impuestos', 'impuestos-calculo:b'],
-  ['clasificación fiscal automática', 'clasificacion-fiscal:b'],
-  ['Secretaria AI', 'secretaria:b'],
-  ['Atención con IA por voz', 'nombre-anterior:a'],
-  ['certificados en ISO/IEC 42001', 'certificacion-afirmada:b'],
-  ['alineado a NIST AI RMF', 'nist-publico:b'],
-  ['resultados garantizados', 'garantia:b'],
-  ['Pedido confirmado', 'ventas-cobros-inventario:b'],
-  ['se integra automáticamente con tu CRM', 'integracion-automatica:a'],
-  ['operamos contigo en tus oficinas', 'personal-en-sitio:b'],
-  ['soluciones para clínicas', 'clinica-fuera-de-linea:a'],
-  ['Caso real', 'caso-real:a'],
-  ['XAXX010101000', 'rfc-formato-real:b'],
-  ['folio 123e4567-e89b-12d3-a456-426614174000', 'uuid-real:b'],
-  ['pipeline STT + LLM', 'jerga-tecnica:a'],
-  ['el asistente virtual', 'asistente-masculino:a'],
+  ['reduce 30% el tiempo', 'porcentaje:b'], ['3x más prospectos', 'multiplicador:b'], ['+50 clientes', 'conteo-clientes:b'],
+  ['ahorra hasta 40 horas al mes', 'ahorro-o-resultado:b'], ['desde $5,000 MXN', 'precio:b'], ['entrega en 4–6 semanas', 'plazo-numerico:b'],
+  ['Pedir diagnóstico Fase 0', 'fase-numerada:b'], ['Atención 24/7', '24-7:b'], ['pausa inmediata del asistente', 'inmediatez:b'],
+  ['ningún mensaje perdido', 'absoluto-ningun-mensaje:b'], ['nadie se quede sin respuesta', 'absoluto-nadie-sin-respuesta:b'],
+  ['verificamos que tus CFDI estén vigentes', 'fiscal-juicio:b'], ['compártenos tu e.firma', 'credenciales-sat-pedir:b'],
+  ['calculamos tus impuestos', 'impuestos-calculo:b'], ['calculamos tu IVA', 'impuestos-calculo:b'], ['clasificación fiscal automática', 'clasificacion-contable-fiscal:b'],
+  ['Secretaria AI', 'secretaria:b'], ['Atención con IA por voz', 'nombre-anterior:a'], ['certificados en ISO/IEC 42001', 'certificacion-afirmada:b'],
+  ['alineado a NIST AI RMF', 'nist-publico:b'], ['resultados garantizados', 'garantia:b'], ['Pedido confirmado', 'ventas-cobros-inventario:b'],
+  ['se integra automáticamente con tu CRM', 'integracion-automatica:a'], ['operamos contigo en tus oficinas', 'personal-en-sitio:b'],
+  ['soluciones para clínicas', 'clinica:b'], ['XAXX010101000', 'rfc-formato-real:b'], ['folio 123e4567-e89b-12d3-a456-426614174000', 'uuid-real:b'],
+  ['pipeline STT + LLM', 'jerga-tecnica:a'], ['el asistente virtual', 'asistente-masculino:a'],
+  ['Te damos un diagnóstico inicial', 'salud-diagnostico:b'],
 ];
 for (const [texto, esperado] of casos) prueba(`detecta [${esperado}] en «${texto}»`, hits(texto).includes(esperado), true);
-for (const t of ['Entregado a una clínica · Publicado con autorización del cliente', 'ONIX no está certificado y no certifica', 'ISO/IEC 42001 e ISO/IEC 27001', 'Tres pasos claros', 'Folio XXXX-XXXX', 'Escríbenos por WhatsApp'])
+for (const t of ['ISO/IEC 42001 e ISO/IEC 27001', 'Tres pasos claros', 'Folio XXXX-XXXX', 'Escríbenos por WhatsApp', 'Para que tus clientes tengan a quién escribirle', 'Escríbenos al +52 222 709 7945 o a info@onix-ia.com'])
   prueba(`sin falsos positivos en «${t}»`, hits(t), []);
 
-// ── 4b) Negaciones y preguntas (solo reglas con permiteNegacion)
-const bloqueado = (t, id) => hits(t).some((h) => h.startsWith(id + ':'));
-const PERMITE = reglas.filter((r) => r.permiteNegacion).map((r) => r.id).sort();
-prueba('reglas con permiteNegacion', PERMITE, ['certificacion-afirmada', 'certificacion-revisar', 'credenciales-sat', 'impuestos-calculo']);
-// afirmaciones: siguen BLOQUEADAS
-for (const t of ['Estamos certificados ISO 27001', 'Contamos con certificación ISO', 'Somos una empresa certificada', 'Certificados en ISO/IEC 42001', 'No estamos certificados, pero contamos con certificación ISO', 'No solo estamos certificados en ISO 27001, también en 9001', 'Ofrecemos certificación ISO ¿Hablamos?'])
-  prueba(`certificacion-afirmada BLOQUEA: «${t}»`, bloqueado(t, 'certificacion-afirmada'), true);
-// negaciones y preguntas: permitidas
-for (const t of ['No es una certificación ISO', 'ONIX no es un organismo certificador y estos servicios no constituyen una certificación ISO', 'No estamos certificados en ISO 27001', 'No somos una empresa certificada', '¿Tienen certificación ISO?', '¿Esta auditoría me da una certificación ISO? No. Es una revisión alineada', 'Servicios ¿Esta auditoría es una certificación ISO? No'])
-  prueba(`certificacion-afirmada PERMITE: «${t}»`, bloqueado(t, 'certificacion-afirmada'), false);
-prueba('certificacion-revisar: acento «ó» (Unicode) → coincide con la palabra completa', aplicarReglas(reglas, 'Ofrecemos certificación con sello', { negacion: base.negacionPermitida }).map((h) => h.coincidencia), ['certificación']);
-prueba('certificacion-revisar: «no es una certificación» permitido', bloqueado('No es una certificación', 'certificacion-revisar'), false);
-prueba('certificacion-revisar: «no es organismo certificador» permitido', bloqueado('ONIX no es organismo certificador', 'certificacion-revisar'), false);
-prueba('certificacion-revisar: afirmación sigue en aviso', bloqueado('Ofrecemos certificación para tu equipo', 'certificacion-revisar'), true);
-prueba('impuestos-calculo: «No calcula impuestos, retenciones ni contribuciones» permitido', bloqueado('No calcula impuestos, retenciones ni contribuciones', 'impuestos-calculo'), false);
-prueba('impuestos-calculo: afirmación BLOQUEADA', bloqueado('Calculamos tus impuestos cada mes', 'impuestos-calculo'), true);
-prueba('impuestos-calculo: «no solo calculamos tus impuestos» BLOQUEADA', bloqueado('No solo calculamos tus impuestos, también tu nómina', 'impuestos-calculo'), true);
-prueba('credenciales-sat: «Nunca solicitamos ni guardamos tu e.firma ni tu CIEC» permitido', bloqueado('Nunca solicitamos ni guardamos tu e.firma ni tu CIEC', 'credenciales-sat'), false);
-prueba('credenciales-sat: afirmación BLOQUEADA', bloqueado('Compártenos tu e.firma y tu CIEC', 'credenciales-sat'), true);
-prueba('credenciales-sat: «No dudes: compártenos tu e.firma» BLOQUEADA', bloqueado('No dudes: compártenos tu e.firma', 'credenciales-sat'), true);
-prueba('credenciales-sat: pregunta con «e.firma o CIEC» (el punto de e.firma no corta la pregunta) permitida', bloqueado('¿Necesitan mi e.firma o mi CIEC? No. Nunca solicitamos ni guardamos tu e.firma ni tu CIEC.', 'credenciales-sat'), false);
-prueba('credenciales-sat: «Nunca … tu e.firma ni tu CIEC» permitido (cada mención)', aplicarReglas(reglas, 'Nunca solicitamos ni guardamos tu e.firma ni tu CIEC.', { negacion: base.negacionPermitida }).length, 0);
-prueba('credenciales-sat: afirmación con e.firma y CIEC BLOQUEADA', aplicarReglas(reglas, 'Envíanos tu e.firma y tu CIEC.', { negacion: base.negacionPermitida }).length, 2);
-// reglas SIN el flag no admiten negación ni pregunta
-prueba('absoluto-cobertura sigue BLOQUEADA aunque haya negación', bloqueado('No dejes que ningún cliente se quede sin respuesta', 'absoluto-cobertura'), true);
-prueba('absoluto-cobertura sigue BLOQUEADA en pregunta', bloqueado('¿Quieres que ningún cliente se quede sin respuesta?', 'absoluto-cobertura'), true);
-prueba('ventas-cobros-inventario «Pedido confirmado» sigue BLOQUEADA', bloqueado('Pedido confirmado ✅', 'ventas-cobros-inventario'), true);
-prueba('ventas-cobros-inventario «cerrar ventas» sigue BLOQUEADA aunque haya negación', bloqueado('No necesitas cerrar ventas por tu cuenta', 'ventas-cobros-inventario'), true);
-prueba('garantia (sin flag) bloquea «No garantizamos»', bloqueado('No garantizamos resultados', 'garantia'), true);
-prueba('permiteNegacion con valor no booleano es error de configuración', compilarReglas([{ id: 'x', nivel: 'bloqueante', regex: 'zzz', permiteNegacion: 'si' }]).errores.length, 1);
-prueba('con ventana 0 no hay negación', aplicarReglas(compilarReglas([{ id: 'x', nivel: 'bloqueante', regex: 'zzz', permiteNegacion: true }]).reglas, 'no zzz', { negacion: { ventanaPalabras: 0, permitePregunta: false } }).length, 1);
+// ── 4b) Condiciones de la decisión de dirección sobre el contenido
+prueba('«ningún cliente se quede sin respuesta» sigue BLOQUEADA', bloqueado('Que ningún cliente se quede sin respuesta, por WhatsApp o por teléfono.', 'absoluto-ningun-mensaje'), true);
+prueba('«Pedido confirmado» sigue BLOQUEADA', bloqueado('Pedido confirmado ✅', 'ventas-cobros-inventario'), true);
+prueba('«clínica» BLOQUEADA en cualquier ruta', ['/', '/servicios', '/salud', '/salud/preguntas'].map((r) => bloqueado('Atendemos una clínica.', 'clinica', r)), [true, true, true, true]);
+prueba('«clínicas» BLOQUEADA también en /salud', bloqueado('Soluciones para clínicas.', 'clinica', '/salud'), true);
+prueba('«diagnóstico» BLOQUEADO en todo el sitio', ['/', '/servicios/auditoria-de-ia', '/como-trabajamos'].map((r) => bloqueado('Diagnóstico, prioridades y reglas de uso', 'salud-diagnostico', r)), [true, true, true]);
+prueba('«diagnóstico» negado baja a advertencia (no bloquea)', hits('La asistente virtual no hace diagnósticos.').includes('salud-diagnostico:a'), true);
+prueba('«cerrar ventas» (mención) es advertencia en v3, no bloqueante', hits('el tiempo que debería ir a cerrar ventas').includes('ventas-mencion:a'), true);
 
+// ── 4c) permiteNegacion (opt-in): negaciones y preguntas permitidas, afirmaciones bloqueadas
+const PERMITE = comp.patrones.filter((r) => r.permiteNegacion).map((r) => r.id).sort();
+prueba('reglas con permiteNegacion', PERMITE, ['certificacion-afirmada', 'impuestos-calculo']);
+for (const t of ['Estamos certificados ISO 27001', 'Somos una empresa certificada', 'Certificados en ISO/IEC 42001', 'No estamos certificados, pero estamos certificados en ISO 27001', 'No solo estamos certificados en ISO 27001, también en 9001', 'Ofrecemos que estamos certificados ¿Hablamos?'])
+  prueba(`certificacion-afirmada BLOQUEA: «${t}»`, bloqueado(t, 'certificacion-afirmada'), true);
+for (const t of ['No estamos certificados en ISO 27001', 'No somos una empresa certificada', '¿Estamos certificados en ISO 27001? No.', 'ONIX no es un organismo certificador y estos servicios no constituyen una certificación', '¿Esta auditoría me da una certificación ISO? No. Es una revisión alineada a esos marcos.'])
+  prueba(`certificacion-afirmada PERMITE: «${t}»`, detecta(t, 'certificacion-afirmada'), false);
+prueba('certificacion-revisar (v3): sigue como advertencia en negaciones y preguntas', hits('No es una certificación', '/').includes('certificacion-revisar:a'), true);
+prueba('certificacion-revisar: «ó» Unicode, coincide con la palabra completa', rev('Ofrecemos certificación con sello').map((h) => h.coincidencia), ['certificación']);
+prueba('impuestos-calculo: «No calcula impuestos, retenciones ni contribuciones» PERMITIDO', detecta('No calcula impuestos, retenciones ni contribuciones.', 'impuestos-calculo'), false);
+prueba('impuestos-calculo: «Calculamos tus impuestos cada mes» BLOQUEADO', bloqueado('Calculamos tus impuestos cada mes', 'impuestos-calculo'), true);
+prueba('impuestos-calculo: «No solo calculamos tus impuestos» BLOQUEADO', bloqueado('No solo calculamos tus impuestos, también tu nómina', 'impuestos-calculo'), true);
+prueba('impuestos-calculo: «¿Calculan mis impuestos?» (pregunta) permitido', detecta('¿Calculan mis impuestos?', 'impuestos-calculo'), false);
+prueba('e.firma: «Nunca solicitamos ni guardamos tu e.firma ni tu CIEC» no bloquea (solo aviso de mención)', rev('Nunca solicitamos ni guardamos tu e.firma ni tu CIEC.').every((h) => h.nivel === 'advertencia'), true);
+prueba('e.firma: «¿Necesitan mi e.firma o mi CIEC? No.» no bloquea', rev('¿Necesitan mi e.firma o mi CIEC? No. Nunca solicitamos ni guardamos tu e.firma ni tu CIEC.').every((h) => h.nivel === 'advertencia'), true);
+prueba('e.firma: pedirla BLOQUEADO', bloqueado('Envíanos tu e.firma y tu CIEC.', 'credenciales-sat-pedir'), true);
+prueba('el punto de «e.firma» no corta la pregunta (estaNegada/pregunta)', estaNegada('No te pedimos tu e.firma', 20), true);
+prueba('absoluto-ningun-mensaje (sin flag) sigue BLOQUEADA aunque haya negación o pregunta', [bloqueado('No dejes que ningún cliente se quede sin respuesta', 'absoluto-ningun-mensaje'), bloqueado('¿Quieres que ningún cliente se quede sin respuesta?', 'absoluto-ningun-mensaje')], [true, true]);
+prueba('garantia (sin flag) bloquea «No garantizamos»', bloqueado('No garantizamos resultados', 'garantia'), true);
+prueba('permiteNegacion no booleano es error de configuración', compilar({ frasesProhibidas: [{ id: 'x', nivel: 'bloqueante', regex: 'zzz', permiteNegacion: 'si' }] }).errores.length, 1);
+prueba('nivel inválido es error de configuración', compilar({ frasesProhibidas: [{ id: 'x', nivel: 'otro', regex: 'zzz' }] }).errores.length, 1);
+prueba('con ventana 0 no hay negación', revisarTexto('no zzz', compilar({ frasesProhibidas: [{ id: 'x', nivel: 'bloqueante', regex: 'zzz', permiteNegacion: true }], negacionPermitida: { ventanaPalabras: 0, permitePregunta: false } })).length, 1);
+
+// ── 4d) Sectores por ruta (/salud) — solo esa ruta
+prueba('rutasConSectorPermitido válidas', L.validarRutasConSectorPermitido(base), []);
+prueba('«salud» pasa en /salud y /salud/preguntas', [bloqueado('Asistentes para tu consultorio de salud.', 'sector-fuera-de-ruta', '/salud'), bloqueado('Salud', 'sector-fuera-de-ruta', '/salud/preguntas')], [false, false]);
+prueba('«salud» BLOQUEADO fuera de /salud (/, /servicios, /saludable, /aviso-de-privacidad)', ['/', '/servicios', '/saludable', '/aviso-de-privacidad'].map((r) => bloqueado('Datos de salud', 'sector-fuera-de-ruta', r)), [true, true, true, true]);
+prueba('guarda: otra ruta en rutasConSectorPermitido es error de configuración', L.validarRutasConSectorPermitido({ rutasConSectorPermitido: [{ ruta: '/servicios', terminos: ['salud'] }] }).length, 1);
 
 // ── 5) Integración: checks 01 y 05 sobre un sitio mínimo temporal
 function correr(check, html, ajustes) {

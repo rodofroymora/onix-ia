@@ -124,7 +124,13 @@ prueba('05: los MISMOS plazos en otra página FALLAN', run({ 'index.html': compl
 prueba('01: sin la excepción, el aviso falla', run({ [AV]: completa(LEGAL) }, '01-cifras-consistencia.js', (r) => { delete r.excepcionesPorRuta; }), 1);
 prueba('01: cifras (porcentaje) exentas en el aviso', run({ [AV]: completa('<p>Hasta 30% de los casos.</p>') }, '01-cifras-consistencia.js'), 0);
 prueba('01: la excepción NO cubre precios en el aviso', run({ [AV]: completa('<p>Cuesta $5,000 MXN.</p>') }, '01-cifras-consistencia.js'), 1);
-prueba('01: la excepción NO cubre sectores («salud») en el aviso', run({ [AV]: completa('<p>No pedimos datos de salud.</p>') }, '01-cifras-consistencia.js'), 1);
+prueba('01: la excepción NO cubre sectores en el aviso', run({ [AV]: completa('<p>Servicios para despachos.</p>') }, '01-cifras-consistencia.js'), 1);
+prueba('05: la excepción NO cubre «salud» en el aviso (sector-fuera-de-ruta: queda como violación)', run({ [AV]: completa('<p>No pedimos datos de salud.</p>') }, '05-frases-prohibidas.js'), 1);
+prueba('05: «salud» pasa en /salud (salud.html)', run({ 'salud.html': completa('<p>Asistentes para tu consultorio de salud.</p>') }, '05-frases-prohibidas.js'), 0);
+prueba('05: «salud» pasa en /salud/preguntas', run({ 'salud/preguntas.html': completa('<p>Salud</p>') }, '05-frases-prohibidas.js'), 0);
+prueba('05: «salud» FALLA en otra página', run({ 'servicios.html': completa('<p>Soluciones de salud para PYMES.</p>') }, '05-frases-prohibidas.js'), 1);
+prueba('05: «clínica» FALLA incluso en /salud', run({ 'salud.html': completa('<p>Asistentes para una clínica.</p>') }, '05-frases-prohibidas.js'), 1);
+prueba('05: rutasConSectorPermitido con otra ruta es error de configuración', run({ 'index.html': completa('<p>x</p>') }, '05-frases-prohibidas.js', (r) => { r.rutasConSectorPermitido[0].ruta = '/servicios'; }), 1);
 prueba('01: la excepción NO cubre otro teléfono en el aviso', run({ [AV]: completa('<p>Llama al 222 555 1234.</p>') }, '01-cifras-consistencia.js'), 1);
 prueba('05: la excepción NO cubre otras frases (garantía) en el aviso', run({ [AV]: completa('<p>Resultados garantizados.</p>') }, '05-frases-prohibidas.js'), 1);
 prueba('05: la excepción NO cubre precio-frase en el aviso', run({ [AV]: completa('<p>Desde $5,000 MXN.</p>') }, '05-frases-prohibidas.js'), 1);

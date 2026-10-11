@@ -275,10 +275,10 @@ function textoAuditable(html) {
   const tags = etiquetas(limpio);
   let texto = textoVisible(html);
   const tit = limpio.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
-  if (tit) texto += ' ' + aTexto(tit[1]);
+  if (tit) texto += ' \n ' + aTexto(tit[1]);
   for (const t of tags) {
-    if (t.tag === 'meta' && /^(description|og:description|twitter:description|og:title|twitter:title)$/i.test(t.attrs.name || t.attrs.property || '') && t.attrs.content) texto += ' ' + decodificar(t.attrs.content);
-    for (const a of ['alt', 'aria-label', 'title']) if (t.attrs[a] && t.tag !== 'title') texto += ' ' + decodificar(t.attrs[a]);
+    if (t.tag === 'meta' && /^(description|og:description|twitter:description|og:title|twitter:title)$/i.test(t.attrs.name || t.attrs.property || '') && t.attrs.content) texto += ' \n ' + decodificar(t.attrs.content);
+    for (const a of ['alt', 'aria-label', 'title']) if (t.attrs[a] && t.tag !== 'title') texto += ' \n ' + decodificar(t.attrs[a]);
   }
   return texto;
 }
@@ -324,6 +324,18 @@ function validarExcepcionesPorRuta(reglas) {
   });
   return errs;
 }
+// rutasConSectorPermitido (check 05): solo se admite la ruta /salud (decisión de dirección); cualquier otra es error.
+const RUTAS_SECTOR_PERMITIDAS = ['/salud'];
+function validarRutasConSectorPermitido(reglas) {
+  const errs = [];
+  const lista = reglas.rutasConSectorPermitido;
+  if (lista === undefined) return errs;
+  if (!Array.isArray(lista)) return ['rutasConSectorPermitido debe ser una lista.'];
+  lista.forEach((r, i) => {
+    if (!r || !RUTAS_SECTOR_PERMITIDAS.includes(r.ruta)) errs.push(`rutasConSectorPermitido[${i}]: la ruta "${r && r.ruta}" no puede exceptuarse (solo: ${RUTAS_SECTOR_PERMITIDAS.join(', ')}).`);
+  });
+  return errs;
+}
 /** Categorías exentas para una página (Set). Ignora excepciones inválidas. */
 function categoriasExentas(reglas, archivoRel) {
   const set = new Set();
@@ -357,7 +369,7 @@ function hrefCtaCoincide(href, aprobado, permitirTexto) {
 }
 
 module.exports = {
-  normLiteral, regexLiteral, contieneLiteral, construirArbol, descendientes, validarExcepcionesPorRuta, categoriasExentas, frasesExentasPorRuta, esCentinela, listaAprobada, normalizarSector, quitarFormatosWhatsapp, textoAuditable, lineaDeFragmento, hrefCtaCoincide, ROOT, leerReglas, listarArchivos, listarHtml, rel, leer, urlDePagina,
+  validarRutasConSectorPermitido, normLiteral, regexLiteral, contieneLiteral, construirArbol, descendientes, validarExcepcionesPorRuta, categoriasExentas, frasesExentasPorRuta, esCentinela, listaAprobada, normalizarSector, quitarFormatosWhatsapp, textoAuditable, lineaDeFragmento, hrefCtaCoincide, ROOT, leerReglas, listarArchivos, listarHtml, rel, leer, urlDePagina,
   enmascarar, sinComentariosScriptsEstilos, etiquetas, atributos, lineaDe, decodificar, aTexto,
   textoVisible, contenidoElemento, textoSinSrOnly, normalizar, normalizarPalabra, ramaObjetivo, Reporte,
 };

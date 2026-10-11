@@ -1,22 +1,23 @@
 {
-  "_LEEME": "Reglas de release de ONIX. Las listas VACÍAS no se validan (check desactivado). Las reglas vigentes no aprueban ninguna cifra, plazo ni precio para el sitio; por eso se usa el centinela \"__NINGUNA_APROBADA__\" para ACTIVAR el check sin aprobar nada. Pendiente de OK del responsable de contenido.",
-  "_ultimaRevision": "PROPUESTA sin aprobar: falta fecha y nombre de quien aprueba (responsable de contenido).",
+  "_LEEME": "Reglas de release de ONIX (incorporan la propuesta v3 del Arquitecto de soluciones). Las listas VACÍAS no se validan (check desactivado); los centinelas (\"__NINGUNA_APROBADA__\" / \"__NINGUNO_APROBADO__\") ACTIVAN el check sin aprobar nada. frasesProhibidas usa límites de palabra Unicode; excepción por ruta para sectores solo en /salud (rutasConSectorPermitido) y para cifras/plazos/fechas solo en /aviso-de-privacidad (excepcionesPorRuta). \"clínica/clínicas\" no pasan en ninguna ruta. Pendiente de OK del responsable de contenido.",
+  "_ultimaRevision": "PENDIENTE: falta fecha y nombre de quien aprueba.",
   "cifrasAprobadas": [
-    "__NINGUNA_APROBADA__"
+    "__NINGUNA_APROBADA__",
+    "+52"
   ],
-  "_cifrasAprobadas_NOTA": "Reglas vigentes (Reglas duras; Qué no prometemos): no hay cifras aprobadas para el sitio. El centinela no coincide con ningún texto, así que cualquier cifra detectada falla. Los formatos visibles del número de WhatsApp aprobado (whatsapp.formatosVisiblesPermitidos, p. ej. \"+52 222 709 7945\") se excluyen de la detección de cifras; cualquier otro \"+NN\" sigue fallando.",
+  "_cifrasAprobadas_NOTA": "Reglas vigentes: no hay cifras aprobadas. El centinela activa el check. \"+52\" solo se admite como parte de los formatos visibles del WhatsApp oficial (whatsapp.formatosVisiblesPermitidos, p. ej. \"+52 222 709 7945\"): el check 01 los excluye antes de buscar cifras. \"+52 clientes\", \"+52%\" u otro \"+NN\" siguen fallando.",
   "plazosAprobados": [
     "__NINGUNA_APROBADA__"
   ],
-  "_plazosAprobados_NOTA": "Reglas vigentes (Reglas de contenido › Criterios vigentes y Reglas duras; 02-fases › Reglas de lenguaje): sin plazos ni duraciones. El centinela activa el check (también bloquea \"24/7\").",
+  "_plazosAprobados_NOTA": "Reglas vigentes: sin plazos ni duraciones. El centinela activa el check (incluye \"24/7\").",
   "preciosAprobados": [
     "__NINGUNA_APROBADA__"
   ],
-  "_preciosAprobados_NOTA": "Reglas vigentes (Framing de inversión; FAQ del kit outbound): no hay lista de precios pública. Las cifras de casos internos no son precios aprobados.",
+  "_preciosAprobados_NOTA": "Reglas vigentes: no hay lista de precios pública. Las cifras de casos internos no son precios aprobados.",
   "sectoresPermitidos": [
     "__NINGUNO_APROBADO__"
   ],
-  "_sectoresPermitidos_NOTA": "Decisión vigente: NO hay sectores aprobados; \"clínica\" y \"clínicas\" quedan bloqueados en todo el sitio, incluida la línea «Entregado a una clínica · Publicado con autorización del cliente». El centinela \"__NINGUNO_APROBADO__\" mantiene ACTIVA la validación sin aprobar nada (una lista vacía la desactivaría). Los sectores se comparan de forma exacta (sin acentos ni mayúsculas, sin quitar plural). No hay excepción por ruta para ningún sector (p. ej. \"salud\" en /aviso-de-privacidad NO está exceptuada: pendiente de confirmación).",
+  "_sectoresPermitidos_NOTA": "Sin sectores aprobados: el centinela \"__NINGUNO_APROBADO__\" mantiene ACTIVO el check 01 para todo el vocabulario sin aprobar nada. \"clínica\" y \"clínicas\" no pasan en ninguna ruta (regla \"clinica\" del check 05, y vocabulario del check 01). Los términos de salud (\"salud\", \"consultorio\", \"paciente\"…) se permiten SOLO en /salud mediante rutasConSectorPermitido (check 05; por eso salen de sectoresVocabulario); en cualquier otra ruta, incluida /aviso-de-privacidad, son bloqueantes. Los sectores se comparan de forma exacta (sin acentos ni mayúsculas, sin quitar plural).",
   "sectoresVocabulario": [
     "escuelas",
     "escuela",
@@ -40,7 +41,6 @@
     "banca",
     "fintech",
     "aseguradoras",
-    "salud",
     "educación",
     "turismo",
     "automotriz",
@@ -49,18 +49,16 @@
     "restaurante",
     "tienda",
     "tiendas",
-    "consultorio",
-    "consultorios",
     "dentistas",
     "veterinarias",
     "gimnasios",
     "salones de belleza"
   ],
-  "_sectoresVocabulario_NOTA": "Palabras que el check reconoce como 'sector'. PROPUESTA: se agregan giros que las reglas vigentes menciona solo para reels (restaurante, tienda) y giros comunes en demos. Revisar falsos positivos: \"tienda\" o \"salud\" pueden aparecer en otro sentido.",
+  "_sectoresVocabulario_NOTA": "Palabras que el check 01 reconoce como sector; con el centinela, todas fallan en cualquier página. “clínica” y “clínicas” siguen aquí (nunca se aprueban). “salud”, “consultorio” y “consultorios” pasan a rutasConSectorPermitido (solo /salud, check 05). Revisar falsos positivos de “tienda”.",
   "cta": {
     "etiqueta": "Escríbenos por WhatsApp",
     "href": "https://wa.me/522227097945",
-    "_NOTA": "Confirmado por las reglas vigentes (Reglas de contenido › CTA único; 01-oferta › CTA estándar): único CTA, “Escríbenos por WhatsApp” → https://wa.me/522227097945. Legal: el botón solo se activa en el sitio público cuando el aviso de privacidad de ONIX esté publicado.",
+    "_NOTA": "Confirmado en las reglas vigentes (CTA único; CTA estándar): único CTA, “Escríbenos por WhatsApp” → https://wa.me/522227097945. Legal: el botón solo se activa en el sitio público cuando el aviso de privacidad de ONIX esté publicado.",
     "clasesCtaPrimario": [
       "btn--primary",
       "btn--accent"
@@ -119,6 +117,114 @@
   "_marcadoresProhibidos_NOTA": "Los escritos en MAYÚSCULAS se buscan solo en mayúsculas; el resto sin distinguir mayúsculas. Se incluyen marcas internas para que no lleguen al HTML público (incluye \"[PENDIENTE: aviso de privacidad de ONIX]\"). \"xxx\" NO marca los folios ficticios \"XXXX\" de la demo de Contabilidad, porque el check exige que no haya letra antes ni después.",
   "frasesProhibidas": [
     {
+      "id": "clinica",
+      "nivel": "bloqueante",
+      "regex": "(?<![\\p{L}\\p{N}_])(?<!atenci[oó]n )cl[ií]nicas?(?![\\p{L}\\p{N}_])",
+      "flags": "giu",
+      "ejemplo": "soluciones para clínicas",
+      "fuente": "Decisión de dirección 2026-10-10: la línea de la clínica se retiró por falta de autorización escrita. Nunca pasa, en ninguna ruta (incluida /salud). “atención clínica” lo cubre salud-atencion-clinica"
+    },
+    {
+      "id": "salud-diagnostico",
+      "nivel": "bloqueante",
+      "negacion": "advertencia",
+      "regex": "(?<![\\p{L}\\p{N}_])diagn[oó]stic(?:o|os|a|ar|amos)(?![\\p{L}\\p{N}_])",
+      "flags": "giu",
+      "ejemplo": "diagnóstico inicial",
+      "fuente": "Nota de Legal (salud) + decisión de dirección. En una negación (“no…”, “sin…”, “ni…”) baja a advertencia. CONFLICTO: el sitio general usa “Diagnóstico” como paso de la ruta de ONIX"
+    },
+    {
+      "id": "salud-atencion-clinica",
+      "nivel": "bloqueante",
+      "negacion": "advertencia",
+      "regex": "(?<![\\p{L}\\p{N}_])atenci[oó]n (?:cl[ií]nica|m[eé]dica)(?![\\p{L}\\p{N}_])",
+      "flags": "giu",
+      "ejemplo": "atención clínica",
+      "fuente": "Nota de Legal (salud) + decisión de dirección"
+    },
+    {
+      "id": "salud-doctor-virtual",
+      "nivel": "bloqueante",
+      "negacion": "advertencia",
+      "regex": "(?<![\\p{L}\\p{N}_])(?:doctor|doctora|m[eé]dico|psic[oó]log[oa]|enfermer[oa]) virtual(?![\\p{L}\\p{N}_])|(?<![\\p{L}\\p{N}_])asistente m[eé]dic[oa](?![\\p{L}\\p{N}_])|(?<![\\p{L}\\p{N}_])terapia con IA(?![\\p{L}\\p{N}_])",
+      "flags": "giu",
+      "ejemplo": "doctor virtual",
+      "fuente": "Nota de Legal (salud) + decisión de dirección"
+    },
+    {
+      "id": "salud-lenguaje-legal",
+      "nivel": "bloqueante",
+      "negacion": "advertencia",
+      "regex": "(?<![\\p{L}\\p{N}_])(?:consejo m[eé]dico|orientaci[oó]n m[eé]dica|triage|triaje|clasificaci[oó]n de urgencias|evaluaci[oó]n de s[ií]ntomas|recetas?|interpretamos tus estudios|monitoreo de pacientes|expediente (?:cl[ií]nico|electr[oó]nico)|historial m[eé]dico|tratamiento(?! de (?:tus |los |sus )?datos))(?![\\p{L}\\p{N}_])",
+      "flags": "giu",
+      "ejemplo": "orientación médica; expediente clínico",
+      "fuente": "Nota de Legal (salud) (lenguaje a evitar). La frase de Legal “No damos consejo médico ni atendemos urgencias” es negación: solo aviso"
+    },
+    {
+      "id": "salud-cumplimiento",
+      "nivel": "bloqueante",
+      "regex": "(?<![\\p{L}\\p{N}_])(?:cumple(?:mos)? con (?:la )?(?:NOM|LFPDPPP)|compatible con HIPAA|avalad[oa] por (?:COFEPRIS|la Secretar[ií]a de Salud)|aprobad[oa] por COFEPRIS|certificad[oa] por COFEPRIS|(?:aprobad[oa]|avalad[oa]|certificad[oa]) por Meta|datos protegidos garantizados)(?![\\p{L}\\p{N}_])",
+      "flags": "giu",
+      "ejemplo": "cumple con la NOM; compatible con HIPAA",
+      "fuente": "Nota de Legal (salud)"
+    },
+    {
+      "id": "absoluto-nadie-sin-respuesta",
+      "nivel": "bloqueante",
+      "regex": "nadie (?:se )?qued(?:a|e|ar[aá])n? sin (?:respuesta|atender|atenci[oó]n)",
+      "flags": "giu",
+      "ejemplo": "para que nadie se quede sin respuesta",
+      "fuente": "Decisión de dirección 2026-10-10 (claim retirado). Reemplazo: “Para que tus clientes tengan a quién escribirle”"
+    },
+    {
+      "id": "absoluto-ningun-mensaje",
+      "nivel": "bloqueante",
+      "regex": "ning[uú]n(?:a)? (?:mensaje|llamada|cliente|prospecto|lead|solicitud)[^.]{0,30}?(?:perdid[oa]|sin respuesta|sin atender|se (?:queda|pierde))",
+      "flags": "giu",
+      "ejemplo": "ningún mensaje perdido",
+      "fuente": "Decisión de dirección; 01-oferta › Claims"
+    },
+    {
+      "id": "absoluto-generico",
+      "nivel": "advertencia",
+      "regex": "(?<!(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))sin\\s)(?<![\\p{L}])(?:nadie|ning[uú]n|ninguna)(?![\\p{L}])(?!\\s+(?:costo|cargo|compromiso|decisi[oó]n|dato|contrase[ñn]a))",
+      "flags": "giu",
+      "ejemplo": "ningún cliente se va sin atención",
+      "fuente": "Decisión de dirección 2026-10-10: absolutos en texto de cliente. Acotado: no marca “sin ningún costo/compromiso” ni “ninguna decisión…” (frase de gobierno) ni “ningún dato/contraseña”"
+    },
+    {
+      "id": "clasificacion-contable-fiscal",
+      "nivel": "bloqueante",
+      "regex": "clasificaci[oó]n (?:contable|fiscal)|clasifica(?:mos|n)? (?:tus |los |las )?(?:comprobantes|facturas|gastos|CFDI|movimientos)",
+      "flags": "giu",
+      "ejemplo": "la IA clasifica tus comprobantes; clasificación contable",
+      "fuente": "Decisión de dirección 2026-10-10; especificación Contabilidad. Reemplazo: “ordena comprobantes por categoría administrativa”"
+    },
+    {
+      "id": "clasifica-generico",
+      "nivel": "advertencia",
+      "regex": "(?<![\\p{L}])clasific[\\p{L}\\p{N}_]*",
+      "flags": "giu",
+      "ejemplo": "clasifica",
+      "fuente": "Decisión de dirección 2026-10-10 (en texto de cliente usar “ordena por categoría administrativa”)"
+    },
+    {
+      "id": "credenciales-sat-pedir",
+      "nivel": "bloqueante",
+      "regex": "(?:comp[aá]rte(?:nos)?|env[ií]a(?:nos)?|proporciona(?:nos)?|sube|necesitamos|danos|p[aá]sanos)[^.]{0,40}?(?:e\\.?firma|CIEC|contrase[ñn]a del SAT)",
+      "flags": "giu",
+      "ejemplo": "compártenos tu e.firma",
+      "fuente": "Decisión de dirección (Contabilidad)"
+    },
+    {
+      "id": "credenciales-sat-mencion",
+      "nivel": "advertencia",
+      "regex": "(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))e\\.?firma(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))|(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))CIEC(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))",
+      "flags": "giu",
+      "ejemplo": "e.firma (revisar que sea el aviso “nunca pedimos…”)",
+      "fuente": "Decisión de dirección (Contabilidad)"
+    },
+    {
       "id": "porcentaje",
       "nivel": "bloqueante",
       "regex": "\\d+(?:[.,]\\d+)?\\s?%",
@@ -145,7 +251,7 @@
     {
       "id": "ahorro-o-resultado",
       "nivel": "bloqueante",
-      "regex": "(?:ahorr\\w*|reduc\\w*|aument\\w*|recuper\\w*|increment\\w*)[^.]{0,40}?\\d",
+      "regex": "(?:ahorr[\\p{L}\\p{N}_]*|reduc[\\p{L}\\p{N}_]*|aument[\\p{L}\\p{N}_]*|recuper[\\p{L}\\p{N}_]*|increment[\\p{L}\\p{N}_]*)[^.]{0,40}?\\d",
       "flags": "giu",
       "ejemplo": "ahorra hasta 40 horas al mes",
       "fuente": "01-oferta › Qué no prometemos"
@@ -153,7 +259,7 @@
     {
       "id": "precio",
       "nivel": "bloqueante",
-      "regex": "(?:US\\$|MX\\$|\\$)\\s?\\d|\\b\\d[\\d,.]*\\s?(?:MXN|USD|pesos)\\b|\\bdesde\\s+\\$",
+      "regex": "(?:US\\$|MX\\$|\\$)\\s?\\d|(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))\\d[\\d,.]*\\s?(?:MXN|USD|pesos)(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))|(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))desde\\s+\\$",
       "flags": "giu",
       "ejemplo": "desde $5,000 MXN",
       "fuente": "02-fases › Framing de inversión"
@@ -161,7 +267,7 @@
     {
       "id": "plazo-numerico",
       "nivel": "bloqueante",
-      "regex": "\\b\\d+(?:\\s?[-–a]\\s?\\d+)?\\s*(?:minutos?|horas?|d[ií]as?|semanas?|meses|mes|años?)\\b",
+      "regex": "(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))\\d+(?:\\s?[-–a]\\s?\\d+)?\\s*(?:minutos?|horas?|d[ií]as?|semanas?|meses|mes|años?)(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))",
       "flags": "giu",
       "ejemplo": "4–6 semanas; menos de 30 días",
       "fuente": "Reglas de contenido › Nota sobre el historial (texto retirado)"
@@ -169,7 +275,7 @@
     {
       "id": "fase-numerada",
       "nivel": "bloqueante",
-      "regex": "\\bFase\\s*(?:\\d+|cero|uno|dos|tres)\\b|Prueba de mercado|Pedir diagn[oó]stico",
+      "regex": "(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))Fase\\s*(?:\\d+|cero|uno|dos|tres)(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))|Prueba de mercado|Pedir diagn[oó]stico",
       "flags": "giu",
       "ejemplo": "Pedir diagnóstico Fase 0",
       "fuente": "Reglas de contenido › decisión (o) y Nota sobre el historial"
@@ -177,7 +283,7 @@
     {
       "id": "24-7",
       "nivel": "bloqueante",
-      "regex": "\\b24\\s?(?:/|x)\\s?7\\b|24 horas,? (?:los )?7 d[ií]as",
+      "regex": "(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))24\\s?(?:/|x)\\s?7(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))|24 horas,? (?:los )?7 d[ií]as",
       "flags": "giu",
       "ejemplo": "Atención con IA por voz y WhatsApp, 24/7",
       "fuente": "Reglas de contenido › Nota sobre el historial"
@@ -185,73 +291,40 @@
     {
       "id": "inmediatez",
       "nivel": "bloqueante",
-      "regex": "\\bal instante\\b|\\bde inmediato\\b|\\binmediatamente\\b|\\bpausa inmediata\\b|\\brespuesta inmediata\\b",
+      "regex": "(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))al instante(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))|(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))de inmediato(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))|(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))inmediatamente(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))|(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))pausa inmediata(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))|(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))respuesta inmediata(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))",
       "flags": "giu",
       "ejemplo": "pausa inmediata del asistente",
       "fuente": "Decisión de dirección: “se puede pausar desde el panel”"
     },
     {
-      "id": "absoluto-cobertura",
-      "nivel": "bloqueante",
-      "regex": "ning[uú]n (?:mensaje|cliente|prospecto|lead)[^.]{0,30}(?:perdido|sin respuesta|se queda)|nadie queda sin respuesta|nunca (?:pierdas|perder[aá]s)",
-      "flags": "giu",
-      "ejemplo": "ningún mensaje perdido; nadie queda sin respuesta",
-      "fuente": "01-oferta › Claims permitidos (no prometer “ningún mensaje perdido”)"
-    },
-    {
-      "id": "claim-nadie-se-quede",
-      "nivel": "advertencia",
-      "regex": "nadie se quede sin respuesta",
-      "flags": "giu",
-      "ejemplo": "…para que nadie se quede sin respuesta.",
-      "fuente": "CONFLICTO: claim APROBADO en Reglas de contenido › Criterios vigentes y 01-oferta, pero la decisión de dirección prohíbe “nadie queda sin respuesta”. Decide la dirección."
-    },
-    {
       "id": "fiscal-juicio",
       "nivel": "bloqueante",
-      "regex": "(?:CFDI|factura|comprobante|SAT)[^.]{0,80}?\\b(?:valida|validamos|verifica|verificamos|v[aá]lid[oa]s?|vigentes?|cancelad[oa]s?|deducibles?|acreditables?|cumple(?:n)? (?:con )?(?:los )?requisitos fiscales)\\b|\\b(?:valida|validamos|verifica|verificamos)\\b[^.]{0,80}?(?:CFDI|factura|comprobante|SAT)",
+      "regex": "(?:CFDI|factura|comprobante|SAT)[^.]{0,80}?(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))(?:valida|validamos|verifica|verificamos|v[aá]lid[oa]s?|vigentes?|cancelad[oa]s?|deducibles?|acreditables?|cumple(?:n)? (?:con )?(?:los )?requisitos fiscales)(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))|(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))(?:valida|validamos|verifica|verificamos)(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))[^.]{0,80}?(?:CFDI|factura|comprobante|SAT)",
       "flags": "giu",
       "ejemplo": "verificamos que tus CFDI estén vigentes y sean deducibles",
-      "fuente": "Decisión de dirección (Contabilidad) + especificación Contabilidad Asistida v4"
+      "fuente": "Decisión de dirección (Contabilidad) + especificación Contabilidad Asistida"
     },
     {
       "id": "fiscal-palabra-suelta",
       "nivel": "advertencia",
-      "regex": "\\b(?:deducibles?|acreditables?|requisitos fiscales|v[aá]lid[oa]s? ante el SAT)\\b",
+      "regex": "(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))(?:deducibles?|acreditables?|requisitos fiscales|v[aá]lid[oa]s? ante el SAT)(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))",
       "flags": "giu",
       "ejemplo": "gastos deducibles",
       "fuente": "Decisión de dirección (Contabilidad)"
     },
     {
-      "id": "credenciales-sat",
-      "nivel": "bloqueante",
-      "regex": "\\be\\.?firma\\b|\\bCIEC\\b|contraseña del SAT",
-      "flags": "giu",
-      "ejemplo": "compártenos tu e.firma",
-      "fuente": "Decisión de dirección (Contabilidad). Excepción: la frase de aviso “nunca pide tu e.firma ni tu CIEC”; revisar a mano",
-      "permiteNegacion": true
-    },
-    {
       "id": "impuestos-calculo",
       "nivel": "bloqueante",
-      "regex": "calcul\\w*\\s+(?:tus\\s+|los\\s+)?(?:impuestos|IVA|ISR|retenciones)|declaraciones? (?:pre)?llenad|DIOT|contabilidad electr[oó]nica",
+      "regex": "(?<![\\p{L}\\p{N}_])calcul[\\p{L}]*\\s+(?:(?:tus?|sus?|los|las|el|nuestros?)\\s+)?(?:impuestos|IVA|ISR|retenciones|contribuciones)(?![\\p{L}\\p{N}_])|(?<![\\p{L}\\p{N}_])(?:declaraci[oó]n(?:es)? (?:pre)?llenadas?|DIOT|contabilidad electr[oó]nica)(?![\\p{L}\\p{N}_])",
       "flags": "giu",
       "ejemplo": "calculamos tu IVA",
-      "fuente": "Especificación Contabilidad Asistida v4 › Qué NO hace",
+      "fuente": "Especificación Contabilidad Asistida › Qué NO hace",
       "permiteNegacion": true
-    },
-    {
-      "id": "clasificacion-fiscal",
-      "nivel": "bloqueante",
-      "regex": "clasificaci[oó]n fiscal",
-      "flags": "giu",
-      "ejemplo": "clasificación fiscal automática",
-      "fuente": "Especificación Contabilidad Asistida v4 (Legal)"
     },
     {
       "id": "secretaria",
       "nivel": "bloqueante",
-      "regex": "\\bSecretaria(?:\\s+AI)?\\b",
+      "regex": "(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))Secretaria(?:\\s+AI)?(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))",
       "flags": "gu",
       "ejemplo": "Secretaria AI",
       "fuente": "Reglas de contenido › decisión (j) y Nota sobre el historial"
@@ -267,26 +340,24 @@
     {
       "id": "certificacion-afirmada",
       "nivel": "bloqueante",
-      "regex": "certificad[oa]s en|estamos certificad|somos (?:una empresa )?certificad|empresa certificada|certificaci[oó]n ISO|certificamos",
+      "regex": "(?<![\\p{L}\\p{N}_])(?:certificad[oa]s en|estamos certificad[oa]s|somos (?:una empresa )?certificad[oa]s?|empresa certificada|(?<!no )certificamos)(?![\\p{L}\\p{N}_]*\\?)",
       "flags": "giu",
-      "ejemplo": "certificados en ISO/IEC 42001",
-      "fuente": "Reglas de contenido › Gobierno y estándares; 04-kit-outbound › FAQ",
+      "ejemplo": "certificados en ISO/IEC 42001; empresa certificada",
+      "fuente": "Reglas de contenido › Gobierno; 04-kit › FAQ. v2.1: “certificación ISO” sale de aquí (era falso positivo en una pregunta de FAQ con respuesta “No”); queda como advertencia en certificacion-revisar",
       "permiteNegacion": true
     },
     {
       "id": "certificacion-revisar",
       "nivel": "advertencia",
-      "regex": "(?<!no est[aá] )(?<!no )certific[\\p{L}\\p{N}_]*",
+      "regex": "(?<![\\p{L}\\p{N}_])(?<!no est[aá] )(?<!no )certific[\\p{L}]*",
       "flags": "giu",
-      "ejemplo": "cualquier “certific…” distinto de “ONIX no está certificado y no certifica”",
-      "fuente": "Reglas de contenido › Gobierno y estándares",
-      "_nota": "Se usa [\\p{L}\\p{N}_]* con flag u en lugar de \\w*: \\w no reconoce letras acentuadas (la \"ó\" de \"certificación\" cortaba la coincidencia en \"certificaci\").",
-      "permiteNegacion": true
+      "ejemplo": "no es una certificación; ¿me da una certificación ISO? (preguntas y negaciones: solo aviso)",
+      "fuente": "Reglas de contenido › Gobierno. Advertencia: cualquier forma de “certific…”, incluidas negaciones y preguntas de FAQ"
     },
     {
       "id": "nist-publico",
       "nivel": "bloqueante",
-      "regex": "\\bNIST\\b",
+      "regex": "(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))NIST(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))",
       "flags": "gu",
       "ejemplo": "alineado a NIST AI RMF",
       "fuente": "Reglas de contenido › Gobierno: NIST AI RMF solo en documentos internos"
@@ -294,7 +365,7 @@
     {
       "id": "garantia",
       "nivel": "bloqueante",
-      "regex": "\\bgarantiza\\w*|\\bgarant[ií]as? de resultad|resultados garantizados|\\b100\\s?%",
+      "regex": "(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))garantiza[\\p{L}\\p{N}_]*|(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))garant[ií]as? de resultad|resultados garantizados|(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))100\\s?%",
       "flags": "giu",
       "ejemplo": "resultados garantizados",
       "fuente": "01-oferta › Qué no prometemos"
@@ -302,10 +373,18 @@
     {
       "id": "ventas-cobros-inventario",
       "nivel": "bloqueante",
-      "regex": "cierra(?:mos)? (?:tus )?ventas|cerrar ventas|cobra(?:mos)? por ti|cobros autom[aá]ticos|control(?:a|amos) (?:tu )?inventario|pedido confirmado",
+      "regex": "(?<![\\p{L}\\p{N}_])(?<!no )(?<!ni )(?<!sin )(?:cerramos (?:tus |las )?ventas|cierra (?:tus |las )?ventas|cierra ventas|cobra(?:mos)? por ti|cobros autom[aá]ticos|control(?:a|amos) (?:tu |el )?inventario)(?![\\p{L}\\p{N}_])|(?<![\\p{L}\\p{N}_])pedido confirmado(?![\\p{L}\\p{N}_])",
       "flags": "giu",
-      "ejemplo": "Pedido confirmado",
-      "fuente": "Reglas de contenido › Conexiones con sistemas…; 06-gaps-escala (bandera “Pedido confirmado”)"
+      "ejemplo": "cerramos tus ventas; Pedido confirmado",
+      "fuente": "Reglas de contenido › Conexiones; 06-gaps (bandera “Pedido confirmado”). v2.1: las negaciones (“no cierra ventas”) no bloquean"
+    },
+    {
+      "id": "ventas-mencion",
+      "nivel": "advertencia",
+      "regex": "(?<![\\p{L}\\p{N}_])(?:cerrar ventas|cierre de ventas|cierra ventas|cerramos ventas)(?![\\p{L}\\p{N}_])",
+      "flags": "giu",
+      "ejemplo": "el tiempo que debería ir a cerrar ventas (contexto del equipo del cliente: solo aviso)",
+      "fuente": "v2.1: menciones o negaciones de cierre de ventas se revisan a mano"
     },
     {
       "id": "integracion-automatica",
@@ -324,41 +403,25 @@
       "fuente": "01-oferta › Qué vendemos"
     },
     {
-      "id": "clinica-fuera-de-linea",
-      "nivel": "advertencia",
-      "regex": "(?<!Entregado a una )cl[ií]nicas?",
-      "flags": "giu",
-      "ejemplo": "soluciones para clínicas",
-      "fuente": "01-oferta › Caso: una clínica (solo la línea exacta). Legal (especificación Voz): sin datos de salud ni caso de la clínica en demos hasta abogado humano"
-    },
-    {
-      "id": "caso-real",
-      "nivel": "advertencia",
-      "regex": "Caso real",
-      "flags": "gu",
-      "ejemplo": "Caso real",
-      "fuente": "Reglas de contenido › Reels: solo la pieza de la clínica dice “Caso real”"
-    },
-    {
       "id": "rfc-formato-real",
       "nivel": "bloqueante",
-      "regex": "\\b[A-ZÑ&]{3,4}\\d{6}[A-Z0-9]{3}\\b",
+      "regex": "(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))[A-ZÑ&]{3,4}\\d{6}[A-Z0-9]{3}(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))",
       "flags": "gu",
       "ejemplo": "XAXX010101000",
-      "fuente": "Especificación Contabilidad Asistida v4 › demo (usar “RFC-EJEMPLO”)"
+      "fuente": "Especificación Contabilidad Asistida › demo (usar “RFC-EJEMPLO”)"
     },
     {
       "id": "uuid-real",
       "nivel": "bloqueante",
-      "regex": "\\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\\b",
+      "regex": "(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))",
       "flags": "gu",
       "ejemplo": "folio fiscal con formato UUID",
-      "fuente": "Especificación Contabilidad Asistida v4 › demo (usar folios “XXXX”)"
+      "fuente": "Especificación Contabilidad Asistida › demo (usar folios “XXXX”)"
     },
     {
       "id": "jerga-tecnica",
       "nivel": "advertencia",
-      "regex": "\\b(?:LLM|RLS|Supabase|multi-?tenant|tenant_id|STT|TTS|OCR|prompt|embeddings?)\\b",
+      "regex": "(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))(?:LLM|RLS|Supabase|multi-?tenant|tenant_id|STT|TTS|OCR|prompt|embeddings?)(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))",
       "flags": "giu",
       "ejemplo": "pipeline STT + LLM + TTS",
       "fuente": "Reglas de contenido › Reglas duras (cero jerga técnica)"
@@ -366,13 +429,75 @@
     {
       "id": "asistente-masculino",
       "nivel": "advertencia",
-      "regex": "\\b(?:el|un|nuestro) asistente virtual\\b",
+      "regex": "(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))(?:el|un|nuestro) asistente virtual(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))",
       "flags": "giu",
       "ejemplo": "el asistente virtual",
       "fuente": "Decisión de dirección: “la asistente virtual”"
     }
   ],
-  "_frasesProhibidas_NOTA": "Cada regex (sintaxis JavaScript; flag u para \\p{L}) se aplica en scripts/checks/05-frases-prohibidas.js al mismo texto auditable que usa 01-cifras-consistencia.js: \"bloqueante\" = error (falla el check), \"advertencia\" = aviso (no bloquea). Opt-in por regla: \"permiteNegacion\": true permite negaciones («no es una certificación») y preguntas de FAQ («¿Tienen certificación ISO?»), según negacionPermitida; hoy lo usan certificacion-afirmada, certificacion-revisar, impuestos-calculo y credenciales-sat. Las afirmaciones siguen bloqueadas. Reglas SIN el flag (p. ej. absoluto-cobertura, ventas-cobros-inventario) no admiten negación ni pregunta. Candidatas a evaluar para el flag si el contenido las necesita: garantia («no garantizamos…»), fiscal-juicio («no validamos CFDI»).",
+  "_frasesProhibidas_NOTA": "Lo lee el check 05 v3. \"bloqueante\" = R.error; \"advertencia\" = R.aviso. Campo opcional \"negacion\": \"advertencia\" baja el nivel cuando, en la misma oración y antes del término, aparece “no”, “sin”, “ni” o “nunca”. Límites de palabra con lookarounds Unicode (flag u); sin \\b ni \\w. Antes se enmascaran excepcionesAprobadas (WhatsApp oficial y correo). Opt-in adicional \"permiteNegacion\": true (ver negacionPermitida): permite negaciones («no es una certificación», «No calcula impuestos») y preguntas de FAQ en esa regla; las afirmaciones siguen bloqueadas. Hoy lo usan certificacion-afirmada e impuestos-calculo. El campo \"negacion\": \"advertencia\" del Arquitecto baja a advertencia en lugar de permitir.",
+  "excepcionesAprobadas": {
+    "_NOTA": "Decisión de dirección 2026-10-10. El check 05 enmascara estas coincidencias (WhatsApp oficial y correo público) antes de aplicar frasesProhibidas.",
+    "telefonoWhatsApp": {
+      "regex": "(?:wa\\.me\\/|https?:\\/\\/wa\\.me\\/)?(?:\\+?\\s?52[\\s.-]?)?222[\\s.-]?709[\\s.-]?7945",
+      "flags": "gu",
+      "variantes": [
+        "222 709 7945",
+        "2227097945",
+        "522227097945",
+        "+52 222 709 7945",
+        "52 222 709 7945",
+        "+522227097945",
+        "wa.me/522227097945",
+        "https://wa.me/522227097945"
+      ]
+    },
+    "correo": {
+      "regex": "info@onix-ia\\.com",
+      "flags": "giu",
+      "valores": [
+        "info@onix-ia.com"
+      ]
+    }
+  },
+  "frasesAprobadasReemplazo": [
+    {
+      "retirado": "para que nadie se quede sin respuesta",
+      "reemplazo": "Para que tus clientes tengan a quién escribirle",
+      "fuente": "Decisión de dirección 2026-10-10 (claim absoluto retirado)"
+    },
+    {
+      "retirado": "la IA captura, clasifica y ordena comprobantes",
+      "reemplazo": "la IA ordena comprobantes por categoría administrativa",
+      "fuente": "Decisión de dirección 2026-10-10; especificación Contabilidad Asistida"
+    },
+    {
+      "retirado": "24/7",
+      "reemplazo": "a cualquier hora",
+      "fuente": "Reglas vigentes › Criterios vigentes"
+    },
+    {
+      "retirado": "diagnóstico (en páginas de salud)",
+      "reemplazo": "revisión inicial / conversación inicial",
+      "fuente": "Nota de Legal (salud)"
+    }
+  ],
+  "rutasConSectorPermitido": [
+    {
+      "ruta": "/salud",
+      "terminos": [
+        "salud",
+        "consultorio",
+        "consultorios",
+        "paciente",
+        "pacientes",
+        "profesionales de la salud",
+        "profesional de la salud"
+      ],
+      "nota": "Excepción decidida por la dirección (frente separado de salud, página /salud) [SUJETO A REVISIÓN DE ABOGADO]. Fuera de /salud (y sus subrutas) cada término es bloqueante. “clínica/clínicas” NO están aquí: nunca pasan. Las reglas de contenido vigentes dicen que el sitio no nombra sectores: deben ajustarse para la ruta /salud antes de publicarla."
+    }
+  ],
+  "_rutasConSectorPermitido_NOTA": "Lo lee el check 05 v3: genera una regla bloqueante “sector-fuera-de-ruta” por término y la omite en páginas cuya URL (lib.urlDePagina) es la ruta o empieza con ruta + \"/\".",
   "negacionPermitida": {
     "_NOTA": "Configuración de las NEGACIONES y PREGUNTAS permitidas. Solo se aplica a las reglas de frasesProhibidas con \"permiteNegacion\": true (opt-in; las demás no se afectan). Una coincidencia se permite si (a) está NEGADA: hay una palabra de `palabras` en la misma cláusula, dentro de las últimas `ventanaPalabras` palabras antes de la coincidencia (la cláusula empieza tras , ; : . ! ? ¿ o tras pero/sino/aunque/excepto/salvo/mientras), y esa palabra no va seguida de una de `noSi` («no solo calculamos…» es afirmación); o (b) está dentro de una PREGUNTA «¿ … ?» (FAQ), si `permitePregunta` es true. Limitación conocida: la ventana es una heurística; una afirmación con «no» a ≤ 6 palabras en la misma cláusula (p. ej. «no hay mejor opción que nuestra certificación ISO») se permitiría.",
     "palabras": [
