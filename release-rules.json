@@ -14,9 +14,9 @@
   ],
   "_preciosAprobados_NOTA": "Reglas vigentes (Framing de inversión; FAQ del kit outbound): no hay lista de precios pública. Las cifras de casos internos no son precios aprobados.",
   "sectoresPermitidos": [
-    "clínica"
+    "__NINGUNO_APROBADO__"
   ],
-  "_sectoresPermitidos_NOTA": "Único uso aprobado en las reglas vigentes (Claims permitidos en sitio › Caso: una clínica): la línea exacta \"Entregado a una clínica · Publicado con autorización del cliente\". El check compara cada sector de forma exacta (sin acentos ni mayúsculas, pero sin quitar plural): aprobar \"clínica\" NO aprueba \"clínicas\". Como el check permite la palabra aprobada en cualquier lugar, frasesProhibidas incluye una advertencia para \"clínica\" fuera de la línea exacta. Si se prefiere no mostrar el caso, usar [\"__NINGUNO_APROBADO__\"].",
+  "_sectoresPermitidos_NOTA": "Decisión vigente: NO hay sectores aprobados; \"clínica\" y \"clínicas\" quedan bloqueados en todo el sitio, incluida la línea «Entregado a una clínica · Publicado con autorización del cliente». El centinela \"__NINGUNO_APROBADO__\" mantiene ACTIVA la validación sin aprobar nada (una lista vacía la desactivaría). Los sectores se comparan de forma exacta (sin acentos ni mayúsculas, sin quitar plural). No hay excepción por ruta para ningún sector (p. ej. \"salud\" en /aviso-de-privacidad NO está exceptuada: pendiente de confirmación).",
   "sectoresVocabulario": [
     "escuelas",
     "escuela",
@@ -228,7 +228,8 @@
       "regex": "\\be\\.?firma\\b|\\bCIEC\\b|contraseña del SAT",
       "flags": "giu",
       "ejemplo": "compártenos tu e.firma",
-      "fuente": "Decisión de dirección (Contabilidad). Excepción: la frase de aviso “nunca pide tu e.firma ni tu CIEC”; revisar a mano"
+      "fuente": "Decisión de dirección (Contabilidad). Excepción: la frase de aviso “nunca pide tu e.firma ni tu CIEC”; revisar a mano",
+      "permiteNegacion": true
     },
     {
       "id": "impuestos-calculo",
@@ -236,7 +237,8 @@
       "regex": "calcul\\w*\\s+(?:tus\\s+|los\\s+)?(?:impuestos|IVA|ISR|retenciones)|declaraciones? (?:pre)?llenad|DIOT|contabilidad electr[oó]nica",
       "flags": "giu",
       "ejemplo": "calculamos tu IVA",
-      "fuente": "Especificación Contabilidad Asistida v4 › Qué NO hace"
+      "fuente": "Especificación Contabilidad Asistida v4 › Qué NO hace",
+      "permiteNegacion": true
     },
     {
       "id": "clasificacion-fiscal",
@@ -268,15 +270,18 @@
       "regex": "certificad[oa]s en|estamos certificad|somos (?:una empresa )?certificad|empresa certificada|certificaci[oó]n ISO|certificamos",
       "flags": "giu",
       "ejemplo": "certificados en ISO/IEC 42001",
-      "fuente": "Reglas de contenido › Gobierno y estándares; 04-kit-outbound › FAQ"
+      "fuente": "Reglas de contenido › Gobierno y estándares; 04-kit-outbound › FAQ",
+      "permiteNegacion": true
     },
     {
       "id": "certificacion-revisar",
       "nivel": "advertencia",
-      "regex": "(?<!no est[aá] )(?<!no )certific\\w*",
+      "regex": "(?<!no est[aá] )(?<!no )certific[\\p{L}\\p{N}_]*",
       "flags": "giu",
       "ejemplo": "cualquier “certific…” distinto de “ONIX no está certificado y no certifica”",
-      "fuente": "Reglas de contenido › Gobierno y estándares"
+      "fuente": "Reglas de contenido › Gobierno y estándares",
+      "_nota": "Se usa [\\p{L}\\p{N}_]* con flag u en lugar de \\w*: \\w no reconoce letras acentuadas (la \"ó\" de \"certificación\" cortaba la coincidencia en \"certificaci\").",
+      "permiteNegacion": true
     },
     {
       "id": "nist-publico",
@@ -367,5 +372,95 @@
       "fuente": "Decisión de dirección: “la asistente virtual”"
     }
   ],
-  "_frasesProhibidas_NOTA": "Cada regex (sintaxis JavaScript; flag u para \\p{L}) se aplica en scripts/checks/05-frases-prohibidas.js al mismo texto auditable que usa 01-cifras-consistencia.js: \"bloqueante\" = error (falla el check), \"advertencia\" = aviso (no bloquea)."
+  "_frasesProhibidas_NOTA": "Cada regex (sintaxis JavaScript; flag u para \\p{L}) se aplica en scripts/checks/05-frases-prohibidas.js al mismo texto auditable que usa 01-cifras-consistencia.js: \"bloqueante\" = error (falla el check), \"advertencia\" = aviso (no bloquea). Opt-in por regla: \"permiteNegacion\": true permite negaciones («no es una certificación») y preguntas de FAQ («¿Tienen certificación ISO?»), según negacionPermitida; hoy lo usan certificacion-afirmada, certificacion-revisar, impuestos-calculo y credenciales-sat. Las afirmaciones siguen bloqueadas. Reglas SIN el flag (p. ej. absoluto-cobertura, ventas-cobros-inventario) no admiten negación ni pregunta. Candidatas a evaluar para el flag si el contenido las necesita: garantia («no garantizamos…»), fiscal-juicio («no validamos CFDI»).",
+  "negacionPermitida": {
+    "_NOTA": "Configuración de las NEGACIONES y PREGUNTAS permitidas. Solo se aplica a las reglas de frasesProhibidas con \"permiteNegacion\": true (opt-in; las demás no se afectan). Una coincidencia se permite si (a) está NEGADA: hay una palabra de `palabras` en la misma cláusula, dentro de las últimas `ventanaPalabras` palabras antes de la coincidencia (la cláusula empieza tras , ; : . ! ? ¿ o tras pero/sino/aunque/excepto/salvo/mientras), y esa palabra no va seguida de una de `noSi` («no solo calculamos…» es afirmación); o (b) está dentro de una PREGUNTA «¿ … ?» (FAQ), si `permitePregunta` es true. Limitación conocida: la ventana es una heurística; una afirmación con «no» a ≤ 6 palabras en la misma cláusula (p. ej. «no hay mejor opción que nuestra certificación ISO») se permitiría.",
+    "palabras": [
+      "no",
+      "nunca",
+      "jamás",
+      "tampoco",
+      "ni"
+    ],
+    "noSi": [
+      "solo",
+      "sólo",
+      "solamente",
+      "únicamente"
+    ],
+    "ventanaPalabras": 6,
+    "permitePregunta": true
+  },
+  "excepcionesPorRuta": [
+    {
+      "id": "aviso-de-privacidad-cifras-plazos-fechas",
+      "archivo": "aviso-de-privacidad.html",
+      "categorias": [
+        "cifras",
+        "plazos",
+        "fechas"
+      ],
+      "explicacion": "Excepción POR RUTA, no una aprobación general. El aviso de privacidad redactado por Legal contiene cifras, plazos y fechas legítimos (p. ej. «12 meses», «3 años», «20 días», «15 días», «20 de marzo de 2025»). Solo en el archivo aviso-de-privacidad.html se omiten: (cifras) el check 01 de cifras y las frases porcentaje, multiplicador y conteo-clientes; (plazos) el check 01 de plazos y las frases plazo-numerico y 24-7; (fechas) reservada, hoy ningún check detecta fechas. NO se exceptúan precios, sectores (p. ej. «salud»), WhatsApp, CTA, textos obligatorios ni el resto de las frases prohibidas. En ninguna otra página aplica. Las guardas están en scripts/checks/lib.js (solo esa ruta, sin comodines, solo esas categorías).",
+      "propuestoPor": "Arquitecto de soluciones",
+      "fecha": "2026-10-10"
+    }
+  ],
+  "textosObligatorios": {
+    "_NOTA": "Textos que DEBEN aparecer (check 06-textos-obligatorios.js; todo incumplimiento es error con archivo:línea). Los textos deben coincidir de forma literal (mayúsculas, acentos y puntuación); solo los tokens de \"ignorarMayusculasEn\" (ÓNIX) admiten cualquier combinación de mayúsculas/minúsculas, y \"ONIX\" sin acento NO equivale a «ÓNIX». Se buscan en el texto visible del body (entidades HTML decodificadas, espacios colapsados).",
+    "paginasDemo": {
+      "definicion": "DEFINICIÓN CONSERVADORA (pendiente de confirmación del dueño del sitio): una página es DEMO si contiene al menos un elemento con alguna de las clases de marcadores.clases o algún id de marcadores.ids, o si figura en paginasExplicitas. Hoy esos marcadores son los de la demostración de chat/voz del sitio (id sa-chat, clases chat, vchat, demo-legend) más nombres genéricos (demo, mock, simulacion). Nada más cuenta como demo. Para marcar otra página como demo, añadirla a paginasExplicitas o dar a su elemento demo una de estas clases/ids.",
+      "marcadores": {
+        "clases": [
+          "chat",
+          "vchat",
+          "demo",
+          "demo-legend",
+          "mock",
+          "simulacion"
+        ],
+        "ids": [
+          "sa-chat",
+          "demo-legend",
+          "demo"
+        ]
+      },
+      "paginasExplicitas": []
+    },
+    "reglas": [
+      {
+        "id": "demo-datos-ficticios",
+        "aplicaA": "paginasDemo",
+        "texto": "Datos ficticios, no escribas datos reales",
+        "explicacion": "Toda página demo debe avisar que los datos son ficticios."
+      },
+      {
+        "id": "demo-ilustrativo",
+        "aplicaA": "paginasDemo",
+        "texto": "Ilustrativo",
+        "explicacion": "Toda página demo debe incluir la palabra «Ilustrativo» (con esa mayúscula inicial)."
+      },
+      {
+        "id": "aviso-contable",
+        "aplicaA": "paginas",
+        "paginas": [
+          "servicios/contabilidad-asistida.html"
+        ],
+        "texto": "ÓNIX no presta servicios contables ni fiscales",
+        "ignorarMayusculasEn": [
+          "ÓNIX"
+        ],
+        "explicacion": "La página de Contabilidad Asistida y su demo deben llevar este aviso visible (no basta con JSON-LD o metas). Esta página hoy no tiene elementos demo; si se añade uno, aplican además las reglas de páginas demo."
+      }
+    ],
+    "avisoPrivacidadCercaDeWhatsapp": {
+      "prefijoHrefWhatsapp": "https://wa.me/522227097945",
+      "textoEnlace": "Aviso de privacidad de ÓNIX",
+      "ignorarMayusculasEn": [
+        "ÓNIX"
+      ],
+      "hrefAvisoRegex": "(?:^|/)aviso-de-privacidad(?:\\.html)?(?:[?#].*)?$",
+      "nivelesAncestro": 3,
+      "definicionCerca": "«CERCA» = en alguno de estos lugares hay un enlace con el texto «Aviso de privacidad de ÓNIX» cuyo href apunta a una página aviso-de-privacidad: (a) cualquiera de los hasta nivelesAncestro (3) ancestros del enlace de WhatsApp, sin llegar a <main>, <body> ni <html>, con todos sus descendientes; (b) el elemento hermano inmediato anterior o posterior (con descendientes) del enlace de WhatsApp o de su padre directo, excepto <main>, <body> y <html>. Un botón flotante hijo de <body> solo se evalúa por (b). Que exista el enlace en otra parte de la página NO basta. Aplica a TODOS los enlaces cuyo href empieza por prefijoHrefWhatsapp (con o sin ?text=), incluidos cabecera, menú móvil, pie y botón flotante. Nota de orden: el destino aviso-de-privacidad.html aún no existe en dev (solo en el PR #6), por lo que el check 03 de enlaces solo pasará cuando ese PR esté fusionado."
+    }
+  }
 }

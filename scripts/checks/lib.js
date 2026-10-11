@@ -220,6 +220,55 @@ function quitarFormatosWhatsapp(texto, formatos) {
   }
   return t;
 }
+/** Normaliza para comparar literales: NFC, espacios (incluido nbsp) colapsados. */
+const normLiteral = (x) => String(x).normalize('NFC').replace(/[\s\u00a0]+/g, ' ').trim();
+/**
+ * Regex de un texto LITERAL: coincide exactamente (mayúsculas/minúsculas, acentos y puntuación) salvo los tokens de
+ * `ignorarMayusculas` (p. ej. "ÓNIX"), que aceptan cualquier combinación de mayúsculas/minúsculas (ÓNIX, Ónix, ónix).
+ * No coincide si hay letras o dígitos pegados antes o después.
+ */
+function regexLiteral(literal, ignorarMayusculas) {
+  let patron = escRe(normLiteral(literal));
+  for (const tok of ignorarMayusculas || []) {
+    const t = escRe(normLiteral(tok));
+    const ci = [...normLiteral(tok)].map((c) => (c.toLowerCase() === c.toUpperCase() ? escRe(c) : `[${c.toUpperCase()}${c.toLowerCase()}]`)).join('');
+    patron = patron.split(t).join(ci);
+  }
+  return new RegExp('(?<![\\p{L}\\p{N}])' + patron + '(?![\\p{L}\\p{N}])', 'u');
+}
+const contieneLiteral = (texto, literal, ignorarMayusculas) => regexLiteral(literal, ignorarMayusculas).test(normLiteral(texto));
+
+const VOID_TAGS = new Set(['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr']);
+/**
+ * Árbol de elementos mínimo sobre HTML ya enmascarado (sinComentariosScriptsEstilos).
+ * Nodo: { tag, attrs, line, parent, children[], start, innerStart, innerEnd }. Devuelve { raiz, nodos }.
+ */
+function construirArbol(htmlLimpio) {
+  const re = /<(\/?)([a-zA-Z][\w:-]*)((?:\s+[^\s"'<>\/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s"'<>=`]+))?)*)\s*(\/?)>/g;
+  const raiz = { tag: '#raiz', attrs: {}, children: [], parent: null, line: 1, start: 0, innerStart: 0, innerEnd: htmlLimpio.length };
+  const nodos = [];
+  const pila = [raiz];
+  let m;
+  while ((m = re.exec(htmlLimpio))) {
+    const tag = m[2].toLowerCase();
+    if (m[1]) {
+      for (let i = pila.length - 1; i > 0; i--) {
+        if (pila[i].tag === tag) { pila[i].innerEnd = m.index; pila.length = i; break; }
+      }
+      continue;
+    }
+    const nodo = { tag, attrs: atributos(m[3] || ''), line: lineaDe(htmlLimpio, m.index), parent: pila[pila.length - 1], children: [], start: m.index, innerStart: m.index + m[0].length, innerEnd: m.index + m[0].length };
+    nodo.parent.children.push(nodo);
+    nodos.push(nodo);
+    if (!m[4] && !VOID_TAGS.has(tag)) pila.push(nodo);
+  }
+  return { raiz, nodos };
+}
+function descendientes(nodo, acc = []) {
+  for (const h of nodo.children) { acc.push(h); descendientes(h, acc); }
+  return acc;
+}
+
 /** Texto auditable de una página: visible + title + meta descriptions/títulos + alt/aria-label/title. */
 function textoAuditable(html) {
   const limpio = sinComentariosScriptsEstilos(html);
@@ -251,6 +300,44 @@ function lineaDeFragmento(html, fragmento) {
 }
 
 /**
+ * EXCEPCIONES POR RUTA (release-rules.json → excepcionesPorRuta). NO es una aprobación general: exime a UNA página
+ * concreta de ciertas categorías de detección. Guardas en código (cambiarlas requiere revisión de código):
+ *   · solo se admiten las rutas de RUTAS_EXCEPTUABLES (hoy únicamente aviso-de-privacidad.html), sin comodines;
+ *   · solo las categorías de CATEGORIAS_EXCEPTUABLES (cifras, plazos, fechas). Precios, sectores, WhatsApp,
+ *     CTA y demás frases siguen aplicando en esa página.
+ */
+const RUTAS_EXCEPTUABLES = ['aviso-de-privacidad.html'];
+const CATEGORIAS_EXCEPTUABLES = ['cifras', 'plazos', 'fechas'];
+// Reglas de frasesProhibidas que pertenecen a cada categoría (check 05). "fechas": hoy ningún check detecta fechas.
+const FRASES_POR_CATEGORIA = { cifras: ['porcentaje', 'multiplicador', 'conteo-clientes'], plazos: ['plazo-numerico', '24-7'], fechas: [] };
+function validarExcepcionesPorRuta(reglas) {
+  const errs = [];
+  const lista = reglas.excepcionesPorRuta;
+  if (lista === undefined) return errs;
+  if (!Array.isArray(lista)) return ['excepcionesPorRuta debe ser una lista.'];
+  lista.forEach((e, i) => {
+    const id = (e && e.id) || '#' + i;
+    if (!e || typeof e.archivo !== 'string' || /[*?]/.test(e.archivo)) errs.push(`excepcionesPorRuta "${id}": "archivo" debe ser una ruta exacta (sin comodines).`);
+    else if (!RUTAS_EXCEPTUABLES.includes(e.archivo)) errs.push(`excepcionesPorRuta "${id}": la ruta "${e.archivo}" no puede exceptuarse (solo: ${RUTAS_EXCEPTUABLES.join(', ')}).`);
+    const cats = e && e.categorias;
+    if (!Array.isArray(cats) || !cats.length || cats.some((c) => !CATEGORIAS_EXCEPTUABLES.includes(c))) errs.push(`excepcionesPorRuta "${id}": "categorias" debe ser una lista no vacía con valores de ${CATEGORIAS_EXCEPTUABLES.join('/')}.`);
+  });
+  return errs;
+}
+/** Categorías exentas para una página (Set). Ignora excepciones inválidas. */
+function categoriasExentas(reglas, archivoRel) {
+  const set = new Set();
+  if (validarExcepcionesPorRuta(reglas).length) return set;
+  for (const e of reglas.excepcionesPorRuta || []) if (e.archivo === archivoRel) e.categorias.forEach((c) => set.add(c));
+  return set;
+}
+function frasesExentasPorRuta(reglas, archivoRel) {
+  const ids = new Set();
+  for (const c of categoriasExentas(reglas, archivoRel)) (FRASES_POR_CATEGORIA[c] || []).forEach((id) => ids.add(id));
+  return ids;
+}
+
+/**
  * ¿El href de un CTA coincide con el href aprobado?
  * Coincidencia exacta, o (si la excepción "whatsapp-mensaje-precargado" está activa) mismo origen + ruta
  * con, como ÚNICO parámetro de consulta permitido, `text` (mensaje precargado). Se compara origen+ruta;
@@ -270,7 +357,7 @@ function hrefCtaCoincide(href, aprobado, permitirTexto) {
 }
 
 module.exports = {
-  esCentinela, listaAprobada, normalizarSector, quitarFormatosWhatsapp, textoAuditable, lineaDeFragmento, hrefCtaCoincide, ROOT, leerReglas, listarArchivos, listarHtml, rel, leer, urlDePagina,
+  normLiteral, regexLiteral, contieneLiteral, construirArbol, descendientes, validarExcepcionesPorRuta, categoriasExentas, frasesExentasPorRuta, esCentinela, listaAprobada, normalizarSector, quitarFormatosWhatsapp, textoAuditable, lineaDeFragmento, hrefCtaCoincide, ROOT, leerReglas, listarArchivos, listarHtml, rel, leer, urlDePagina,
   enmascarar, sinComentariosScriptsEstilos, etiquetas, atributos, lineaDe, decodificar, aTexto,
   textoVisible, contenidoElemento, textoSinSrOnly, normalizar, normalizarPalabra, ramaObjetivo, Reporte,
 };

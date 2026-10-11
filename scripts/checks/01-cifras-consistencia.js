@@ -8,12 +8,15 @@
  * Centinela: una lista con "__NINGUNA_APROBADA__" (o "__NINGUNO_APROBADO__") ACTIVA la validación sin aprobar
  * nada: cualquier cifra/plazo/precio/sector detectado falla.
  * Sectores: comparación EXACTA (aprobar "clínica" no aprueba "clínicas").
+ * Excepción POR RUTA (release-rules.json → excepcionesPorRuta): solo aviso-de-privacidad.html y solo cifras/plazos/fechas
+ * (ver lib.js); NO es una aprobación general. Precios, sectores y WhatsApp siguen aplicando.
  * Los formatos visibles aprobados del WhatsApp (whatsapp.formatosVisiblesPermitidos) no cuentan como cifra.
  * El número de WhatsApp SIEMPRE se valida (es dato fijo).
  */
 const L = require('./lib');
 const reglas = L.leerReglas();
 const R = new L.Reporte('Cifras / plazos / precios / sectores / WhatsApp');
+L.validarExcepcionesPorRuta(reglas).forEach((e) => R.error('release-rules.json', null, e));
 
 const PRECIO = /(?:US\$|MX\$|\$)\s?\d[\d,.]*(?:\s?(?:MXN|USD|pesos|mil|k)\b)?|\b\d[\d,.]*\s?(?:MXN|USD|pesos)\b/gi;
 const NUM_PALABRA = '(?:\\d+(?:[.,]\\d+)?|un|una|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|doce|quince|veinte|treinta)';
@@ -59,11 +62,13 @@ for (const f of L.listarHtml()) {
   // Sin los formatos visibles aprobados del WhatsApp (p. ej. "+52 222 709 7945") para no detectarlos como cifra
   const textoCifras = L.quitarFormatosWhatsapp(texto, (reglas.whatsapp && reglas.whatsapp.formatosVisiblesPermitidos) || []);
 
+  const exentas = L.categoriasExentas(reglas, nombre);
+  if (exentas.size) R.nota(`${nombre}: excepción por ruta activa para: ${[...exentas].join(', ')}.`);
   // --- Precios / plazos / cifras
   for (const [tipo, re] of [['precios', PRECIO], ['plazos', PLAZO], ['cifras', CIFRA]]) {
     for (const v of extraer(re, textoCifras)) {
       anotar(tipo, v, nombre);
-      if (listas[tipo].activa && !aprobado[tipo].some((a) => L.normalizar(v) === a || L.normalizar(v).includes(a) && a.length >= L.normalizar(v).length)) {
+      if (listas[tipo].activa && !exentas.has(tipo) && !aprobado[tipo].some((a) => L.normalizar(v) === a || L.normalizar(v).includes(a) && a.length >= L.normalizar(v).length)) {
         const campo = { precios: 'preciosAprobados', plazos: 'plazosAprobados', cifras: 'cifrasAprobadas' }[tipo];
         R.error(nombre, L.lineaDeFragmento(html, v), `${{ precios: 'Precio no aprobado', plazos: 'Plazo no aprobado', cifras: 'Cifra no aprobada' }[tipo]}: "${v}". Si es correcto, el responsable de contenido debe agregarlo a "${campo}" en release-rules.json; si no, corregir el texto.`);
       }
