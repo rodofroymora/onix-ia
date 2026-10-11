@@ -571,7 +571,11 @@
           "demo"
         ]
       },
-      "paginasExplicitas": []
+      "paginasExplicitas": [
+        "demos/contabilidad-asistida.html",
+        "demos/documentos-vivos.html"
+      ],
+      "_NOTA_paginasExplicitas": "Registradas el 11 oct 2026. Estas dos demos usan prefijos propios (dca-, dv-) y no coinciden con ninguna clase ni id de marcadores, así que el check NO las reconocía como demos y las reglas de paginasDemo nunca se les aplicaban: pasaban por no ser vistas, no por cumplir. Si se les añade una clase marcadora en el futuro, esta lista puede retirarse."
     },
     "reglas": [
       {
