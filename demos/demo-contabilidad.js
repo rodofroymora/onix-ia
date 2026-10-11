@@ -56,7 +56,7 @@
   var form = document.getElementById('dca-form');
 
   /* Regla dura de la spec: toda pregunta fiscal se remite al contador, sin orientar. */
-  var FISCAL = /impuest|iva|isr|sat|deducib|declaraci|retenci|contribu|fiscal|cfdi|factura electr/i;
+  var FISCAL = /impuest|iva|isr|sat|deduc|declaraci|retenci|contribu|fiscal|cfdi|factura electr/i;
 
   var RESPUESTAS = [
     {
