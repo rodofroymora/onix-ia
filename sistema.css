@@ -1,0 +1,83 @@
+/* ──────────────────────────────────────────────────────────────────────────
+   SISTEMA VISUAL ÓNIX — capa de tokens compartida
+   ──────────────────────────────────────────────────────────────────────────
+   Se carga DESPUÉS de site.css y servicios.css y solo redefine variables.
+   No contiene ninguna regla de maquetación: no mueve nada de sitio.
+
+   Por qué existe: el sitio y las demos crecieron por separado y terminaron
+   con dos paletas distintas (sitio en papel blanco #FFFFFF y tinta #0B0B0C;
+   demos en papel cálido #FFFDF7 y tinta #26262C). Esta hoja unifica las dos
+   en la paleta de las demos, que es la más cuidada y la que sostiene mejor
+   las superficies apiladas de un dashboard.
+
+   Para volver atrás: basta quitar el <link> de esta hoja. site.css queda
+   intacto y el sitio recupera su paleta anterior.
+   ────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* ── Superficies ──────────────────────────────────────────────────────
+     Papel cálido en vez de blanco puro. Baja el deslumbramiento en textos
+     largos y deja que una tarjeta blanca se despegue del fondo sin sombra. */
+  --paper:   #FFFDF7;
+  --paper-2: #F6F3EA;
+
+  /* ── Tinta ────────────────────────────────────────────────────────────
+     #26262C en vez de #0B0B0C: sigue siendo de alto contraste sobre papel
+     (14.9:1) pero no vibra contra el fondo cálido como el negro casi puro. */
+  --ink:     #26262C;
+  --ink-2:   #4A4A52;
+  --muted:   #716E78;  /* 4.9:1 sobre --paper · 4.5:1 sobre --paper-2 */
+  --line:    #E4E0D5;
+
+  /* ── Acento ───────────────────────────────────────────────────────────
+     El violeta de marca se conserva. Para TEXTO se usa --accent-ink, que
+     sí pasa AA sobre papel (5.9:1); --accent queda para fondos y bordes. */
+  --accent:     #7C3AED;
+  --accent-ink: #6D28D9;
+
+  /* ── Sobre fondo oscuro ───────────────────────────────────────────────  */
+  --on-dark:        #F2F0EA;
+  --on-dark-muted:  #A5A2A9;  /* 7.0:1 sobre --ink */
+  --accent-on-dark: #B79AF5;  /* 7.4:1 sobre --ink */
+
+  /* ── Estado ───────────────────────────────────────────────────────────
+     Separados del acento a propósito: "algo necesita atención" no debe
+     competir con "esto es ÓNIX". Solo existen en dashboards y demos. */
+  --estado-ok:    #1C7A5E;
+  --estado-rev:   #A8661C;
+  --estado-alto:  #A33232;
+  --estado-ok-wash:   #F1FAF6;
+  --estado-rev-wash:  #FDF7EF;
+  --estado-alto-wash: #FDF3F3;
+
+  /* ── Acento lavado ────────────────────────────────────────────────────
+     Para resaltar una fila o un bloque sin pintarlo de violeta entero. */
+  --accent-wash: #F4F0FE;
+  --accent-line: #E3D9FB;
+
+  /* ── Tipografía de dato ───────────────────────────────────────────────
+     Geist Mono acompaña a Geist en folios, importes, etiquetas de capa y
+     cualquier columna de cifras. Si no está instalada cae a la mono del
+     sistema, que también es tabular. Se sirve desde /fonts, nunca de un CDN. */
+  --mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* ── Elevación ────────────────────────────────────────────────────────
+     Una sola sombra, y solo para lo que de verdad flota sobre el papel.
+     Separar dos bloques es trabajo del borde, no de la sombra. */
+  --sombra: 0 1px 2px rgba(38,38,44,.04), 0 12px 28px -18px rgba(38,38,44,.22);
+
+  /* ── Movimiento ───────────────────────────────────────────────────────
+     Una sola curva en todo el sitio, ya definida en site.css como --ease.
+     Aquí solo se fijan las duraciones: entra rápido, se asienta despacio. */
+  --dur-rapida: 180ms;
+  --dur-media:  240ms;
+  --dur-lenta:  320ms;
+}
+
+/* Números alineados en cualquier tabla, sin tener que acordarse. */
+table { font-variant-numeric: tabular-nums; }
+
+/* Nadie debería tener que pelear con el movimiento. */
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur-rapida: 0ms; --dur-media: 0ms; --dur-lenta: 0ms; }
+}
