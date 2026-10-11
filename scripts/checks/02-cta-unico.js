@@ -16,6 +16,9 @@
  * el parámetro opcional ?text=... (único parámetro permitido; se compara origen+ruta). Otro número, otra ruta u otro
  * parámetro fallan. Documentada en release-rules.json → cta.excepciones (id "whatsapp-mensaje-precargado").
  * Un <a class="btn--primary"> sigue contando como CTA aunque esté dentro de un <form>.
+ * EXCEPCIÓN («Contáctanos» como ancla interna, H-28): un <a href="#id"> con texto exacto «Contáctanos» cuyo id existe y es
+ * (o contiene) el botón de WhatsApp aprobado NO cuenta como CTA. Cualquier otro enlace con clase de CTA primario sigue
+ * contando. Documentada en release-rules.json → cta.excepciones (id "contactanos-ancla-interna"); ver lib.js.
  */
 const L = require('./lib');
 const reglas = L.leerReglas();
@@ -28,6 +31,8 @@ const EXC_TEXTO = 'whatsapp-mensaje-precargado';
 const permitirTexto = Array.isArray(cfg.excepciones) && cfg.excepciones.some((e) => e && e.id === EXC_TEXTO);
 // Un href que coincide con el aprobado (con ?text= opcional) se agrupa bajo el href aprobado
 const canon = (hr) => (cfg.href && L.hrefCtaCoincide(hr, cfg.href, permitirTexto) ? cfg.href : hr);
+const EXC_ANCLA = 'contactanos-ancla-interna';
+const permitirAncla = Array.isArray(cfg.excepciones) && cfg.excepciones.some((e) => e && e.id === EXC_ANCLA);
 const excluirSubmit = Array.isArray(cfg.excepciones) && cfg.excepciones.some((e) => e && e.id === EXC_SUBMIT);
 
 if (!cfg.etiqueta || !cfg.href) R.aviso('release-rules.json', null, 'cta.etiqueta / cta.href vacíos (pendiente de aprobación): solo se valida que haya un único CTA por página.');
@@ -42,6 +47,8 @@ for (const f of L.listarHtml()) {
   const dentroDeForm = (t) => formularios.some(([a, b]) => t.index > a && t.index < b);
   const ctas = [];
   let excluidos = 0;
+  let anclasContactanos = 0;
+  const esAncla = permitirAncla ? L.crearDetectorContactanos(limpio, cfg, clases, permitirTexto) : null;
   for (const t of tags) {
     if (t.tag === 'input' && excluirSubmit && ['submit', 'image'].includes((t.attrs.type || '').toLowerCase()) && clases.some((c) => (t.attrs.class || '').split(/\s+/).includes(c))) { excluidos++; continue; }
     if (t.tag !== 'a' && t.tag !== 'button') continue;
@@ -49,6 +56,7 @@ for (const f of L.listarHtml()) {
     if (!clases.some((c) => cls.includes(c))) continue;
     if (t.tag === 'button' && excluirSubmit && ((t.attrs.type || 'submit').toLowerCase() === 'submit' || dentroDeForm(t))) { excluidos++; continue; }
     const etiqueta = norm(L.textoSinSrOnly(L.contenidoElemento(limpio, t)));
+    if (esAncla && t.tag === 'a' && esAncla(t, etiqueta).exento) { anclasContactanos++; continue; }
     let href;
     if (t.tag === 'a') href = t.attrs.href || '(sin href)';
     else {
@@ -82,6 +90,6 @@ for (const f of L.listarHtml()) {
       }
     }
   }
-  R.nota(`${nombre}: ${ctas.length} aparición(es) de CTA primario, ${distintos.size} distinto(s)` + (excluidos ? `; ${excluidos} botón(es)/input(s) de envío de formulario excluido(s) por excepción (cta.excepciones).` : '.'));
+  R.nota(`${nombre}: ${ctas.length} aparición(es) de CTA primario, ${distintos.size} distinto(s)` + (excluidos ? `; ${excluidos} botón(es)/input(s) de envío de formulario excluido(s) por excepción (cta.excepciones)` : '') + (anclasContactanos ? `; ${anclasContactanos} ancla(s) «Contáctanos» a #id del botón de WhatsApp no cuentan como CTA (cta.excepciones: ${EXC_ANCLA})` : '') + '.');
 }
 R.terminar();

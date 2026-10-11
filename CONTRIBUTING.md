@@ -26,11 +26,16 @@ Nombre de la rama: `cambio/<corto>`, en minúsculas y con guiones, p. ej. `cambi
 - **Un solo CTA:** un único CTA primario de marketing por página (WhatsApp, con la misma etiqueta y destino).
 - **Enlaces y assets:** enlaces internos, anclas e imágenes/archivos deben existir.
 - **QA smoke:** title, meta description, `lang`, un solo `h1`, imágenes con `alt`, sin texto residual (TODO, lorem, placeholder) y regla de indexación según la rama.
+- **Frases prohibidas:** `release-rules.json` → `frasesProhibidas`. Las de nivel `bloqueante` hacen fallar el PR; las de nivel `advertencia` se muestran para revisión manual y no bloquean. «cerrar ventas», «cierra/cerramos ventas» y «Pedido confirmado» son bloqueantes.
+- **Excepciones por ruta** (`release-rules.json` → `excepcionesPorRuta`; no son aprobaciones generales): `aviso-de-privacidad.html` está exento de cifras, plazos y fechas, y de las palabras exactas «tratamiento» y «salud». Los términos de salud (`salud`, `consultorio`, `paciente`…) solo se permiten en `/salud` (`rutasConSectorPermitido`). «clínica/clínicas» y «diagnóstico» no se permiten en ninguna página. Las guardas están en `scripts/checks/lib.js` y cambiarlas requiere revisión de código.
+- **Indexación (robots):** `dev` es noindex en todo el sitio. `main` debe ser indexable: cualquier página o header `noindex` hace fallar el PR, salvo la ruta `/salud` y sus subrutas (`release-rules.json` → `robots.rutasNoindex`; la guarda de `lib.js` rechaza cualquier otra ruta). **`/salud` no debe ir a `main` hasta la revisión de un abogado humano y el OK escrito del dueño del sitio** (no hay compuerta automática).
+- **Textos obligatorios:** `release-rules.json` → `textosObligatorios`. Las páginas demo deben llevar el aviso de datos ficticios y la palabra «Ilustrativo»; Contabilidad Asistida, el aviso de que ÓNIX no presta servicios contables ni fiscales; y cada enlace de WhatsApp debe tener cerca un enlace «Aviso de privacidad de ÓNIX».
 - **Higiene:** no se versionan `.env*`, `.vercel/` ni `node_modules/`.
 
 ## Reglas
 - Nunca subas `.env*`, `.vercel/`, tokens o claves, ni los pegues en issues, PRs o comentarios.
 - **Excepción de formularios:** los botones de envío de formularios (`<button type="submit">`, cualquier `<button>` dentro de un `<form>` e `<input type="submit">`) no cuentan como CTA y no se validan contra el CTA aprobado. Un enlace `<a>` con `btn--primary`/`btn--accent` sí cuenta, aunque esté dentro de un formulario. Está registrada en `release-rules.json` → `cta.excepciones`.
+- **Excepción de «Contáctanos» (ancla interna):** un enlace `<a href="#id">` con texto exacto «Contáctanos» (menú, menú móvil, botón flotante) cuyo `id` existe en la página y es —o contiene— el botón de WhatsApp aprobado **no** cuenta como CTA. Cualquier otro enlace o botón con `btn--primary`/`btn--accent` sigue contando (otro texto, `/#id` con barra, id inexistente, etc.). Ver `release-rules.json` → `cta.excepciones` (`contactanos-ancla-interna`).
 - **Excepción del mensaje precargado de WhatsApp:** el CTA aprobado puede llevar el parámetro `?text=...` (único parámetro permitido). Otro número, otra ruta u otro parámetro hacen fallar el check. Ver `release-rules.json` → `cta.excepciones`.
 - No publiques en producción a mano; solo mediante los workflows.
 - No hagas push directo a `dev` ni a `main`, ni force-push.
