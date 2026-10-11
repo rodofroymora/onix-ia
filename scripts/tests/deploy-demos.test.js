@@ -64,7 +64,7 @@ prueba('el .vercelignore del repo excluye «demos»', /^demos\s*$/m.test(ignoreR
   for (const n of ['scripts', '.github', 'release-rules.json', 'README.md', 'CONTRIBUTING.md']) prueba(`DEV: ${n} no está en el paquete`, fs.existsSync(path.join(d, n)), false);
   prueba('DEV: index.html sigue en el paquete', fs.existsSync(path.join(d, 'index.html')), true);
   // idempotencia sobre el mismo directorio
-  const r2 = P.prepararDemosDev(d);
+  const r2 = P.inyectarNoindexDev(d);
   prueba('DEV: segunda pasada no duplica noindex', P.listarHtml(path.join(d, 'demos')).filter((f) => (fs.readFileSync(f, 'utf8').match(/name\s*=\s*["']robots["']/gi) || []).length !== 1), []);
   prueba('DEV: segunda pasada reporta las mismas páginas', r2.demosHtml, htmlDemosRepo);
 }
@@ -75,12 +75,12 @@ prueba('el .vercelignore del repo excluye «demos»', /^demos\s*$/m.test(ignoreR
   fs.mkdirSync(path.join(d, 'demos', 'x'), { recursive: true });
   fs.writeFileSync(path.join(d, 'demos', 'a.html'), '<!doctype html><html><head><title>a</title></head><body></body></html>');
   fs.writeFileSync(path.join(d, 'demos', 'x', 'b.html'), '<!doctype html><html><head><meta name="robots" content="index, follow"></head><body></body></html>');
-  P.prepararDemosDev(d);
+  P.inyectarNoindexDev(d);
   prueba('DEV: sin meta robots → se inyecta noindex', /noindex/.test(fs.readFileSync(path.join(d, 'demos', 'a.html'), 'utf8')), true);
   const b = fs.readFileSync(path.join(d, 'demos', 'x', 'b.html'), 'utf8');
   prueba('DEV: «index, follow» se reemplaza por noindex', /noindex/.test(b) && !/index, follow/.test(b), true);
   fs.writeFileSync(path.join(d, 'demos', 'c.html'), '<p>sin head</p>');
-  let msg = ''; try { P.prepararDemosDev(d); } catch (e) { msg = e.message; }
+  let msg = ''; try { P.inyectarNoindexDev(d); } catch (e) { msg = e.message; }
   prueba('DEV (negativa): página sin <head> hace fallar el paquete', /no tiene <head>/.test(msg), true);
 }
 
@@ -98,21 +98,21 @@ for (const [etiqueta, env] of [['DEPLOY_ENV=prod', { DEPLOY_ENV: 'prod' }], ['si
 // ── Negativas de PROD
 {
   const d = copiaDelRepo();
-  prueba('verificarProd: paquete con demos/ → errores', P.verificarProd(d).some((e) => /^demos\/.*no puede estar|^demos: /.test(e)), true);
+  prueba('verificarProd: paquete con demos/ → errores', P.verificarDemosProd(d).some((e) => /^demos\/.*no puede estar|^demos: /.test(e)), true);
   const e1 = copiaDelRepo(); fs.rmSync(path.join(e1, 'demos'), { recursive: true });
-  prueba('verificarProd: sin demos/ y con .vercelignore correcto → sin errores', P.verificarProd(e1), []);
+  prueba('verificarProd: sin demos/ y con .vercelignore correcto → sin errores', P.verificarDemosProd(e1), []);
   fs.writeFileSync(path.join(e1, '.vercelignore'), ignoreRepo.replace(/^demos\s*$/m, ''));
-  prueba('verificarProd: .vercelignore sin «demos» → error', P.verificarProd(e1).length, 1);
+  prueba('verificarProd: .vercelignore sin «demos» → error', P.verificarDemosProd(e1).length, 1);
   const e2 = copiaDelRepo(); fs.writeFileSync(path.join(e2, '.vercelignore'), ignoreRepo.replace(/^demos\s*$/m, ''));
   const r = cli(e2, { DEPLOY_ENV: 'prod' });
   prueba('PROD (negativa): .vercelignore sin «demos» → el script falla', r.status, 1);
   const e3 = copiaDelRepo(); fs.mkdirSync(path.join(e3, 'demos-extra'), { recursive: true }); fs.writeFileSync(path.join(e3, 'demos-extra', 'x.html'), '<p>x</p>');
   fs.rmSync(path.join(e3, 'demos'), { recursive: true });
-  prueba('guarda de prefijo exacto: «demos-extra/» NO cuenta como demos/', P.verificarProd(e3), []);
+  prueba('guarda de prefijo exacto: «demos-extra/» NO cuenta como demos/', P.verificarDemosProd(e3), []);
   const e4 = copiaDelRepo(); fs.rmSync(path.join(e4, 'demos'), { recursive: true }); fs.mkdirSync(path.join(e4, 'sub', 'demos'), { recursive: true });
-  prueba('guarda de prefijo exacto: «sub/demos/» NO cuenta (solo la raíz)', P.verificarProd(e4), []);
+  prueba('guarda de prefijo exacto: «sub/demos/» NO cuenta (solo la raíz)', P.verificarDemosProd(e4), []);
   const e5 = copiaDelRepo(); fs.rmSync(path.join(e5, 'demos'), { recursive: true }); fs.writeFileSync(path.join(e5, 'demos'), 'archivo');
-  prueba('guarda de prefijo exacto: un archivo llamado «demos» sí cuenta', P.verificarProd(e5).length >= 1, true);
+  prueba('guarda de prefijo exacto: un archivo llamado «demos» sí cuenta', P.verificarDemosProd(e5).length >= 1, true);
 }
 
 // ── Entorno inválido y protecciones

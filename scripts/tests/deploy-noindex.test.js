@@ -55,7 +55,7 @@ const META = /<meta name="robots" content="noindex, nofollow" \/>/g;
   prueba('dev: meta noindex en cada página (home y subcarpeta), una vez', ['index.html', 'servicios/radar.html'].map((f) => (lee(tmp, f).match(META) || []).length), [1, 1]);
   prueba('dev: la meta queda dentro del <head>', /<head>\n  <meta name="robots"[^>]*>\n  <meta charset/.test(lee(tmp, 'index.html')), true);
   prueba('dev: sitemap.xml se conserva', fs.existsSync(path.join(tmp, 'sitemap.xml')), true);
-  prueba('dev: quita demos/, scripts/, README, .github, release-rules.json', ['demos', 'scripts', 'README.md', '.github', 'release-rules.json'].map((n) => fs.existsSync(path.join(tmp, n))), [false, false, false, false, false]);
+  prueba('dev: CONSERVA demos/ y quita scripts/, README, .github, release-rules.json', ['demos', 'scripts', 'README.md', '.github', 'release-rules.json'].map((n) => fs.existsSync(path.join(tmp, n))), [true, false, false, false, false]);
   fs.rmSync(tmp, { recursive: true, force: true });
 }
 // idempotencia y reemplazo de una meta robots previa (función exportada)
@@ -98,8 +98,13 @@ prodFalla('sitemap.xml sin <urlset>', { 'sitemap.xml': '<html>x</html>' }, /site
   const t2 = sitio({ 'saludable.html': pag('S', '  <meta name="robots" content="noindex" />\n') });
   prueba('prod ABORTA: página parecida a /salud (saludable) con noindex', prepara(t2, 'prod').status, 1); fs.rmSync(t2, { recursive: true, force: true });
 }
-// ── DEPLOY_ENV obligatorio y válido (falla cerrado)
-for (const v of [undefined, '', 'staging', 'PROD', 'production']) {
+// ── DEPLOY_ENV: sin definir = prod (opción segura); un valor inválido falla cerrado
+for (const v of [undefined, '']) {
+  const tmp = sitio(); const p = prepara(tmp, v);
+  prueba(`DEPLOY_ENV=${JSON.stringify(v)} → se trata como prod (sin demos/, sin noindex inyectado)`, [p.status, fs.existsSync(path.join(tmp, 'demos')), lee(tmp, 'robots.txt') === ROBOTS_PROD], [0, false, true]);
+  fs.rmSync(tmp, { recursive: true, force: true });
+}
+for (const v of ['staging', 'PROD', 'production']) {
   const tmp = sitio(); const p = prepara(tmp, v);
   prueba(`DEPLOY_ENV=${JSON.stringify(v)} → aborta sin tocar nada`, [p.status, fs.existsSync(path.join(tmp, 'demos')), lee(tmp, 'robots.txt') === ROBOTS_PROD], [1, true, true]);
   fs.rmSync(tmp, { recursive: true, force: true });
@@ -155,19 +160,29 @@ for (const [n2, extra] of [['«FECHA DE VIGENCIA» en una página', { 'aviso-de-
   prueba('prod: «Aprobar borrador» en demos/ (se quita del paquete) NO aborta', p.status, 0); fs.rmSync(tmp, { recursive: true, force: true });
 }
 
-// ── garantía «demos/ nunca se publica» (la exención robots.rutasExentasDemos del check 04 depende de esto)
+// ── garantía «demos/ solo en DEV» (la exención robots.rutasExentasDemos del check 04 depende de que demos/ no llegue a PROD)
 {
   const lista = (d, base = d, acc = []) => { for (const e of fs.readdirSync(d, { withFileTypes: true })) { const f = path.join(d, e.name); if (e.isDirectory()) lista(f, base, acc); else acc.push(path.relative(base, f).split(path.sep).join('/')); } return acc; };
   const fake = { 'demos/x.html': pag('Demo', '  <p>demo con noindex</p>\n', '<meta name="robots" content="noindex">'), 'demos/sub/y.html': pag('Demo 2'), 'demos/assets/a.png': 'PNG', 'demos/README.md': 'interno' };
-  for (const env of ['dev', 'prod']) {
-    const tmp = sitio(fake); const p = prepara(tmp, env);
+  {
+    const tmp = sitio(fake); const p = prepara(tmp, 'prod');
     const rest = lista(tmp);
-    prueba(`${env.toUpperCase()}: con demos/x.html (+ subcarpetas, assets, README) en el fuente, el paquete NO contiene ningún archivo de demos/`, [p.status, rest.filter((f) => f === 'demos' || f.startsWith('demos/')).length, rest.includes('index.html')], [0, 0, true]);
+    prueba('PROD: con demos/x.html (+ subcarpetas, assets, README) en el fuente, el paquete NO contiene ningún archivo de demos/', [p.status, rest.filter((f) => f === 'demos' || f.startsWith('demos/')).length, rest.includes('index.html')], [0, 0, true]);
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+  {
+    const tmp = sitio(fake); const p = prepara(tmp, 'dev');
+    const rest = lista(tmp);
+    prueba('DEV: el paquete CONTIENE demos/ (4 archivos) y conserva index.html', [p.status, rest.filter((f) => f === 'demos' || f.startsWith('demos/')).length, rest.includes('index.html')], [0, 4, true]);
+    const htmlsDemos = rest.filter((f) => /^demos\/.*\.html$/.test(f));
+    prueba('DEV: cada .html de demos/ trae UNA sola meta robots noindex, nofollow', htmlsDemos.map((f) => (lee(tmp, f).match(META) || []).length + '/' + (lee(tmp, f).match(/<meta\b[^>]*name="robots"/gi) || []).length), htmlsDemos.map(() => '1/1'));
+    prueba('DEV: robots.txt con «Disallow: /» y header X-Robots-Tag en vercel.json', [/^Disallow:\s*\/\s*$/m.test(lee(tmp, 'robots.txt')), JSON.stringify(JSON.parse(lee(tmp, 'vercel.json')).headers).includes('noindex, nofollow')], [true, true]);
     fs.rmSync(tmp, { recursive: true, force: true });
   }
   const ig = fs.readFileSync(path.join(raiz, '.vercelignore'), 'utf8').split(/\r?\n/).map((l) => l.trim());
   prueba('.vercelignore lista «demos»', ig.includes('demos') || ig.includes('demos/'), true);
-  prueba('prepare-deploy NO_PUBLICOS incluye «demos»', require('../prepare-deploy.js').NO_PUBLICOS.includes('demos'), true);
+  const PD = require('../prepare-deploy.js');
+  prueba('prepare-deploy: la lista de PROD incluye «demos» y la de DEV no', [PD.NO_PUBLICOS_PROD.includes('demos'), PD.NO_PUBLICOS_SIEMPRE.includes('demos')], [true, false]);
 }
 
 // ── verify-deploy: CLI contra un servidor HTTP local (extremo a extremo con prepare-deploy)

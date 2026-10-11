@@ -6,18 +6,27 @@
  * clon desechable.
  *
  * El FUENTE del repo es indexable (production-ready) en dev y en main. La diferencia entre entornos se aplica aquí,
- * al desplegar, con la variable obligatoria DEPLOY_ENV (si falta o es otra cosa, el script falla):
- *   · DEPLOY_ENV=dev  → inyecta noindex en el paquete: robots.txt con «Disallow: /», header X-Robots-Tag
+ * al desplegar, con la variable DEPLOY_ENV (si no se define se asume "prod", la opción segura; cualquier otro valor
+ * distinto de "dev" o "prod" es un error y el script falla):
+ *   · DEPLOY_ENV=dev  → INCLUYE demos/ e inyecta noindex en el paquete: robots.txt con «Disallow: /», header X-Robots-Tag
  *                       «noindex, nofollow» en vercel.json y <meta name="robots" content="noindex, nofollow"> en cada
- *                       página .html. No modifica el repo (solo el directorio de trabajo del CI).
- *   · DEPLOY_ENV=prod → NO inyecta nada y VERIFICA que el paquete sea indexable (sin meta/header noindex, robots.txt
- *                       sin «Disallow: /» y con «Sitemap:», sitemap.xml presente); si no, falla antes de desplegar.
- *                       Única excepción: la ruta /salud (robots.rutasNoindex en release-rules.json).
+ *                       página .html (también las de demos/). La línea «demos» se quita de .vercelignore SOLO dentro del
+ *                       paquete (el archivo del repo no cambia). No modifica el repo (solo el directorio de trabajo del CI).
+ *   · DEPLOY_ENV=prod → demos/ se elimina por completo; NO inyecta nada y VERIFICA que el paquete no contenga ninguna ruta
+ *                       demos/ (prefijo exacto en la raíz), que .vercelignore siga excluyendo «demos» y que sea indexable
+ *                       (sin meta/header noindex, robots.txt sin «Disallow: /» y con «Sitemap:», sitemap.xml presente);
+ *                       si no, falla antes de desplegar. Única excepción de noindex: la ruta /salud (robots.rutasNoindex).
  */
 const fs = require('fs');
 const path = require('path');
 
-const NO_PUBLICOS = ['.github', 'scripts', 'demos', 'release-rules.json', 'README.md', 'CONTRIBUTING.md', '.gitignore'];
+// Archivos que nunca se publican en ningún entorno.
+const NO_PUBLICOS_SIEMPRE = ['.github', 'scripts', 'release-rules.json', 'README.md', 'CONTRIBUTING.md', '.gitignore'];
+// `demos/` (prefijo exacto, con barra) solo se publica en DEV, siempre con noindex; en PROD se elimina.
+const DIR_DEMOS = 'demos';
+const NO_PUBLICOS_PROD = NO_PUBLICOS_SIEMPRE.concat([DIR_DEMOS]);
+const NO_PUBLICOS = NO_PUBLICOS_PROD;   // lista de PROD (compatibilidad)
+const LINEA_DEMOS_RE = /^\/?demos\/?\s*$/;
 const META_NOINDEX = '<meta name="robots" content="noindex, nofollow" />';
 const ROBOTS_DEV = 'User-agent: *\nDisallow: /\n';
 const HEADER_NOINDEX = { source: '/(.*)', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] };
@@ -59,13 +68,45 @@ function inyectarNoindexDev(root) {
   v.headers = (Array.isArray(v.headers) ? v.headers : []).filter((h) => !(h.headers || []).some((kv) => /^x-robots-tag$/i.test(kv.key)));
   v.headers.push(JSON.parse(JSON.stringify(HEADER_NOINDEX)));
   fs.writeFileSync(vj, JSON.stringify(v, null, 2) + '\n'); resumen.header = true;
+  // .vercelignore del PAQUETE DEV sin «demos» (el del repo no cambia): si vercel lo aplicara, no debe bloquear las demos.
+  const vi = path.join(root, '.vercelignore');
+  if (fs.existsSync(vi)) {
+    const lineas = fs.readFileSync(vi, 'utf8').split(/\r?\n/).filter((l) => !LINEA_DEMOS_RE.test(l.trim()));
+    fs.writeFileSync(vi, lineas.join('\n').replace(/\n*$/, '\n'));
+  }
+  resumen.demosHtml = listarHtml(path.join(root, DIR_DEMOS)).length;
   return resumen;
+}
+
+/** Todas las rutas del paquete (relativas, con "/") cuyo primer segmento es exactamente `demos` (no «demos-x/» ni «sub/demos/»). */
+function rutasDemos(root) {
+  const acc = [];
+  const rec = (dir) => {
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (SKIP.has(e.name)) continue;
+      const p = path.join(dir, e.name);
+      const rel = path.relative(root, p).split(path.sep).join('/');
+      if (rel === DIR_DEMOS || rel.startsWith(DIR_DEMOS + '/')) acc.push(rel);
+      if (e.isDirectory()) rec(p);
+    }
+  };
+  rec(root);
+  return acc;
+}
+
+/** PROD: el paquete no debe contener demos/ y .vercelignore debe seguir excluyéndolo. Devuelve errores[]. */
+function verificarDemosProd(root) {
+  const errs = [];
+  for (const r of rutasDemos(root)) errs.push(`${r}: demos/ no puede estar en el paquete de PRODUCCIÓN.`);
+  const vi = path.join(root, '.vercelignore');
+  if (fs.existsSync(vi) && !fs.readFileSync(vi, 'utf8').split(/\r?\n/).some((l) => LINEA_DEMOS_RE.test(l.trim()))) errs.push('.vercelignore: debe excluir «demos» en PRODUCCIÓN.');
+  return errs;
 }
 
 /** PROD: verifica que el paquete sea indexable. `rutasNoindex`: rutas con noindex permitido (solo /salud); `sitemapUrl`: la URL exacta
  *  que robots.txt debe referenciar (release-rules.json → robots.sitemapUrl; si es null, cualquier «Sitemap:»). Devuelve errores[]. */
 function verificarProd(root, rutasNoindex = [], sitemapUrl = null, marcadores = []) {
-  const errs = [];
+  const errs = verificarDemosProd(root);
   const permitida = (url) => rutasNoindex.some((r) => enRuta(url, r));
   for (const f of listarHtml(root)) {
     const m = fs.readFileSync(f, 'utf8').match(META_ROBOTS_RE);
@@ -118,7 +159,7 @@ function construirPaquete(root, env) {
   const robotsCfg = reglas.robots || {};
   const marcadores = (reglas.bloqueosSoloMain && reglas.bloqueosSoloMain.marcadores) || [];
   const removidos = [];
-  for (const n of NO_PUBLICOS) {
+  for (const n of env === 'dev' ? NO_PUBLICOS_SIEMPRE : NO_PUBLICOS_PROD) {
     const p = path.join(root, n);
     if (fs.existsSync(p)) { fs.rmSync(p, { recursive: true, force: true }); removidos.push(n); }
   }
@@ -127,7 +168,7 @@ function construirPaquete(root, env) {
   return { removidos, resumen: null, errores: verificarProd(root, robotsCfg.rutasNoindex || [], robotsCfg.sitemapUrl || null, marcadores) };
 }
 
-module.exports = { NO_PUBLICOS, inyectarNoindexDev, verificarProd, construirPaquete, listarHtml, urlDe };
+module.exports = { NO_PUBLICOS, NO_PUBLICOS_SIEMPRE, NO_PUBLICOS_PROD, inyectarNoindexDev, verificarProd, verificarDemosProd, rutasDemos, construirPaquete, listarHtml, urlDe };
 
 if (require.main === module) {
   const root = path.resolve(__dirname, '..');
@@ -135,19 +176,19 @@ if (require.main === module) {
     console.error('✖ prepare-deploy.js borra archivos del directorio actual. Solo corre en GitHub Actions o con --force en un clon desechable.');
     process.exit(1);
   }
-  const env = process.env.DEPLOY_ENV;
+  const env = process.env.DEPLOY_ENV || 'prod';   // sin definir = prod (opción segura: sin demos/ y con verificación de indexación)
   if (!['dev', 'prod'].includes(env)) {
-    console.error('✖ Define DEPLOY_ENV=dev|prod (obligatorio): decide si se inyecta noindex (dev) o se verifica que sea indexable (prod).');
+    console.error('✖ DEPLOY_ENV debe ser "dev" o "prod" (si no se define, se asume "prod").');
     process.exit(1);
   }
   const r = construirPaquete(root, env);
   r.removidos.forEach((n) => console.log('− removido del paquete de deploy: ' + n));
   if (r.errores.length) {
     r.errores.forEach((e) => console.error('✖ ' + e));
-    console.error('✖ El paquete de PRODUCCIÓN no es indexable: se aborta antes de desplegar.');
+    console.error('✖ El paquete de PRODUCCIÓN no cumple (indexable y sin demos/): se aborta antes de desplegar.');
     process.exit(1);
   }
-  if (env === 'dev') console.log(`✔ DEV: noindex inyectado (${r.resumen.paginas} página(s), robots.txt «Disallow: /», header X-Robots-Tag en vercel.json).`);
-  else console.log('✔ PROD: paquete indexable verificado (sin noindex, robots.txt con Sitemap, sitemap.xml presente).');
+  if (env === 'dev') console.log(`✔ DEV: demos/ incluido y noindex inyectado (${r.resumen.paginas} página(s), ${r.resumen.demosHtml} de demos/; robots.txt «Disallow: /», header X-Robots-Tag en vercel.json).`);
+  else console.log('✔ PROD: paquete verificado (sin demos/, sin noindex, robots.txt con Sitemap, sitemap.xml presente).');
   console.log('✔ Paquete de deploy listo (solo archivos públicos del sitio).');
 }
