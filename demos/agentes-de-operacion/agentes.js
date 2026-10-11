@@ -7,18 +7,18 @@
   var LAST = 5;
   var DEFAULT_NOTE = $('#quote-note').value;
 
-  var STEP_NAMES = { 1: 'Llega un correo', 2: 'Se capturan los datos', 3: 'Borrador de cotización', 4: 'Una persona aprueba', 5: 'Bitácora y pausa' };
+  var STEP_NAMES = { 1: 'Llega un correo', 2: 'Se capturan los datos', 3: 'Borrador', 4: 'Una persona aprueba', 5: 'Bitácora y pausa' };
   var WHO = {
     1: 'Participa: el Receptor',
     2: 'Participan: el Capturista y una persona del equipo',
-    3: 'Participan: el Cotizador y una persona del equipo',
+    3: 'Participan: la asistente que arma borradores y una persona del equipo',
     4: 'Participan: una persona del equipo y Seguimiento',
     5: 'Participan: el Orquestador y una persona del equipo'
   };
   var AGENTS = [
     { id: 'rec', name: 'Receptor de solicitudes', effect: 'las solicitudes nuevas pasan a la cola humana' },
     { id: 'cap', name: 'Capturista', effect: 'la revisión de renglones queda desactivada' },
-    { id: 'cot', name: 'Cotizador (borradores)', effect: 'no hay borrador ni aprobación' },
+    { id: 'cot', name: 'Asistente de borradores', effect: 'no hay borrador ni aprobación' },
     { id: 'seg', name: 'Seguimiento', effect: 'no se anotan respuestas ni se avisa al equipo' },
     { id: 'rep', name: 'Reportero', effect: 'no se preparan reportes de lectura' }
   ];
@@ -36,7 +36,7 @@
       paused: { rec: false, cap: false, cot: false, seg: false, rep: false },
       draftLogged: false,
       log: [
-        { who: 'Receptor', kind: 'agente', text: 'Creó la tarea “Cotización — Empresa Demo” con urgencia normal. Estado: pendiente.' },
+        { who: 'Receptor', kind: 'agente', text: 'Creó la tarea “Borrador — Empresa Demo” con urgencia normal. Estado: pendiente.' },
         { who: 'Capturista', kind: 'agente', text: 'Extrajo los renglones del adjunto con su confianza (alta o baja) y marcó los dudosos como pendientes de revisión.' }
       ]
     };
@@ -73,10 +73,10 @@
   }
   function renderThread() {
     var items = [];
-    items.push(email('m1', false, 'De: Empresa Demo (cliente ficticio)', 'Solicitud de cotización', 'Hola, buenas tardes. ¿Nos pueden cotizar lo que viene en la lista adjunta? Gracias.', 'Adjunto: lista-de-necesidades (ficticio)'));
+    items.push(email('m1', false, 'De: Empresa Demo (cliente ficticio)', 'Solicitud de borrador', 'Hola, buenas tardes. ¿Nos pueden armar un borrador con lo que viene en la lista adjunta? Gracias.', 'Adjunto: lista-de-necesidades (ficticio)'));
     if (state.sent) {
-      items.push(email('m2', true, 'De: Marisol Ejemplo (persona del equipo de Servicios Ejemplo)', 'Re: Solicitud de cotización', state.sentNote, 'Adjunto: borrador aprobado de Empresa Demo (ficticio, simulado)'));
-      items.push(email('m3', false, 'De: Empresa Demo (cliente ficticio)', 'Re: Solicitud de cotización', 'Acepto la cotización. Gracias.'));
+      items.push(email('m2', true, 'De: Marisol Ejemplo (persona del equipo de Servicios Ejemplo)', 'Re: Solicitud de borrador', state.sentNote, 'Adjunto: borrador aprobado de Empresa Demo (ficticio, simulado)'));
+      items.push(email('m3', false, 'De: Empresa Demo (cliente ficticio)', 'Re: Solicitud de borrador', 'Acepto el borrador. Gracias.'));
     }
     var shown = {}, idx = 0;
     thread.textContent = '';
@@ -90,7 +90,7 @@
       shown[key] = true; thread.appendChild(n);
     }
     if (state.step >= 3 && !decided()) sys('sys1', 'thread__sys--pend', 'Borrador en espera de una persona. Nada se ha enviado a Empresa Demo.');
-    if (state.rejected) sys('sysrej', 'thread__sys--rej', 'Cotización rechazada por una persona. Rechazado, no se envía: no salió nada hacia Empresa Demo.');
+    if (state.rejected) sys('sysrej', 'thread__sys--rej', 'Borrador rechazado por una persona. Rechazado, no se envía: no salió nada hacia Empresa Demo.');
     if (state.sent) sys('sys2', 'thread__sys--ok', 'Borrador aprobado por una persona (simulado: no sale nada real).' + (isP('seg') ? ' Seguimiento está en pausa: la respuesta del cliente regresó a la cola humana.' : ' La asistente virtual solo anotó la solicitud y avisó al equipo.'));
     if (anyPaused()) sys('syspz', 'thread__sys--pend', 'Hay agentes en pausa. Las tareas pendientes regresaron a la cola humana.');
     state.seen = shown;
@@ -104,7 +104,7 @@
       var r = state.rows[k];
       var st = $('#st-' + k);
       if (r.d) { st.className = 'chip ' + ST[r.d][0]; st.textContent = ST[r.d][1] + (r.d === 'edited' ? ': ' + r.v : ''); }
-      else { st.className = 'chip chip--gap'; st.textContent = 'Pendiente de revisión'; }
+      else { st.className = 'chip chip--gap'; st.textContent = 'Pendiente de revisar'; }
       $('#edit-' + k).hidden = !r.editing;
       $('[data-act="edit"][data-row="' + k + '"]').setAttribute('aria-expanded', String(r.editing));
       $$('input[name="' + k + '"]').forEach(function (i) { i.checked = r.d === 'edited' && r.v === i.value; i.disabled = lock; });
@@ -112,8 +112,8 @@
     });
     var note = $('#resolve-note');
     if (isP('cap')) note.textContent = 'El Capturista está en pausa: la revisión de renglones queda desactivada hasta que una persona autorizada lo reanude.';
-    else if (decided()) note.textContent = 'La cotización ya tiene una decisión: los renglones quedan cerrados.';
-    else if (resolved()) note.textContent = 'Listo: una persona decidió sobre los renglones dudosos. Ahora el Cotizador puede armar el borrador.';
+    else if (decided()) note.textContent = 'El borrador ya tiene una decisión: los renglones quedan cerrados.';
+    else if (resolved()) note.textContent = 'Listo: una persona decidió sobre los renglones dudosos. Ahora la asistente que arma borradores puede prepararlo.';
     else note.textContent = 'Decide cada renglón dudoso (aprobar, editar o rechazar) para continuar. En un proyecto real, la persona responsable resuelve estos renglones.';
   }
   function decideRow(k, d, v) {
@@ -124,7 +124,7 @@
     addLog('Marisol Ejemplo', 'persona', 'Marisol ' + verb + ROWS[k].art.replace(/^el /, 'el ') + (d === 'edited' ? ': ' + v + '.' : d === 'rejected' ? '. Rechazado, no se incluye en el borrador.' : '.'));
     if (resolved() && !state.draftLogged) {
       state.draftLogged = true;
-      addLog('Cotizador', 'agente', 'Armó el borrador de la cotización y lo dejó en la cola del equipo. Estado: pendiente. No lo comparte con el cliente.');
+      addLog('Asistente de borradores', 'agente', 'Armó el borrador y lo dejó en la cola del equipo. Estado: pendiente. No lo comparte con el cliente.');
     }
     renderCapture();
     live.textContent = ST[d][1] + '.';
@@ -138,7 +138,7 @@
     return r;
   }
   function blockedMsg(where) {
-    if (isP('cot')) return 'El Cotizador está en pausa: no hay borrador ni envío. La tarea regresó a la cola humana hasta que una persona autorizada lo reanude.';
+    if (isP('cot')) return 'La asistente de borradores está en pausa: no hay borrador ni envío. La tarea regresó a la cola humana hasta que una persona autorizada lo reanude.';
     if (!resolved()) return where === 3
       ? 'Borrador en espera: faltan renglones dudosos por decidir. Vuelve al paso anterior para que una persona los resuelva.'
       : 'Aún no hay borrador para aprobar: faltan renglones dudosos por decidir en el paso de captura de datos.';
@@ -184,13 +184,13 @@
     $('#after').hidden = !state.sent;
     $('#gate').hidden = decided(); $('#send-help').hidden = decided();
     var rd = $('#rej-done'); rd.hidden = !state.rejected;
-    if (state.rejected) rd.textContent = 'Marisol Ejemplo, persona del equipo, rechazó esta cotización. Rechazado, no se envía: no salió nada hacia Empresa Demo.';
+    if (state.rejected) rd.textContent = 'Marisol Ejemplo, persona del equipo, rechazó este borrador. Rechazado, no se envía: no salió nada hacia Empresa Demo.';
     if (state.sent) {
       $('#sent-done').textContent = 'Marisol Ejemplo, persona del equipo, revisó, ajustó y aprobó el borrador. Ella lo comparte desde su propio correo (simulado en esta demo).' + (isP('seg') ? '' : ' Cuando Empresa Demo respondió que acepta, la asistente virtual anotó la solicitud y la mandó al equipo.');
       $('#wa-prev').hidden = isP('seg'); $('#seg-paused').hidden = !isP('seg');
     }
     $('#send-help').textContent = isP('cot')
-      ? 'El Cotizador está en pausa: las acciones de aprobación están desactivadas hasta que una persona autorizada lo reanude.'
+      ? 'La asistente de borradores está en pausa: las acciones de aprobación están desactivadas hasta que una persona autorizada lo reanude.'
       : 'Sin esta aprobación, el borrador no avanza. «Aprobar borrador» se activa cuando la persona marca que revisó y termina de editar.';
   }
 
@@ -226,7 +226,7 @@
     var pl = $('#pend'); pl.textContent = '';
     var any = false;
     if (!resolved() && !decided()) { pl.appendChild(logRow('Marisol Ejemplo', 'pend', 'Decidir los renglones dudosos. Mientras tanto, no hay borrador.')); any = true; }
-    else if (!decided()) { pl.appendChild(logRow('Marisol Ejemplo', 'pend', 'Aprobar, editar o rechazar la cotización. Mientras tanto, no se ha enviado nada al cliente.')); any = true; }
+    else if (!decided()) { pl.appendChild(logRow('Marisol Ejemplo', 'pend', 'Aprobar, editar o rechazar el borrador. Mientras tanto, no se ha enviado nada al cliente.')); any = true; }
     if (state.sent) { pl.appendChild(logRow('Equipo de Servicios Ejemplo', 'pend', 'Confirmar el pedido en sus propios sistemas. Aún no ocurre en esta demo.')); any = true; }
     AGENTS.forEach(function (a) { if (isP(a.id)) { pl.appendChild(logRow('Persona autorizada', 'pend', 'Reanudar: ' + a.name + '. Solo una persona autorizada puede hacerlo.')); any = true; } });
     if (!any) pl.appendChild(logRow('Equipo', 'persona', 'Nada pendiente por ahora.'));
@@ -314,7 +314,7 @@
     if (!state.editing) { state.editing = true; state.reviewed = false; renderSend(); noteEl.focus(); live.textContent = 'Modo de edición. Ajusta las notas y pulsa «Listo con la edición».'; }
     else {
       state.editing = false;
-      if (state.noteEdited && !state.noteLogged) { addLog('Marisol Ejemplo', 'persona', 'Editó las notas de la cotización antes de decidir.'); state.noteLogged = true; }
+      if (state.noteEdited && !state.noteLogged) { addLog('Marisol Ejemplo', 'persona', 'Editó las notas del borrador antes de decidir.'); state.noteLogged = true; }
       if (state.noteEdited) state.reviewed = false;
       renderSend(); editBtn.focus();
       live.textContent = 'Edición terminada. Marca la casilla de revisión para poder aprobar.';
@@ -323,7 +323,7 @@
   rejectBtn.addEventListener('click', function () {
     if (sendLocked()) return;
     state.rejected = true; state.editing = false;
-    addLog('Marisol Ejemplo', 'persona', 'Rechazó la cotización. Estado: pendiente → rechazado. Rechazado, no se envía: no salió nada hacia el cliente.');
+    addLog('Marisol Ejemplo', 'persona', 'Rechazó el borrador. Estado: pendiente → rechazado. Rechazado, no se envía: no salió nada hacia el cliente.');
     renderSend(); renderThread();
     live.textContent = 'Rechazado, no se envía. No salió nada hacia el cliente ficticio.';
     var d = $('#rej-done'); d.focus();

@@ -205,7 +205,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .free-legend { margin-top: 0; }
 
 
-.phone__sim { font-size: .72rem; color: var(--on-dark-muted); padding: .35rem 1rem .45rem; background: var(--ink-2); border-top: 1px solid #26262C; }
+.phone__sim { font-size: .8125rem; color: var(--on-dark-muted); padding: .35rem 1rem .45rem; background: var(--ink-2); border-top: 1px solid #26262C; }
 .chat.is-voice { gap: .6rem; padding-top: .75rem; }
 .callbar { display: flex; align-items: center; gap: .65rem; margin: .1rem .75rem .35rem; padding: .6rem .75rem; border-radius: 16px; background: rgba(255,255,255,.07); color: var(--on-dark); }
 .callbar__mini { flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--accent); box-shadow: inset 0 0 0 6px var(--accent), inset 0 0 0 7.5px var(--on-dark); }
@@ -251,7 +251,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .bullets { margin-top: .75rem; display: grid; gap: .4rem; }
 .bullets li { position: relative; padding-left: 1.25rem; font-size: .9375rem; }
 .bullets li::before { content: ""; position: absolute; left: 0; top: .72em; width: 8px; height: 1.5px; background: var(--ink); }
-.view[hidden], [data-ch].phone__legend { font-size: .72rem; color: var(--on-dark); padding: .3rem 1rem .5rem; background: var(--ink-2); }
+.view[hidden], [data-ch].phone__legend { font-size: .8125rem; color: var(--on-dark); padding: .3rem 1rem .5rem; background: var(--ink-2); }
 .ctrls { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
 .pausepanel { margin-bottom: 1.5rem; padding: 1rem 1.1rem; border: 1px solid var(--line); border-radius: var(--r-field); background: var(--paper-2); }
 .pausepanel__title { font-size: 1rem; font-weight: 600; }
@@ -269,7 +269,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 [hidden] { display: none !important; }
 .log li.is-pending { background: #FFFDF7; }
 
-.phone__legend { font-size: .72rem; color: var(--on-dark); padding: .3rem 1rem .5rem; background: var(--ink-2); }
+.phone__legend { font-size: .8125rem; color: var(--on-dark); padding: .3rem 1rem .5rem; background: var(--ink-2); }
 .ctrls { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
 .pausepanel { margin-bottom: 1.5rem; padding: 1rem 1.1rem; border: 1px solid var(--line); border-radius: var(--r-field); background: var(--paper-2); }
 .pausepanel__title { font-size: 1rem; font-weight: 600; }

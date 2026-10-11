@@ -29,15 +29,15 @@
     <div class="wrap">
       <span class="kicker">Agentes de Operación · Demo interactiva</span>
       <h1 class="display">Las asistentes virtuales hacen lo repetitivo. <em>Una persona aprueba</em> lo que tiene impacto.</h1>
-      <p class="lead">Asistentes virtuales que capturan datos, arman borradores de cotización, dan seguimiento y preparan reportes, con una persona de tu equipo aprobando lo que importa.</p>
-      <p class="hero__note">Recorre el ejemplo paso a paso. La asistente virtual arma el borrador de la cotización, pero la revisa y la aprueba una persona de tu equipo: no sale sola.</p>
+      <p class="lead">Asistentes virtuales que capturan datos, arman borradores, dan seguimiento y preparan reportes, con una persona de tu equipo aprobando lo que importa.</p>
+      <p class="hero__note">Recorre el ejemplo paso a paso. La asistente virtual arma el borrador, pero lo revisa y lo aprueba una persona de tu equipo: no sale sola.</p>
     </div>
   </section>
 
-  <section class="stage-sec" aria-labelledby="demo-title">
+  <section class="stage-sec demo" aria-labelledby="demo-title">
     <div class="wrap">
       <div class="stage-head">
-        <h2 id="demo-title" class="h2 display">Una cotización, de la solicitud al seguimiento</h2>
+        <h2 id="demo-title" class="h2 display">Un borrador, de la solicitud al seguimiento</h2>
         <p class="lead">Negocio ficticio: <strong>Servicios Ejemplo</strong>. Cliente ficticio: <strong>Empresa Demo</strong>. Persona del equipo ficticia: <strong>Marisol Ejemplo</strong>.</p>
       </div>
 
@@ -47,7 +47,7 @@
         <ol class="stepper__list">
           <li><button type="button" class="step" data-go="1"><span class="step__dot" aria-hidden="true"></span><span class="step__label">Llega un correo</span></button></li>
           <li><button type="button" class="step" data-go="2"><span class="step__dot" aria-hidden="true"></span><span class="step__label">Se capturan los datos</span></button></li>
-          <li><button type="button" class="step" data-go="3"><span class="step__dot" aria-hidden="true"></span><span class="step__label">Borrador de cotización</span></button></li>
+          <li><button type="button" class="step" data-go="3"><span class="step__dot" aria-hidden="true"></span><span class="step__label">Borrador</span></button></li>
           <li><button type="button" class="step" data-go="4"><span class="step__dot" aria-hidden="true"></span><span class="step__label">Una persona aprueba</span></button></li>
           <li><button type="button" class="step" data-go="5"><span class="step__dot" aria-hidden="true"></span><span class="step__label">Bitácora y pausa</span></button></li>
         </ol>
@@ -63,7 +63,7 @@
               <span class="mail__avatar" aria-hidden="true">SE</span>
               <span>
                 <span class="mail__name">Servicios Ejemplo</span>
-                <span class="mail__meta">Buzón del proceso de cotizaciones (ficticio)</span>
+                <span class="mail__meta">Buzón del proceso de solicitudes (ficticio)</span>
               </span>
             </div>
             <div class="thread" id="thread" role="log" aria-label="Correos de ejemplo" aria-live="off"></div>
@@ -83,11 +83,11 @@
             <p class="view__sub">Lee solo el buzón definido para este proceso, no todo el correo.</p>
             <article class="card card--plain" aria-labelledby="task-title">
               <header class="card__head">
-                <h4 id="task-title" class="card__title">Tarea: Cotización — Empresa Demo</h4>
+                <h4 id="task-title" class="card__title">Tarea: Borrador — Empresa Demo</h4>
                 <span class="chip chip--agente">Creada por el Receptor</span>
               </header>
               <dl class="kv">
-                <div><dt>Tipo</dt><dd>Cotización</dd></div>
+                <div><dt>Tipo</dt><dd>Borrador</dd></div>
                 <div><dt>Origen</dt><dd>Correo del buzón del proceso</dd></div>
                 <div><dt>Urgencia</dt><dd>Normal</dd></div>
                 <div><dt>Adjunto</dt><dd>Lista de lo que necesita el cliente</dd></div>
@@ -117,7 +117,7 @@
                     <div class="choice__opts"><label><input type="radio" name="desk" value="Medida estándar" /><span>Medida estándar</span></label><label><input type="radio" name="desk" value="A la medida" /><span>A la medida</span></label></div>
                   </fieldset>
                 </span>
-                <span role="cell"><span class="chip chip--gap" id="st-desk">Pendiente de revisión</span></span>
+                <span role="cell"><span class="chip chip--gap" id="st-desk">Pendiente de revisar</span></span>
               </div>
               <div class="tbl__row tbl__row--doubt" role="row" id="row-file">
                 <span class="tbl__item" role="cell">Archivero</span>
@@ -132,7 +132,7 @@
                     <div class="choice__opts"><label><input type="radio" name="file" value="Metálico" /><span>Metálico</span></label><label><input type="radio" name="file" value="De madera" /><span>De madera</span></label></div>
                   </fieldset>
                 </span>
-                <span role="cell"><span class="chip chip--gap" id="st-file">Pendiente de revisión</span></span>
+                <span role="cell"><span class="chip chip--gap" id="st-file">Pendiente de revisar</span></span>
               </div>
               <div class="tbl__row" role="row"><span class="tbl__item" role="cell">Lámpara de escritorio</span><span class="tbl__detail" role="cell">Luz cálida <span class="chip chip--ok">Confianza: alta</span></span><span role="cell"><span class="chip chip--ok">Capturado</span></span></div>
             </div>
@@ -141,14 +141,14 @@
 
           <!-- Vista: borrador -->
           <section class="view" data-view="3" aria-labelledby="v3-title" hidden>
-            <h3 id="v3-title" class="view__title">El Cotizador arma un borrador</h3>
-            <p class="view__sub">Usa el catálogo y las reglas vigentes del negocio. <strong>La asistente virtual no envía cotizaciones.</strong></p>
+            <h3 id="v3-title" class="view__title">La asistente que arma borradores prepara uno</h3>
+            <p class="view__sub">Usa el catálogo y las reglas vigentes del negocio. <strong>La asistente virtual no envía borradores a clientes.</strong></p>
             <div id="v3-blocked" class="blocked" hidden></div>
             <article class="draft" id="quote" data-state="pending" aria-labelledby="quote-title">
               <header class="draft__head">
                 <div>
-                  <h4 id="quote-title" class="draft__title">Cotización para Empresa Demo</h4>
-                  <p class="draft__meta">Preparada por el Cotizador · Revisa y envía: Marisol Ejemplo (persona del equipo)</p>
+                  <h4 id="quote-title" class="draft__title">Borrador para Empresa Demo</h4>
+                  <p class="draft__meta">Preparado por la asistente que arma borradores · Revisa y aprueba: Marisol Ejemplo (persona del equipo)</p>
                 </div>
                 <span class="chip chip--pend" id="quote-status" role="status">Borrador · no se envía solo</span>
               </header>
@@ -174,7 +174,7 @@
                 <span class="chip chip--pend" id="send-status" role="status">Pendiente de aprobación por una persona</span>
               </header>
               <label class="draft__label" for="quote-note">Notas para el cliente <span class="muted">(usa «Editar» para ajustarlas)</span></label>
-              <textarea id="quote-note" class="draft__text" rows="4" readonly aria-describedby="free-legend-2">Hola. Con gusto compartimos la cotización de lo que nos pediste. Si algo cambia, avísanos y la ajustamos.</textarea>
+              <textarea id="quote-note" class="draft__text" rows="4" readonly aria-describedby="free-legend-2">Hola. Con gusto compartimos el borrador de lo que nos pediste. Si algo cambia, avísanos y lo ajustamos.</textarea>
               <p class="free-legend" id="free-legend-2"><strong>Datos ficticios, no escribas datos reales.</strong></p>
               <div class="draft__gate" id="gate">
                 <label class="check">
@@ -191,7 +191,7 @@
               <p class="draft__done" id="rej-done" tabindex="-1" hidden></p>
               <div id="after" hidden>
                 <p class="draft__done" id="sent-done" tabindex="-1"></p>
-                <div class="wa-preview" id="wa-prev"><b>WhatsApp interno de Servicios Ejemplo (ejemplo)</b>Queda anotado y se lo mando a tu equipo: Empresa Demo aceptó la cotización. Falta que una persona confirme el pedido en sus propios sistemas.</div>
+                <div class="wa-preview" id="wa-prev"><b>WhatsApp interno de Servicios Ejemplo (ejemplo)</b>Queda anotado y se lo mando a tu equipo: Empresa Demo aceptó el borrador. Falta que una persona confirme el pedido en sus propios sistemas.</div>
                 <p class="blocked" id="seg-paused" hidden>Seguimiento está en pausa: la solicitud aceptada no se anotó ni se avisó al equipo. La tarea regresó a la cola humana.</p>
                 <dl class="kv" style="margin-top:.9rem">
                   <div><dt>Pedido</dt><dd><span class="chip chip--pend">Pendiente de confirmación por una persona</span></dd></div>
@@ -236,7 +236,7 @@
       <div class="roles__grid">
         <article class="rcard">
           <h3>Se automatiza</h3>
-          <p>Lectura y orden de solicitudes, captura de datos, borradores de cotización, recordatorios internos y reportes de lectura.</p>
+          <p>Lectura y orden de solicitudes, captura de datos, borradores, recordatorios internos y reportes de lectura.</p>
         </article>
         <article class="rcard">
           <h3>Se revisa</h3>
@@ -244,7 +244,7 @@
         </article>
         <article class="rcard rcard--key">
           <h3>Lo aprueba una persona</h3>
-          <p>El envío de cotizaciones, cualquier cambio a datos de clientes y la confirmación de pedidos. Los pagos y cobros la asistente virtual no los ejecuta.</p>
+          <p>El envío de borradores a clientes, cualquier cambio a datos de clientes y la confirmación de pedidos. Los pagos y cobros la asistente virtual no los ejecuta.</p>
         </article>
       </div>
       <div class="nots">

@@ -233,7 +233,9 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .kv > div { display: grid; grid-template-columns: minmax(0, 10.5rem) minmax(0, 1fr); gap: .25rem 1rem; padding: .7rem 1rem; align-items: baseline; }
 .kv > div + div { border-top: 1px solid var(--line); }
 .kv dt { font-size: .875rem; color: var(--muted); } .kv dd { font-weight: 500; }
-@media (max-width: 520px) { .kv > div { grid-template-columns: 1fr; } }
+@media (max-width: 520px) { .kv > div { grid-template-columns: minmax(0, 1fr); } }
+.kv dd { min-width: 0; overflow-wrap: anywhere; }
+.kv .chip { white-space: normal; text-align: left; }
 .chip--gap { background: var(--pend-bg); color: var(--pend-fg); box-shadow: inset 0 0 0 1px var(--pend-line); }
 .chip--info { background: var(--media-bg); color: var(--media-fg); }
 .tbl { margin-top: 1.25rem; border: 1px solid var(--line); border-radius: var(--r-field); overflow: hidden; }
