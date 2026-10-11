@@ -262,3 +262,10 @@
 .legal mark.pending { background: color-mix(in srgb, var(--accent) 22%, transparent); color: inherit; padding: .05em .3em; border-radius: 4px; font-weight: 600; }
 .demo-legend { margin: .625rem auto .25rem; }
 .js .sa-pin .sa-devices .phone__screen { height: min(600px, calc(100vh - var(--nav-h) - 235px)); height: min(600px, calc(100svh - var(--nav-h) - 235px)); }
+
+/* header / mobile menu / floating contact links (not wa.me; they scroll to the page's own WhatsApp CTA) — same look as btn--primary / btn--accent, but outside the CI "primary CTA" classes */
+.btn--go { background: var(--ink); color: var(--on-dark); }
+.btn--go:hover { background: var(--ink-2); box-shadow: 0 10px 24px -14px rgba(11,11,12,.55); }
+.btn--goac { background: var(--accent); color: #fff; }
+.btn--goac:hover { background: var(--accent-ink); box-shadow: 0 10px 24px -14px rgba(109,40,217,.6); }
+#escribenos { scroll-margin-top: 6rem; }
