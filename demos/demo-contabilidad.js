@@ -73,7 +73,7 @@
   }
 
   /* ── Asistente virtual ─────────────────────────────────────────────
-     Regla dura de la spec: toda pregunta de materia fiscal se remite al
+     Regla dura: toda pregunta de materia fiscal se remite al
      contador, sin orientación. El patrón "deduc" cubre deducible,
      deducir y deducción sin escribir la palabra prohibida. */
   var FISCAL = /impuest|iva|isr|sat|deduc|declaraci|retenci|contribu|fiscal|cfdi|factura electr/i;

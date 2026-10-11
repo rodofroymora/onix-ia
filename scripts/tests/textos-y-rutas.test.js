@@ -41,8 +41,7 @@ prueba('demo con el texto obligatorio pasa', viol('x.html', DEMO + '<p>Datos fic
 prueba('demo: texto con entidades/espacios extra pasa', viol('x.html', DEMO + '<p>Datos&nbsp;ficticios,\n no escribas datos reales</p>'), []);
 prueba('demo: variante de mayúsculas NO pasa (literal)', reglasDe(viol('x.html', DEMO + '<p>datos ficticios, no escribas datos reales</p>')), ['demo-datos-ficticios']);
 prueba('demo: redacción distinta NO pasa', reglasDe(viol('x.html', DEMO + '<p>Demo con datos ficticios. No escribas datos reales.</p>')), ['demo-datos-ficticios']);
-/* Retirada junto con la regla demo-ilustrativo (decisión de Rodolfo, 10 oct 2026):
-   comprobaba que «ilustrativa» en minúscula no contara como «Ilustrativo». */
+/* La leyenda Ilustrativo ya no se exige en demos: se retiró la prueba de «ilustrativa» en minúscula. */
 prueba('demo: el error reporta la línea del marcador', viol('x.html', DEMO)[0].linea, 4);
 prueba('página no demo no exige textos', viol('x.html', '<p>Hola</p>'), []);
 const cfgExp = JSON.parse(JSON.stringify(cfg)); cfgExp.paginasDemo.paginasExplicitas = ['otra.html'];
