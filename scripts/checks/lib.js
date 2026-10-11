@@ -303,11 +303,16 @@ function lineaDeFragmento(html, fragmento) {
  * EXCEPCIONES POR RUTA (release-rules.json → excepcionesPorRuta). NO es una aprobación general: exime a UNA página
  * concreta de ciertas categorías de detección. Guardas en código (cambiarlas requiere revisión de código):
  *   · solo se admiten las rutas de RUTAS_EXCEPTUABLES (hoy únicamente aviso-de-privacidad.html), sin comodines;
- *   · solo las categorías de CATEGORIAS_EXCEPTUABLES (cifras, plazos, fechas). Precios, sectores, WhatsApp,
- *     CTA y demás frases siguen aplicando en esa página.
+ *   · "categorias": solo las de CATEGORIAS_EXCEPTUABLES (cifras, plazos, fechas). Precios, sectores, WhatsApp,
+ *     CTA y demás frases siguen aplicando en esa página;
+ *   · "terminos": palabras sueltas exentas del check 05 SOLO en esa ruta, y solo las de TERMINOS_EXCEPTUABLES
+ *     («tratamiento», «salud»). Se exime únicamente la coincidencia que sea EXACTAMENTE esa palabra: frases más
+ *     largas («profesionales de la salud», «expediente clínico», «consultorio», «paciente»…) siguen bloqueadas.
+ *   Cada excepción lleva "categorias", "terminos" o ambos.
  */
 const RUTAS_EXCEPTUABLES = ['aviso-de-privacidad.html'];
 const CATEGORIAS_EXCEPTUABLES = ['cifras', 'plazos', 'fechas'];
+const TERMINOS_EXCEPTUABLES = ['tratamiento', 'salud'];
 // Reglas de frasesProhibidas que pertenecen a cada categoría (check 05). "fechas": hoy ningún check detecta fechas.
 const FRASES_POR_CATEGORIA = { cifras: ['porcentaje', 'multiplicador', 'conteo-clientes'], plazos: ['plazo-numerico', '24-7'], fechas: [] };
 function validarExcepcionesPorRuta(reglas) {
@@ -320,7 +325,10 @@ function validarExcepcionesPorRuta(reglas) {
     if (!e || typeof e.archivo !== 'string' || /[*?]/.test(e.archivo)) errs.push(`excepcionesPorRuta "${id}": "archivo" debe ser una ruta exacta (sin comodines).`);
     else if (!RUTAS_EXCEPTUABLES.includes(e.archivo)) errs.push(`excepcionesPorRuta "${id}": la ruta "${e.archivo}" no puede exceptuarse (solo: ${RUTAS_EXCEPTUABLES.join(', ')}).`);
     const cats = e && e.categorias;
-    if (!Array.isArray(cats) || !cats.length || cats.some((c) => !CATEGORIAS_EXCEPTUABLES.includes(c))) errs.push(`excepcionesPorRuta "${id}": "categorias" debe ser una lista no vacía con valores de ${CATEGORIAS_EXCEPTUABLES.join('/')}.`);
+    const terms = e && e.terminos;
+    if (cats === undefined && terms === undefined) errs.push(`excepcionesPorRuta "${id}": necesita "categorias", "terminos" o ambos.`);
+    if (cats !== undefined && (!Array.isArray(cats) || !cats.length || cats.some((c) => !CATEGORIAS_EXCEPTUABLES.includes(c)))) errs.push(`excepcionesPorRuta "${id}": "categorias" debe ser una lista no vacía con valores de ${CATEGORIAS_EXCEPTUABLES.join('/')}.`);
+    if (terms !== undefined && (!Array.isArray(terms) || !terms.length || terms.some((t) => !TERMINOS_EXCEPTUABLES.includes(t)))) errs.push(`excepcionesPorRuta "${id}": "terminos" debe ser una lista no vacía con valores de ${TERMINOS_EXCEPTUABLES.join('/')}.`);
   });
   return errs;
 }
@@ -340,7 +348,14 @@ function validarRutasConSectorPermitido(reglas) {
 function categoriasExentas(reglas, archivoRel) {
   const set = new Set();
   if (validarExcepcionesPorRuta(reglas).length) return set;
-  for (const e of reglas.excepcionesPorRuta || []) if (e.archivo === archivoRel) e.categorias.forEach((c) => set.add(c));
+  for (const e of reglas.excepcionesPorRuta || []) if (e.archivo === archivoRel) (e.categorias || []).forEach((c) => set.add(c));
+  return set;
+}
+/** Palabras exentas (en minúsculas) del check 05 para una página (Set). Ignora excepciones inválidas. */
+function terminosExentosPorRuta(reglas, archivoRel) {
+  const set = new Set();
+  if (validarExcepcionesPorRuta(reglas).length) return set;
+  for (const e of reglas.excepcionesPorRuta || []) if (e.archivo === archivoRel) (e.terminos || []).forEach((t) => set.add(t.toLowerCase()));
   return set;
 }
 function frasesExentasPorRuta(reglas, archivoRel) {
@@ -369,7 +384,7 @@ function hrefCtaCoincide(href, aprobado, permitirTexto) {
 }
 
 module.exports = {
-  validarRutasConSectorPermitido, normLiteral, regexLiteral, contieneLiteral, construirArbol, descendientes, validarExcepcionesPorRuta, categoriasExentas, frasesExentasPorRuta, esCentinela, listaAprobada, normalizarSector, quitarFormatosWhatsapp, textoAuditable, lineaDeFragmento, hrefCtaCoincide, ROOT, leerReglas, listarArchivos, listarHtml, rel, leer, urlDePagina,
+  terminosExentosPorRuta, validarRutasConSectorPermitido, normLiteral, regexLiteral, contieneLiteral, construirArbol, descendientes, validarExcepcionesPorRuta, categoriasExentas, frasesExentasPorRuta, esCentinela, listaAprobada, normalizarSector, quitarFormatosWhatsapp, textoAuditable, lineaDeFragmento, hrefCtaCoincide, ROOT, leerReglas, listarArchivos, listarHtml, rel, leer, urlDePagina,
   enmascarar, sinComentariosScriptsEstilos, etiquetas, atributos, lineaDe, decodificar, aTexto,
   textoVisible, contenidoElemento, textoSinSrOnly, normalizar, normalizarPalabra, ramaObjetivo, Reporte,
 };

@@ -74,7 +74,9 @@ prueba('«clínica» BLOQUEADA en cualquier ruta', ['/', '/servicios', '/salud',
 prueba('«clínicas» BLOQUEADA también en /salud', bloqueado('Soluciones para clínicas.', 'clinica', '/salud'), true);
 prueba('«diagnóstico» BLOQUEADO en todo el sitio', ['/', '/servicios/auditoria-de-ia', '/como-trabajamos'].map((r) => bloqueado('Diagnóstico, prioridades y reglas de uso', 'salud-diagnostico', r)), [true, true, true]);
 prueba('«diagnóstico» negado baja a advertencia (no bloquea)', hits('La asistente virtual no hace diagnósticos.').includes('salud-diagnostico:a'), true);
-prueba('«cerrar ventas» (mención) es advertencia en v3, no bloqueante', hits('el tiempo que debería ir a cerrar ventas').includes('ventas-mencion:a'), true);
+for (const [t, id] of [['el tiempo que debería ir a cerrar ventas', 'ventas-mencion'], ['La asistente cierra tus ventas', 'ventas-cobros-inventario'], ['La asistente cierra ventas por ti', 'ventas-cobros-inventario'], ['Cerramos ventas por ti', 'ventas-mencion'], ['el cierre de ventas', 'ventas-mencion'], ['No cerramos ventas por ti', 'ventas-mencion'], ['Pedido confirmado ✅', 'ventas-cobros-inventario']])
+  prueba(`BLOQUEANTE (error) «${t}»`, bloqueado(t, id), true);
+prueba('ventas-mencion es bloqueante en la configuración', comp.patrones.find((r) => r.id === 'ventas-mencion').nivel, 'bloqueante');
 
 // ── 4c) permiteNegacion (opt-in): negaciones y preguntas permitidas, afirmaciones bloqueadas
 const PERMITE = comp.patrones.filter((r) => r.permiteNegacion).map((r) => r.id).sort();

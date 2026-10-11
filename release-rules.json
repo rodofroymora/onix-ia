@@ -380,11 +380,11 @@
     },
     {
       "id": "ventas-mencion",
-      "nivel": "advertencia",
+      "nivel": "bloqueante",
       "regex": "(?<![\\p{L}\\p{N}_])(?:cerrar ventas|cierre de ventas|cierra ventas|cerramos ventas)(?![\\p{L}\\p{N}_])",
       "flags": "giu",
       "ejemplo": "el tiempo que debería ir a cerrar ventas (contexto del equipo del cliente: solo aviso)",
-      "fuente": "v2.1: menciones o negaciones de cierre de ventas se revisan a mano"
+      "fuente": "Decisión de dirección 2026-10-10: «cerrar ventas», «cierra/cerramos ventas» y «cierre de ventas» son bloqueantes (también en negaciones o menciones). Antes v3 las dejaba como advertencia."
     },
     {
       "id": "integracion-automatica",
@@ -525,8 +525,19 @@
         "plazos",
         "fechas"
       ],
-      "explicacion": "Excepción POR RUTA, no una aprobación general. El aviso de privacidad redactado por Legal contiene cifras, plazos y fechas legítimos (p. ej. «12 meses», «3 años», «20 días», «15 días», «20 de marzo de 2025»). Solo en el archivo aviso-de-privacidad.html se omiten: (cifras) el check 01 de cifras y las frases porcentaje, multiplicador y conteo-clientes; (plazos) el check 01 de plazos y las frases plazo-numerico y 24-7; (fechas) reservada, hoy ningún check detecta fechas. NO se exceptúan precios, sectores (p. ej. «salud»), WhatsApp, CTA, textos obligatorios ni el resto de las frases prohibidas. En ninguna otra página aplica. Las guardas están en scripts/checks/lib.js (solo esa ruta, sin comodines, solo esas categorías).",
+      "explicacion": "Excepción POR RUTA, no una aprobación general. El aviso de privacidad redactado por Legal contiene cifras, plazos y fechas legítimos (p. ej. «12 meses», «3 años», «20 días», «15 días», «20 de marzo de 2025»). Solo en el archivo aviso-de-privacidad.html se omiten: (cifras) el check 01 de cifras y las frases porcentaje, multiplicador y conteo-clientes; (plazos) el check 01 de plazos y las frases plazo-numerico y 24-7; (fechas) reservada, hoy ningún check detecta fechas. NO se exceptúan precios, sectores (salvo las palabras «tratamiento» y «salud», ver la excepción siguiente), WhatsApp, CTA, textos obligatorios ni el resto de las frases prohibidas. En ninguna otra página aplica. Las guardas están en scripts/checks/lib.js (solo esa ruta, sin comodines, solo esas categorías).",
       "propuestoPor": "Arquitecto de soluciones",
+      "fecha": "2026-10-10"
+    },
+    {
+      "id": "aviso-de-privacidad-tratamiento-salud",
+      "archivo": "aviso-de-privacidad.html",
+      "terminos": [
+        "tratamiento",
+        "salud"
+      ],
+      "explicacion": "Excepción POR RUTA y por PALABRA (decisión de dirección 2026-10-10). El aviso de privacidad usa legítimamente «tratamiento» («Finalidades del tratamiento») y «salud» («datos personales sensibles, como datos de salud»). Solo en el archivo aviso-de-privacidad.html, el check 05 omite la coincidencia que sea EXACTAMENTE «tratamiento» o «salud» (reglas salud-lenguaje-legal y sector-fuera-de-ruta). Siguen bloqueadas en esa página todas las demás palabras y frases (clínica/clínicas, diagnóstico, consultorio, paciente, «profesionales de la salud», «expediente clínico», «orientación médica», etc.) y «tratamiento»/«salud» en cualquier otra página. Las guardas están en scripts/checks/lib.js (solo esa ruta, sin comodines, solo esas dos palabras).",
+      "propuestoPor": "Dirección",
       "fecha": "2026-10-10"
     }
   ],

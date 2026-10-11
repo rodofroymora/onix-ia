@@ -24,7 +24,8 @@
  *   Las afirmaciones siguen bloqueadas. Reglas sin el flag no se afectan.
  *
  * rutasConSectorPermitido (v3): cada término es bloqueante salvo en la ruta indicada (o subrutas «/ruta/…»).
- * excepcionesPorRuta: en el archivo indicado se omiten las frases de las categorías exentas (ver lib.js).
+ * excepcionesPorRuta: en el archivo indicado se omiten las frases de las categorías exentas y las coincidencias que
+ * sean EXACTAMENTE una palabra de "terminos" (hoy «tratamiento» y «salud» en aviso-de-privacidad.html; ver lib.js).
  * Node 20, sin dependencias.
  */
 const L = require('./lib');
@@ -146,6 +147,7 @@ function permitidaPorNegacion(patron, texto, idx, len, cfg) {
  * Revisa un texto. Devuelve [{id, nivel, coincidencia, inicio, fin, contexto, fuente}] con las propiedades
  * `.permitidas` (coincidencias permitidas por permiteNegacion) y `.exentas` (reglas omitidas por excepción de ruta).
  * `opciones.exentas`: Set de ids de frases omitidas (excepción por ruta, ver lib.frasesExentasPorRuta).
+ * `opciones.terminos`: Set de palabras (minúsculas) cuya coincidencia exacta se omite (ver lib.terminosExentosPorRuta).
  */
 function revisarTexto(texto, comp, urlPagina = null, opciones = {}) {
   const limpio = enmascararExcepciones(texto, comp.mascaras);
@@ -163,6 +165,7 @@ function revisarTexto(texto, comp, urlPagina = null, opciones = {}) {
       const permitida = permitidaPorNegacion(p, limpio, m.index, m[0].length, comp.negacion);
       if (permitida) { permitidas.push({ id: p.id, motivo: permitida, coincidencia: m[0].trim() }); continue; }
       const k = m[0].toLowerCase();
+      if (opciones.terminos && opciones.terminos.has(k.trim())) { exentas.push(p.id + ':' + k.trim()); continue; }
       if (!vistos.has(k)) {
         vistos.add(k);
         const ini = Math.max(0, m.index - 30);
@@ -197,7 +200,9 @@ if (require.main === module) {
     const html = L.leer(f);
     const exentas = L.frasesExentasPorRuta(reglas, nombre);
     if (exentas.size) R.nota(`${nombre}: excepción por ruta activa para las frases: ${[...exentas].join(', ')}.`);
-    const hallazgos = revisarTexto(L.textoAuditable(html), comp, L.urlDePagina(f), { exentas });
+    const terminos = L.terminosExentosPorRuta(reglas, nombre);
+    if (terminos.size) R.nota(`${nombre}: excepción por ruta activa para las palabras: ${[...terminos].join(', ')}.`);
+    const hallazgos = revisarTexto(L.textoAuditable(html), comp, L.urlDePagina(f), { exentas, terminos });
     for (const p of hallazgos.permitidas) R.nota(`${nombre}: [${p.id}] "${p.coincidencia}" permitida (${p.motivo}).`);
     for (const h of hallazgos) {
       const linea = L.lineaDeFragmento(html, h.coincidencia);

@@ -125,7 +125,28 @@ prueba('01: sin la excepción, el aviso falla', run({ [AV]: completa(LEGAL) }, '
 prueba('01: cifras (porcentaje) exentas en el aviso', run({ [AV]: completa('<p>Hasta 30% de los casos.</p>') }, '01-cifras-consistencia.js'), 0);
 prueba('01: la excepción NO cubre precios en el aviso', run({ [AV]: completa('<p>Cuesta $5,000 MXN.</p>') }, '01-cifras-consistencia.js'), 1);
 prueba('01: la excepción NO cubre sectores en el aviso', run({ [AV]: completa('<p>Servicios para despachos.</p>') }, '01-cifras-consistencia.js'), 1);
-prueba('05: la excepción NO cubre «salud» en el aviso (sector-fuera-de-ruta: queda como violación)', run({ [AV]: completa('<p>No pedimos datos de salud.</p>') }, '05-frases-prohibidas.js'), 1);
+// Excepción por palabra («tratamiento», «salud») SOLO en el aviso de privacidad
+const TXT = '<p>Finalidades del tratamiento. Datos personales sensibles, como datos de salud.</p>';
+prueba('config real: términos exentos en el aviso', [...L.terminosExentosPorRuta(base, AV)].sort(), ['salud', 'tratamiento']);
+prueba('config real: ninguna otra página tiene términos exentos', [...L.terminosExentosPorRuta(base, 'index.html')], []);
+prueba('05: «tratamiento» y «salud» pasan en el aviso', run({ [AV]: completa(TXT) }, '05-frases-prohibidas.js'), 0);
+prueba('05: «Tratamiento»/«SALUD» (mayúsculas) también pasan en el aviso', run({ [AV]: completa('<p>Tratamiento. SALUD.</p>') }, '05-frases-prohibidas.js'), 0);
+const T1 = '<p>Finalidades del tratamiento.</p>', T2 = '<p>Datos personales sensibles, como datos de salud.</p>';
+const cada = (archivo, aj) => [run({ [archivo]: completa(T1) }, '05-frases-prohibidas.js', aj), run({ [archivo]: completa(T2) }, '05-frases-prohibidas.js', aj)];
+prueba('05: «tratamiento» y «salud» (cada una por separado) pasan en el aviso', cada(AV), [0, 0]);
+prueba('05: cada término FALLA por separado en index.html', cada('index.html'), [1, 1]);
+prueba('05: cada término FALLA por separado en servicios/contabilidad-asistida.html', cada('servicios/contabilidad-asistida.html'), [1, 1]);
+prueba('05: cada término FALLA en una página de nombre parecido (mi-aviso-de-privacidad.html)', cada('mi-aviso-de-privacidad.html'), [1, 1]);
+prueba('05: cada término FALLA en aviso-de-privacidad/otra.html (no es la ruta exacta)', cada('aviso-de-privacidad/otra.html'), [1, 1]);
+prueba('05: sin la excepción de términos, el aviso falla con cada término', cada(AV, (r) => { r.excepcionesPorRuta = r.excepcionesPorRuta.filter((e) => !e.terminos); }), [1, 1]);
+prueba('05: en /salud pasa «salud» pero «tratamiento» sigue fallando', run({ 'salud.html': completa('<p>Finalidades del tratamiento.</p>') }, '05-frases-prohibidas.js'), 1);
+for (const [t, esperado] of [['clínica', 'clinica'], ['clínicas', 'clinica'], ['diagnóstico', 'salud-diagnostico'], ['consultorio', 'sector-fuera-de-ruta'], ['pacientes', 'sector-fuera-de-ruta'], ['profesionales de la salud', 'sector-fuera-de-ruta'], ['expediente clínico', 'salud-lenguaje-legal'], ['orientación médica', 'salud-lenguaje-legal'], ['doctor virtual', 'salud-doctor-virtual'], ['Pedido confirmado', 'ventas-cobros-inventario'], ['cerrar ventas', 'ventas-mencion'], ['Resultados garantizados', 'garantia']])
+  prueba(`05: «${t}» sigue FALLANDO en el aviso (${esperado})`, run({ [AV]: completa(`<p>Finalidades del tratamiento y datos de salud. ${t}.</p>`) }, '05-frases-prohibidas.js'), 1);
+prueba('05: «tratamiento de salud» (frase más larga con otra regla) no se exime por completo', run({ [AV]: completa('<p>Atención médica y tratamiento.</p>') }, '05-frases-prohibidas.js'), 1);
+prueba('guarda: términos fuera de la lista no son exceptuables', L.validarExcepcionesPorRuta({ excepcionesPorRuta: [{ id: 'x', archivo: AV, terminos: ['clínica'] }] }).length, 1);
+prueba('guarda: términos en otra ruta no son exceptuables', L.validarExcepcionesPorRuta({ excepcionesPorRuta: [{ id: 'x', archivo: 'index.html', terminos: ['salud'] }] }).length, 1);
+prueba('guarda: excepción sin categorias ni terminos es error', L.validarExcepcionesPorRuta({ excepcionesPorRuta: [{ id: 'x', archivo: AV }] }).length, 1);
+prueba('guarda: términos inválidos no eximen nada', [...L.terminosExentosPorRuta({ excepcionesPorRuta: [{ id: 'x', archivo: AV, terminos: ['clínica'] }] }, AV)], []);
 prueba('05: «salud» pasa en /salud (salud.html)', run({ 'salud.html': completa('<p>Asistentes para tu consultorio de salud.</p>') }, '05-frases-prohibidas.js'), 0);
 prueba('05: «salud» pasa en /salud/preguntas', run({ 'salud/preguntas.html': completa('<p>Salud</p>') }, '05-frases-prohibidas.js'), 0);
 prueba('05: «salud» FALLA en otra página', run({ 'servicios.html': completa('<p>Soluciones de salud para PYMES.</p>') }, '05-frases-prohibidas.js'), 1);

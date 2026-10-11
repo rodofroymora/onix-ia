@@ -54,13 +54,14 @@ const casos = [
   ['Resultados garantizados', 'falla', 'garantia'],
   ['Pedido confirmado', 'falla', 'ventas-cobros-inventario'],
   ['Escríbenos por WhatsApp', 'pasa'],
+  // NOTA: «cerrar ventas» y sus formas (ventas-mencion) pasaron de 'aviso' (v3) a 'falla' por decisión de dirección 2026-10-10.
   // v2.1 (hallazgos de la revisión del PR #7)
   ['Esto no es una certificación.', 'aviso', 'certificacion-revisar', 'certificación'],
   ['Calculamos tu IVA cada mes.', 'falla', 'impuestos-calculo'],
   ['Calculamos tus impuestos.', 'falla', 'impuestos-calculo'],
-  ['Las preguntas de siempre consumen el tiempo que debería ir a cerrar ventas.', 'aviso', 'ventas-mencion'],
-  ['La asistente virtual no cierra ventas ni cobra.', 'aviso', 'ventas-mencion'],
-  ['No cerramos ventas por ti.', 'aviso', 'ventas-mencion'],
+  ['Las preguntas de siempre consumen el tiempo que debería ir a cerrar ventas.', 'falla', 'ventas-mencion'],
+  ['La asistente virtual no cierra ventas ni cobra.', 'falla', 'ventas-mencion'],
+  ['No cerramos ventas por ti.', 'falla', 'ventas-mencion'],
   ['La asistente cierra ventas por ti.', 'falla', 'ventas-cobros-inventario'],
   ['¿Esta auditoría me da una certificación ISO? No. Es una revisión alineada a esos marcos.', 'aviso', 'certificacion-revisar'],
   ['Somos una empresa certificada en ISO/IEC 27001.', 'falla', 'certificacion-afirmada'],
