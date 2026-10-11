@@ -98,9 +98,11 @@
     ]
   },
   "robots": {
-    "_NOTA": "Regla de indexación esperada según la rama BASE del PR (o CHECK_BRANCH). 'noindex' = header X-Robots-Tag noindex en vercel.json + robots.txt Disallow:/ ; 'index' = sin noindex en el sitio. TODO (dueño del sitio): confirmar 'main' (producción) = 'index' para salir a buscadores.",
-    "dev": "noindex",
+    "_NOTA": "Regla de indexación del FUENTE del repo (rama BASE del PR o CHECK_BRANCH). El fuente es indexable en dev Y en main ('index'): páginas sin <meta name=\"robots\" content=\"noindex\">, robots.txt sin «Disallow: /» y con «Sitemap: <robots.sitemapUrl>» (bloqueante), sitemap.xml presente, y vercel.json sin header X-Robots-Tag noindex. DEV sigue siendo noindex, pero se inyecta AL DESPLEGAR (scripts/prepare-deploy.js con DEPLOY_ENV=dev: robots.txt «Disallow: /», header X-Robots-Tag y meta noindex en el paquete) y el workflow lo verifica con curl; nunca se aplica con DEPLOY_ENV=prod. El valor 'noindex' sigue siendo válido para el check 04 (exige noindex en el fuente) pero ya no se usa. La excepción /salud está en rutasNoindex.",
+    "dev": "index",
     "main": "index",
+    "sitemapUrl": "https://www.onix-ia.com/sitemap.xml",
+    "_sitemapUrl_NOTA": "URL del sitemap que robots.txt DEBE referenciar con «Sitemap: …» (check 04, BLOQUEANTE en dev y en main, sobre el robots.txt del fuente; el «Disallow: /» que DEV inyecta al desplegar no cuenta). sitemap.xml debe existir en la raíz y todas sus <loc> deben estar en el mismo host. Host = el de las <loc> y los canonical (www); el apex onix-ia.com redirige 308 a www.",
     "rutasNoindex": [
       "/salud"
     ],

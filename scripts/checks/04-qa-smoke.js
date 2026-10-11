@@ -3,7 +3,8 @@
 /**
  * Check 4 · QA smoke: por página <html lang>, <title>, meta description, exactamente un <h1>,
  * imágenes con alt, sin texto residual (TODO / lorem / placeholder...), y regla de robots/noindex
- * según la rama (release-rules.json → robots.dev / robots.main). robots.rutasNoindex (solo /salud) permite que esa
+ * según la rama (release-rules.json → robots.dev / robots.main). Hoy ambas son "index": el FUENTE es indexable en dev y
+ * en main; el noindex de DEV se inyecta al desplegar (scripts/prepare-deploy.js, DEPLOY_ENV=dev). robots.rutasNoindex (solo /salud) permite que esa
  * ruta sea noindex en una rama indexable; cualquier otra página o header noindex sigue fallando.
  * Rama: CHECK_BRANCH, o GITHUB_BASE_REF (PR), o GITHUB_REF_NAME, o rama git actual.
  */
@@ -127,8 +128,31 @@ if (!rama) {
       // robots.rutasNoindex: solo /salud puede ser noindex; todo lo demás sigue fallando.
       const otrasPaginas = paginasNoindex.filter((p) => !paginasNoindexPermitidas.includes(p));
       if (paginasNoindexPermitidas.length || headersNoindexPermitidos.length) R.nota(`robots.rutasNoindex (${(esperadoCfg.rutasNoindex || []).join(', ')}): noindex permitido solo en ${[...paginasNoindexPermitidas, ...headersNoindexPermitidos.map((x) => 'header ' + x)].join(', ')}. /salud NO debe ir a main sin revisión de un abogado humano y el OK escrito del dueño del sitio.`);
-      if (headersNoindexOtros.length) R.error('vercel.json', null, `Rama "${clave}" debe ser indexable ("index") pero vercel.json envía X-Robots-Tag noindex en: ${headersNoindexOtros.map((x) => JSON.stringify(x)).join(', ')}. Al promover a producción onix-ia.com quedaría fuera de Google. Solo se permite noindex acotado a las rutas de robots.rutasNoindex. Requiere decisión del dueño del sitio: ajustar antes del release.`);
+      if (headersNoindexOtros.length) R.error('vercel.json', null, `Rama "${clave}" debe ser indexable ("index") pero vercel.json envía X-Robots-Tag noindex en: ${headersNoindexOtros.map((x) => JSON.stringify(x)).join(', ')}. Quedaría fuera de Google. (DEV recibe su noindex al desplegar con DEPLOY_ENV=dev, no en el fuente.) Solo se permite noindex acotado a las rutas de robots.rutasNoindex. Requiere decisión del dueño del sitio: ajustar antes del release.`);
       if (disallowTodo) R.error('robots.txt', null, `Rama "${clave}" debe ser indexable pero robots.txt tiene "Disallow: /".`);
+      // Fuente production-ready (BLOQUEANTE, igual en dev y en main): sitemap.xml existe y robots.txt lo referencia con una
+      // línea «Sitemap: <URL absoluta https …/sitemap.xml>» (si release-rules.json → robots.sitemapUrl está definida, debe ser exactamente esa).
+      // Se evalúa sobre el robots.txt del FUENTE; el «Disallow: /» que DEV inyecta al desplegar no pasa por aquí.
+      const sitemapCfg = esperadoCfg.sitemapUrl;
+      if (sitemapCfg !== undefined && !(typeof sitemapCfg === 'string' && /^https:\/\/[^\s/]+\/sitemap\.xml$/.test(sitemapCfg))) R.error('release-rules.json', null, 'robots.sitemapUrl debe ser una URL absoluta https que termine en /sitemap.xml (p. ej. https://www.onix-ia.com/sitemap.xml).');
+      const sm = path.join(L.ROOT, 'sitemap.xml');
+      const smTxt = fs.existsSync(sm) ? L.leer(sm) : null;
+      if (smTxt === null) R.error('sitemap.xml', null, `Rama "${clave}" debe ser indexable: falta sitemap.xml en la raíz.`);
+      else if (!/<(urlset|sitemapindex)\b/i.test(smTxt)) R.error('sitemap.xml', null, 'sitemap.xml no es válido: falta <urlset> (o <sitemapindex>).');
+      if (!fs.existsSync(rt)) R.error('robots.txt', null, `Rama "${clave}" debe ser indexable: falta robots.txt en la raíz (con «Sitemap: …»).`);
+      else {
+        const urls = [...L.leer(rt).matchAll(/^[ \t]*sitemap:[ \t]*(\S+)[ \t]*$/gim)].map((m) => m[1]);
+        if (!urls.length) R.error('robots.txt', null, `Rama "${clave}" debe ser indexable: robots.txt debe referenciar el sitemap con una línea «Sitemap: ${typeof sitemapCfg === 'string' ? sitemapCfg : 'https://…/sitemap.xml'}».`);
+        else if (typeof sitemapCfg === 'string' && !urls.includes(sitemapCfg)) R.error('robots.txt', null, `robots.txt referencia ${urls.map((u) => JSON.stringify(u)).join(', ')} pero release-rules.json → robots.sitemapUrl es ${JSON.stringify(sitemapCfg)}.`);
+        else if (typeof sitemapCfg !== 'string' && !urls.some((u) => /^https:\/\/[^\s/]+\/sitemap\.xml$/.test(u))) R.error('robots.txt', null, 'robots.txt: la línea «Sitemap:» debe ser una URL absoluta https que termine en /sitemap.xml.');
+        // Coherencia de host: todas las <loc> del sitemap deben estar en el mismo host que la URL del sitemap (evita mezclar www y apex).
+        if (smTxt !== null && urls.length) {
+          const host = (u) => { try { return new URL(u).host; } catch (_) { return null; } };
+          const h0 = host(typeof sitemapCfg === 'string' ? sitemapCfg : urls[0]);
+          const otros = [...new Set([...smTxt.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/gi)].map((m) => host(m[1])).filter((h) => h !== h0))];
+          if (otros.length) R.error('sitemap.xml', null, `Las <loc> de sitemap.xml deben estar en el host ${h0}; hay otros hosts: ${otros.join(', ')}.`);
+        }
+      }
       if (otrasPaginas.length) R.error(null, null, `Rama "${clave}" debe ser indexable pero ${otrasPaginas.length} página(s) tienen <meta name="robots" content="noindex">: ${otrasPaginas.join(', ')}.`);
     }
   }

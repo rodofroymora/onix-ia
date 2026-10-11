@@ -7,7 +7,7 @@ Sitio estático (HTML/CSS/JS, **sin build**) de ÓNIX, consultora de IA y datos.
 - `site.css`, `servicios.css`, `motion.js`, `nav.js`, `fonts/` — estilos, scripts y tipografías.
 - `vercel.json` — `cleanUrls`, headers y `git.deploymentEnabled.main=false` (merge a `main` **no** publica).
 - `release-rules.json` — cifras, plazos, precios, sectores y CTA aprobados (aprobados por el responsable de contenido).
-- `scripts/checks/` — checks automáticos (Node 20, sin dependencias). `scripts/prepare-deploy.js` — deja solo archivos públicos en CI.
+- `scripts/checks/` — checks automáticos (Node 20, sin dependencias). `scripts/prepare-deploy.js` — deja solo archivos públicos en CI y, según `DEPLOY_ENV` (`dev`/`prod`), inyecta noindex (DEV) o verifica que el paquete sea indexable (PROD); `scripts/verify-deploy.js` — verifica la indexación ya desplegada.
 - `.github/` — workflows (`pr-checks`, `deploy-dev`, `promote-prod`), plantilla de PR, CODEOWNERS.
 
 ## Flujo en una línea
