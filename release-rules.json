@@ -577,8 +577,8 @@
       {
         "id": "demo-datos-ficticios",
         "aplicaA": "paginasDemo",
-        "texto": "Datos ficticios, no escribas datos reales",
-        "explicacion": "Toda página demo debe avisar que los datos son ficticios."
+        "texto": "Demostración con información de ejemplo. Por favor, no incluyas datos personales reales.",
+        "explicacion": "Toda página demo debe llevar esta leyenda literal (mayúsculas, acentos y puntuación exactos). La leyenda anterior ya no se acepta."
       },
       {
         "id": "aviso-contable",
