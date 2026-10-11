@@ -107,7 +107,9 @@ jobs:
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Dejar solo archivos públicos
+      - name: Dejar solo archivos públicos (PROD no incluye demos/)
+        env:
+          DEPLOY_ENV: prod
         run: node scripts/prepare-deploy.js
 
       - name: vercel pull (production)

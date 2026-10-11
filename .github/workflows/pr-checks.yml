@@ -76,6 +76,9 @@ jobs:
       - name: Pruebas de textos obligatorios y excepción por ruta
         run: node scripts/tests/textos-y-rutas.test.js
 
+      - name: Pruebas del paquete de deploy (DEV con demos y noindex; PROD sin demos)
+        run: node scripts/tests/deploy-demos.test.js
+
       - name: Resumen
         if: always()
         env:
