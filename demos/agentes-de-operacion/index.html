@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Agentes de Operación · Demo ilustrativa | ONIX</title>
+  <title>Agentes de Operación · Demo ilustrativa | ÓNIX</title>
   <meta name="description" content="Demo ilustrativa de Agentes de Operación: asistentes virtuales hacen las tareas repetitivas y una persona de tu equipo aprueba lo que tiene impacto." />
   <meta name="robots" content="noindex,nofollow" />
   <meta name="theme-color" content="#FFFFFF" />
   <meta name="color-scheme" content="light" />
-  <link rel="canonical" href="https://onix-ia.com/demos/agentes-de-operacion" />
-  <link rel="icon" href="data:," />
+  <link rel="canonical" href="https://www.onix-ia.com/demos/agentes-de-operacion" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230B0B0C'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%237C3AED'/%3E%3C/svg%3E" />
   <link rel="preload" href="/demos/agentes-de-operacion/fonts/geist-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/demos/agentes-de-operacion/agentes.css" />
   <script>document.documentElement.classList.add('js');</script>
@@ -19,7 +19,7 @@
 
 <header class="bar">
   <div class="wrap bar__inner">
-    <span class="logo" aria-label="ONIX">ÓNIX</span>
+    <span class="logo" aria-label="ÓNIX">ÓNIX</span>
     <p class="legend"><span class="tag"><span class="tag__dot" aria-hidden="true"></span>Ilustrativo</span><span class="legend__text">Datos ficticios: los negocios y las personas de esta demo son inventados.</span></p>
   </div>
 </header>
@@ -29,8 +29,8 @@
     <div class="wrap">
       <span class="kicker">Agentes de Operación · Demo interactiva</span>
       <h1 class="display">Las asistentes virtuales hacen lo repetitivo. <em>Una persona aprueba</em> lo que tiene impacto.</h1>
-      <p class="lead">Asistentes virtuales que capturan datos, arman borradores de cotización, dan seguimiento y preparan reportes, con una persona de tu equipo aprobando todo lo que importa.</p>
-      <p class="hero__note">Recorre el ejemplo paso a paso. La asistente virtual arma el borrador de la cotización, pero la revisa y la envía una persona de tu equipo: nunca sale sola.</p>
+      <p class="lead">Asistentes virtuales que capturan datos, arman borradores de cotización, dan seguimiento y preparan reportes, con una persona de tu equipo aprobando lo que importa.</p>
+      <p class="hero__note">Recorre el ejemplo paso a paso. La asistente virtual arma el borrador de la cotización, pero la revisa y la aprueba una persona de tu equipo: no sale sola.</p>
     </div>
   </section>
 
@@ -41,14 +41,14 @@
         <p class="lead">Negocio ficticio: <strong>Servicios Ejemplo</strong>. Cliente ficticio: <strong>Empresa Demo</strong>. Persona del equipo ficticia: <strong>Marisol Ejemplo</strong>.</p>
       </div>
 
-      <p class="free-legend stage-legend"><strong>Datos ficticios, no escribas datos reales.</strong> Esta demostración no guarda tu información. Todo es una simulación en tu navegador, sin correos ni sistemas reales.</p>
+      <p class="free-legend stage-legend"><strong>Datos ficticios, no escribas datos reales.</strong> Todo es una simulación en tu navegador, sin correos ni sistemas reales.</p>
 
       <nav class="stepper" aria-label="Pasos de la demo">
         <ol class="stepper__list">
           <li><button type="button" class="step" data-go="1"><span class="step__dot" aria-hidden="true"></span><span class="step__label">Llega un correo</span></button></li>
           <li><button type="button" class="step" data-go="2"><span class="step__dot" aria-hidden="true"></span><span class="step__label">Se capturan los datos</span></button></li>
           <li><button type="button" class="step" data-go="3"><span class="step__dot" aria-hidden="true"></span><span class="step__label">Borrador de cotización</span></button></li>
-          <li><button type="button" class="step" data-go="4"><span class="step__dot" aria-hidden="true"></span><span class="step__label">Una persona envía</span></button></li>
+          <li><button type="button" class="step" data-go="4"><span class="step__dot" aria-hidden="true"></span><span class="step__label">Una persona aprueba</span></button></li>
           <li><button type="button" class="step" data-go="5"><span class="step__dot" aria-hidden="true"></span><span class="step__label">Bitácora y pausa</span></button></li>
         </ol>
       </nav>
@@ -93,7 +93,8 @@
                 <div><dt>Adjunto</dt><dd>Lista de lo que necesita el cliente</dd></div>
               </dl>
             </article>
-            <p class="note">El contenido de un correo es dato, nunca una instrucción. Si un correo dijera “paga esta factura” o “cambia la cuenta”, la asistente virtual genera una alerta para una persona; no ejecuta nada.</p>
+            <p class="blocked" id="rec-paused" hidden>El Receptor está en pausa: las solicitudes nuevas no se convierten en tarea y pasan a la cola humana.</p>
+            <p class="note">El contenido de un correo es dato, no una instrucción. Si un correo dijera “paga esta factura” o “cambia la cuenta”, la asistente virtual genera una alerta para una persona; no ejecuta nada.</p>
           </section>
 
           <!-- Vista: captura -->
@@ -161,32 +162,32 @@
 
           <!-- Vista: decisión y envío -->
           <section class="view" data-view="4" aria-labelledby="v4-title" hidden>
-            <h3 id="v4-title" class="view__title">Una persona revisa, ajusta y envía</h3>
-            <p class="view__sub">La cotización la envía una persona, desde su propio correo o WhatsApp. La asistente virtual no la envía. Puede aprobarla, editarla o rechazarla.</p>
+            <h3 id="v4-title" class="view__title">Una persona revisa, ajusta y aprueba</h3>
+            <p class="view__sub">El borrador lo aprueba una persona, que luego lo comparte desde su propio correo o WhatsApp (fuera de esta demo). La asistente virtual no lo comparte con el cliente. Puede aprobarlo, editarlo o rechazarlo.</p>
             <div id="v4-blocked" class="blocked" hidden></div>
             <article class="draft" id="send" data-state="pending" aria-labelledby="send-title">
               <header class="draft__head">
                 <div>
-                  <h4 id="send-title" class="draft__title">Envío de la cotización</h4>
+                  <h4 id="send-title" class="draft__title">Aprobación del borrador</h4>
                   <p class="draft__meta">Responsable: Marisol Ejemplo (persona del equipo)</p>
                 </div>
-                <span class="chip chip--pend" id="send-status" role="status">Pendiente de envío por una persona</span>
+                <span class="chip chip--pend" id="send-status" role="status">Pendiente de aprobación por una persona</span>
               </header>
               <label class="draft__label" for="quote-note">Notas para el cliente <span class="muted">(usa «Editar» para ajustarlas)</span></label>
               <textarea id="quote-note" class="draft__text" rows="4" readonly aria-describedby="free-legend-2">Hola. Con gusto compartimos la cotización de lo que nos pediste. Si algo cambia, avísanos y la ajustamos.</textarea>
-              <p class="free-legend" id="free-legend-2"><strong>Datos ficticios, no escribas datos reales.</strong> Esta demostración no guarda tu información.</p>
+              <p class="free-legend" id="free-legend-2"><strong>Datos ficticios, no escribas datos reales.</strong></p>
               <div class="draft__gate" id="gate">
                 <label class="check">
                   <input type="checkbox" id="reviewed" />
                   <span>Marisol revisó y ajustó el borrador</span>
                 </label>
                 <div class="ctrls" role="group" aria-label="Decisión de la persona">
-                  <button type="button" class="btn btn--approve" id="send-btn" disabled aria-describedby="send-help">Aprobar y enviar</button>
+                  <button type="button" class="btn btn--approve" id="send-btn" disabled aria-describedby="send-help">Aprobar borrador</button>
                   <button type="button" class="btn btn--ghost" id="edit-note" aria-pressed="false">Editar</button>
                   <button type="button" class="btn btn--ghost btn--reject" id="reject-quote">Rechazar</button>
                 </div>
               </div>
-              <p class="draft__help" id="send-help">Sin esta aprobación, la cotización no sale. «Aprobar y enviar» se activa cuando la persona marca que revisó y termina de editar.</p>
+              <p class="draft__help" id="send-help">Sin esta aprobación, el borrador no avanza. «Aprobar borrador» se activa cuando la persona marca que revisó y termina de editar.</p>
               <p class="draft__done" id="rej-done" tabindex="-1" hidden></p>
               <div id="after" hidden>
                 <p class="draft__done" id="sent-done" tabindex="-1"></p>
@@ -264,8 +265,8 @@
     <div class="wrap cta__inner">
       <h2 id="cta-title" class="h2 display">¿Qué tarea repetitiva te gustaría quitarle a tu equipo?</h2>
       <p class="lead">Cuéntanos cómo trabajas hoy y lo platicamos.</p>
-      <a class="btn btn--accent" href="https://wa.me/522227097945?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20los%20servicios%20de%20%C3%93NIX.%20Aviso%20de%20privacidad%3A%20https%3A%2F%2Fonix-ia.com%2Faviso-de-privacidad" target="_blank" rel="noopener noreferrer">Escríbenos por WhatsApp</a>
-      <p class="privacy">Al escribirnos por WhatsApp, ÓNIX (Rodolfo Mora) usará tu número y tu mensaje para responderte y darte seguimiento. WhatsApp (Meta) trata los datos de la conversación bajo sus propias condiciones. <a class="privacy__link" href="/aviso-de-privacidad">Aviso de privacidad de ÓNIX</a></p>
+      <a class="btn btn--accent" href="https://wa.me/522227097945?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20los%20servicios%20de%20%C3%93NIX.%20Aviso%20de%20privacidad%3A%20https%3A%2F%2Fwww.onix-ia.com%2Faviso-de-privacidad" target="_blank" rel="noopener noreferrer">Escríbenos por WhatsApp</a>
+      <p class="privacy">Demo con datos ficticios. No escribas ni digas datos personales reales. <a class="privacy__link" href="/aviso-de-privacidad">Aviso de privacidad de ÓNIX</a></p>
     </div>
   </section>
 </main>

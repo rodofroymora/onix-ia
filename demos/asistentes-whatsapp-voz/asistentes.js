@@ -27,13 +27,12 @@
       { k: 'w8', s: 3, side: 'in', who: 'Andrés Demo', text: 'Quiero una cita el martes.' },
       { k: 'w9', s: 3, side: 'ai', who: 'Asistente virtual', text: 'Con gusto la anoto. ¿La prefieres en la mañana o en la tarde?' },
       { k: 'w10', s: 3, side: 'in', who: 'Andrés Demo', text: 'En la tarde.' },
-      { k: 'w11', s: 3, side: 'ai', who: 'Asistente virtual', text: 'Queda anotado y se lo mando al equipo de Negocio Ejemplo. La cita la confirma una persona del equipo; yo no puedo confirmarla.' },
+      { k: 'w11', s: 3, side: 'ai', who: 'Asistente virtual', text: 'Queda anotado y se lo mando a tu equipo. La cita la confirma una persona del equipo; yo no puedo confirmarla.' },
       { k: 'w12', s: 4, side: 'in', who: 'Andrés Demo', text: 'Mejor quiero hablar con una persona.' },
       { k: 'w13', s: 4, side: 'ai', who: 'Asistente virtual', text: 'Claro. Te paso con una persona del equipo y le comparto un resumen para que no repitas nada. Como ahora no están en línea, dejo tu recado y les aviso; no puedo prometerte cuándo te contestarán.' }
     ],
-    // [REVISIÓN ABOGADO] texto provisional: la apertura de voz definitiva queda pendiente de revisión; aquí va un saludo neutro.
     voice: [
-      { k: 'v1', s: 1, side: 'ai', who: 'Asistente virtual', text: 'Hola, soy la asistente virtual de Negocio Ejemplo. Si prefieres hablar con una persona, dímelo. ¿En qué te puedo ayudar?' },
+      { k: 'v1', s: 1, side: 'ai', who: 'Asistente virtual', text: 'Hola, soy la asistente virtual de Negocio Ejemplo. Esta llamada se transcribe para atenderte. Si prefieres que no se transcriba, o hablar con una persona, dime en cualquier momento. Tu aviso de privacidad está disponible en el sitio de Negocio Ejemplo; si quieres, te lo envío por mensaje.' },
       { k: 'v2', s: 1, side: 'in', who: 'Andrés Demo (cliente ficticio)', text: 'Hola, llamo para saber qué horarios tienen.' },
       { k: 'v3', s: 2, side: 'ai', who: 'Asistente virtual', text: 'Atendemos de lunes a viernes. Hoy es domingo, así que el equipo no está en línea.' },
       { k: 'v4', s: 2, side: 'in', who: 'Andrés Demo', text: '¿Y qué incluye la asesoría?' },
@@ -41,7 +40,7 @@
       { k: 'v6', s: 2, side: 'in', who: 'Andrés Demo', text: '¿Tienen estacionamiento?' },
       { k: 'v7', s: 2, side: 'ai', who: 'Asistente virtual', text: 'Ese dato no lo tengo aprobado y no quiero inventarlo. Lo paso al equipo para que te lo confirme.' },
       { k: 'v8', s: 3, side: 'in', who: 'Andrés Demo', text: 'Quiero una cita el martes, en la tarde.' },
-      { k: 'v9', s: 3, side: 'ai', who: 'Asistente virtual', text: 'Queda anotado y se lo mando al equipo de Negocio Ejemplo. La cita la confirma una persona del equipo; yo no puedo confirmarla.' },
+      { k: 'v9', s: 3, side: 'ai', who: 'Asistente virtual', text: 'Queda anotado y se lo mando a tu equipo. La cita la confirma una persona del equipo; yo no puedo confirmarla.' },
       { k: 'v10', s: 4, side: 'in', who: 'Andrés Demo', text: 'Prefiero hablar con una persona.' },
       { k: 'v11', s: 4, side: 'ai', who: 'Asistente virtual', text: 'Claro. Como ahora el equipo no está en línea, tomo tu recado con un resumen de lo que platicamos y aviso al equipo. No puedo prometerte cuándo te devolverán la llamada.' }
     ]
@@ -54,7 +53,7 @@
   var CH_NAME = { wa: 'WhatsApp', voice: 'voz' };
   var PAUSE_MSG = { wa: 'los mensajes nuevos pasan a la bandeja humana', voice: 'las llamadas nuevas pasan al desvío o al buzón' };
   function addLog(who, kind, text) { state.log.push({ who: who, kind: kind, text: text }); } // bitácora solo acumulativa
-  function maxStep() { return state.paused[state.channel] ? state.frozen[state.channel] : LAST; }
+  function chatStep() { return state.paused[state.channel] ? Math.min(state.step, state.frozen[state.channel]) : state.step; }
   state = fresh();
 
   var stage = $('#stage'), chat = $('#chat'), live = $('#live');
@@ -71,7 +70,8 @@
 
   function renderChat() {
     var voice = state.channel === 'voice';
-    var items = SCRIPT[state.channel].filter(function (m) { return m.s <= state.step; });
+    var cs = chatStep();
+    var items = SCRIPT[state.channel].filter(function (m) { return m.s <= cs; });
     var shown = {}, idx = 0;
     chat.textContent = '';
     chat.className = 'chat' + (voice ? ' is-voice' : '');
@@ -99,15 +99,15 @@
       chat.appendChild(node);
     });
     if (state.paused[state.channel]) {
-      var pz = el('div', 'chat__sys chat__sys--pend', 'Asistente virtual en pausa en ' + CH_NAME[state.channel] + ': ' + PAUSE_MSG[state.channel] + '. Esta conversación no avanza.');
+      var pz = el('div', 'chat__sys chat__sys--pend', 'Asistente virtual en pausa en ' + CH_NAME[state.channel] + ': ' + PAUSE_MSG[state.channel] + '. Esta conversación no avanza; el panel sigue disponible para revisar.');
       var pk = state.channel + 'pz';
       if (!state.seen[pk]) pz.classList.add('is-new');
       shown[pk] = true;
       chat.appendChild(pz);
     }
-    if (state.step >= 3) {
-      var s = el('div', 'chat__sys chat__sys--pend', state.step >= 4 ? 'Transferido con resumen. Esperando a una persona del equipo.' : 'Solicitud anotada. Pendiente de confirmación por una persona.');
-      var sk = state.channel + 'sys' + state.step;
+    if (cs >= 3) {
+      var s = el('div', 'chat__sys chat__sys--pend', cs >= 4 ? 'Transferido con resumen. Esperando a una persona del equipo.' : 'Solicitud anotada. Pendiente de confirmación por una persona.');
+      var sk = state.channel + 'sys' + cs;
       if (!state.seen[sk]) s.classList.add('is-new');
       shown[sk] = true;
       chat.appendChild(s);
@@ -141,7 +141,7 @@
     var bar = $('#pausebar');
     var cur = state.paused[state.channel];
     bar.hidden = !cur;
-    if (cur) bar.textContent = 'Asistente virtual en pausa en ' + CH_NAME[state.channel] + ': ' + PAUSE_MSG[state.channel] + '. Los pasos siguientes están desactivados hasta que una persona autorizada la reanude.';
+    if (cur) bar.textContent = 'Asistente virtual en pausa en ' + CH_NAME[state.channel] + ': ' + PAUSE_MSG[state.channel] + '. La conversación de este canal no avanza hasta que una persona autorizada la reanude; el panel sigue disponible para revisar.';
   }
   function renderLog() {
     var ol = $('#log');
@@ -155,10 +155,10 @@
       ol.appendChild(li);
     });
     var pend = $('#pend');
-    $$('li:not(.is-pending)', pend).forEach(function (n) { n.remove(); });
+    $$('li[data-dyn]', pend).forEach(function (n) { n.remove(); });
     ['wa', 'voice'].forEach(function (c) {
       if (!state.paused[c]) return;
-      var li = el('li', 'is-pending');
+      var li = el('li', 'is-pending'); li.setAttribute('data-dyn', '1');
       var a = el('div', 'log__actor'); a.appendChild(el('span', null, 'Persona autorizada')); a.appendChild(el('span', 'chip chip--pend', 'Pendiente'));
       li.appendChild(a); li.appendChild(el('span', null, 'Reanudar la asistente virtual en ' + CH_NAME[c] + '. Solo una persona autorizada puede hacerlo.'));
       pend.appendChild(li);
@@ -166,12 +166,10 @@
   }
 
   function render(announce) {
-    if (state.step > maxStep()) state.step = maxStep();
     var s = state.step;
     stage.setAttribute('data-step', String(s));
     $$('.step').forEach(function (b) {
       var n = Number(b.getAttribute('data-go'));
-      b.disabled = n > maxStep();
       if (n === s) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current');
       b.classList.toggle('is-done', n < s);
     });
@@ -182,10 +180,10 @@
     renderPause();
     renderLog();
     prevBtn.disabled = s === 1;
-    nextBtn.disabled = s >= maxStep();
+    nextBtn.disabled = s >= LAST;
     if (announce) live.textContent = (state.channel === 'voice' ? 'Por voz. ' : 'Por WhatsApp. ') + STEP_NAMES[s];
   }
-  function go(n) { state.step = Math.max(1, Math.min(maxStep(), n)); render(true); }
+  function go(n) { state.step = Math.max(1, Math.min(LAST, n)); render(true); }
 
   $$('.step').forEach(function (b) { b.addEventListener('click', function () { go(Number(b.getAttribute('data-go'))); }); });
   $$('.seg button').forEach(function (b) {
@@ -193,7 +191,14 @@
   });
   prevBtn.addEventListener('click', function () { go(state.step - 1); });
   nextBtn.addEventListener('click', function () { go(state.step + 1); });
-  resetBtn.addEventListener('click', function () { state = fresh(); render(false); live.textContent = 'Demo reiniciada. ' + STEP_NAMES[1]; });
+  resetBtn.addEventListener('click', function () {
+    var k = { log: state.log, paused: state.paused, frozen: state.frozen };
+    state = fresh();
+    state.log = k.log; state.paused = k.paused; state.frozen = k.frozen; // bitácora y pausas no se borran al reiniciar
+    addLog('Persona', 'persona', 'Reinició la demostración: el recorrido vuelve al inicio; la bitácora y las pausas se conservan.');
+    render(false);
+    live.textContent = 'Demo reiniciada. ' + STEP_NAMES[1];
+  });
 
   $$('[data-pause]').forEach(function (b) {
     b.addEventListener('click', function () {
@@ -204,7 +209,7 @@
       addLog('Calidad y bitácora', 'agente', 'Aplicó la pausa en ' + CH_NAME[c] + ': ' + PAUSE_MSG[c] + '.');
       render(false);
       $('[data-resume="' + c + '"]').focus();
-      live.textContent = 'Asistente virtual en pausa en ' + CH_NAME[c] + '. Los pasos siguientes están desactivados hasta que una persona autorizada la reanude.';
+      live.textContent = 'Asistente virtual en pausa en ' + CH_NAME[c] + '. La conversación de este canal no avanza hasta que una persona autorizada la reanude; el panel sigue disponible para revisar.';
     });
   });
   $$('[data-resume]').forEach(function (b) {

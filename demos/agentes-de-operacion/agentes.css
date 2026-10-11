@@ -129,7 +129,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .btn--approve:disabled { background: #D8D6CF; color: #55555C; cursor: not-allowed; }
 .btn--ghost { min-height: 44px; padding: .5rem 1.15rem; font-size: .9375rem; border: 1px solid #C9C6BD; color: var(--ink); background: var(--paper); }
 .btn--ghost:hover:not(:disabled) { border-color: var(--ink); }
-.btn--ghost:disabled { color: #8A8A92; border-color: var(--line); cursor: not-allowed; }
+.btn--ghost:disabled { color: #5F5F66; background: #EFEEE9; border-color: #C9C6BD; cursor: not-allowed; }
 .panel__nav { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem; margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--line); }
 
 /* Bitácora */
@@ -176,7 +176,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .chip--ejemplo { background: var(--paper); color: var(--ink); box-shadow: inset 0 0 0 1px #A8A59B; font-size: .75rem; padding: .1rem .55rem; vertical-align: middle; }
 .free-legend { margin-top: .75rem; padding: .55rem .8rem; border-left: 3px solid var(--pend-line); background: var(--pend-bg); color: var(--pend-fg); border-radius: 6px; font-size: .9rem; }
 .privacy { margin-top: 1.25rem; max-width: 40em; font-size: .9rem; line-height: 1.5; color: var(--on-dark-muted); }
-.privacy__link { color: var(--on-dark); text-decoration: underline; text-underline-offset: 3px; display: inline-block; min-height: 24px; }
+.privacy__link { color: var(--on-dark); text-decoration: underline; text-underline-offset: 3px; display: inline-flex; align-items: center; min-height: 44px; padding-block: .6rem; }
 .privacy__link:hover { color: #fff; text-decoration-thickness: 2px; }
 
 .chip--rej { background: #FEE2E2; color: #7F1D1D; box-shadow: inset 0 0 0 1px #DC2626; }
@@ -197,7 +197,9 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .agents { grid-template-columns: minmax(0, 1fr); }
 .log--pend li { background: #FFFDF7; }
 .btn:disabled { cursor: not-allowed; }
-.btn--ghost:disabled { opacity: .6; }
+
+@media (max-width: 380px) { .chip { white-space: normal; } }
+.agents__effect { flex-basis: 100%; font-size: .875rem; font-weight: 400; color: var(--pend-fg); }
 [hidden] { display: none !important; }
 
 /* ── Agentes de Operación: bandeja de correo ficticia y paneles ── */

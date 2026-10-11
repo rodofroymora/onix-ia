@@ -1,5 +1,5 @@
 /* Radar de Leads · demo ilustrativa. Estado simulado en el navegador, sin backend.
-   Todos los datos son ficticios. El primer contacto NUNCA se envía sin la aprobación explícita de una persona. */
+   Todos los datos son ficticios. El primer contacto solo se envía con la aprobación explícita de una persona. */
 (function () {
   'use strict';
   var $ = function (s, r) { return (r || document).querySelector(s); };
@@ -294,7 +294,10 @@
   prevBtn.addEventListener('click', function () { go(state.step - 1); });
   nextBtn.addEventListener('click', function () { go(state.step + 1); });
   resetBtn.addEventListener('click', function () {
+    var keepLog = state.log, keepPaused = state.paused;
     state = fresh();
+    state.log = keepLog; state.paused = keepPaused; // la bitácora y la pausa no se borran al reiniciar
+    addLog('Persona', 'persona', 'Reinició la demostración: el recorrido vuelve al inicio; la bitácora y la pausa se conservan.');
     render(false);
     live.textContent = 'Demo reiniciada. ' + STEP_NAMES[1];
   });
@@ -309,6 +312,7 @@
     if (locked()) return;
     if (!state.editing) {
       state.editing = true;
+      state.reviewed = false; // al entrar a Editar se vuelve a pedir la casilla de revisión
       renderApproval();
       ta.focus();
       live.textContent = 'Modo de edición. Cambia el mensaje y pulsa «Listo con la edición».';
