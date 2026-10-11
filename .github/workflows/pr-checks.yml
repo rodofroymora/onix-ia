@@ -61,6 +61,9 @@ jobs:
       - name: Pruebas de la regla CTA (WhatsApp con ?text=)
         run: node scripts/tests/cta-href.test.js
 
+      - name: Pruebas de la excepción «Contáctanos» (ancla interna)
+        run: node scripts/tests/cta-contactanos.test.js
+
       - name: Pruebas de reglas (centinela, sector exacto, WhatsApp, frases prohibidas)
         run: node scripts/tests/reglas.test.js
 

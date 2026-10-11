@@ -35,6 +35,7 @@ Nombre de la rama: `cambio/<corto>`, en minúsculas y con guiones, p. ej. `cambi
 ## Reglas
 - Nunca subas `.env*`, `.vercel/`, tokens o claves, ni los pegues en issues, PRs o comentarios.
 - **Excepción de formularios:** los botones de envío de formularios (`<button type="submit">`, cualquier `<button>` dentro de un `<form>` e `<input type="submit">`) no cuentan como CTA y no se validan contra el CTA aprobado. Un enlace `<a>` con `btn--primary`/`btn--accent` sí cuenta, aunque esté dentro de un formulario. Está registrada en `release-rules.json` → `cta.excepciones`.
+- **Excepción de «Contáctanos» (ancla interna):** un enlace `<a href="#id">` con texto exacto «Contáctanos» (menú, menú móvil, botón flotante) cuyo `id` existe en la página y es —o contiene— el botón de WhatsApp aprobado **no** cuenta como CTA. Cualquier otro enlace o botón con `btn--primary`/`btn--accent` sigue contando (otro texto, `/#id` con barra, id inexistente, etc.). Ver `release-rules.json` → `cta.excepciones` (`contactanos-ancla-interna`).
 - **Excepción del mensaje precargado de WhatsApp:** el CTA aprobado puede llevar el parámetro `?text=...` (único parámetro permitido). Otro número, otra ruta u otro parámetro hacen fallar el check. Ver `release-rules.json` → `cta.excepciones`.
 - No publiques en producción a mano; solo mediante los workflows.
 - No hagas push directo a `dev` ni a `main`, ni force-push.

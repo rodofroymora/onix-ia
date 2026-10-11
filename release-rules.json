@@ -77,6 +77,13 @@
         "explicacion": "Decisión aprobada: el CTA de WhatsApp aprobado (https://wa.me/522227097945) también es válido cuando lleva un mensaje precargado, es decir, con el parámetro de consulta ?text=... (p. ej. https://wa.me/522227097945?text=Hola). El check compara origen + ruta del enlace con cta.href e ignora el valor de ?text. El ÚNICO parámetro permitido es «text»: cualquier otro (p. ej. ?foo=1, &lang=es), otro número, otra ruta, otro dominio o un fragmento (#...) siguen haciendo fallar el check. Las apariciones con distintos mensajes precargados cuentan como el mismo CTA. Para volver a exigir el href exacto, eliminar esta entrada.",
         "aprobadoPor": "Dirección",
         "fecha": "2026-10-10"
+      },
+      {
+        "id": "contactanos-ancla-interna",
+        "aplicaA": "<a href=\"#id\"> con texto exacto «Contáctanos» (menú, menú móvil y botón flotante) cuyo id existe en la página y es, o contiene, el botón de WhatsApp aprobado",
+        "explicacion": "Decisión aprobada (hallazgo H-28 de QA): los enlaces «Contáctanos» del menú, del menú móvil y del botón flotante son anclas internas que llevan al único botón de WhatsApp; no son un segundo CTA y no cuentan como CTA primario aunque lleven clase btn--primary/btn--accent. Se aplica SOLO si se cumple todo: (1) es un <a> cuyo href empieza por «#» (p. ej. #escribenos; «/#contacto» con barra NO está cubierto); (2) su texto visible es exactamente «Contáctanos»; (3) el id al que apunta existe en la misma página y ese elemento es el botón de WhatsApp aprobado (clase de CTA primario y href = cta.href, con ?text= opcional) o un contenedor que lo contiene (no valen <html>, <body> ni <main>). Cualquier otro enlace o botón con clase de CTA primario (otro texto, otro destino, ancla a un id inexistente o que no contiene el botón, <button>) SIGUE contando como CTA. La guarda está en scripts/checks/lib.js (crearDetectorContactanos). Para volver a contarlos, eliminar esta entrada.",
+        "aprobadoPor": "Dirección",
+        "fecha": "2026-10-10"
       }
     ]
   },

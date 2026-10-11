@@ -269,6 +269,39 @@ function descendientes(nodo, acc = []) {
   return acc;
 }
 
+/**
+ * EXCEPCIÓN CTA «Contáctanos» (release-rules.json → cta.excepciones, id "contactanos-ancla-interna"; hallazgo H-28).
+ * Un enlace NO cuenta como CTA primario solo si cumple TODO esto:
+ *   · es un <a> cuyo href empieza por "#" (ancla interna de la misma página, con al menos un carácter de id);
+ *   · su texto visible es exactamente «Contáctanos» (mayúscula inicial y acento; sin contar texto solo-lectores);
+ *   · el id al que apunta existe en la página y ese elemento es EL botón de WhatsApp aprobado (un <a> con clase de
+ *     CTA primario y href = cta.href, con ?text= opcional) o un contenedor que lo contiene (sección, div…); no valen
+ *     <html>, <body> ni <main>.
+ * Cualquier otro enlace con clase de CTA primario (otro texto, href que no empieza por "#", ancla a un id inexistente
+ * o que no contiene el botón de WhatsApp, otro destino) SIGUE contando como CTA. Nota: «/#contacto» (con barra) NO
+ * está cubierto: solo «#id».
+ */
+const TEXTO_CONTACTANOS = 'Contáctanos';
+function crearDetectorContactanos(limpio, cfg, clases, permitirTexto) {
+  const { nodos } = construirArbol(limpio);
+  const esPrimario = (n) => (n.attrs.class || '').split(/\s+/).some((c) => clases.includes(c));
+  const botonesWa = nodos.filter((n) => n.tag === 'a' && esPrimario(n) && typeof n.attrs.href === 'string' && !n.attrs.href.startsWith('#') && cfg.href && hrefCtaCoincide(n.attrs.href, cfg.href, permitirTexto));
+  const idsDe = (id) => nodos.filter((n) => n.attrs.id === id);
+  return function esAncla(t, etiqueta) {
+    if (t.tag !== 'a') return { exento: false };
+    const href = t.attrs.href;
+    if (typeof href !== 'string' || !href.startsWith('#') || href.length < 2) return { exento: false, motivo: 'el href no es una ancla «#id»' };
+    if (etiqueta !== TEXTO_CONTACTANOS) return { exento: false, motivo: `el texto es «${etiqueta}», no «${TEXTO_CONTACTANOS}»` };
+    let id = href.slice(1);
+    try { id = decodeURIComponent(id); } catch (_) { /* se usa tal cual */ }
+    const destinos = idsDe(id);
+    if (!destinos.length) return { exento: false, motivo: `el id «${id}» no existe en la página` };
+    const ok = destinos.some((d) => !['html', 'body', 'main'].includes(d.tag) && (botonesWa.includes(d) || descendientes(d).some((x) => botonesWa.includes(x))));
+    if (!ok) return { exento: false, motivo: `el id «${id}» no es (ni contiene) el botón de WhatsApp aprobado` };
+    return { exento: true };
+  };
+}
+
 /** Texto auditable de una página: visible + title + meta descriptions/títulos + alt/aria-label/title. */
 function textoAuditable(html) {
   const limpio = sinComentariosScriptsEstilos(html);
@@ -410,7 +443,7 @@ function hrefCtaCoincide(href, aprobado, permitirTexto) {
 }
 
 module.exports = {
-  validarRutasNoindex, rutaNoindexPermitida, sourceNoindexPermitido, terminosExentosPorRuta, validarRutasConSectorPermitido, normLiteral, regexLiteral, contieneLiteral, construirArbol, descendientes, validarExcepcionesPorRuta, categoriasExentas, frasesExentasPorRuta, esCentinela, listaAprobada, normalizarSector, quitarFormatosWhatsapp, textoAuditable, lineaDeFragmento, hrefCtaCoincide, ROOT, leerReglas, listarArchivos, listarHtml, rel, leer, urlDePagina,
+  crearDetectorContactanos, TEXTO_CONTACTANOS, validarRutasNoindex, rutaNoindexPermitida, sourceNoindexPermitido, terminosExentosPorRuta, validarRutasConSectorPermitido, normLiteral, regexLiteral, contieneLiteral, construirArbol, descendientes, validarExcepcionesPorRuta, categoriasExentas, frasesExentasPorRuta, esCentinela, listaAprobada, normalizarSector, quitarFormatosWhatsapp, textoAuditable, lineaDeFragmento, hrefCtaCoincide, ROOT, leerReglas, listarArchivos, listarHtml, rel, leer, urlDePagina,
   enmascarar, sinComentariosScriptsEstilos, etiquetas, atributos, lineaDe, decodificar, aTexto,
   textoVisible, contenidoElemento, textoSinSrOnly, normalizar, normalizarPalabra, ramaObjetivo, Reporte,
 };
