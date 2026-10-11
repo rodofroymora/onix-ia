@@ -581,12 +581,6 @@
         "explicacion": "Toda página demo debe avisar que los datos son ficticios."
       },
       {
-        "id": "demo-ilustrativo",
-        "aplicaA": "paginasDemo",
-        "texto": "Ilustrativo",
-        "explicacion": "Toda página demo debe incluir la palabra «Ilustrativo» (con esa mayúscula inicial)."
-      },
-      {
         "id": "aviso-contable",
         "aplicaA": "paginas",
         "paginas": [

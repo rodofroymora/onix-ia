@@ -1,0 +1,252 @@
+/* ───────────────────────────────────────────────────────────────────────
+   Demostración · Contabilidad Asistida
+   El scroll conduce la narración: el panel queda fijo y cambia de estado
+   conforme entra cada paso. Sin pestañas, sin instrucciones de uso.
+   ─────────────────────────────────────────────────────────────────────── */
+
+.dc { --dc-r: 16px; }
+
+/* ── Apertura ────────────────────────────────────────────────────────── */
+.dc-hero { max-width: 54rem; padding-bottom: clamp(2rem, 5vw, 3.5rem); }
+.dc-hero h1 { margin: .5rem 0 0; }
+.dc-hero .lead { margin-top: 1rem; max-width: 42rem; }
+.dc-nota {
+  margin: 1.4rem 0 0; font-size: .8125rem; line-height: 1.5;
+  color: var(--muted); max-width: 42rem;
+  padding-left: .8rem; border-left: 2px solid var(--line);
+}
+
+/* ── Escenario: pasos que corren, panel que se queda ─────────────────── */
+.dc-stage {
+  display: grid; grid-template-columns: minmax(0, 23rem) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem); align-items: start;
+}
+.dc-steps { display: flex; flex-direction: column; }
+.dc-step {
+  min-height: 78vh; display: flex; flex-direction: column; justify-content: center;
+  padding: 2rem 0; gap: .7rem;
+}
+.dc-step__k {
+  font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, monospace); font-size: .7rem; letter-spacing: .13em;
+  text-transform: uppercase; color: var(--muted);
+  transition: color var(--dur-media, 240ms) var(--ease);
+}
+.dc-step__h {
+  margin: 0; font-size: clamp(1.35rem, 2.3vw, 1.75rem); line-height: 1.18;
+  letter-spacing: -.022em; font-weight: 600; color: var(--ink);
+  text-wrap: balance;
+}
+.dc-step__p { margin: 0; color: var(--ink-2); line-height: 1.6; max-width: 32rem; }
+.dc-step__p b { color: var(--ink); font-weight: 500; }
+.dc-step.on .dc-step__k { color: var(--accent-ink); }
+
+/* el panel se queda mientras los pasos pasan */
+.dc-sticky { position: sticky; top: calc(var(--nav-h) + 1.5rem); }
+
+/* ── Panel ───────────────────────────────────────────────────────────── */
+.dc-panel {
+  background: var(--paper); border: 1px solid var(--line);
+  border-radius: var(--dc-r); overflow: hidden; box-shadow: var(--sombra, 0 1px 2px rgba(38,38,44,.04), 0 12px 28px -18px rgba(38,38,44,.22));
+  transition: box-shadow var(--dur-lenta, 320ms) var(--ease);
+}
+.dc-panel.cambia { box-shadow: 0 2px 4px rgba(38,38,44,.05), 0 20px 42px -20px rgba(109,40,217,.32); }
+
+/* Avance: cuatro marcas en la barra, una por escena. Orienta sin instruir. */
+.dc-avance { display: inline-flex; gap: .3rem; margin-left: .6rem; }
+.dc-avance i {
+  width: 1.1rem; height: .18rem; border-radius: 2px; background: var(--line);
+  transition: background var(--dur-media, 240ms) var(--ease), width var(--dur-media, 240ms) var(--ease);
+}
+.dc-avance i.on { background: var(--accent); width: 1.8rem; }
+.dc-bar {
+  display: flex; align-items: center; gap: .6rem;
+  padding: .7rem 1rem; border-bottom: 1px solid var(--line); background: var(--paper-2);
+}
+.dc-bar__dots { display: inline-flex; gap: .35rem; }
+.dc-bar__dots i { width: .5rem; height: .5rem; border-radius: 50%; background: var(--line); }
+.dc-bar__n { font-size: .8125rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+/* Obligatoria por regla, pero no tiene por qué gritar: etiqueta discreta,
+   del mismo peso que el resto de la barra. */
+.dc-ilu {
+  margin-left: auto; display: inline-flex; align-items: center; gap: .33rem;
+  font-size: .75rem; color: var(--muted); letter-spacing: .005em;
+}
+.dc-ilu::before {
+  content: ""; width: .4rem; height: .4rem; border-radius: 50%;
+  background: var(--accent); opacity: .7; flex: none;
+}
+.dc-body { position: relative; }
+.dc-foot {
+  padding: .7rem 1rem; border-top: 1px solid var(--line);
+  background: var(--paper-2); font-size: .75rem; color: var(--muted); line-height: 1.45;
+}
+
+/* ── Escenas ──────────────────────────────────────────────────────────
+   Sin JS se apilan y se leen todas: la página sigue sirviendo.
+   Con JS (clase .js-dc) se superponen y solo una está encendida. */
+.dc-scene { padding: clamp(1rem, 2.4vw, 1.5rem); }
+
+.js-dc .dc-body { min-height: 26rem; }
+.js-dc .dc-scene {
+  position: absolute; inset: 0; overflow: auto;
+  opacity: 0; visibility: hidden;
+  transform: translateY(14px) scale(.985);
+  filter: blur(3px);
+  transition: opacity var(--dur-media, 240ms) var(--ease),
+              transform var(--dur-lenta, 320ms) var(--ease),
+              filter var(--dur-media, 240ms) var(--ease),
+              visibility 0s linear var(--dur-media, 240ms);
+}
+.js-dc .dc-scene.on {
+  opacity: 1; visibility: visible; transform: none; filter: none;
+  transition-delay: 0s; z-index: 1;
+}
+/* la que sale se va hacia arriba, para que la entrada se lea como avance */
+.js-dc .dc-scene.sale { transform: translateY(-14px) scale(.985); }
+
+/* El contenido de cada escena entra escalonado, no de golpe. */
+.js-dc .dc-scene.on > * {
+  animation: dc-entra var(--dur-lenta, 320ms) var(--ease) backwards;
+  animation-delay: calc(60ms + var(--i, 0) * 55ms);
+}
+@keyframes dc-entra { from { opacity: 0; transform: translateY(10px); } }
+
+.dc-scene__h { margin: 0 0 1rem; font-size: .9375rem; font-weight: 600; color: var(--ink); }
+
+/* ── Escena 1 · centralización ───────────────────────────────────────── */
+.dc-fuentes { display: grid; gap: .45rem; margin-bottom: .9rem; }
+.dc-fuente {
+  display: flex; align-items: center; gap: .6rem;
+  padding: .6rem .75rem; background: var(--paper-2);
+  border: 1px solid var(--line); border-radius: 10px; font-size: .875rem; color: var(--ink-2);
+}
+.dc-fuente svg { flex: none; color: var(--accent-ink); }
+.dc-fuente span:last-child { margin-left: auto; font-size: .75rem; color: var(--muted); }
+.dc-fuente--out { opacity: .5; }
+.dc-fuente--out span:last-child { color: var(--estado-rev, #A8661C); }
+.dc-caja {
+  border: 1px dashed var(--accent-line, #E3D9FB); background: var(--accent-wash, #F4F0FE);
+  border-radius: 10px; padding: .85rem;
+}
+.dc-caja b { display: block; font-size: .9375rem; }
+.dc-caja span { font-size: .8125rem; color: var(--ink-2); }
+
+/* ── Escena 2 · la IA leyendo ────────────────────────────────────────── */
+.dc-lee { display: grid; grid-template-columns: 8.5rem minmax(0,1fr); gap: 1rem; }
+@media (max-width: 1100px) { .dc-lee { grid-template-columns: 1fr; } }
+.dc-doc {
+  background: var(--paper-2); border: 1px solid var(--line); border-radius: 8px;
+  padding: .7rem; display: grid; gap: .3rem; align-content: start; position: relative; overflow: hidden;
+}
+.dc-doc i { display: block; height: .3rem; background: var(--line); border-radius: 2px; }
+.dc-doc i:nth-child(2){width:70%} .dc-doc i:nth-child(4){width:85%}
+.dc-doc i:nth-child(5){width:45%} .dc-doc i:nth-child(7){width:60%}
+.dc-doc__scan {
+  position: absolute; left: 0; right: 0; height: 2px; background: var(--accent);
+  box-shadow: 0 0 10px 1px var(--accent); opacity: .85;
+  animation: dc-scan 2.2s var(--ease) infinite;
+}
+@keyframes dc-scan { 0%{top:4%} 50%{top:92%} 100%{top:4%} }
+.dc-campos { display: grid; gap: .4rem; align-content: start; }
+.dc-campo {
+  display: grid; grid-template-columns: 6.5rem minmax(0,1fr) auto; gap: .6rem; align-items: center;
+  padding: .45rem .65rem; border: 1px solid var(--line); border-radius: 8px;
+  font-size: .8125rem; background: var(--paper);
+  opacity: 0; transform: translateX(-6px);
+  animation: dc-pop .45s var(--ease) forwards;
+}
+.dc-campo:nth-child(1){animation-delay:.15s} .dc-campo:nth-child(2){animation-delay:.45s}
+.dc-campo:nth-child(3){animation-delay:.75s} .dc-campo:nth-child(4){animation-delay:1.05s}
+@keyframes dc-pop { to { opacity:1; transform:none } }
+.dc-campo dt { color: var(--muted); font-size: .75rem; }
+.dc-campo dd { margin: 0; font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, monospace); color: var(--ink); }
+.dc-conf { display: inline-flex; align-items: center; gap: .3rem; font-size: .7rem; white-space: nowrap; }
+.dc-conf i { width: 2.5rem; height: .28rem; border-radius: 2px; background: var(--line); position: relative; overflow: hidden; }
+.dc-conf i::after { content:""; position:absolute; inset:0 auto 0 0; background: currentColor; border-radius: 2px; }
+.dc-conf--alta { color: var(--estado-ok, #1C7A5E); } .dc-conf--alta i::after { width: 94%; }
+.dc-conf--baja { color: var(--estado-rev, #A8661C); } .dc-conf--baja i::after { width: 38%; }
+.dc-humano {
+  margin-top: .8rem; display: flex; flex-wrap: wrap; gap: .6rem; align-items: center;
+  padding: .7rem .85rem; border: 1px solid var(--estado-rev, #A8661C); border-radius: 10px;
+  background: var(--estado-rev-wash, #FDF7EF); font-size: .8125rem; color: var(--ink-2);
+}
+.dc-humano b { color: var(--ink); font-weight: 500; }
+
+/* ── Escena 3 · reconciliación ───────────────────────────────────────── */
+.dc-rec { display: grid; gap: .4rem; }
+.dc-par {
+  display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr) auto;
+  gap: .7rem; align-items: center; padding: .55rem .75rem;
+  border: 1px solid var(--line); border-radius: 10px; font-size: .8125rem;
+}
+.dc-par > div { display: grid; gap: .1rem; min-width: 0; }
+.dc-par small { color: var(--muted); font-size: .7rem; }
+.dc-par__u { color: var(--line); display: grid; place-items: center; }
+.dc-par--falta { border-color: var(--estado-rev, #A8661C); background: var(--estado-rev-wash, #FDF7EF); }
+.dc-par--falta .dc-par__u { color: var(--estado-rev, #A8661C); }
+.dc-et {
+  flex: none; font-size: .7rem; padding: .18rem .5rem; border-radius: 999px;
+  border: 1px solid currentColor; white-space: nowrap;
+}
+.dc-et--ok { color: var(--estado-ok, #1C7A5E); } .dc-et--falta { color: var(--estado-rev, #A8661C); }
+.dc-entrega {
+  margin-top: .9rem; display: flex; gap: .65rem; align-items: center;
+  padding: .8rem .95rem; border-radius: 10px; background: var(--ink); color: var(--on-dark); font-size: .8125rem;
+}
+.dc-entrega b { color: #fff; font-weight: 500; }
+.dc-entrega svg { flex: none; color: var(--accent-on-dark); }
+
+/* ── Escena 4 · consultas ────────────────────────────────────────────── */
+.dc-chat { display: grid; gap: .5rem; margin-bottom: .9rem; }
+.dc-msg { max-width: 88%; padding: .6rem .8rem; border-radius: 13px; font-size: .875rem; line-height: 1.5; margin: 0; }
+.dc-msg--out { justify-self: end; background: var(--ink); color: var(--on-dark); border-bottom-right-radius: 4px; }
+.dc-msg--in { justify-self: start; background: var(--paper-2); border: 1px solid var(--line); color: var(--ink-2); border-bottom-left-radius: 4px; }
+.dc-msg small { display: block; margin-top: .35rem; font-size: .75rem; color: var(--accent-ink); }
+.dc-msg--in.esc small { color: var(--muted); }
+.dc-esc { display: inline-flex; gap: .3rem; align-items: center; }
+.dc-esc i { width: .3rem; height: .3rem; border-radius: 50%; background: currentColor; opacity: .35; animation: dc-pulse 1.1s infinite; }
+.dc-esc i:nth-child(2){animation-delay:.18s} .dc-esc i:nth-child(3){animation-delay:.36s}
+@keyframes dc-pulse { 0%,60%,100%{opacity:.25} 30%{opacity:.9} }
+.dc-quick { display: flex; flex-wrap: wrap; gap: .35rem; margin-bottom: .5rem; }
+.dc-quick button {
+  cursor: pointer; font: inherit; font-size: .8125rem; padding: .35rem .75rem;
+  border-radius: 999px; background: var(--paper); border: 1px solid var(--line); color: var(--ink-2);
+  transition: border-color var(--dur-rapida, 180ms) var(--ease), color var(--dur-rapida, 180ms) var(--ease);
+}
+.dc-quick button:hover { border-color: var(--accent); color: var(--accent-ink); }
+.dc-form { display: flex; gap: .45rem; }
+.dc-form input {
+  flex: 1 1 auto; min-width: 0; font: inherit; font-size: .8125rem;
+  padding: .5rem .7rem; border: 1px solid var(--line); border-radius: 10px;
+  background: var(--paper); color: var(--ink);
+}
+.dc-form input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
+.dc-form button {
+  cursor: pointer; font: inherit; font-size: .8125rem; font-weight: 500;
+  padding: .5rem .95rem; border-radius: 999px;
+  background: var(--ink); color: var(--on-dark); border: 1px solid var(--ink);
+}
+.dc-aviso-campo { margin: .55rem 0 0; font-size: .75rem; color: var(--estado-rev, #A8661C); font-weight: 500; }
+
+/* ── Móvil: el panel deja de ser fijo y se intercala ─────────────────── */
+@media (max-width: 900px) {
+  .dc-stage { grid-template-columns: 1fr; }
+  .dc-sticky { position: sticky; top: var(--nav-h); z-index: 2; padding: .5rem 0; background: var(--paper); }
+  .dc-step { min-height: 0; padding: 1.5rem 0; }
+  .dc-body { min-height: 21rem; }
+  .dc-par { grid-template-columns: minmax(0,1fr) auto; }
+  .dc-par__u { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dc-doc__scan, .dc-esc i { animation: none; }
+  .dc-campo { animation: none; opacity: 1; transform: none; }
+  .js-dc .dc-scene { transition: none; filter: none; transform: none; }
+  .js-dc .dc-scene.sale { transform: none; }
+  .js-dc .dc-scene.on > * { animation: none; }
+  .dc-panel.cambia { box-shadow: var(--sombra, 0 1px 2px rgba(38,38,44,.04), 0 12px 28px -18px rgba(38,38,44,.22)); }
+}
+
+/* El primer paso arranca arriba, a la par del panel: centrarlo en su bloque
+   alto dejaba un hueco muerto a la izquierda. */
+.dc-step:first-child { justify-content: flex-start; padding-top: 0; min-height: 68vh; }
+.dc-step:last-child  { min-height: 62vh; }

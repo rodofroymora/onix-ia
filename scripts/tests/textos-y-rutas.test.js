@@ -36,16 +36,16 @@ prueba('configuración inválida detectada (sin definición de demo)', T.validar
 const DEMO = '<div id="sa-chat" class="chat">hola</div>';
 prueba('demo por id/clase detectada', !!T.esDemo(L.etiquetas(pagina(DEMO)), cfg.paginasDemo), true);
 prueba('página sin marcadores NO es demo', !!T.esDemo(L.etiquetas(pagina('<p class="reveal">hola</p><div class="rel">x</div>')), cfg.paginasDemo), false);
-prueba('demo sin textos: faltan ambos', reglasDe(viol('x.html', DEMO)).sort(), ['demo-datos-ficticios', 'demo-ilustrativo']);
-prueba('demo con ambos textos pasa', viol('x.html', DEMO + '<p>Ilustrativo. Datos ficticios, no escribas datos reales.</p>'), []);
-prueba('demo: texto con entidades/espacios extra pasa', viol('x.html', DEMO + '<p>Ilustrativo.  Datos&nbsp;ficticios,\n no escribas datos reales</p>'), []);
-prueba('demo: variante de mayúsculas NO pasa (literal)', reglasDe(viol('x.html', DEMO + '<p>Ilustrativo. datos ficticios, no escribas datos reales</p>')), ['demo-datos-ficticios']);
-prueba('demo: redacción distinta NO pasa', reglasDe(viol('x.html', DEMO + '<p>Ilustrativo. Demo con datos ficticios. No escribas datos reales.</p>')), ['demo-datos-ficticios']);
-prueba('demo: «ilustrativa»/minúscula NO cuenta como «Ilustrativo»', reglasDe(viol('x.html', DEMO + '<p>Demostración ilustrativa. Datos ficticios, no escribas datos reales</p>')), ['demo-ilustrativo']);
+prueba('demo sin textos: falta el de datos ficticios', reglasDe(viol('x.html', DEMO)).sort(), ['demo-datos-ficticios']);
+prueba('demo con el texto obligatorio pasa', viol('x.html', DEMO + '<p>Datos ficticios, no escribas datos reales.</p>'), []);
+prueba('demo: texto con entidades/espacios extra pasa', viol('x.html', DEMO + '<p>Datos&nbsp;ficticios,\n no escribas datos reales</p>'), []);
+prueba('demo: variante de mayúsculas NO pasa (literal)', reglasDe(viol('x.html', DEMO + '<p>datos ficticios, no escribas datos reales</p>')), ['demo-datos-ficticios']);
+prueba('demo: redacción distinta NO pasa', reglasDe(viol('x.html', DEMO + '<p>Demo con datos ficticios. No escribas datos reales.</p>')), ['demo-datos-ficticios']);
+/* La leyenda Ilustrativo ya no se exige en demos: se retiró la prueba de «ilustrativa» en minúscula. */
 prueba('demo: el error reporta la línea del marcador', viol('x.html', DEMO)[0].linea, 4);
 prueba('página no demo no exige textos', viol('x.html', '<p>Hola</p>'), []);
 const cfgExp = JSON.parse(JSON.stringify(cfg)); cfgExp.paginasDemo.paginasExplicitas = ['otra.html'];
-prueba('paginasExplicitas: marcada como demo', reglasDe(T.revisarPagina('otra.html', pagina('<p>hola</p>'), cfgExp)).sort(), ['demo-datos-ficticios', 'demo-ilustrativo']);
+prueba('paginasExplicitas: marcada como demo', reglasDe(T.revisarPagina('otra.html', pagina('<p>hola</p>'), cfgExp)).sort(), ['demo-datos-ficticios']);
 prueba('paginasExplicitas: otras páginas no', T.revisarPagina('distinta.html', pagina('<p>hola</p>'), cfgExp), []);
 
 // ── B) Aviso contable
