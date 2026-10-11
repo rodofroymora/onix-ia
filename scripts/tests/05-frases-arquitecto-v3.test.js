@@ -54,7 +54,7 @@ const casos = [
   ['Resultados garantizados', 'falla', 'garantia'],
   ['Pedido confirmado', 'falla', 'ventas-cobros-inventario'],
   ['Escríbenos por WhatsApp', 'pasa'],
-  // v2.1 (hallazgos de DevOps en el PR #7)
+  // v2.1 (hallazgos de la revisión del PR #7)
   ['Esto no es una certificación.', 'aviso', 'certificacion-revisar', 'certificación'],
   ['Calculamos tu IVA cada mes.', 'falla', 'impuestos-calculo'],
   ['Calculamos tus impuestos.', 'falla', 'impuestos-calculo'],

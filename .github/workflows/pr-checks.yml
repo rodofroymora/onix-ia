@@ -64,6 +64,9 @@ jobs:
       - name: Pruebas de reglas (centinela, sector exacto, WhatsApp, frases prohibidas)
         run: node scripts/tests/reglas.test.js
 
+      - name: Casos de prueba del Arquitecto (check 05, v3)
+        run: node scripts/tests/05-frases-arquitecto-v3.test.js
+
       - name: Pruebas de textos obligatorios y excepción por ruta
         run: node scripts/tests/textos-y-rutas.test.js
 
