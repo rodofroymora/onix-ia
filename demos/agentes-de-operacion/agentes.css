@@ -109,7 +109,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .draft__title { font-size: 1.0625rem; font-weight: 600; letter-spacing: -.02em; }
 .draft__meta { font-size: .875rem; color: #4A4A52; margin-top: .15rem; }
 .draft__label { display: block; font-size: .9375rem; font-weight: 500; margin-bottom: .4rem; }
-.draft__text { width: 100%; font: inherit; font-size: .9375rem; line-height: 1.55; color: var(--ink); background: var(--paper); border: 1px solid #A8A59B; border-radius: var(--r-field); padding: .8rem .9rem; resize: vertical; min-height: 8rem; }
+.draft__text { width: 100%; font: inherit; font-size: .9375rem; line-height: 1.55; color: var(--ink); background: var(--paper); border: 1px solid #A8A59B; border-radius: var(--r-field); padding: .8rem .9rem; resize: vertical; min-height: 6rem; field-sizing: content; }
 .draft__text:read-only { background: var(--paper-2); resize: none; }
 .draft__gate { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem 1.25rem; margin-top: 1rem; }
 .check { display: inline-flex; align-items: center; gap: .65rem; min-height: 44px; font-weight: 500; cursor: pointer; }

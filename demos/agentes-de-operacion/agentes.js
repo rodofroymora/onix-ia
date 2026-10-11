@@ -23,8 +23,8 @@
     { id: 'rep', name: 'Reportero', effect: 'no se preparan reportes de lectura' }
   ];
   var ROWS = {
-    desk: { label: 'Escritorio', art: 'el escritorio', proposal: 'Medida estándar' },
-    file: { label: 'Archivero', art: 'el archivero', proposal: 'Metálico' }
+    desk: { label: 'Escritorio', art: 'el escritorio', de: 'del escritorio', proposal: 'Medida estándar' },
+    file: { label: 'Archivero', art: 'el archivero', de: 'del archivero', proposal: 'Metálico' }
   };
 
   var state;
@@ -120,8 +120,8 @@
     if (rowsLocked()) return;
     var r = state.rows[k];
     r.d = d; r.v = v; r.editing = false;
-    var verb = d === 'approved' ? 'aprobó la propuesta de la asistente virtual para ' : d === 'edited' ? 'editó el renglón de ' : 'rechazó el renglón de ';
-    addLog('Marisol Ejemplo', 'persona', 'Marisol ' + verb + ROWS[k].art.replace(/^el /, 'el ') + (d === 'edited' ? ': ' + v + '.' : d === 'rejected' ? '. Rechazado, no se incluye en el borrador.' : '.'));
+    var verb = d === 'approved' ? 'aprobó la propuesta de la asistente virtual para ' : d === 'edited' ? 'editó el renglón ' : 'rechazó el renglón ';
+    addLog('Marisol Ejemplo', 'persona', 'Marisol ' + verb + (d === 'approved' ? ROWS[k].art : ROWS[k].de) + (d === 'edited' ? ': ' + v + '.' : d === 'rejected' ? '. Rechazado, no se incluye en el borrador.' : '.'));
     if (resolved() && !state.draftLogged) {
       state.draftLogged = true;
       addLog('Asistente de borradores', 'agente', 'Armó el borrador y lo dejó en la cola del equipo. Estado: pendiente. No lo comparte con el cliente.');
@@ -138,7 +138,7 @@
     return r;
   }
   function blockedMsg(where) {
-    if (isP('cot')) return 'La asistente de borradores está en pausa: no hay borrador ni envío. La tarea regresó a la cola humana hasta que una persona autorizada lo reanude.';
+    if (isP('cot')) return 'La asistente de borradores está en pausa: no hay borrador ni envío. La tarea regresó a la cola humana hasta que una persona autorizada la reanude.';
     if (!resolved()) return where === 3
       ? 'Borrador en espera: faltan renglones dudosos por decidir. Vuelve al paso anterior para que una persona los resuelva.'
       : 'Aún no hay borrador para aprobar: faltan renglones dudosos por decidir en el paso de captura de datos.';
@@ -169,7 +169,7 @@
     $('#send').hidden = !ok;
     var lock = sendLocked();
     noteEl.value = state.note;
-    noteEl.readOnly = lock || !state.editing;
+    noteEl.readOnly = lock || !state.editing; autosize(noteEl);
     reviewed.checked = state.reviewed || state.sent;
     reviewed.disabled = lock;
     editBtn.disabled = lock; rejectBtn.disabled = lock;
@@ -190,7 +190,7 @@
       $('#wa-prev').hidden = isP('seg'); $('#seg-paused').hidden = !isP('seg');
     }
     $('#send-help').textContent = isP('cot')
-      ? 'La asistente de borradores está en pausa: las acciones de aprobación están desactivadas hasta que una persona autorizada lo reanude.'
+      ? 'La asistente de borradores está en pausa: las acciones de aprobación están desactivadas hasta que una persona autorizada la reanude.'
       : 'Sin esta aprobación, el borrador no avanza. «Aprobar borrador» se activa cuando la persona marca que revisó y termina de editar.';
   }
 
@@ -249,6 +249,22 @@
   }
 
   /* ── Navegación ── */
+  // El textarea crece a su contenido: nunca queda texto oculto ni barra de scroll interna.
+  function autosize(t) {
+    if (!t || t.offsetParent === null) return;
+    t.style.height = 'auto';
+    var extra = t.offsetHeight - t.clientHeight;
+    t.style.height = (t.scrollHeight + extra) + 'px';
+  }
+  function watchSize(t) {
+    var w = 0;
+    function again() { autosize(t); }
+    window.addEventListener('resize', again);
+    window.addEventListener('load', again);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(again);
+    if (window.ResizeObserver) new ResizeObserver(function () { if (t.clientWidth !== w) { w = t.clientWidth; autosize(t); } }).observe(t);
+    t.addEventListener('input', again);
+  }
   function render(announce) {
     var s = state.step;
     stage.setAttribute('data-step', String(s));
@@ -275,6 +291,7 @@
     prevBtn.disabled = s === 1;
     nextBtn.disabled = s === LAST;
     if (announce) live.textContent = STEP_NAMES[s] + (s === 4 && resolved() && !decided() ? '. El borrador espera a una persona.' : '');
+    autosize(noteEl);
   }
   function go(n) { state.step = Math.max(1, Math.min(LAST, n)); render(true); }
 
@@ -352,5 +369,6 @@
   $('#pause-all').addEventListener('click', function () { setPaused(AGENTS.map(function (a) { return a.id; }), true); $('#resume-all').focus(); });
   $('#resume-all').addEventListener('click', function () { setPaused(AGENTS.map(function (a) { return a.id; }), false); $('#pause-all').focus(); });
 
+  watchSize(noteEl);
   render(false);
 })();

@@ -146,7 +146,7 @@
   function locked() { return decided() || state.paused; }
   function renderApproval() {
     ta.value = state.text;
-    ta.readOnly = locked() || !state.editing;
+    ta.readOnly = locked() || !state.editing; autosize(ta);
     reviewed.checked = state.reviewed || state.approved;
     reviewed.disabled = locked();
     editBtn.disabled = locked();
@@ -266,6 +266,22 @@
   }
 
   /* ── Navegación ── */
+  // El textarea crece a su contenido: nunca queda texto oculto ni barra de scroll interna.
+  function autosize(t) {
+    if (!t || t.offsetParent === null) return;
+    t.style.height = 'auto';
+    var extra = t.offsetHeight - t.clientHeight;
+    t.style.height = (t.scrollHeight + extra) + 'px';
+  }
+  function watchSize(t) {
+    var w = 0;
+    function again() { autosize(t); }
+    window.addEventListener('resize', again);
+    window.addEventListener('load', again);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(again);
+    if (window.ResizeObserver) new ResizeObserver(function () { if (t.clientWidth !== w) { w = t.clientWidth; autosize(t); } }).observe(t);
+    t.addEventListener('input', again);
+  }
   function render(announce) {
     var s = state.step;
     stage.setAttribute('data-step', String(s));
@@ -287,6 +303,7 @@
     prevBtn.disabled = s === 1;
     nextBtn.disabled = s === LAST;
     if (announce) live.textContent = STEP_NAMES[s] + (s === 3 && !decided() ? '. Hay un borrador pendiente de aprobación.' : '');
+    autosize(ta);
   }
   function go(n) { state.step = Math.max(1, Math.min(LAST, n)); render(true); }
 
@@ -366,5 +383,6 @@
     live.textContent = 'Radar reanudado por una persona autorizada.';
   });
 
+  watchSize(ta);
   render(false);
 })();
