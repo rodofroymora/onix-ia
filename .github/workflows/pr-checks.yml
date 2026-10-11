@@ -52,7 +52,7 @@ jobs:
           fi
           echo "✔ Sin .env*, .vercel/ ni node_modules versionados"
 
-      - name: Checks automáticos (cifras, CTA único, enlaces/assets, QA smoke)
+      - name: Checks automáticos (cifras, CTA único, enlaces/assets, QA smoke, frases prohibidas, textos obligatorios)
         env:
           # La regla robots/noindex depende de la rama DESTINO del PR (dev o main)
           CHECK_BRANCH: ${{ github.base_ref }}
@@ -60,6 +60,21 @@ jobs:
 
       - name: Pruebas de la regla CTA (WhatsApp con ?text=)
         run: node scripts/tests/cta-href.test.js
+
+      - name: Pruebas de la excepción «Contáctanos» (ancla interna)
+        run: node scripts/tests/cta-contactanos.test.js
+
+      - name: Pruebas de reglas (centinela, sector exacto, WhatsApp, frases prohibidas)
+        run: node scripts/tests/reglas.test.js
+
+      - name: Casos de prueba del Arquitecto (check 05, v3)
+        run: node scripts/tests/05-frases-arquitecto.test.js
+
+      - name: Pruebas de robots/noindex (solo /salud puede ser noindex en main)
+        run: node scripts/tests/robots.test.js
+
+      - name: Pruebas de textos obligatorios y excepción por ruta
+        run: node scripts/tests/textos-y-rutas.test.js
 
       - name: Resumen
         if: always()

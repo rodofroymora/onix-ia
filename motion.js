@@ -1,4 +1,4 @@
-/* Ónix v3 · scroll motion layer (vanilla, no dependencies).
+/* ÓNIX v3 · scroll motion layer (vanilla, no dependencies).
    Runs only when <html> has the .js class (set in <head> when
    prefers-reduced-motion is not "reduce"). Animates transform/opacity/filter only. */
 (function () {
@@ -98,7 +98,7 @@
   // touch phones/tablets: the stage pins and scroll position drives the conversation (no autoplay there)
   var mqPin = w.matchMedia('(max-width: 900px) and (pointer: coarse)');
   var pinMode = false, pinRendered = false, pinS = -1, pinKey = '';
-  var PIN_N = 7, PIN_HOLD = 0.6;       // 7 scroll steps (CSS: 40svh each) + a short hold after the last message
+  var PIN_N = 7, PIN_HOLD = 0.6;       // initial value for 8 messages: 7 scroll steps (CSS: 40svh each, track 404svh) + a short hold after the last message; overwritten below from the real message count
   var trackStart = 0, stepPx = 1;
 
   // WhatsApp steps: each step = one message; replies (inside .turn) show typing dots first
@@ -107,6 +107,7 @@
       ? { msg: node.querySelector('.msg'), typing: node.querySelector('.typing') }
       : { msg: node, typing: null };
   }) : [];
+  PIN_N = Math.max(3, waSteps.length - 1);   // scroll steps follow the number of WhatsApp messages: 8 messages -> PIN_N = 7 (keep the CSS track at (PIN_N + .6) x 40 + 100 svh = 404svh)
   var pill = chat && chat.querySelector('.pill');
   var waK = 0, callStage = 0, callC = 0;   // callStage: 0 ringing, 1 answered
 
@@ -144,18 +145,21 @@
     waK = 1;
     waSteps.forEach(function (st, i) { st.msg.classList.toggle('on', i < 1); if (st.typing) st.typing.classList.remove('on'); });
     if (pill) pill.classList.remove('on');
+    setShift(chat, null);
   }
   function resetCall() {
     callStage = 0; callC = 0; stopTimer();
     if (timerEl) timerEl.textContent = '00:00';
     call.classList.add('ringing'); call.classList.remove('answered', 'live');
     caps.forEach(function (c) { c.classList.remove('on', 'now'); });
+    setShift(call.querySelector('.vchat'), null);
   }
 
   function playBubble(i) {
     var c = caps[i]; if (!c) return;
     caps.forEach(function (x) { x.classList.remove('now'); });
     c.classList.add('on', 'now');
+    setShift(call.querySelector('.vchat'), c);   // keep the newest bubble in view (tap mode)
     call.classList.add('live');
     busy = true;
     wait(450, release);   // next tap allowed while this bubble keeps playing
@@ -175,6 +179,7 @@
       var show = function () {
         if (st.typing) st.typing.classList.remove('on');
         st.msg.classList.add('on');
+        setShift(chat, chat.children[waSteps.indexOf(st)]);   // keep the newest message in view (tap mode)
         if (last && pill) wait(380, function () { pill.classList.add('on'); });
         if (last) wait(700, function () { busy = false; setEnd(true); }); else wait(150, release);
       };

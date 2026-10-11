@@ -105,10 +105,10 @@
 .tl { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0 clamp(1rem, 2vw, 1.75rem); margin-top: clamp(2.25rem, 4vw, 3.5rem); counter-reset: tl; }
 .tl li { position: relative; border-top: 1px solid var(--ink); padding-top: 1.5rem; }
 .tl li::before { content: ""; position: absolute; left: 0; top: -1px; width: 2.5rem; height: 2px; background: var(--accent); }
-.tl__n { display: block; font-size: clamp(2.25rem, 3.6vw, 3rem); font-weight: 500; letter-spacing: -.05em; line-height: 1; color: var(--accent); font-variant-numeric: tabular-nums; margin-bottom: 1rem; }
+.tl__m { display: block; width: .75rem; height: .75rem; border-radius: 50%; background: var(--accent); margin-bottom: 1.25rem; }
 .tl h3 { font-size: 1.125rem; font-weight: 600; letter-spacing: -.02em; line-height: 1.3; }
 .tl p { margin-top: .5rem; color: var(--muted); font-size: .9688rem; line-height: 1.5; }
-@media (max-width: 960px) { .tl { grid-template-columns: 1fr; gap: 0; } .tl li { display: grid; grid-template-columns: 3.25rem minmax(0, 1fr); gap: 0 1rem; padding: 1.5rem 0; border-top-color: var(--line); } .tl li::before { width: 3.25rem; } .tl__n { grid-row: span 2; font-size: 2.5rem; margin: 0; } }
+@media (max-width: 960px) { .tl { grid-template-columns: 1fr; gap: 0; } .tl li { display: grid; grid-template-columns: 3.25rem minmax(0, 1fr); gap: 0 1rem; padding: 1.5rem 0; border-top-color: var(--line); } .tl li::before { width: 3.25rem; } .tl__m { grid-row: span 2; margin: .35rem 0 0; } }
 .more-links { display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; margin-top: 2rem; }
 
 /* FAQ */
@@ -237,3 +237,45 @@
 @media (max-width: 1000px) { .footer__layers { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .footer__layers { grid-template-columns: 1fr; } }
 .hero h1 em { display: inline; }
+
+/* Demo pin track: (PIN_N + hold) steps x 40svh + 100svh. The demo has 8 WhatsApp messages (greeting, 'con gusto', 2 turns of the customer, summary, handoff to a person) -> PIN_N = 8 - 1 = 7 -> (7+.6)*40+100 = 404 (same as the default in site.css). */
+.js .sa-pin .sa-stage { height: calc(404vh - var(--nav-h) - 20px); height: calc(404svh - var(--nav-h) - 20px); }
+
+/* ── Privacidad (Legal): avisos junto a CTA de WhatsApp, aviso simplificado + casilla en el formulario, leyenda de demo, página del aviso */
+.cta__act { display: flex; flex-direction: column; align-items: flex-start; gap: .75rem; max-width: 26rem; }
+.priv-note, .cta .priv-note { margin: 0; max-width: 38ch; font-size: .8125rem; line-height: 1.5; color: inherit; opacity: .74; }
+.priv-note a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.priv-note a:hover, .priv-note a:focus-visible { opacity: 1; text-decoration-thickness: 2px; }
+@media (max-width: 600px) { .cta__act { width: 100%; max-width: none; } .hero__actions .cta__act { align-items: stretch; } }
+.form__notice { font-size: .8125rem; line-height: 1.55; color: var(--muted, #55555c); margin: 0; }
+.form__notice a { color: var(--accent-ink, inherit); text-decoration: underline; text-underline-offset: 3px; }
+.form__check { display: flex; align-items: flex-start; gap: .625rem; font-size: .875rem; line-height: 1.45; cursor: pointer; }
+.form__check input { flex: none; width: 1.125rem; height: 1.125rem; margin-top: .125rem; accent-color: var(--accent); }
+.demo-legend { margin: 0 0 .75rem; max-width: 34ch; text-align: center; font-size: .75rem; line-height: 1.45; color: var(--on-dark-muted, #9A9AA2); }
+.wrap.legal { max-width: none; }
+.legal > * { max-width: 46rem; }
+.legal h2.legal-h { font-family: var(--sans); font-weight: 600; letter-spacing: -.02em; font-size: clamp(1.25rem, 2.2vw, 1.625rem); margin: 2.5rem 0 .75rem; }
+.legal h3.legal-h3 { font-size: 1.0625rem; font-weight: 600; margin: 1.75rem 0 .5rem; }
+.legal p, .legal li { line-height: 1.65; margin-block: .6rem; }
+.legal ul, .legal ol { padding-left: 1.4rem; }
+.legal ul { list-style: disc; } .legal ol { list-style: decimal; }
+.legal mark.pending { background: color-mix(in srgb, var(--accent) 22%, transparent); color: inherit; padding: .05em .3em; border-radius: 4px; font-weight: 600; }
+.demo-legend { margin: .625rem auto .25rem; }
+.js .sa-pin .demo-legend { margin-bottom: 1.35rem; }
+.js .sa-pin .sa-devices .phone__screen { height: min(600px, calc(100vh - var(--nav-h) - 262px)); height: min(600px, calc(100svh - var(--nav-h) - 262px)); }
+
+/* header / mobile menu / floating contact links (not wa.me; they scroll to the page's own WhatsApp CTA) — same look as btn--primary / btn--accent, but outside the CI "primary CTA" classes */
+.btn--go { background: var(--ink); color: var(--on-dark); }
+.btn--go:hover { background: var(--ink-2); box-shadow: 0 10px 24px -14px rgba(11,11,12,.55); }
+.btn--goac { background: var(--accent); color: #fff; }
+.btn--goac:hover { background: var(--accent-ink); box-shadow: 0 10px 24px -14px rgba(109,40,217,.6); }
+#escribenos { scroll-margin-top: 6rem; }
+
+/* demo: label next to the voice script + one-line note under the demo */
+.demo-sub { margin: .75rem 0 0; text-align: center; font-size: .75rem; line-height: 1.4; color: var(--on-dark-muted, #9A9AA2); }
+.demo-note { margin: .75rem auto 0; max-width: 46ch; text-align: center; font-size: .75rem; line-height: 1.45; color: var(--on-dark-muted, #9A9AA2); }
+/* mobile: keep the literal demo legend clear of the "Ilustrativo" pill */
+@media (max-width: 600px) { .js .product .demo-legend { max-width: calc(100% - 8.75rem); margin: .625rem auto .25rem .5rem; text-align: left; } }
+
+/* v15 · enlace dentro de un mensaje de la demo (aviso de privacidad) */
+.msg a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }

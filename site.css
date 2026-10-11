@@ -1,4 +1,4 @@
-/* Ónix v3 · consultancy positioning (built on v2 taste pass). Palette = v1 (locked). Type = Geist (self-hosted, OFL). */
+/* ÓNIX v3 · consultancy positioning (built on v2 taste pass). Palette = v1 (locked). Type = Geist (self-hosted, OFL). */
     @font-face { font-family: 'Geist'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('/fonts/geist-latin-wght-normal.woff2') format('woff2'); }
     @font-face { font-family: 'Geist'; font-style: italic; font-weight: 100 900; font-display: swap; src: url('/fonts/geist-latin-wght-italic.woff2') format('woff2'); }
 
@@ -277,7 +277,7 @@
     @media (max-width: 960px) { .think__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
     @media (max-width: 560px) { .think__grid { grid-template-columns: 1fr; gap: 1.75rem; } }
 
-    /* ── Qué te llevas de la Fase 0 ─────────────────────────── */
+    /* ── Qué te llevas ─────────────────────────── */
     .takeaway { margin-top: clamp(2.75rem, 5vw, 4rem); background: var(--paper-2); border: 1px solid var(--line); border-radius: 24px; padding: clamp(1.5rem, 3.5vw, 2.5rem); display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 6fr) auto; gap: 1rem clamp(1.5rem, 4vw, 3rem); align-items: center; }
     .takeaway__title { font-size: clamp(1.375rem, 2.2vw, 1.75rem); font-weight: 600; letter-spacing: -.03em; line-height: 1.2; text-wrap: balance; }
     .takeaway__text { color: var(--muted); max-width: 34em; }
@@ -528,7 +528,7 @@
       .js .sa-devices > .phone--call:not(.is-current) .call__ring { opacity: 0; transform: translateX(26px) scale(.96); }
       .js .sa-devices > .phone:not(.is-current) { opacity: 0; visibility: hidden; }
       .js .sa-devices > .phone.is-current { z-index: 1; transition-delay: 0s; }
-      .js .sa-devices .phone__screen { height: 620px; min-height: 0; }
+      .js .sa-devices .phone__screen { height: 780px; min-height: 0; }   /* v16: was 620px; 8 WhatsApp messages (greeting + privacy link + handoff) and the 7-bubble voice script need ~130-160px more so the finished demo is not clipped */
       .js .product .chat > * { animation: none; }
       .js .product .chat, .js .product .vchat { position: relative; min-height: 0; overflow: hidden; }
       .js .product .vchat { flex: 1 1 auto; }

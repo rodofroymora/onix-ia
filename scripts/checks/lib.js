@@ -191,6 +191,238 @@ class Reporte {
   }
 }
 
+/** Centinela "__NINGUNA_APROBADA__" / "__NINGUNO_APROBADO__": activa la validación de una lista sin aprobar nada. */
+const CENTINELA = /^__NINGUN[AO]_APROBAD[AO]__$/;
+const esCentinela = (v) => CENTINELA.test(String(v).trim());
+/**
+ * Interpreta una lista de aprobados de release-rules.json.
+ * activa = la lista tiene algún elemento (incluido el centinela) → se valida.
+ * valores = elementos realmente aprobados (sin centinelas). Lista vacía = validación desactivada.
+ */
+function listaAprobada(arr) {
+  const a = Array.isArray(arr) ? arr : [];
+  return { activa: a.length > 0, valores: a.filter((v) => !esCentinela(v)), soloCentinela: a.length > 0 && a.every(esCentinela) };
+}
+/** Sector exacto: sin acentos ni mayúsculas, pero SIN quitar plural ("clínica" ≠ "clínicas"). */
+function normalizarSector(s) {
+  return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' ').trim();
+}
+const escRe = (m) => String(m).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+/**
+ * Quita del texto los formatos visibles APROBADOS del WhatsApp (whatsapp.formatosVisiblesPermitidos), p. ej.
+ * "+52 222 709 7945", para que no se detecten como cifra ("+52"). Solo coincide si no hay dígitos pegados.
+ */
+function quitarFormatosWhatsapp(texto, formatos) {
+  let t = texto;
+  for (const f of [...(formatos || [])].sort((a, b) => b.length - a.length)) {
+    const re = new RegExp('(?<![\\d+])' + escRe(f).replace(/\\ /g, '\\s') + '(?!\\d)', 'g');
+    t = t.replace(re, ' ');
+  }
+  return t;
+}
+/** Normaliza para comparar literales: NFC, espacios (incluido nbsp) colapsados. */
+const normLiteral = (x) => String(x).normalize('NFC').replace(/[\s\u00a0]+/g, ' ').trim();
+/**
+ * Regex de un texto LITERAL: coincide exactamente (mayúsculas/minúsculas, acentos y puntuación) salvo los tokens de
+ * `ignorarMayusculas` (p. ej. "ÓNIX"), que aceptan cualquier combinación de mayúsculas/minúsculas (ÓNIX, Ónix, ónix).
+ * No coincide si hay letras o dígitos pegados antes o después.
+ */
+function regexLiteral(literal, ignorarMayusculas) {
+  let patron = escRe(normLiteral(literal));
+  for (const tok of ignorarMayusculas || []) {
+    const t = escRe(normLiteral(tok));
+    const ci = [...normLiteral(tok)].map((c) => (c.toLowerCase() === c.toUpperCase() ? escRe(c) : `[${c.toUpperCase()}${c.toLowerCase()}]`)).join('');
+    patron = patron.split(t).join(ci);
+  }
+  return new RegExp('(?<![\\p{L}\\p{N}])' + patron + '(?![\\p{L}\\p{N}])', 'u');
+}
+const contieneLiteral = (texto, literal, ignorarMayusculas) => regexLiteral(literal, ignorarMayusculas).test(normLiteral(texto));
+
+const VOID_TAGS = new Set(['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr']);
+/**
+ * Árbol de elementos mínimo sobre HTML ya enmascarado (sinComentariosScriptsEstilos).
+ * Nodo: { tag, attrs, line, parent, children[], start, innerStart, innerEnd }. Devuelve { raiz, nodos }.
+ */
+function construirArbol(htmlLimpio) {
+  const re = /<(\/?)([a-zA-Z][\w:-]*)((?:\s+[^\s"'<>\/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s"'<>=`]+))?)*)\s*(\/?)>/g;
+  const raiz = { tag: '#raiz', attrs: {}, children: [], parent: null, line: 1, start: 0, innerStart: 0, innerEnd: htmlLimpio.length };
+  const nodos = [];
+  const pila = [raiz];
+  let m;
+  while ((m = re.exec(htmlLimpio))) {
+    const tag = m[2].toLowerCase();
+    if (m[1]) {
+      for (let i = pila.length - 1; i > 0; i--) {
+        if (pila[i].tag === tag) { pila[i].innerEnd = m.index; pila.length = i; break; }
+      }
+      continue;
+    }
+    const nodo = { tag, attrs: atributos(m[3] || ''), line: lineaDe(htmlLimpio, m.index), parent: pila[pila.length - 1], children: [], start: m.index, innerStart: m.index + m[0].length, innerEnd: m.index + m[0].length };
+    nodo.parent.children.push(nodo);
+    nodos.push(nodo);
+    if (!m[4] && !VOID_TAGS.has(tag)) pila.push(nodo);
+  }
+  return { raiz, nodos };
+}
+function descendientes(nodo, acc = []) {
+  for (const h of nodo.children) { acc.push(h); descendientes(h, acc); }
+  return acc;
+}
+
+/**
+ * EXCEPCIÓN CTA «Contáctanos» (release-rules.json → cta.excepciones, id "contactanos-ancla-interna"; hallazgo H-28).
+ * Un enlace NO cuenta como CTA primario solo si cumple TODO esto:
+ *   · es un <a> cuyo href empieza por "#" (ancla interna de la misma página, con al menos un carácter de id);
+ *   · su texto visible es exactamente «Contáctanos» (mayúscula inicial y acento; sin contar texto solo-lectores);
+ *   · el id al que apunta existe en la página y ese elemento es EL botón de WhatsApp aprobado (un <a> con clase de
+ *     CTA primario y href = cta.href, con ?text= opcional) o un contenedor que lo contiene (sección, div…); no valen
+ *     <html>, <body> ni <main>.
+ * Cualquier otro enlace con clase de CTA primario (otro texto, href que no empieza por "#", ancla a un id inexistente
+ * o que no contiene el botón de WhatsApp, otro destino) SIGUE contando como CTA. Nota: «/#contacto» (con barra) NO
+ * está cubierto: solo «#id».
+ */
+const TEXTO_CONTACTANOS = 'Contáctanos';
+function crearDetectorContactanos(limpio, cfg, clases, permitirTexto) {
+  const { nodos } = construirArbol(limpio);
+  const esPrimario = (n) => (n.attrs.class || '').split(/\s+/).some((c) => clases.includes(c));
+  const botonesWa = nodos.filter((n) => n.tag === 'a' && esPrimario(n) && typeof n.attrs.href === 'string' && !n.attrs.href.startsWith('#') && cfg.href && hrefCtaCoincide(n.attrs.href, cfg.href, permitirTexto));
+  const idsDe = (id) => nodos.filter((n) => n.attrs.id === id);
+  return function esAncla(t, etiqueta) {
+    if (t.tag !== 'a') return { exento: false };
+    const href = t.attrs.href;
+    if (typeof href !== 'string' || !href.startsWith('#') || href.length < 2) return { exento: false, motivo: 'el href no es una ancla «#id»' };
+    if (etiqueta !== TEXTO_CONTACTANOS) return { exento: false, motivo: `el texto es «${etiqueta}», no «${TEXTO_CONTACTANOS}»` };
+    let id = href.slice(1);
+    try { id = decodeURIComponent(id); } catch (_) { /* se usa tal cual */ }
+    const destinos = idsDe(id);
+    if (!destinos.length) return { exento: false, motivo: `el id «${id}» no existe en la página` };
+    const ok = destinos.some((d) => !['html', 'body', 'main'].includes(d.tag) && (botonesWa.includes(d) || descendientes(d).some((x) => botonesWa.includes(x))));
+    if (!ok) return { exento: false, motivo: `el id «${id}» no es (ni contiene) el botón de WhatsApp aprobado` };
+    return { exento: true };
+  };
+}
+
+/** Texto auditable de una página: visible + title + meta descriptions/títulos + alt/aria-label/title. */
+function textoAuditable(html) {
+  const limpio = sinComentariosScriptsEstilos(html);
+  const tags = etiquetas(limpio);
+  let texto = textoVisible(html);
+  const tit = limpio.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+  if (tit) texto += ' \n ' + aTexto(tit[1]);
+  for (const t of tags) {
+    if (t.tag === 'meta' && /^(description|og:description|twitter:description|og:title|twitter:title)$/i.test(t.attrs.name || t.attrs.property || '') && t.attrs.content) texto += ' \n ' + decodificar(t.attrs.content);
+    for (const a of ['alt', 'aria-label', 'title']) if (t.attrs[a] && t.tag !== 'title') texto += ' \n ' + decodificar(t.attrs[a]);
+  }
+  return texto;
+}
+/** Mejor esfuerzo: línea del HTML donde aparece un fragmento de texto auditable (null si no se localiza). */
+function lineaDeFragmento(html, fragmento) {
+  const norm = (x) => x.replace(/\s+/g, ' ').trim().toLowerCase();
+  const f = norm(fragmento);
+  if (!f) return null;
+  const lineas = html.split('\n');
+  const plano = lineas.map((l) => norm(decodificar(l.replace(/<[^>]*>/g, ' '))));
+  const crudo = lineas.map((l) => norm(decodificar(l)));
+  for (const cand of [f, f.slice(0, 25)]) {
+    if (cand.length < 3) continue;
+    let i = plano.findIndex((l) => l.includes(cand));
+    if (i < 0) i = crudo.findIndex((l) => l.includes(cand));
+    if (i >= 0) return i + 1;
+  }
+  return null;
+}
+
+/**
+ * EXCEPCIONES POR RUTA (release-rules.json → excepcionesPorRuta). NO es una aprobación general: exime a UNA página
+ * concreta de ciertas categorías de detección. Guardas en código (cambiarlas requiere revisión de código):
+ *   · solo se admiten las rutas de RUTAS_EXCEPTUABLES (hoy únicamente aviso-de-privacidad.html), sin comodines;
+ *   · "categorias": solo las de CATEGORIAS_EXCEPTUABLES (cifras, plazos, fechas). Precios, sectores, WhatsApp,
+ *     CTA y demás frases siguen aplicando en esa página;
+ *   · "terminos": palabras sueltas exentas del check 05 SOLO en esa ruta, y solo las de TERMINOS_EXCEPTUABLES
+ *     («tratamiento», «salud»). Se exime únicamente la coincidencia que sea EXACTAMENTE esa palabra: frases más
+ *     largas («profesionales de la salud», «expediente clínico», «consultorio», «paciente»…) siguen bloqueadas.
+ *   Cada excepción lleva "categorias", "terminos" o ambos.
+ */
+const RUTAS_EXCEPTUABLES = ['aviso-de-privacidad.html'];
+const CATEGORIAS_EXCEPTUABLES = ['cifras', 'plazos', 'fechas'];
+const TERMINOS_EXCEPTUABLES = ['tratamiento', 'salud'];
+// Reglas de frasesProhibidas que pertenecen a cada categoría (check 05). "fechas": hoy ningún check detecta fechas.
+const FRASES_POR_CATEGORIA = { cifras: ['porcentaje', 'multiplicador', 'conteo-clientes'], plazos: ['plazo-numerico', '24-7'], fechas: [] };
+function validarExcepcionesPorRuta(reglas) {
+  const errs = [];
+  const lista = reglas.excepcionesPorRuta;
+  if (lista === undefined) return errs;
+  if (!Array.isArray(lista)) return ['excepcionesPorRuta debe ser una lista.'];
+  lista.forEach((e, i) => {
+    const id = (e && e.id) || '#' + i;
+    if (!e || typeof e.archivo !== 'string' || /[*?]/.test(e.archivo)) errs.push(`excepcionesPorRuta "${id}": "archivo" debe ser una ruta exacta (sin comodines).`);
+    else if (!RUTAS_EXCEPTUABLES.includes(e.archivo)) errs.push(`excepcionesPorRuta "${id}": la ruta "${e.archivo}" no puede exceptuarse (solo: ${RUTAS_EXCEPTUABLES.join(', ')}).`);
+    const cats = e && e.categorias;
+    const terms = e && e.terminos;
+    if (cats === undefined && terms === undefined) errs.push(`excepcionesPorRuta "${id}": necesita "categorias", "terminos" o ambos.`);
+    if (cats !== undefined && (!Array.isArray(cats) || !cats.length || cats.some((c) => !CATEGORIAS_EXCEPTUABLES.includes(c)))) errs.push(`excepcionesPorRuta "${id}": "categorias" debe ser una lista no vacía con valores de ${CATEGORIAS_EXCEPTUABLES.join('/')}.`);
+    if (terms !== undefined && (!Array.isArray(terms) || !terms.length || terms.some((t) => !TERMINOS_EXCEPTUABLES.includes(t)))) errs.push(`excepcionesPorRuta "${id}": "terminos" debe ser una lista no vacía con valores de ${TERMINOS_EXCEPTUABLES.join('/')}.`);
+  });
+  return errs;
+}
+// rutasConSectorPermitido (check 05): solo se admite la ruta /salud (decisión de dirección); cualquier otra es error.
+const RUTAS_SECTOR_PERMITIDAS = ['/salud'];
+function validarRutasConSectorPermitido(reglas) {
+  const errs = [];
+  const lista = reglas.rutasConSectorPermitido;
+  if (lista === undefined) return errs;
+  if (!Array.isArray(lista)) return ['rutasConSectorPermitido debe ser una lista.'];
+  lista.forEach((r, i) => {
+    if (!r || !RUTAS_SECTOR_PERMITIDAS.includes(r.ruta)) errs.push(`rutasConSectorPermitido[${i}]: la ruta "${r && r.ruta}" no puede exceptuarse (solo: ${RUTAS_SECTOR_PERMITIDAS.join(', ')}).`);
+  });
+  return errs;
+}
+/**
+ * robots.rutasNoindex (check 04, solo rama con regla "index", p. ej. main): rutas que SÍ pueden ser noindex aunque el
+ * sitio sea indexable. Guarda en código: solo /salud (y subrutas «/salud/…»); cualquier otra ruta es error de
+ * configuración. Cualquier otra página o header noindex sigue fallando. /salud NO debe ir a main sin revisión de un
+ * abogado humano y el OK escrito del dueño del sitio (no hay compuerta automática).
+ */
+const RUTAS_NOINDEX_PERMITIDAS = ['/salud'];
+function validarRutasNoindex(reglas) {
+  const rn = reglas.robots && reglas.robots.rutasNoindex;
+  if (rn === undefined) return [];
+  if (!Array.isArray(rn)) return ['robots.rutasNoindex debe ser una lista.'];
+  return rn.filter((r) => !RUTAS_NOINDEX_PERMITIDAS.includes(r)).map((r) => `robots.rutasNoindex: la ruta ${JSON.stringify(r)} no puede ser noindex (solo: ${RUTAS_NOINDEX_PERMITIDAS.join(', ')}).`);
+}
+/** ¿`url` (p. ej. "/salud/preguntas") es una ruta noindex permitida? Solo si la config es válida. */
+function rutaNoindexPermitida(reglas, url) {
+  if (validarRutasNoindex(reglas).length) return false;
+  const rn = (reglas.robots && reglas.robots.rutasNoindex) || [];
+  const u = String(url || '').replace(/\/+$/, '') || '/';
+  return rn.some((r) => u === r || u.startsWith(r + '/'));
+}
+/** ¿El `source` de un header de vercel.json cubre SOLO una ruta noindex permitida (/salud, /salud/(.*), /salud/:path*)? */
+function sourceNoindexPermitido(reglas, source) {
+  if (validarRutasNoindex(reglas).length) return false;
+  const rn = (reglas.robots && reglas.robots.rutasNoindex) || [];
+  return rn.some((r) => [r, r + '/(.*)', r + '/:path*', r + '/:path(.*)'].includes(String(source || '').trim()));
+}
+/** Categorías exentas para una página (Set). Ignora excepciones inválidas. */
+function categoriasExentas(reglas, archivoRel) {
+  const set = new Set();
+  if (validarExcepcionesPorRuta(reglas).length) return set;
+  for (const e of reglas.excepcionesPorRuta || []) if (e.archivo === archivoRel) (e.categorias || []).forEach((c) => set.add(c));
+  return set;
+}
+/** Palabras exentas (en minúsculas) del check 05 para una página (Set). Ignora excepciones inválidas. */
+function terminosExentosPorRuta(reglas, archivoRel) {
+  const set = new Set();
+  if (validarExcepcionesPorRuta(reglas).length) return set;
+  for (const e of reglas.excepcionesPorRuta || []) if (e.archivo === archivoRel) (e.terminos || []).forEach((t) => set.add(t.toLowerCase()));
+  return set;
+}
+function frasesExentasPorRuta(reglas, archivoRel) {
+  const ids = new Set();
+  for (const c of categoriasExentas(reglas, archivoRel)) (FRASES_POR_CATEGORIA[c] || []).forEach((id) => ids.add(id));
+  return ids;
+}
+
 /**
  * ¿El href de un CTA coincide con el href aprobado?
  * Coincidencia exacta, o (si la excepción "whatsapp-mensaje-precargado" está activa) mismo origen + ruta
@@ -211,7 +443,7 @@ function hrefCtaCoincide(href, aprobado, permitirTexto) {
 }
 
 module.exports = {
-  hrefCtaCoincide, ROOT, leerReglas, listarArchivos, listarHtml, rel, leer, urlDePagina,
+  crearDetectorContactanos, TEXTO_CONTACTANOS, validarRutasNoindex, rutaNoindexPermitida, sourceNoindexPermitido, terminosExentosPorRuta, validarRutasConSectorPermitido, normLiteral, regexLiteral, contieneLiteral, construirArbol, descendientes, validarExcepcionesPorRuta, categoriasExentas, frasesExentasPorRuta, esCentinela, listaAprobada, normalizarSector, quitarFormatosWhatsapp, textoAuditable, lineaDeFragmento, hrefCtaCoincide, ROOT, leerReglas, listarArchivos, listarHtml, rel, leer, urlDePagina,
   enmascarar, sinComentariosScriptsEstilos, etiquetas, atributos, lineaDe, decodificar, aTexto,
   textoVisible, contenidoElemento, textoSinSrOnly, normalizar, normalizarPalabra, ramaObjetivo, Reporte,
 };
