@@ -98,7 +98,7 @@
   // touch phones/tablets: the stage pins and scroll position drives the conversation (no autoplay there)
   var mqPin = w.matchMedia('(max-width: 900px) and (pointer: coarse)');
   var pinMode = false, pinRendered = false, pinS = -1, pinKey = '';
-  var PIN_N = 7, PIN_HOLD = 0.6;       // 7 scroll steps (CSS: 40svh each) + a short hold after the last message
+  var PIN_N = 7, PIN_HOLD = 0.6;       // initial value for 8 messages: 7 scroll steps (CSS: 40svh each, track 404svh) + a short hold after the last message; overwritten below from the real message count
   var trackStart = 0, stepPx = 1;
 
   // WhatsApp steps: each step = one message; replies (inside .turn) show typing dots first
@@ -107,7 +107,7 @@
       ? { msg: node.querySelector('.msg'), typing: node.querySelector('.typing') }
       : { msg: node, typing: null };
   }) : [];
-  PIN_N = Math.max(3, waSteps.length - 1);   // scroll steps follow the number of WhatsApp messages (was 7 for 8 messages)
+  PIN_N = Math.max(3, waSteps.length - 1);   // scroll steps follow the number of WhatsApp messages: 8 messages -> PIN_N = 7 (keep the CSS track at (PIN_N + .6) x 40 + 100 svh = 404svh)
   var pill = chat && chat.querySelector('.pill');
   var waK = 0, callStage = 0, callC = 0;   // callStage: 0 ringing, 1 answered
 

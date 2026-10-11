@@ -13,7 +13,8 @@ if (process.env.GITHUB_ACTIONS !== 'true' && !process.argv.includes('--force')) 
   console.error('✖ prepare-deploy.js borra archivos del directorio actual. Solo corre en GitHub Actions o con --force en un clon desechable.');
   process.exit(1);
 }
-const NO_PUBLICOS = ['.github', 'scripts', 'release-rules.json', 'README.md', 'CONTRIBUTING.md', '.gitignore'];
+// `demos` (demos en desarrollo) NO se publica ni en DEV ni en PROD hasta que la dirección decida publicarlas.
+const NO_PUBLICOS = ['.github', 'scripts', 'demos', 'release-rules.json', 'README.md', 'CONTRIBUTING.md', '.gitignore'];
 for (const n of NO_PUBLICOS) {
   const p = path.join(root, n);
   if (fs.existsSync(p)) { fs.rmSync(p, { recursive: true, force: true }); console.log('− removido del paquete de deploy: ' + n); }
