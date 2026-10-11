@@ -155,6 +155,21 @@ for (const [n2, extra] of [['«FECHA DE VIGENCIA» en una página', { 'aviso-de-
   prueba('prod: «Aprobar borrador» en demos/ (se quita del paquete) NO aborta', p.status, 0); fs.rmSync(tmp, { recursive: true, force: true });
 }
 
+// ── garantía «demos/ nunca se publica» (la exención robots.rutasExentasDemos del check 04 depende de esto)
+{
+  const lista = (d, base = d, acc = []) => { for (const e of fs.readdirSync(d, { withFileTypes: true })) { const f = path.join(d, e.name); if (e.isDirectory()) lista(f, base, acc); else acc.push(path.relative(base, f).split(path.sep).join('/')); } return acc; };
+  const fake = { 'demos/x.html': pag('Demo', '  <p>demo con noindex</p>\n', '<meta name="robots" content="noindex">'), 'demos/sub/y.html': pag('Demo 2'), 'demos/assets/a.png': 'PNG', 'demos/README.md': 'interno' };
+  for (const env of ['dev', 'prod']) {
+    const tmp = sitio(fake); const p = prepara(tmp, env);
+    const rest = lista(tmp);
+    prueba(`${env.toUpperCase()}: con demos/x.html (+ subcarpetas, assets, README) en el fuente, el paquete NO contiene ningún archivo de demos/`, [p.status, rest.filter((f) => f === 'demos' || f.startsWith('demos/')).length, rest.includes('index.html')], [0, 0, true]);
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+  const ig = fs.readFileSync(path.join(raiz, '.vercelignore'), 'utf8').split(/\r?\n/).map((l) => l.trim());
+  prueba('.vercelignore lista «demos»', ig.includes('demos') || ig.includes('demos/'), true);
+  prueba('prepare-deploy NO_PUBLICOS incluye «demos»', require('../prepare-deploy.js').NO_PUBLICOS.includes('demos'), true);
+}
+
 // ── verify-deploy: CLI contra un servidor HTTP local (extremo a extremo con prepare-deploy)
 function servir(dir, headersExtra) {
   return new Promise((ok) => {

@@ -6,6 +6,7 @@
  * según la rama (release-rules.json → robots.dev / robots.main). Hoy ambas son "index": el FUENTE es indexable en dev y
  * en main; el noindex de DEV se inyecta al desplegar (scripts/prepare-deploy.js, DEPLOY_ENV=dev). robots.rutasNoindex (solo /salud) permite que esa
  * ruta sea noindex en una rama indexable; cualquier otra página o header noindex sigue fallando.
+ * robots.rutasExentasDemos (solo «demos/»): sus páginas no entran en las reglas de indexación/noindex (nunca se publican).
  * H-39 (SOLO main): release-rules.json → bloqueosSoloMain. Con CHECK_BRANCH=main falla si el paquete público (páginas .html fuera de demos/,
  * sitemap.xml, robots.txt) contiene un marcador pendiente («FECHA DE VIGENCIA», «borrador», «v3-borrador»…) en cualquier parte del código
  * fuente (texto, atributos, comentarios, JSON-LD). En dev NO bloquea (el marcador existe hasta que corre golive.js).
@@ -80,6 +81,7 @@ for (const f of L.listarHtml()) {
 const { rama, origen } = L.ramaObjetivo();
 const esperadoCfg = reglas.robots || {};
 L.validarRutasNoindex(reglas).forEach((e) => R.error('release-rules.json', null, e));
+L.validarRutasExentasDemos(reglas).forEach((e) => R.error('release-rules.json', null, e));
 let clave = rama;
 if (!rama) {
   R.error(null, null, 'No se pudo determinar la rama. Define CHECK_BRANCH=dev|main.');
@@ -117,12 +119,16 @@ if (!rama) {
     // meta robots por página
     const paginasNoindex = [];
     const paginasNoindexPermitidas = [];
+    let exentasDemos = 0;
     for (const f of L.listarHtml()) {
+      // robots.rutasExentasDemos («demos/» exacto): no se publican (.vercelignore + prepare-deploy NO_PUBLICOS), no entran en las reglas de indexación.
+      if (L.paginaExentaDemos(reglas, L.rel(f))) { exentasDemos++; continue; }
       const tags = L.etiquetas(L.sinComentariosScriptsEstilos(L.leer(f)));
       if (tags.some((t) => t.tag === 'meta' && (t.attrs.name || '').toLowerCase() === 'robots' && /noindex/i.test(t.attrs.content || ''))) paginasNoindex.push(L.rel(f));
       if (tags.some((t) => t.tag === 'meta' && (t.attrs.name || '').toLowerCase() === 'robots' && /noindex/i.test(t.attrs.content || '')) && L.rutaNoindexPermitida(reglas, L.urlDePagina(f))) paginasNoindexPermitidas.push(L.rel(f));
     }
-    const todas = L.listarHtml().length;
+    const todas = L.listarHtml().length - exentasDemos;
+    if (exentasDemos) R.nota(`robots.rutasExentasDemos: ${exentasDemos} página(s) de demos/ exentas de las reglas de indexación (no se publican).`);
     if (esperado === 'noindex') {
       if (!hayNoindexHeader) R.error('vercel.json', null, 'Rama con regla "noindex": falta el header X-Robots-Tag "noindex, nofollow" en vercel.json.');
       if (!disallowTodo) R.error('robots.txt', null, 'Rama con regla "noindex": robots.txt debe tener "User-agent: *" y "Disallow: /".');

@@ -70,6 +70,9 @@ jobs:
       - name: Pruebas H-39 (marcadores pendientes bloquean solo en main)
         run: node scripts/tests/bloqueos-main.test.js
 
+      - name: Pruebas de la exención de demos/ en la regla de indexación
+        run: node scripts/tests/demos-exentas.test.js
+
       - name: Pruebas del noindex al desplegar (prepare-deploy / verify-deploy)
         run: node scripts/tests/deploy-noindex.test.js
 
