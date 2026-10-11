@@ -67,7 +67,9 @@ jobs:
       - name: Instalar Vercel CLI
         run: npm install --global vercel@59
 
-      - name: Dejar solo archivos públicos
+      - name: Dejar solo archivos públicos (DEV incluye demos/ con noindex)
+        env:
+          DEPLOY_ENV: dev
         run: node scripts/prepare-deploy.js
 
       # El proyecto DEV usa su propio "production" (URL estable *.vercel.app del proyecto DEV).
