@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 'use strict';
 /**
- * Casos de prueba entregados por el Arquitecto de soluciones (v3) para el check 05, ejecutados contra el
- * release-rules.json del repo. Uso: node scripts/tests/05-frases-arquitecto-v3.test.js [ruta-al-release-rules.json]
+ * Casos de prueba entregados por el Arquitecto de soluciones (v3.1, 74 casos) para el check 05, ejecutados contra el
+ * release-rules.json del repo. Uso: node scripts/tests/05-frases-arquitecto.test.js [ruta-al-release-rules.json]
  */
 const path = require('path');
 const fs = require('fs');
@@ -54,7 +54,7 @@ const casos = [
   ['Resultados garantizados', 'falla', 'garantia'],
   ['Pedido confirmado', 'falla', 'ventas-cobros-inventario'],
   ['Escríbenos por WhatsApp', 'pasa'],
-  // NOTA: «cerrar ventas» y sus formas (ventas-mencion) pasaron de 'aviso' (v3) a 'falla' por decisión de dirección 2026-10-10.
+  // NOTA: «cerrar ventas» y sus formas (ventas-mencion) pasaron de 'aviso' (Arquitecto) a 'falla' por decisión de dirección 2026-10-10.
   // v2.1 (hallazgos de la revisión del PR #7)
   ['Esto no es una certificación.', 'aviso', 'certificacion-revisar', 'certificación'],
   ['Calculamos tu IVA cada mes.', 'falla', 'impuestos-calculo'],
@@ -88,6 +88,13 @@ const casos = [
   ['Tratamiento de datos personales conforme al aviso de privacidad.', 'pasa', null, null, '/salud'],
   ['Cumple con la NOM.', 'falla', 'salud-cumplimiento', null, '/salud'],
   ['Tomamos la solicitud de cita y una persona de tu equipo la confirma.', 'pasa', null, null, '/salud'],
+  // v3.1 · «Diagnóstico» → «Revisión inicial» en todo el sitio (decisión de dirección, opción a)
+  ['Ruta IA — Diagnóstico, prioridades y reglas de uso', 'falla', 'salud-diagnostico', null, '/'],
+  ['Ruta IA — Diagnóstico, prioridades y reglas de uso', 'falla', 'salud-diagnostico', null, '/servicios/auditoria-de-ia'],
+  ['Ruta IA — Revisión inicial, prioridades y reglas de uso', 'pasa', null, null, '/'],
+  ['Primero una conversación y una revisión inicial para entender el problema.', 'pasa', null, null, '/'],
+  ['Agenda tu revisión inicial.', 'pasa', null, null, '/salud'],
+  ['Sin diagnóstico: solo citas y avisos administrativos.', 'aviso', 'salud-diagnostico', null, '/salud'],
 ];
 
 let ok = 0; const malos = [];

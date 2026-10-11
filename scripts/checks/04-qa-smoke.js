@@ -3,7 +3,8 @@
 /**
  * Check 4 · QA smoke: por página <html lang>, <title>, meta description, exactamente un <h1>,
  * imágenes con alt, sin texto residual (TODO / lorem / placeholder...), y regla de robots/noindex
- * según la rama (release-rules.json → robots.dev / robots.main).
+ * según la rama (release-rules.json → robots.dev / robots.main). robots.rutasNoindex (solo /salud) permite que esa
+ * ruta sea noindex en una rama indexable; cualquier otra página o header noindex sigue fallando.
  * Rama: CHECK_BRANCH, o GITHUB_BASE_REF (PR), o GITHUB_REF_NAME, o rama git actual.
  */
 const fs = require('fs');
@@ -74,6 +75,7 @@ for (const f of L.listarHtml()) {
 // --- Regla robots / noindex según rama
 const { rama, origen } = L.ramaObjetivo();
 const esperadoCfg = reglas.robots || {};
+L.validarRutasNoindex(reglas).forEach((e) => R.error('release-rules.json', null, e));
 let clave = rama;
 if (!rama) {
   R.error(null, null, 'No se pudo determinar la rama. Define CHECK_BRANCH=dev|main.');
@@ -88,9 +90,13 @@ if (!rama) {
     R.nota(`Rama: ${rama} (fuente: ${origen}) → regla robots esperada: "${esperado}".`);
     // vercel.json
     let hayNoindexHeader = false;
+    const headersNoindexPermitidos = [], headersNoindexOtros = [];
     try {
       const v = JSON.parse(L.leer(path.join(L.ROOT, 'vercel.json')));
-      for (const h of v.headers || []) for (const kv of h.headers || []) if (/^x-robots-tag$/i.test(kv.key) && /noindex/i.test(kv.value)) hayNoindexHeader = true;
+      for (const h of v.headers || []) for (const kv of h.headers || []) if (/^x-robots-tag$/i.test(kv.key) && /noindex/i.test(kv.value)) {
+        hayNoindexHeader = true;
+        if (L.sourceNoindexPermitido(reglas, h.source)) headersNoindexPermitidos.push(h.source); else headersNoindexOtros.push(h.source);
+      }
     } catch (_) { /* check 3 reporta JSON inválido */ }
     // robots.txt
     const rt = path.join(L.ROOT, 'robots.txt');
@@ -106,9 +112,11 @@ if (!rama) {
     }
     // meta robots por página
     const paginasNoindex = [];
+    const paginasNoindexPermitidas = [];
     for (const f of L.listarHtml()) {
       const tags = L.etiquetas(L.sinComentariosScriptsEstilos(L.leer(f)));
       if (tags.some((t) => t.tag === 'meta' && (t.attrs.name || '').toLowerCase() === 'robots' && /noindex/i.test(t.attrs.content || ''))) paginasNoindex.push(L.rel(f));
+      if (tags.some((t) => t.tag === 'meta' && (t.attrs.name || '').toLowerCase() === 'robots' && /noindex/i.test(t.attrs.content || '')) && L.rutaNoindexPermitida(reglas, L.urlDePagina(f))) paginasNoindexPermitidas.push(L.rel(f));
     }
     const todas = L.listarHtml().length;
     if (esperado === 'noindex') {
@@ -116,9 +124,12 @@ if (!rama) {
       if (!disallowTodo) R.error('robots.txt', null, 'Rama con regla "noindex": robots.txt debe tener "User-agent: *" y "Disallow: /".');
       if (paginasNoindex.length !== todas) R.error(null, null, `Rama con regla "noindex": ${todas - paginasNoindex.length} página(s) sin <meta name="robots" content="noindex">.`);
     } else {
-      if (hayNoindexHeader) R.error('vercel.json', null, `Rama "${clave}" debe ser indexable ("index") pero vercel.json envía X-Robots-Tag noindex: al promover a producción onix-ia.com quedaría fuera de Google. Requiere decisión del dueño del sitio: ajustar antes del release.`);
+      // robots.rutasNoindex: solo /salud puede ser noindex; todo lo demás sigue fallando.
+      const otrasPaginas = paginasNoindex.filter((p) => !paginasNoindexPermitidas.includes(p));
+      if (paginasNoindexPermitidas.length || headersNoindexPermitidos.length) R.nota(`robots.rutasNoindex (${(esperadoCfg.rutasNoindex || []).join(', ')}): noindex permitido solo en ${[...paginasNoindexPermitidas, ...headersNoindexPermitidos.map((x) => 'header ' + x)].join(', ')}. /salud NO debe ir a main sin revisión de un abogado humano y el OK escrito del dueño del sitio.`);
+      if (headersNoindexOtros.length) R.error('vercel.json', null, `Rama "${clave}" debe ser indexable ("index") pero vercel.json envía X-Robots-Tag noindex en: ${headersNoindexOtros.map((x) => JSON.stringify(x)).join(', ')}. Al promover a producción onix-ia.com quedaría fuera de Google. Solo se permite noindex acotado a las rutas de robots.rutasNoindex. Requiere decisión del dueño del sitio: ajustar antes del release.`);
       if (disallowTodo) R.error('robots.txt', null, `Rama "${clave}" debe ser indexable pero robots.txt tiene "Disallow: /".`);
-      if (paginasNoindex.length) R.error(null, null, `Rama "${clave}" debe ser indexable pero ${paginasNoindex.length} página(s) tienen <meta name="robots" content="noindex">: ${paginasNoindex.join(', ')}.`);
+      if (otrasPaginas.length) R.error(null, null, `Rama "${clave}" debe ser indexable pero ${otrasPaginas.length} página(s) tienen <meta name="robots" content="noindex">: ${otrasPaginas.join(', ')}.`);
     }
   }
 }

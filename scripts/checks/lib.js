@@ -344,6 +344,32 @@ function validarRutasConSectorPermitido(reglas) {
   });
   return errs;
 }
+/**
+ * robots.rutasNoindex (check 04, solo rama con regla "index", p. ej. main): rutas que SÍ pueden ser noindex aunque el
+ * sitio sea indexable. Guarda en código: solo /salud (y subrutas «/salud/…»); cualquier otra ruta es error de
+ * configuración. Cualquier otra página o header noindex sigue fallando. /salud NO debe ir a main sin revisión de un
+ * abogado humano y el OK escrito del dueño del sitio (no hay compuerta automática).
+ */
+const RUTAS_NOINDEX_PERMITIDAS = ['/salud'];
+function validarRutasNoindex(reglas) {
+  const rn = reglas.robots && reglas.robots.rutasNoindex;
+  if (rn === undefined) return [];
+  if (!Array.isArray(rn)) return ['robots.rutasNoindex debe ser una lista.'];
+  return rn.filter((r) => !RUTAS_NOINDEX_PERMITIDAS.includes(r)).map((r) => `robots.rutasNoindex: la ruta ${JSON.stringify(r)} no puede ser noindex (solo: ${RUTAS_NOINDEX_PERMITIDAS.join(', ')}).`);
+}
+/** ¿`url` (p. ej. "/salud/preguntas") es una ruta noindex permitida? Solo si la config es válida. */
+function rutaNoindexPermitida(reglas, url) {
+  if (validarRutasNoindex(reglas).length) return false;
+  const rn = (reglas.robots && reglas.robots.rutasNoindex) || [];
+  const u = String(url || '').replace(/\/+$/, '') || '/';
+  return rn.some((r) => u === r || u.startsWith(r + '/'));
+}
+/** ¿El `source` de un header de vercel.json cubre SOLO una ruta noindex permitida (/salud, /salud/(.*), /salud/:path*)? */
+function sourceNoindexPermitido(reglas, source) {
+  if (validarRutasNoindex(reglas).length) return false;
+  const rn = (reglas.robots && reglas.robots.rutasNoindex) || [];
+  return rn.some((r) => [r, r + '/(.*)', r + '/:path*', r + '/:path(.*)'].includes(String(source || '').trim()));
+}
 /** Categorías exentas para una página (Set). Ignora excepciones inválidas. */
 function categoriasExentas(reglas, archivoRel) {
   const set = new Set();
@@ -384,7 +410,7 @@ function hrefCtaCoincide(href, aprobado, permitirTexto) {
 }
 
 module.exports = {
-  terminosExentosPorRuta, validarRutasConSectorPermitido, normLiteral, regexLiteral, contieneLiteral, construirArbol, descendientes, validarExcepcionesPorRuta, categoriasExentas, frasesExentasPorRuta, esCentinela, listaAprobada, normalizarSector, quitarFormatosWhatsapp, textoAuditable, lineaDeFragmento, hrefCtaCoincide, ROOT, leerReglas, listarArchivos, listarHtml, rel, leer, urlDePagina,
+  validarRutasNoindex, rutaNoindexPermitida, sourceNoindexPermitido, terminosExentosPorRuta, validarRutasConSectorPermitido, normLiteral, regexLiteral, contieneLiteral, construirArbol, descendientes, validarExcepcionesPorRuta, categoriasExentas, frasesExentasPorRuta, esCentinela, listaAprobada, normalizarSector, quitarFormatosWhatsapp, textoAuditable, lineaDeFragmento, hrefCtaCoincide, ROOT, leerReglas, listarArchivos, listarHtml, rel, leer, urlDePagina,
   enmascarar, sinComentariosScriptsEstilos, etiquetas, atributos, lineaDe, decodificar, aTexto,
   textoVisible, contenidoElemento, textoSinSrOnly, normalizar, normalizarPalabra, ramaObjetivo, Reporte,
 };

@@ -1,5 +1,5 @@
 {
-  "_LEEME": "Reglas de release de ONIX (incorporan la propuesta v3 del Arquitecto de soluciones). Las listas VACÍAS no se validan (check desactivado); los centinelas (\"__NINGUNA_APROBADA__\" / \"__NINGUNO_APROBADO__\") ACTIVAN el check sin aprobar nada. frasesProhibidas usa límites de palabra Unicode; excepción por ruta para sectores solo en /salud (rutasConSectorPermitido) y para cifras/plazos/fechas solo en /aviso-de-privacidad (excepcionesPorRuta). \"clínica/clínicas\" no pasan en ninguna ruta. Pendiente de OK del responsable de contenido.",
+  "_LEEME": "Reglas de release de ONIX (incorporan la propuesta v3.1 del Arquitecto de soluciones). Las listas VACÍAS no se validan (check desactivado); los centinelas (\"__NINGUNA_APROBADA__\" / \"__NINGUNO_APROBADO__\") ACTIVAN el check sin aprobar nada. frasesProhibidas usa límites de palabra Unicode; excepción por ruta para sectores solo en /salud (rutasConSectorPermitido) y para cifras/plazos/fechas solo en /aviso-de-privacidad (excepcionesPorRuta). \"clínica/clínicas\" no pasan en ninguna ruta. Pendiente de OK del responsable de contenido. v3.1: «Diagnóstico» → «Revisión inicial» en todo el sitio.",
   "_ultimaRevision": "PENDIENTE: falta fecha y nombre de quien aprueba.",
   "cifrasAprobadas": [
     "__NINGUNA_APROBADA__",
@@ -93,7 +93,11 @@
   "robots": {
     "_NOTA": "Regla de indexación esperada según la rama BASE del PR (o CHECK_BRANCH). 'noindex' = header X-Robots-Tag noindex en vercel.json + robots.txt Disallow:/ ; 'index' = sin noindex en el sitio. TODO (dueño del sitio): confirmar 'main' (producción) = 'index' para salir a buscadores.",
     "dev": "noindex",
-    "main": "index"
+    "main": "index",
+    "rutasNoindex": [
+      "/salud"
+    ],
+    "_rutasNoindex_NOTA": "Decisión de dirección 2026-10-10: SOLO la ruta /salud (y sus subrutas «/salud/…», p. ej. salud.html o salud/index.html) puede ser noindex en una rama con regla \"index\" (main): su <meta name=\"robots\" content=\"noindex\"> y, si se usa, un header X-Robots-Tag cuyo source sea exactamente /salud, /salud/(.*) o /salud/:path*. Cualquier otra página o header noindex (incluido el global \"/(.*)\") sigue FALLANDO en main. Guarda en scripts/checks/lib.js: otra ruta en esta lista es error de configuración. Sin efecto en dev (todo el sitio sigue noindex). ⚠ /salud NO debe ir a main hasta que la revise un abogado humano y exista el OK escrito del dueño del sitio (sin compuerta automática: es una nota de gobierno)."
   },
   "marcadoresProhibidos": [
     "TODO",
@@ -130,8 +134,8 @@
       "negacion": "advertencia",
       "regex": "(?<![\\p{L}\\p{N}_])diagn[oó]stic(?:o|os|a|ar|amos)(?![\\p{L}\\p{N}_])",
       "flags": "giu",
-      "ejemplo": "diagnóstico inicial",
-      "fuente": "Nota de Legal (salud) + decisión de dirección. En una negación (“no…”, “sin…”, “ni…”) baja a advertencia. CONFLICTO: el sitio general usa “Diagnóstico” como paso de la ruta de ONIX"
+      "ejemplo": "Ruta IA — Diagnóstico, prioridades y reglas de uso",
+      "fuente": "Decisión de dirección 2026-10-10 (opción a): «Revisión inicial» en todo el sitio; Nota de Legal (salud). Bloqueante en cualquier ruta; en una negación («no…», «sin…», «ni…») baja a advertencia. «revisión inicial» no es prohibida. Esperado: «Ruta IA — Diagnóstico, prioridades y reglas de uso» falla hasta que el sitio cambie."
     },
     {
       "id": "salud-atencion-clinica",
@@ -477,9 +481,9 @@
       "fuente": "Reglas vigentes › Criterios vigentes"
     },
     {
-      "retirado": "diagnóstico (en páginas de salud)",
-      "reemplazo": "revisión inicial / conversación inicial",
-      "fuente": "Nota de Legal (salud)"
+      "retirado": "diagnóstico (en todo el sitio; solo se tolera en negaciones, como aviso)",
+      "reemplazo": "revisión inicial",
+      "fuente": "Decisión de dirección 2026-10-10 (opción a) + Nota de Legal (salud)"
     }
   ],
   "rutasConSectorPermitido": [

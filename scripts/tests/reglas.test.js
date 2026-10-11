@@ -40,7 +40,7 @@ prueba('quita "+52 222 709 7945"', L.quitarFormatosWhatsapp('Escribe al +52 222 
 prueba('no quita número distinto', L.quitarFormatosWhatsapp('Llama al +52 222 709 7946', fmt).includes('+52'), true);
 prueba('no quita si hay dígitos pegados', L.quitarFormatosWhatsapp('12227097945', fmt), '12227097945');
 
-// ── 4) Reglas de frases (reglas reales; los casos del Arquitecto v3 están en 05-frases-arquitecto-v3.test.js)
+// ── 4) Reglas de frases (reglas reales; los casos del Arquitecto v3 están en 05-frases-arquitecto.test.js)
 const { compilar, revisarTexto, estaNegada } = require('../checks/05-frases-prohibidas');
 const comp = compilar(base);
 prueba('todas las reglas compilan', comp.errores, []);
