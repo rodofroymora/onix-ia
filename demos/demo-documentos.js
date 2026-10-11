@@ -62,18 +62,26 @@
      Responde solo con lo que está en el repositorio y cita de dónde salió.
      Si no lo encuentra, lo dice; no lo supone. */
   var RESPUESTAS = [
-    { re: /garant[íi]a|devoluci[óo]n|cambio/i,
-      texto: 'La garantía del producto cubre defectos de fabricación y no cubre daños por mal uso.',
-      cita: 'Manual de operación, versión 4, apartado 7.2' },
-    { re: /vacacion|permiso|d[íi]as libres|ausencia/i,
+    { re: /contacto|ventas|qui[ée]n ve|representante/i,
+      texto: 'El contacto de ventas de Proveedor Ejemplo es Nombre Ejemplo.',
+      cita: 'Correo de alta de proveedor, consolidado en la ficha',
+      ruta: ['Proveedores', 'Proveedor Ejemplo', 'ficha consolidada'] },
+    { re: /documentos|tocan|relacionad|aparece|d[óo]nde sale/i,
+      texto: 'Proveedor Ejemplo aparece en el contrato marco, en el correo de alta y en el manual de entregas. Los tres quedaron conectados a la misma entidad aunque vivan en dominios distintos.',
+      cita: 'Red de relaciones: dominios Proveedores y Operación',
+      ruta: ['Proveedores', 'Proveedor Ejemplo', 'Operación'] },
+    { re: /entrega|recib|env[íi]o|reparto/i,
+      texto: 'Al entregar hay que confirmar los datos con quien recibe antes de cerrar la orden.',
+      cita: 'Manual de entregas, versión 3, paso 5',
+      ruta: ['Operación', 'Entrega a domicilio'] },
+    { re: /condicion|cl[áa]usula|contrato|acordad/i,
+      texto: 'Las condiciones acordadas con ese proveedor son las de la cláusula cuarta del contrato marco.',
+      cita: 'Contrato marco, cláusula cuarta',
+      ruta: ['Proveedores', 'Contrato marco'] },
+    { re: /permiso|vacacion|personal|reglamento/i,
       texto: 'El trámite se levanta con tu responsable directo y queda registrado antes de tomarse.',
-      cita: 'Reglamento interno, versión 2, apartado 3.1' },
-    { re: /proveedor|contrato|plazo de pago|pago/i,
-      texto: 'Los contratos con proveedores se renuevan de forma anual y requieren la firma de dirección.',
-      cita: 'Contrato marco de ejemplo, cláusula cuarta' },
-    { re: /entrega|env[íi]o|reparto/i,
-      texto: 'El procedimiento de entrega pide confirmar los datos con quien recibe antes de cerrar la orden.',
-      cita: 'Procedimiento de entregas, versión 3, paso 5' }
+      cita: 'Reglamento interno, versión 2, apartado 3.1',
+      ruta: ['Personal', 'Reglamento interno'] }
   ];
 
   var chat  = document.getElementById('dv-chat');
@@ -89,17 +97,36 @@
     return p;
   }
 
+  var ruta = document.getElementById('dv-ruta');
+
+  function pintarRuta(pasos) {
+    if (!ruta) return;
+    ruta.innerHTML = '';
+    pasos.forEach(function (p, i) {
+      if (i) {
+        ruta.insertAdjacentHTML('beforeend',
+          '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+          'stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>');
+      }
+      var b = document.createElement('b');
+      b.textContent = p;
+      ruta.appendChild(b);
+    });
+  }
+
   function responder(texto) {
     for (var i = 0; i < RESPUESTAS.length; i++) {
       var r = RESPUESTAS[i];
       if (r.re.test(texto)) {
+        pintarRuta(r.ruta);
         burbuja('dv-msg--in', r.texto + '<span class="dv-cita">' + r.cita + '</span>');
         return;
       }
     }
+    pintarRuta(['sin coincidencias en la red']);
     burbuja('dv-msg--in sin',
-      'No encuentro eso en los documentos que tengo cargados, así que no lo voy a suponer.' +
-      '<small>Puedes subir el documento que lo explique y vuelvo a buscar.</small>');
+      'Eso no está en ningún documento cargado, así que no lo voy a suponer.' +
+      '<small>Sube el archivo que lo explique y vuelvo a buscar.</small>');
   }
 
   function preguntar(texto) {
