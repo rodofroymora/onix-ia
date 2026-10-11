@@ -27,20 +27,20 @@
 <a class="skip" href="#main">Saltar al contenido</a>
 <header class="nav">
   <div class="wrap nav__inner">
-    <a href="/" class="logo" aria-label="Ónix, inicio">ÓNIX</a>
+    <a href="/" class="logo" aria-label="ÓNIX, inicio">ÓNIX</a>
     <nav class="nav__links" aria-label="Principal">
       <a href="/">Inicio</a>
       <div class="nav__item">
         <button type="button" class="nav__trigger" id="svc-trigger" aria-expanded="false" aria-controls="svc-mega" aria-current="page">Servicios <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
         <div class="mega" id="svc-mega" hidden><div class="wrap mega__in">
           <a href="/servicios" class="mega__all">Ver todos los servicios <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-          <div class="mega__grid"><div class="mega__col"><p class="mega__title">Capa 1 · Estrategia y gobierno</p><a href="/servicios/estrategia-de-ia">Ruta IA</a><p class="mega__desc">¿Qué hacemos con IA, en qué orden y con qué reglas?</p></div><div class="mega__col"><p class="mega__title">Capa 2 · Auditoría y seguridad</p><a href="/servicios/auditoria-de-ia">Auditoría IA Confiable</a><p class="mega__desc">¿Lo que usamos es seguro, confiable y responsable?</p></div><div class="mega__col"><p class="mega__title">Capa 3 · Datos y documentos</p><a href="/servicios/documentos-vivos">Documentos Vivos</a><a href="/servicios/contabilidad-asistida">Contabilidad Asistida</a><p class="mega__desc">¿Nuestra información está lista para que la IA la use?</p></div><div class="mega__col"><p class="mega__title">Capa 4 · Agentes y asistentes</p><a href="/servicios/agentes-de-operacion">Agentes de Operación</a><a href="/servicios/radar-de-leads">Radar de Leads</a><p class="mega__desc">¿Qué tareas puede hacer la IA por nosotros?</p></div><div class="mega__col"><p class="mega__title">Capa 5 · Canales de atención</p><a href="/servicios/asistentes-whatsapp-y-voz">Asistentes de WhatsApp y Voz</a><p class="mega__desc">¿Cómo atendemos mejor y a cualquier hora?</p></div></div>
+          <div class="mega__grid"><div class="mega__col"><p class="mega__title">Capa 1 · Estrategia y gobierno</p><a href="/servicios/estrategia-de-ia">Ruta IA</a><p class="mega__desc">¿Qué hacemos con IA, en qué orden y con qué reglas?</p></div><div class="mega__col"><p class="mega__title">Capa 2 · Auditoría y seguridad</p><a href="/servicios/auditoria-de-ia">Auditoría IA Confiable</a><p class="mega__desc">¿Lo que usamos es seguro, confiable y responsable?</p></div><div class="mega__col"><p class="mega__title">Capa 3 · Datos y documentos</p><a href="/servicios/documentos-vivos">Documentos Vivos</a><a href="/servicios/contabilidad-asistida">Contabilidad Asistida</a><p class="mega__desc">¿Nuestra información está lista para que la IA la use?</p></div><div class="mega__col"><p class="mega__title">Capa 4 · Agentes y asistentes</p><a href="/servicios/agentes-de-operacion">Agentes de Operación</a><a href="/servicios/radar-de-leads">Radar de Leads</a><p class="mega__desc">¿Qué tareas puede hacer la IA por nosotros?</p></div><div class="mega__col"><p class="mega__title">Capa 5 · Canales de atención</p><a href="/servicios/asistentes-whatsapp-y-voz">Asistentes de WhatsApp y Voz</a><p class="mega__desc">¿Cómo logramos que tus clientes tengan a quién escribirle?</p></div></div>
         </div></div>
       </div>
       <a href="/como-trabajamos">Cómo trabajamos</a>
       <a href="/confianza-y-gobierno">Confianza y gobierno</a>
       <a href="/#contacto">Contacto</a>
-      <a href="https://wa.me/522227097945" class="btn btn--primary" target="_blank" rel="noopener noreferrer">Escríbenos por WhatsApp<span class="sr-only"> (abre WhatsApp)</span></a>
+      <a href="#escribenos" class="btn btn--go">Contáctanos</a>
     </nav>
     <button class="burger" id="burger" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="mmenu"><span></span></button>
   </div>
@@ -52,7 +52,7 @@
   <a href="/como-trabajamos">Cómo trabajamos</a>
   <a href="/confianza-y-gobierno">Confianza y gobierno</a>
   <a href="/#contacto">Contacto</a>
-  <div class="mm-cta"><a href="https://wa.me/522227097945" class="btn btn--accent" target="_blank" rel="noopener noreferrer">Escríbenos por WhatsApp<span class="sr-only"> (abre WhatsApp)</span></a></div>
+  <div class="mm-cta"><a href="#escribenos" class="btn btn--goac">Contáctanos</a></div>
 </nav>
 <main id="main">
 <section class="sec dca">
@@ -125,16 +125,16 @@
         <!-- Pantalla 2 -->
         <div class="dca-panel" id="dca-p2" role="tabpanel" aria-labelledby="dca-t2" hidden>
           <p class="dca-panel__h">Se extraen los datos tal como aparecen en el documento.</p>
-          <p class="dca-panel__s">Dos salieron con baja confianza y quedan marcados para que los vea una persona. La categoría viene del catálogo que entrega tu contador; sin ese catálogo no se propone ninguna.</p>
+          <p class="dca-panel__s">Los importes van ocultos: esta demostración no publica cifras. Dos renglones salieron con baja confianza y quedan marcados para que los vea una persona. La categoría viene del catálogo que entrega tu contador; sin ese catálogo no se propone ninguna.</p>
           <div class="dca-tablewrap">
             <table class="dca-table">
-              <caption class="sr-only">Datos extraídos de los comprobantes del mes, con su estado de revisión. Datos ficticios.</caption>
+              <caption class="sr-only">Datos extraídos de los comprobantes del mes, con su estado de revisión. Datos ficticios; los importes se ocultan en la demostración.</caption>
               <thead><tr><th scope="col">Comprobante</th><th scope="col">Emisor</th><th scope="col">Importe</th><th scope="col">Categoría sugerida</th><th scope="col">Estado</th></tr></thead>
               <tbody>
-                <tr data-rev="no"><td>FOLIO-XXXX</td><td>Proveedor Ejemplo</td><td>$0,000.00</td><td>Insumos</td><td><span class="dca-state dca-state--ok"><i></i>Datos claros</span></td></tr>
-                <tr data-rev="no"><td>FOLIO-XXXX</td><td>Servicios Ejemplo</td><td>$0,000.00</td><td>Servicios</td><td><span class="dca-state dca-state--ok"><i></i>Datos claros</span></td></tr>
-                <tr data-rev="si"><td>FOLIO-XXXX</td><td>Ticket sin emisor legible</td><td>$0,000.00</td><td>Sin categoría</td><td><span class="dca-state dca-state--rev"><i></i>Revisar: documento ilegible</span></td></tr>
-                <tr data-rev="si"><td>FOLIO-XXXX</td><td>Proveedor Ejemplo</td><td>$0,000.00</td><td>Sin categoría</td><td><span class="dca-state dca-state--rev"><i></i>Revisar: importe distinto entre XML y PDF</span></td></tr>
+                <tr data-rev="no"><td>FOLIO-XXXX</td><td>Proveedor Ejemplo</td><td class="dca-oculto">importe oculto</td><td>Insumos</td><td><span class="dca-state dca-state--ok"><i></i>Datos claros</span></td></tr>
+                <tr data-rev="no"><td>FOLIO-XXXX</td><td>Servicios Ejemplo</td><td class="dca-oculto">importe oculto</td><td>Servicios</td><td><span class="dca-state dca-state--ok"><i></i>Datos claros</span></td></tr>
+                <tr data-rev="si"><td>FOLIO-XXXX</td><td>Ticket sin emisor legible</td><td class="dca-oculto">importe oculto</td><td>Sin categoría</td><td><span class="dca-state dca-state--rev"><i></i>Revisar: documento ilegible</span></td></tr>
+                <tr data-rev="si"><td>FOLIO-XXXX</td><td>Proveedor Ejemplo</td><td class="dca-oculto">importe oculto</td><td>Sin categoría</td><td><span class="dca-state dca-state--rev"><i></i>Revisar: importe distinto entre XML y PDF</span></td></tr>
               </tbody>
             </table>
           </div>
@@ -148,28 +148,28 @@
         <!-- Pantalla 3 -->
         <div class="dca-panel" id="dca-p3" role="tabpanel" aria-labelledby="dca-t3" hidden>
           <p class="dca-panel__h">Cruce de movimientos y comprobantes, papel de trabajo para revisión de tu contador.</p>
-          <p class="dca-panel__s">Tú exportas de tu estado de cuenta solo las columnas necesarias. Nosotros no entramos a tu banca en línea ni al portal del SAT, y nunca te pedimos tu e.firma ni tu contraseña del SAT.</p>
+          <p class="dca-panel__s">Tú exportas de tu estado de cuenta solo las columnas necesarias. Nosotros no entramos por nuestra cuenta a ningún portal: ni al de tu banco ni al del SAT, y nunca te pedimos tu e.firma ni tu contraseña del SAT.</p>
           <div class="dca-cross">
             <div class="dca-row">
-              <span class="dca-row__m">Movimiento del día 03<small>$0,000.00</small></span>
+              <span class="dca-row__m">Movimiento del día 03<small class="dca-oculto">importe oculto</small></span>
               <span class="dca-row__link" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg></span>
               <span class="dca-row__c">FOLIO-XXXX · Proveedor Ejemplo<small>Insumos</small></span>
               <span class="dca-badge">Coincide</span>
             </div>
             <div class="dca-row">
-              <span class="dca-row__m">Movimiento del día 09<small>$0,000.00</small></span>
+              <span class="dca-row__m">Movimiento del día 09<small class="dca-oculto">importe oculto</small></span>
               <span class="dca-row__link" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg></span>
               <span class="dca-row__c">FOLIO-XXXX · Servicios Ejemplo<small>Servicios</small></span>
               <span class="dca-badge">Coincide</span>
             </div>
             <div class="dca-row dca-row--falta">
-              <span class="dca-row__m">Movimiento del día 12<small>$0,000.00</small></span>
+              <span class="dca-row__m">Movimiento del día 12<small class="dca-oculto">importe oculto</small></span>
               <span class="dca-row__link" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg></span>
               <span class="dca-row__c">Sin comprobante en el expediente<small>Dato administrativo, no un juicio fiscal</small></span>
               <span class="dca-badge dca-badge--falta">Falta comprobante</span>
             </div>
             <div class="dca-row dca-row--falta">
-              <span class="dca-row__m">Movimiento del día 27<small>$0,000.00</small></span>
+              <span class="dca-row__m">Movimiento del día 27<small class="dca-oculto">importe oculto</small></span>
               <span class="dca-row__link" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg></span>
               <span class="dca-row__c">Sin comprobante en el expediente<small>Dato administrativo, no un juicio fiscal</small></span>
               <span class="dca-badge dca-badge--falta">Falta comprobante</span>
@@ -211,13 +211,9 @@
       <div class="dca-win__foot">ONIX no presta servicios contables ni fiscales y no sustituye a tu contador. Negocio y contador ficticios; ningún dato de esta pantalla es real.</div>
     </div>
 
-    <div class="dca-close">
-      <a href="https://wa.me/522227097945" class="btn btn--accent" target="_blank" rel="noopener noreferrer">Escríbenos por WhatsApp<span class="sr-only"> (abre WhatsApp)</span></a>
-      <p class="dca-priv">El aviso de privacidad de ÓNIX se publica aparte; en cuanto esté en línea, su enlace va justo aquí, junto a este botón.</p>
-    </div>
-
   </div>
 </section>
+<section class="cta dark" aria-labelledby="cta-title"><div class="wrap cta__in"><div><h2 id="cta-title">¿Quieres ver esto con los documentos de tu negocio?</h2><p>Lo revisamos juntos y te decimos qué se puede ordenar primero.</p></div><div class="cta__act" id="escribenos"><a href="https://wa.me/522227097945?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20los%20servicios%20de%20%C3%93NIX.%20Aviso%20de%20privacidad%3A%20https%3A%2F%2Fwww.onix-ia.com%2Faviso-de-privacidad" class="btn btn--accent" target="_blank" rel="noopener noreferrer">Escríbenos por WhatsApp<span class="sr-only"> (abre WhatsApp)</span></a><p class="priv-note">Al escribirnos por WhatsApp, ÓNIX (Rodolfo Mora) usará tu número y tu mensaje para responderte y darte seguimiento. WhatsApp (Meta) trata los datos de la conversación bajo sus propias condiciones. <a href="/aviso-de-privacidad">Aviso de privacidad de ÓNIX</a></p></div></div></section>
 </main>
 
 <footer class="footer">
@@ -231,19 +227,20 @@
           <li><a href="/como-trabajamos">Cómo trabajamos</a></li>
           <li><a href="/confianza-y-gobierno">Confianza y gobierno</a></li>
           <li><a href="/#contacto">Contacto</a></li>
+          <li><a href="/aviso-de-privacidad">Aviso de privacidad de ÓNIX</a></li>
         </ul>
       </nav>
     </div>
     <div class="footer__map"><h2 class="sr-only">Servicios por capa</h2><div class="footer__layers"><div><h3>Capa 1 · Estrategia y gobierno</h3><ul><li><a href="/servicios/estrategia-de-ia">Ruta IA</a></li></ul></div><div><h3>Capa 2 · Auditoría y seguridad</h3><ul><li><a href="/servicios/auditoria-de-ia">Auditoría IA Confiable</a></li></ul></div><div><h3>Capa 3 · Datos y documentos</h3><ul><li><a href="/servicios/documentos-vivos">Documentos Vivos</a></li><li><a href="/servicios/contabilidad-asistida">Contabilidad Asistida</a></li></ul></div><div><h3>Capa 4 · Agentes y asistentes</h3><ul><li><a href="/servicios/agentes-de-operacion">Agentes de Operación</a></li><li><a href="/servicios/radar-de-leads">Radar de Leads</a></li></ul></div><div><h3>Capa 5 · Canales de atención</h3><ul><li><a href="/servicios/asistentes-whatsapp-y-voz">Asistentes de WhatsApp y Voz</a></li></ul></div></div></div>
     <div class="footer__bottom">
-      <p>© 2026 Ónix. Todos los derechos reservados.</p>
-      <p class="footer__wa">WhatsApp: <a href="https://wa.me/522227097945" target="_blank" rel="noopener noreferrer">222 709 7945<span class="sr-only"> (abre WhatsApp)</span></a></p>
+      <p>© 2026 ÓNIX. Todos los derechos reservados.</p>
+      <p class="footer__wa">WhatsApp: 222 709 7945</p>
       <p class="footer__wa">Escríbenos: <a href="mailto:info@onix-ia.com">info@onix-ia.com</a></p>
-      <p>Instagram @onixia.mx</p>
+      <p class="footer__wa"><a href="https://www.instagram.com/onixia.mx/" target="_blank" rel="noopener noreferrer">Instagram @onixia.mx<span class="sr-only"> (abre Instagram)</span></a></p>
     </div>
   </div>
 </footer>
-<a href="https://wa.me/522227097945" class="btn btn--accent wa-float" target="_blank" rel="noopener noreferrer">Escríbenos por WhatsApp<span class="sr-only"> (abre WhatsApp)</span></a>
+<a href="#escribenos" class="btn btn--goac wa-float">Contáctanos</a>
 <script src="/nav.js" defer></script>
 <script src="/motion.js" defer></script>
 <script src="/demos/demo-contabilidad.js" defer></script>

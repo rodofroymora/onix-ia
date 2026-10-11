@@ -209,3 +209,6 @@
   .dca-rail button { border-top-width: 1px; padding: .7rem .2rem; }
   .dca-rail button[aria-selected="true"] { border-top-width: 2px; }
 }
+
+/* La demostración no publica cifras: los importes van enmascarados. */
+.dca-oculto { color: var(--muted); font-style: italic; letter-spacing: .01em; }
