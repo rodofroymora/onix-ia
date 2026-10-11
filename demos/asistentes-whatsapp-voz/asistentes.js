@@ -1,4 +1,4 @@
-/* Asistentes de WhatsApp y Voz · demo ilustrativa. Todo simulado en el navegador:
+/* Asistentes de WhatsApp y Voz · demostración. Todo simulado en el navegador:
    sin backend, sin llamadas externas, sin micrófono y sin reproducción de audio. Datos ficticios. */
 (function () {
   'use strict';
