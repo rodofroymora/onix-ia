@@ -154,7 +154,9 @@
       <p class="form__notice" id="form-privacy">ÓNIX (Rodolfo Mora, Av. Haras 517, Col. Encinos, C.P. 72300, Puebla, Puebla) usará tu nombre, tus datos de contacto y tu mensaje para responder tu solicitud y darte seguimiento. Si lo autorizas con la casilla de abajo, también para enviarte información de nuestros servicios. Puedes negarte a esto último sin que afecte tu solicitud. Conoce el <a href="/aviso-de-privacidad">Aviso de privacidad integral</a>, incluidos tus derechos de acceso, rectificación, cancelación y oposición.</p>
       <label class="form__check"><input type="checkbox" name="consentimiento_comercial" value="1" /> <span>Quiero recibir información de servicios y novedades de ÓNIX.</span></label>
       <input type="hidden" name="aviso_version" value="v3-borrador" />
-      <button type="submit" class="btn btn--accent">Enviar</button>
+      <noscript><p class="form__status form__noscript">Activa JavaScript para enviar el formulario o escríbenos por WhatsApp.</p></noscript>
+      <button type="submit" class="btn btn--accent" disabled>Enviar</button>
+      <p class="form__error" id="form-error" role="alert" aria-live="assertive" hidden></p>
       <p class="form__status" id="form-status" role="status" aria-live="polite"></p>
     </form>
   </div>
@@ -200,13 +202,31 @@
 (function(){
   /* Contact form: sends to info@onix-ia.com via Web3Forms */
   var f = document.getElementById('contacto-form');
+  /* v17 (H-40): the button ships disabled and only this script enables it, so without JS the form cannot do a native POST that would skip the consent fields (the <noscript> note explains) */
+  if (f) { var b0 = f.querySelector('button[type="submit"]'); if (b0) b0.disabled = false; }
   if (f) f.addEventListener('submit', function(e){
     e.preventDefault();
-    var s = document.getElementById('form-status'), btn = f.querySelector('button[type="submit"]');
+    var s = document.getElementById('form-status'), btn = f.querySelector('button[type="submit"]'), er = document.getElementById('form-error');
     function say(t){ if (s) { s.hidden = false; s.textContent = t; } }
     if (f.botcheck && f.botcheck.checked) return;
+    /* v17 (H-38): trim, then validate (name, message, and contact = valid email or ten or more digits) with an accessible error (role=alert / aria-live) */
+    var fields = ['nombre', 'contacto', 'mensaje'];
+    fields.forEach(function(n){ var el = f.elements[n]; if (el) { el.value = el.value.trim(); el.removeAttribute('aria-invalid'); el.removeAttribute('aria-describedby'); } });
+    if (er) { er.hidden = true; er.textContent = ''; }
+    var cv = f.contacto.value, digits = cv.replace(/\D/g, ''), mailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cv), phoneOk = digits.length > 9 && /^[+()\d\s.\-]+$/.test(cv);
+    var bad = null, msg = '';
+    if (!f.nombre.value) { bad = f.nombre; msg = 'Escribe tu nombre.'; }
+    else if (!mailOk && !phoneOk) { bad = f.contacto; msg = 'Escribe un correo válido o un número de WhatsApp con diez dígitos o más.'; }
+    else if (!f.mensaje.value) { bad = f.mensaje; msg = 'Cuéntanos qué necesitas.'; }
+    if (bad) {
+      bad.setAttribute('aria-invalid', 'true'); bad.setAttribute('aria-describedby', 'form-error');
+      if (s) s.textContent = '';
+      if (er) { er.hidden = false; er.textContent = msg; }
+      bad.focus();
+      return;
+    }
     var d = new FormData(f), c = String(d.get('contacto') || '').trim();
-    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(c)) d.append('replyto', c);
+    if (mailOk) d.append('replyto', c);
     d.set('consentimiento_comercial_valor', f.consentimiento_comercial && f.consentimiento_comercial.checked ? 'Sí' : 'No');
     d.set('consentimiento_fecha_hora', new Date().toISOString());
     btn.disabled = true; say('Enviando…');
