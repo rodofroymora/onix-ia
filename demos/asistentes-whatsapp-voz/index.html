@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Asistentes de WhatsApp y Voz · Demo ilustrativa | ONIX</title>
+  <meta name="description" content="Demo ilustrativa de Asistentes de WhatsApp y Voz: una asistente virtual que contesta con información aprobada por tu negocio y pasa la conversación a una persona cuando hace falta." />
+  <meta name="robots" content="noindex,nofollow" />
+  <meta name="theme-color" content="#FFFFFF" />
+  <meta name="color-scheme" content="light" />
+  <link rel="icon" href="data:," />
+  <link rel="preload" href="fonts/geist-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="asistentes.css" />
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+<a class="skip" href="#main">Saltar al contenido</a>
+
+<header class="bar">
+  <div class="wrap bar__inner">
+    <span class="logo" aria-label="ONIX">ÓNIX</span>
+    <p class="legend"><span class="tag"><span class="tag__dot" aria-hidden="true"></span>Ilustrativo</span><span class="legend__text">Datos ficticios: ningún negocio ni persona de esta demo existe.</span></p>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero">
+    <div class="wrap">
+      <span class="kicker">Asistentes de WhatsApp y Voz · Demo interactiva</span>
+      <h1 class="display">Una asistente virtual que atiende a tus clientes y <em>pasa con una persona</em> cuando hace falta.</h1>
+      <p class="lead">Contesta mensajes de WhatsApp y llamadas con la información que tu negocio aprobó, anota las solicitudes para tu equipo y siempre se presenta como asistente virtual.</p>
+      <p class="hero__note">Elige un canal y recorre el ejemplo paso a paso. La asistente no confirma citas ni inventa respuestas: lo que no sabe, lo pasa a una persona del equipo.</p>
+    </div>
+  </section>
+
+  <section class="stage-sec" aria-labelledby="demo-title">
+    <div class="wrap">
+      <div class="stage-head">
+        <h2 id="demo-title" class="h2 display">Un cliente, por mensaje o por llamada</h2>
+        <p class="lead">Negocio ficticio: <strong>Negocio Ejemplo</strong>. Cliente ficticio: <strong>Andrés Demo</strong>.</p>
+      </div>
+
+      <p class="free-legend stage-legend" id="free-legend"><strong>Datos ficticios, no escribas ni digas datos reales.</strong> Esta demostración no guarda tu información. Es una simulación: no usa micrófono ni reproduce audio, y no tiene campos de texto libre.</p>
+
+      <div class="stage-tools" role="group" aria-labelledby="canal-label">
+        <span class="stage-tools__label" id="canal-label">Canal de la demo</span>
+        <div class="seg">
+          <button type="button" data-channel="wa" aria-pressed="true">Por WhatsApp</button>
+          <button type="button" data-channel="voice" aria-pressed="false">Por voz</button>
+        </div>
+      </div>
+
+      <nav class="stepper" aria-label="Pasos de la demo">
+        <ol class="stepper__list">
+          <li><button type="button" class="step" data-go="1"><span class="step__dot" aria-hidden="true"></span><span class="step__label">Se presenta</span></button></li>
+          <li><button type="button" class="step" data-go="2"><span class="step__dot" aria-hidden="true"></span><span class="step__label">Responde y admite lo que no sabe</span></button></li>
+          <li><button type="button" class="step" data-go="3"><span class="step__dot" aria-hidden="true"></span><span class="step__label">Anota la solicitud</span></button></li>
+          <li><button type="button" class="step" data-go="4"><span class="step__dot" aria-hidden="true"></span><span class="step__label">Pasa con una persona</span></button></li>
+        </ol>
+      </nav>
+
+      <div class="stage" id="stage" data-step="1" data-channel="wa">
+        <p class="sr-only" id="live" role="status" aria-live="polite"></p>
+
+        <figure class="phone" id="phone">
+          <figcaption class="tag tag--float"><span class="tag__dot" aria-hidden="true"></span>Ilustrativo</figcaption>
+          <div class="phone__frame">
+            <div class="phone__screen">
+              <div class="phone__status" aria-hidden="true"><span class="phone__island"></span></div>
+              <div class="phone__head" id="phone-head">
+                <span class="phone__avatar" aria-hidden="true">NE</span>
+                <span>
+                  <span class="phone__name">Negocio Ejemplo</span>
+                  <span class="phone__meta" id="phone-meta">Negocio ficticio · asistente virtual</span>
+                </span>
+              </div>
+              <div class="callbar" id="callbar" hidden>
+                <span class="callbar__mini" aria-hidden="true"></span>
+                <span><span class="callbar__name">Negocio Ejemplo</span><span class="callbar__state">Contestó la asistente virtual</span></span>
+              </div>
+              <div class="chat" id="chat" role="log" aria-label="Conversación de ejemplo" aria-live="off"></div>
+              <p class="phone__sim" id="phone-sim">Conversación simulada de WhatsApp.</p>
+            </div>
+          </div>
+        </figure>
+
+        <div class="panel" id="panel">
+          <div class="panel__top">
+            <p class="panel__brand">Panel de Negocio Ejemplo <span class="panel__sep" aria-hidden="true">·</span> <span id="who"></span></p>
+            <span class="tag"><span class="tag__dot" aria-hidden="true"></span>Ilustrativo</span>
+          </div>
+
+          <section class="view" data-view="1" aria-labelledby="v1-title">
+            <h3 id="v1-title" class="view__title">Cómo abre la conversación</h3>
+            <p class="view__sub">Antes de responder, la asistente deja claras las reglas del juego.</p>
+            <ul class="checks">
+              <li><span>Se presenta como <strong>asistente virtual</strong>, nunca como una persona.</span></li>
+              <li><span>Ofrece <strong>pasar con una persona</strong> si el cliente lo prefiere.</span></li>
+              <li data-ch="wa"><span>Comparte el <strong>aviso de privacidad</strong> del negocio.</span></li>
+              <li data-ch="voice"><span>Avisa que la llamada <strong>se transcribe</strong> y ofrece enviar el aviso de privacidad por WhatsApp.</span></li>
+            </ul>
+            <!-- [REVISIÓN ABOGADO] PROVISIONAL: la apertura de voz (aviso de asistente virtual, transcripción y aviso de privacidad por WhatsApp; "transcripción sí, audio no") es el texto sugerido por Legal y requiere revisión de abogado humano antes de publicarse. No es texto final. Ver asistentes.js (SCRIPT.voice) y README. -->
+            <p class="note" data-ch="voice">Por defecto se transcribe y no se graba audio. Si el negocio decidiera grabar, se avisa y la persona puede negarse: se le pasa con alguien o se toma un recado sin grabar.</p>
+            <p class="note" data-ch="wa">Es domingo en la noche: el equipo de Negocio Ejemplo no está en línea, pero el cliente recibe respuesta con información aprobada.</p>
+          </section>
+
+          <section class="view" data-view="2" aria-labelledby="v2-title" hidden>
+            <h3 id="v2-title" class="view__title">Solo responde con información aprobada</h3>
+            <p class="view__sub">La asistente consulta la base de respuestas que aprobó el responsable de atención de Negocio Ejemplo. Si algo no está ahí, <strong>no inventa</strong>.</p>
+            <div class="base" role="list" aria-label="Base de respuestas aprobada (ejemplo)">
+              <div class="base__row" role="listitem"><span class="base__q">Horario de atención<span class="base__a">Lunes a viernes.</span></span><span class="chip chip--ok">Aprobada · usada</span></div>
+              <div class="base__row" role="listitem"><span class="base__q">Qué incluye la asesoría<span class="base__a">Una conversación para entender lo que necesitas y una recomendación por escrito.</span></span><span class="chip chip--ok">Aprobada · usada</span></div>
+              <div class="base__row base__row--none" role="listitem"><span class="base__q">Estacionamiento<span class="base__a">No hay respuesta aprobada: la asistente lo pasa al equipo.</span></span><span class="chip chip--gap">Sin dato aprobado</span></div>
+            </div>
+            <p class="note">La base es un ejemplo ficticio. Las preguntas sin respuesta quedan en el resumen para que el equipo mejore la base.</p>
+          </section>
+
+          <section class="view" data-view="3" aria-labelledby="v3-title" hidden>
+            <h3 id="v3-title" class="view__title">Registro de solicitudes</h3>
+            <p class="view__sub">La asistente anota la solicitud y avisa al equipo. <strong>No confirma la cita:</strong> la confirma una persona.</p>
+            <article class="card" aria-labelledby="req-title">
+              <header class="card__head">
+                <h4 id="req-title" class="card__title">Solicitud de cita de Andrés Demo</h4>
+                <span class="chip chip--pend" role="status">Pendiente de confirmación por una persona</span>
+              </header>
+              <dl class="kv">
+                <div><dt>Qué pidió</dt><dd>Cita para el martes</dd></div>
+                <div><dt>Preferencia</dt><dd>En la tarde</dd></div>
+                <div><dt>Cómo contactarlo</dt><dd id="req-channel">Por este chat de WhatsApp</dd></div>
+                <div><dt>Aviso al equipo</dt><dd>Enviado por WhatsApp interno (ejemplo)</dd></div>
+                <div><dt>Quién confirma</dt><dd>Una persona del equipo, en su propia agenda <span class="chip chip--persona">Persona</span></dd></div>
+              </dl>
+            </article>
+            <p class="note">En esta demo la cita nunca se confirma. La asistente no consulta ni escribe en agendas ni en sistemas del negocio.</p>
+          </section>
+
+          <section class="view" data-view="4" aria-labelledby="v4-title" hidden>
+            <h3 id="v4-title" class="view__title">Transferencia a una persona</h3>
+            <p class="view__sub">Cuando el cliente lo pide, la asistente pasa la conversación con un resumen para que nadie repita nada.</p>
+            <article class="card" aria-labelledby="tr-title">
+              <header class="card__head">
+                <h4 id="tr-title" class="card__title">Resumen para la persona del equipo</h4>
+                <span class="chip chip--pend" role="status">Esperando a una persona del equipo</span>
+              </header>
+              <ul class="bullets">
+                <li>Preguntó por el horario y por lo que incluye la asesoría (respondido con información aprobada).</li>
+                <li>Preguntó por estacionamiento: sin dato aprobado, queda para que el equipo lo confirme.</li>
+                <li>Pidió una cita para el martes, en la tarde: pendiente de confirmar.</li>
+                <li>Pidió hablar con una persona.</li>
+              </ul>
+              <p class="note">Fuera de horario, la asistente toma el recado y avisa al equipo. No promete cuándo contestará una persona.</p>
+            </article>
+            <h3 class="view__title view__title--2" id="log-title">Bitácora: quién hizo qué</h3>
+            <ol class="log" id="log" aria-labelledby="log-title">
+              <li><div class="log__actor"><span>Asistente virtual</span><span class="chip chip--agente">Automatizado</span></div><span>Se presentó, ofreció una persona y compartió el aviso de privacidad.</span></li>
+              <li><div class="log__actor"><span>Base de respuestas</span><span class="chip chip--agente">Automatizado</span></div><span>Entregó solo información aprobada; marcó una pregunta sin respuesta.</span></li>
+              <li><div class="log__actor"><span>Registro de solicitudes</span><span class="chip chip--agente">Automatizado</span></div><span>Anotó la cita pedida y avisó al equipo.</span></li>
+              <li><div class="log__actor"><span>Transferencia</span><span class="chip chip--agente">Automatizado</span></div><span>Pasó la conversación con su resumen.</span></li>
+              <li class="is-pending"><div class="log__actor"><span>Persona del equipo</span><span class="chip chip--pend">Pendiente</span></div><span>Confirmar la cita en su agenda y responder al cliente. Aún no ocurre en esta demo.</span></li>
+            </ol>
+          </section>
+
+          <div class="panel__nav">
+            <button type="button" class="btn btn--ghost" id="prev">Anterior</button>
+            <button type="button" class="btn btn--ghost" id="reset">Reiniciar demo</button>
+            <button type="button" class="btn btn--ghost" id="next">Siguiente</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section roles" aria-labelledby="roles-title">
+    <div class="wrap">
+      <span class="kicker">Supervisión humana</span>
+      <h2 id="roles-title" class="h2 display">Qué se automatiza, qué se revisa y quién aprueba</h2>
+      <div class="roles__grid">
+        <article class="rcard">
+          <h3>Se automatiza</h3>
+          <p>Respuestas con información aprobada, registro de solicitudes, aviso al equipo y transferencia a una persona.</p>
+        </article>
+        <article class="rcard">
+          <h3>Se revisa</h3>
+          <p>Las conversaciones que pasaron a una persona, las respuestas que Calidad marcó y las preguntas que no se pudieron responder.</p>
+        </article>
+        <article class="rcard rcard--key">
+          <h3>Lo aprueba una persona</h3>
+          <p>El responsable de atención aprueba la base de respuestas, el tono y las reglas de transferencia. Las citas y los pedidos los confirma una persona del equipo.</p>
+        </article>
+      </div>
+      <div class="nots">
+        <h3>Lo que la asistente no hace</h3>
+        <ul>
+          <li>No se hace pasar por una persona.</li>
+          <li>No cierra ventas, no negocia, no cobra ni pide datos de pago.</li>
+          <li>No consulta inventario ni confirma citas o pedidos por su cuenta.</li>
+          <li>No da consejos médicos, legales ni financieros.</li>
+          <li>No inicia campañas ni mensajes masivos.</li>
+          <li>No promete que una persona conteste fuera de horario.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section cta dark" aria-labelledby="cta-title">
+    <div class="wrap cta__inner">
+      <h2 id="cta-title" class="h2 display">¿Cómo se vería con tu negocio?</h2>
+      <p class="lead">Cuéntanos qué preguntas repite hoy tu equipo y lo platicamos.</p>
+      <a class="btn btn--accent" href="https://wa.me/522227097945?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20los%20servicios%20de%20%C3%93NIX.%20Aviso%20de%20privacidad%3A%20https%3A%2F%2Fonix-ia.com%2Faviso-de-privacidad" target="_blank" rel="noopener noreferrer">Escríbenos por WhatsApp</a>
+      <p class="privacy">Al escribirnos por WhatsApp, ÓNIX (Rodolfo Mora) usará tu número y tu mensaje para responderte y darte seguimiento. WhatsApp (Meta) trata los datos de la conversación bajo sus propias condiciones. <a class="privacy__link" href="/aviso-de-privacidad">Aviso de privacidad</a></p>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot__inner">
+    <span class="logo" aria-hidden="true">ÓNIX</span>
+    <p><span class="tag tag--dark"><span class="tag__dot" aria-hidden="true"></span>Ilustrativo</span> Esta demo usa datos y negocios ficticios. No muestra clientes ni resultados reales.</p>
+  </div>
+</footer>
+
+<script src="asistentes.js"></script>
+</body>
+</html>
