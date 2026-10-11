@@ -64,7 +64,7 @@ function inyectarNoindexDev(root) {
 
 /** PROD: verifica que el paquete sea indexable. `rutasNoindex`: rutas con noindex permitido (solo /salud); `sitemapUrl`: la URL exacta
  *  que robots.txt debe referenciar (release-rules.json → robots.sitemapUrl; si es null, cualquier «Sitemap:»). Devuelve errores[]. */
-function verificarProd(root, rutasNoindex = [], sitemapUrl = null) {
+function verificarProd(root, rutasNoindex = [], sitemapUrl = null, marcadores = []) {
   const errs = [];
   const permitida = (url) => rutasNoindex.some((r) => enRuta(url, r));
   for (const f of listarHtml(root)) {
@@ -94,20 +94,29 @@ function verificarProd(root, rutasNoindex = [], sitemapUrl = null) {
     if (!sitemap) errs.push('robots.txt: falta la línea «Sitemap:».');
     else if (sitemapUrl && !urls.includes(sitemapUrl)) errs.push(`robots.txt: debe referenciar ${sitemapUrl} (release-rules.json → robots.sitemapUrl); tiene ${urls.join(', ')}.`);
   }
+  // H-39: ningún marcador pendiente («FECHA DE VIGENCIA», «borrador»…) en las páginas del paquete, sitemap.xml ni robots.txt (demos/ ya no está en el paquete).
+  const lista = marcadores.map((m) => ({ t: m.texto, re: new RegExp(String(m.texto).trim().split(/\s+/).map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('(?:\\s|&nbsp;|&#160;|&#xa0;)+'), 'iu') }));
+  for (const f of [...listarHtml(root), path.join(root, 'sitemap.xml'), path.join(root, 'robots.txt')]) {
+    if (!fs.existsSync(f)) continue;
+    const raw = fs.readFileSync(f, 'utf8');
+    for (const { t, re } of lista) { const m = re.exec(raw); if (m) errs.push(`${path.relative(root, f)}:${raw.slice(0, m.index).split('\n').length}: marcador pendiente «${m[0]}» (regla «${t}») en producción.`); }
+  }
   const sm = path.join(root, 'sitemap.xml');
   if (!fs.existsSync(sm)) errs.push('sitemap.xml: no existe.');
   else if (!/<(urlset|sitemapindex)\b/i.test(fs.readFileSync(sm, 'utf8'))) errs.push('sitemap.xml: no es válido (falta <urlset>).');
   return errs;
 }
 
-function robotsReglasDe(root) {
-  try { return JSON.parse(fs.readFileSync(path.join(root, 'release-rules.json'), 'utf8')).robots || {}; } catch (_) { return {}; }
+function reglasDe(root) {
+  try { return JSON.parse(fs.readFileSync(path.join(root, 'release-rules.json'), 'utf8')); } catch (_) { return {}; }
 }
 
 /** Orquesta el paquete. Devuelve { removidos, resumen, errores }. No hace process.exit (se usa en pruebas). */
 function construirPaquete(root, env) {
   if (!['dev', 'prod'].includes(env)) throw new Error(`DEPLOY_ENV debe ser "dev" o "prod" (valor: ${JSON.stringify(env)}).`);
-  const robotsCfg = env === 'prod' ? robotsReglasDe(root) : {};   // se lee ANTES de borrar release-rules.json
+  const reglas = env === 'prod' ? reglasDe(root) : {};   // se lee ANTES de borrar release-rules.json
+  const robotsCfg = reglas.robots || {};
+  const marcadores = (reglas.bloqueosSoloMain && reglas.bloqueosSoloMain.marcadores) || [];
   const removidos = [];
   for (const n of NO_PUBLICOS) {
     const p = path.join(root, n);
@@ -115,7 +124,7 @@ function construirPaquete(root, env) {
   }
   for (const n of fs.readdirSync(root)) if (/^\.env/.test(n)) { fs.rmSync(path.join(root, n), { force: true }); removidos.push(n); }
   if (env === 'dev') return { removidos, resumen: inyectarNoindexDev(root), errores: [] };
-  return { removidos, resumen: null, errores: verificarProd(root, robotsCfg.rutasNoindex || [], robotsCfg.sitemapUrl || null) };
+  return { removidos, resumen: null, errores: verificarProd(root, robotsCfg.rutasNoindex || [], robotsCfg.sitemapUrl || null, marcadores) };
 }
 
 module.exports = { NO_PUBLICOS, inyectarNoindexDev, verificarProd, construirPaquete, listarHtml, urlDe };

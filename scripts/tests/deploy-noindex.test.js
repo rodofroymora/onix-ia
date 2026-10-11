@@ -31,7 +31,7 @@ function sitio(extra = {}) {
   fs.writeFileSync(path.join(tmp, 'release-rules.json'), reglas);
   fs.mkdirSync(path.join(tmp, 'demos')); fs.writeFileSync(path.join(tmp, 'demos', 'x.html'), pag('demo'));
   fs.mkdirSync(path.join(tmp, '.github')); fs.writeFileSync(path.join(tmp, 'README.md'), '# x');
-  const archivos = Object.assign({ 'index.html': pag('Inicio'), 'servicios/radar.html': pag('Radar'), 'robots.txt': ROBOTS_PROD, 'sitemap.xml': SITEMAP, 'vercel.json': JSON.stringify(VJ) }, extra);
+  const archivos = Object.assign({ 'index.html': pag('Inicio'), 'servicios/radar.html': pag('Radar'), 'aviso-de-privacidad.html': pag('Aviso de privacidad'), 'robots.txt': ROBOTS_PROD, 'sitemap.xml': SITEMAP, 'vercel.json': JSON.stringify(VJ) }, extra);
   for (const [n, c] of Object.entries(archivos)) { fs.mkdirSync(path.dirname(path.join(tmp, n)), { recursive: true }); fs.writeFileSync(path.join(tmp, n), c); }
   return tmp;
 }
@@ -115,22 +115,45 @@ const home = (h, meta) => ({ status: 200, headers: h, body: pag('x', meta ? '  <
 const rbDev = { status: 200, body: 'User-agent: *\nDisallow: /\n' };
 const rbProd = { status: 200, body: ROBOTS_PROD };
 const smOk = { status: 200, body: SITEMAP };
+const av = (h = {}, extra = '') => ({ status: 200, headers: h, body: pag('Aviso de privacidad') + extra });
+const NI = { 'x-robots-tag': 'noindex, nofollow' };
 const n = (r, o) => [r.errores.length, r.avisos.length];
-prueba('verify dev: header+meta+Disallow → ok', n(V.evaluar('dev', { home: home({ 'x-robots-tag': 'noindex, nofollow' }, true), robots: rbDev })), [0, 0]);
-prueba('verify dev: sin header → error', V.evaluar('dev', { home: home({}, true), robots: rbDev }).errores.length, 1);
-prueba('verify dev: sin meta → error', V.evaluar('dev', { home: home({ 'x-robots-tag': 'noindex' }, false), robots: rbDev }).errores.length, 1);
-prueba('verify dev: robots.txt sin Disallow → error', V.evaluar('dev', { home: home({ 'x-robots-tag': 'noindex' }, true), robots: rbProd }).errores.length, 1);
+prueba('verify dev: header+meta+Disallow → ok', n(V.evaluar('dev', { home: home({ 'x-robots-tag': 'noindex, nofollow' }, true), aviso: av(NI), robots: rbDev, sitemap: smOk })), [0, 0]);
+prueba('verify dev: sin header → error', V.evaluar('dev', { home: home({}, true), aviso: av(NI), robots: rbDev, sitemap: smOk }).errores.length, 1);
+prueba('verify dev: sin meta → error', V.evaluar('dev', { home: home({ 'x-robots-tag': 'noindex' }, false), aviso: av(NI), robots: rbDev, sitemap: smOk }).errores.length, 1);
+prueba('verify dev: robots.txt sin Disallow → error', V.evaluar('dev', { home: home({ 'x-robots-tag': 'noindex' }, true), aviso: av(NI), robots: rbProd, sitemap: smOk }).errores.length, 1);
 prueba('verify dev: 401 protegido sin bypass → aviso, no error', n(V.evaluar('dev', { home: { status: 401, headers: {}, body: '' } })), [0, 1]);
 prueba('verify dev: 401 con --strict → error', n(V.evaluar('dev', { home: { status: 401, headers: {}, body: '' } }, { strict: true })), [1, 0]);
-prueba('verify prod: indexable, robots+sitemap, /salud 404 → ok', n(V.evaluar('prod', { home: home({}, false), robots: rbProd, sitemap: smOk, extra404: { '/salud': 404 } })), [0, 0]);
-prueba('verify prod: header noindex → error', V.evaluar('prod', { home: home({ 'x-robots-tag': 'noindex' }, false), robots: rbProd, sitemap: smOk }).errores.length, 1);
-prueba('verify prod: meta noindex → error', V.evaluar('prod', { home: home({}, true), robots: rbProd, sitemap: smOk }).errores.length, 1);
-prueba('verify prod: robots Disallow: / → error', V.evaluar('prod', { home: home({}, false), robots: rbDev, sitemap: smOk }).errores.length, 2);
-prueba('verify prod --sitemap exacta: coincide → ok', V.evaluar('prod', { home: home({}, false), robots: rbProd, sitemap: smOk }, { sitemapUrl: 'https://www.onix-ia.com/sitemap.xml' }).errores.length, 0);
-prueba('verify prod --sitemap exacta: robots apunta a otra URL → error', V.evaluar('prod', { home: home({}, false), robots: rbProd, sitemap: smOk }, { sitemapUrl: 'https://onix-ia.com/sitemap.xml' }).errores.length, 1);
-prueba('verify prod: sin sitemap → error', V.evaluar('prod', { home: home({}, false), robots: rbProd, sitemap: { status: 404, body: '' } }).errores.length, 1);
-prueba('verify prod: /salud responde 200 → error', V.evaluar('prod', { home: home({}, false), robots: rbProd, sitemap: smOk, extra404: { '/salud': 200 } }).errores.length, 1);
+prueba('verify prod: indexable, robots+sitemap, /salud 404 → ok', n(V.evaluar('prod', { home: home({}, false), aviso: av(), robots: rbProd, sitemap: smOk, extra404: { '/salud': 404 } })), [0, 0]);
+prueba('verify prod: header noindex → error', V.evaluar('prod', { home: home({ 'x-robots-tag': 'noindex' }, false), aviso: av(), robots: rbProd, sitemap: smOk }).errores.length, 1);
+prueba('verify prod: meta noindex → error', V.evaluar('prod', { home: home({}, true), aviso: av(), robots: rbProd, sitemap: smOk }).errores.length, 1);
+prueba('verify prod: robots Disallow: / → error', V.evaluar('prod', { home: home({}, false), aviso: av(), robots: rbDev, sitemap: smOk }).errores.length, 2);
+prueba('verify prod --sitemap exacta: coincide → ok', V.evaluar('prod', { home: home({}, false), aviso: av(), robots: rbProd, sitemap: smOk }, { sitemapUrl: 'https://www.onix-ia.com/sitemap.xml' }).errores.length, 0);
+prueba('verify prod --sitemap exacta: robots apunta a otra URL → error', V.evaluar('prod', { home: home({}, false), aviso: av(), robots: rbProd, sitemap: smOk }, { sitemapUrl: 'https://onix-ia.com/sitemap.xml' }).errores.length, 1);
+prueba('verify prod: sin sitemap → error', V.evaluar('prod', { home: home({}, false), aviso: av(), robots: rbProd, sitemap: { status: 404, body: '' } }).errores.length, 1);
+prueba('verify prod: /salud responde 200 → error', V.evaluar('prod', { home: home({}, false), aviso: av(), robots: rbProd, sitemap: smOk, extra404: { '/salud': 200 } }).errores.length, 1);
 prueba('verify prod: 403 → error aunque no sea --strict', V.evaluar('prod', { home: { status: 403, headers: {}, body: '' } }).errores.length, 1);
+
+prueba('verify dev: aviso sin header noindex → error', V.evaluar('dev', { home: home({ 'x-robots-tag': 'noindex' }, true), aviso: av(), robots: rbDev, sitemap: smOk }).errores.length, 1);
+prueba('verify dev: aviso con «FECHA DE VIGENCIA» → solo aviso (normal en dev)', n(V.evaluar('dev', { home: home({ 'x-robots-tag': 'noindex' }, true), aviso: av(NI, '<p>[FECHA DE VIGENCIA]</p>'), robots: rbDev, sitemap: smOk })), [0, 1]);
+prueba('verify dev: /aviso-de-privacidad 404 → error', V.evaluar('dev', { home: home({ 'x-robots-tag': 'noindex' }, true), aviso: { status: 404, headers: {}, body: '' }, robots: rbDev, sitemap: smOk }).errores.length, 1);
+prueba('verify dev: /sitemap.xml 404 → error', V.evaluar('dev', { home: home({ 'x-robots-tag': 'noindex' }, true), aviso: av(NI), robots: rbDev, sitemap: { status: 404, body: '' } }).errores.length, 1);
+prueba('verify prod: /aviso-de-privacidad 404 → error', V.evaluar('prod', { home: home({}, false), aviso: { status: 404, headers: {}, body: '' }, robots: rbProd, sitemap: smOk }).errores.length, 1);
+prueba('verify prod: aviso con «FECHA DE VIGENCIA» → error', V.evaluar('prod', { home: home({}, false), aviso: av({}, '<p>[Fecha de   vigencia — completar]</p>'), robots: rbProd, sitemap: smOk }).errores.length, 1);
+prueba('verify prod: aviso con «v3-borrador» → error', V.evaluar('prod', { home: home({}, false), aviso: av({}, '<div data-version="v3-borrador"></div>'), robots: rbProd, sitemap: smOk }).errores.length, 1);
+prueba('verify prod: aviso con noindex → error', V.evaluar('prod', { home: home({}, false), aviso: av({ 'x-robots-tag': 'noindex' }), robots: rbProd, sitemap: smOk }).errores.length, 1);
+prueba('verify prod: /robots.txt 404 → error', V.evaluar('prod', { home: home({}, false), aviso: av(), robots: { status: 404, body: '' }, sitemap: smOk }).errores.length, 1);
+prueba('verify prod: 401 con --tolerar-proteccion → aviso, no error', n(V.evaluar('prod', { home: { status: 401, headers: {}, body: '' } }, { tolerarProteccion: true })), [0, 1]);
+prueba('verify prod: 401 con --tolerar-proteccion --strict → error', n(V.evaluar('prod', { home: { status: 401, headers: {}, body: '' } }, { tolerarProteccion: true, strict: true })), [1, 0]);
+// H-39 en el paquete prod (defensa en profundidad de prepare-deploy)
+for (const [n2, extra] of [['«FECHA DE VIGENCIA» en una página', { 'aviso-de-privacidad.html': pag('Aviso', '  <mark>[FECHA DE VIGENCIA — completar]</mark>\n') }], ['«v3-borrador» en una página', { 'index.html': pag('Inicio', '  <input value="v3-borrador">\n') }], ['«borrador» en robots.txt', { 'robots.txt': ROBOTS_PROD + '# borrador\n' }]]) {
+  const tmp = sitio(extra); const p = prepara(tmp, 'prod');
+  prueba(`prod ABORTA (H-39): ${n2}`, [p.status, /marcador pendiente/.test(p.stderr)], [1, true]); fs.rmSync(tmp, { recursive: true, force: true });
+}
+{
+  const tmp = sitio({ 'demos/aprobar.html': pag('Demo', '  <button>Aprobar borrador</button>\n') }); const p = prepara(tmp, 'prod');
+  prueba('prod: «Aprobar borrador» en demos/ (se quita del paquete) NO aborta', p.status, 0); fs.rmSync(tmp, { recursive: true, force: true });
+}
 
 // ── verify-deploy: CLI contra un servidor HTTP local (extremo a extremo con prepare-deploy)
 function servir(dir, headersExtra) {
@@ -158,6 +181,23 @@ function cli(args) {
   s = await servir(prod, {}); url = `http://127.0.0.1:${s.address().port}`;
   r = await cli(['--env', 'prod', '--url', url, '--strict', '--404', '/salud']); prueba('CLI e2e: paquete PROD de prepare-deploy → verify prod OK', r.c, 0);
   r = await cli(['--env', 'dev', '--url', url]); prueba('CLI e2e: paquete PROD NO pasa la verificación de DEV', r.c, 1); s.close();
+  // 200 en las tres URLs del MISMO deployment (servidor local que emula cleanUrls: /aviso-de-privacidad → aviso-de-privacidad.html)
+  const si = (x) => /^  200 \/aviso-de-privacidad$/m.test(x) && /^  200 \/robots\.txt$/m.test(x) && /^  200 \/sitemap\.xml$/m.test(x);
+  s = await servir(prod, {}); url = `http://127.0.0.1:${s.address().port}`;
+  r = await cli(['--env', 'prod', '--url', url, '--strict']); prueba('CLI e2e PROD: 200 en /aviso-de-privacidad, /robots.txt y /sitemap.xml (salida lo muestra)', [r.c, si(r.o)], [0, true]);
+  s.close();
+  for (const [quitar, patron] of [['aviso-de-privacidad.html', /404 \/aviso-de-privacidad/], ['robots.txt', /404 \/robots\.txt/], ['sitemap.xml', /404 \/sitemap\.xml/]]) {
+    const pk = sitio(); prepara(pk, 'prod'); fs.rmSync(path.join(pk, quitar));
+    const s2 = await servir(pk, {}); const u2 = `http://127.0.0.1:${s2.address().port}`;
+    const r2 = await cli(['--env', 'prod', '--url', u2, '--strict']); prueba(`CLI e2e PROD NEGATIVO: falta ${quitar} → FALLA (404 visible)`, [r2.c, patron.test(r2.o)], [1, true]);
+    s2.close(); fs.rmSync(pk, { recursive: true, force: true });
+  }
+  { const pk = sitio(); prepara(pk, 'dev'); fs.rmSync(path.join(pk, 'sitemap.xml'));
+    const vjd = JSON.parse(lee(pk, 'vercel.json')); const hd = { 'x-robots-tag': vjd.headers.find((h) => h.headers[0].key === 'X-Robots-Tag').headers[0].value };
+    const s2 = await servir(pk, hd); const r2 = await cli(['--env', 'dev', '--url', `http://127.0.0.1:${s2.address().port}`]); prueba('CLI e2e DEV NEGATIVO: falta sitemap.xml → FALLA', r2.c, 1); s2.close(); fs.rmSync(pk, { recursive: true, force: true }); }
+  { const pk = sitio(); prepara(pk, 'dev');
+    const vjd = JSON.parse(lee(pk, 'vercel.json')); const hd = { 'x-robots-tag': vjd.headers.find((h) => h.headers[0].key === 'X-Robots-Tag').headers[0].value };
+    const s2 = await servir(pk, hd); const r2 = await cli(['--env', 'dev', '--url', `http://127.0.0.1:${s2.address().port}`]); prueba('CLI e2e DEV: 200 en las 4 rutas + noindex → OK', [r2.c, si(r2.o)], [0, true]); s2.close(); fs.rmSync(pk, { recursive: true, force: true }); }
   r = await cli(['--env', 'otro', '--url', url]); prueba('CLI: --env inválido → código 2', r.c, 2);
   [dev, prod].forEach((d) => fs.rmSync(d, { recursive: true, force: true }));
   console.log(fallos ? `\n✖ ${fallos} prueba(s) fallaron.` : '\n✔ Todas las pruebas de deploy-noindex pasaron.');

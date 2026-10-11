@@ -6,6 +6,9 @@
  * según la rama (release-rules.json → robots.dev / robots.main). Hoy ambas son "index": el FUENTE es indexable en dev y
  * en main; el noindex de DEV se inyecta al desplegar (scripts/prepare-deploy.js, DEPLOY_ENV=dev). robots.rutasNoindex (solo /salud) permite que esa
  * ruta sea noindex en una rama indexable; cualquier otra página o header noindex sigue fallando.
+ * H-39 (SOLO main): release-rules.json → bloqueosSoloMain. Con CHECK_BRANCH=main falla si el paquete público (páginas .html fuera de demos/,
+ * sitemap.xml, robots.txt) contiene un marcador pendiente («FECHA DE VIGENCIA», «borrador», «v3-borrador»…) en cualquier parte del código
+ * fuente (texto, atributos, comentarios, JSON-LD). En dev NO bloquea (el marcador existe hasta que corre golive.js).
  * Rama: CHECK_BRANCH, o GITHUB_BASE_REF (PR), o GITHUB_REF_NAME, o rama git actual.
  */
 const fs = require('fs');
@@ -155,6 +158,37 @@ if (!rama) {
       }
       if (otrasPaginas.length) R.error(null, null, `Rama "${clave}" debe ser indexable pero ${otrasPaginas.length} página(s) tienen <meta name="robots" content="noindex">: ${otrasPaginas.join(', ')}.`);
     }
+  }
+}
+
+// --- H-39 · Bloqueos SOLO en main: el sitio no se puede publicar con marcadores pendientes (fecha de vigencia / borrador)
+{
+  const cfg = reglas.bloqueosSoloMain;
+  const ES_MAIN = rama === 'main';
+  const marc = cfg && Array.isArray(cfg.marcadores) ? cfg.marcadores : null;
+  const cfgOk = !!(cfg && marc && marc.length && marc.every((x) => x && typeof x.id === 'string' && typeof x.texto === 'string' && x.texto.trim()) && (cfg.archivos === undefined || Array.isArray(cfg.archivos)) && (cfg.excluirRutas === undefined || Array.isArray(cfg.excluirRutas)));
+  if (cfg !== undefined && !cfgOk) R.error('release-rules.json', null, 'bloqueosSoloMain mal formado: se espera { marcadores: [{id, texto}…], archivos?: [...], excluirRutas?: [...] }.');
+  if (ES_MAIN && cfg === undefined) R.error('release-rules.json', null, 'Falta bloqueosSoloMain: en main es obligatorio (impide publicar con «FECHA DE VIGENCIA» / «borrador»).');
+  if (ES_MAIN && cfgOk) {
+    const norm = (t) => t.trim().split(/\s+/).map(esc).join('(?:\\s|&nbsp;|&#160;|&#xa0;)+');
+    const lista = marc.map((x) => ({ id: x.id, texto: x.texto, re: new RegExp(norm(x.texto), 'giu') }));
+    const excl = (cfg.excluirRutas || []).map((x) => String(x).replace(/^\/+/, ''));
+    const archivos = L.listarHtml().filter((f) => !excl.some((e) => L.rel(f) === e || L.rel(f).startsWith(e.endsWith('/') ? e : e + '/')));
+    for (const a of cfg.archivos || ['sitemap.xml', 'robots.txt']) { const f = path.join(L.ROOT, a); if (fs.existsSync(f)) archivos.push(f); }
+    let hits = 0;
+    for (const f of archivos) {
+      const raw = L.leer(f);
+      for (const { id, texto, re } of lista) {
+        for (const m of raw.matchAll(re)) {
+          hits++;
+          const ini = Math.max(0, m.index - 40);
+          R.error(L.rel(f), L.lineaDe(raw, m.index), `[H-39 ${id}] Marcador pendiente «${m[0]}» (regla «${texto}») en main: no se puede publicar así. Contexto: …${raw.slice(ini, m.index + m[0].length + 40).replace(/\s+/g, ' ')}…`);
+        }
+      }
+    }
+    R.nota(`H-39 (solo main): ${archivos.length} archivo(s) del paquete público revisados (${excl.length ? 'fuera de ' + excl.join(', ') : 'sin exclusiones'}); ${hits} marcador(es) pendiente(s).`);
+  } else if (cfgOk) {
+    R.nota(`H-39 (bloqueosSoloMain) solo aplica con CHECK_BRANCH=main; en "${rama}" no bloquea.`);
   }
 }
 R.terminar();

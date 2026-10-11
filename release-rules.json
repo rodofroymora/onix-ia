@@ -605,5 +605,25 @@
       "nivelesAncestro": 3,
       "definicionCerca": "«CERCA» = en alguno de estos lugares hay un enlace con el texto «Aviso de privacidad de ÓNIX» cuyo href apunta a una página aviso-de-privacidad: (a) cualquiera de los hasta nivelesAncestro (3) ancestros del enlace de WhatsApp, sin llegar a <main>, <body> ni <html>, con todos sus descendientes; (b) el elemento hermano inmediato anterior o posterior (con descendientes) del enlace de WhatsApp o de su padre directo, excepto <main>, <body> y <html>. Un botón flotante hijo de <body> solo se evalúa por (b). Que exista el enlace en otra parte de la página NO basta. Aplica a TODOS los enlaces cuyo href empieza por prefijoHrefWhatsapp (con o sin ?text=), incluidos cabecera, menú móvil, pie y botón flotante. Nota de orden: el destino aviso-de-privacidad.html aún no existe en dev (solo en el PR #6), por lo que el check 03 de enlaces solo pasará cuando ese PR esté fusionado."
     }
+  },
+  "bloqueosSoloMain": {
+    "_NOTA": "H-39. Bloqueos que aplican SOLO con CHECK_BRANCH=main (check 04): impiden publicar el sitio con marcadores pendientes. En dev NO bloquean (dev conserva «[FECHA DE VIGENCIA — completar al publicar]» y «v3-borrador» hasta que golive.js los reemplaza). Se busca cada texto en el código fuente completo (texto visible, atributos/meta, comentarios, JSON-LD, scripts) de las páginas .html del PAQUETE PÚBLICO, de sitemap.xml y de robots.txt, sin distinguir mayúsculas y tolerando espacios/&nbsp; entre palabras. «borrador» es subcadena (también atrapa «v3-borrador» y «borradores»): riesgo de falso positivo si el copy público usa esa palabra; tendría que reformularse o retirarse de este listado con revisión de código. Alcance = lo que se despliega: se excluye demos/ (prepare-deploy.js la quita del paquete; sus pantallas usan «borrador» legítimamente, p. ej. «Aprobar borrador»).",
+    "marcadores": [
+      {
+        "id": "fecha-vigencia-pendiente",
+        "texto": "FECHA DE VIGENCIA"
+      },
+      {
+        "id": "borrador",
+        "texto": "borrador"
+      }
+    ],
+    "archivos": [
+      "sitemap.xml",
+      "robots.txt"
+    ],
+    "excluirRutas": [
+      "demos/"
+    ]
   }
 }

@@ -140,9 +140,22 @@ jobs:
             echo "- Rollback: usar el deployment anterior registrado al inicio de este resumen"
           } >> "$GITHUB_STEP_SUMMARY"
 
-      # Verificación posterior (solo lectura): producción debe ser indexable. /salud no debe estar publicada (404).
+      # Verificación posterior 1/2 (solo lectura) sobre el MISMO deployment que creó este run (su URL única): 200 en /, /aviso-de-privacidad
+      # (cleanUrls), /robots.txt y /sitemap.xml + contenido (Sitemap en robots, <urlset>, aviso sin «FECHA DE VIGENCIA»/«borrador», sin noindex).
+      # Si Vercel protege la URL única (401/403) y no hay VERCEL_AUTOMATION_BYPASS_SECRET, avisa y la verificación 2/2 (dominio) decide.
+      - name: Verificar el deployment recién creado (URL única de este run)
+        env:
+          DEPLOY_URL: ${{ steps.deploy.outputs.url }}
+          BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+        run: |
+          if ! node "$RUNNER_TEMP/verify-deploy.js" --env prod --url "$DEPLOY_URL" --tolerar-proteccion --sitemap "$SITEMAP_URL" --404 /salud; then
+            echo "### ⚠ La verificación del deployment ($DEPLOY_URL) FALLÓ: ver el paso. Rollback: ver el inicio de este resumen." >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+
+      # Verificación posterior 2/2 (dominio) (solo lectura): producción debe ser indexable. /salud no debe estar publicada (404).
       # Si falla, el deploy YA ocurrió: avisar al CEO y hacer rollback con el deployment anterior registrado arriba.
-      - name: Verificar indexación en producción
+      - name: Verificar indexación en producción (dominio)
         run: |
           if ! node "$RUNNER_TEMP/verify-deploy.js" --env prod --url https://www.onix-ia.com --strict --sitemap "$SITEMAP_URL" --404 /salud; then
             {

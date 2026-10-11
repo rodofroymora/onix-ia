@@ -97,7 +97,7 @@ jobs:
             echo "- Proyecto DEV: separado de producción (onix-ia.com no se toca)"
           } >> "$GITHUB_STEP_SUMMARY"
 
-      # Verificación posterior: DEV debe seguir siendo noindex (header + meta + robots.txt). Si el deployment está
+      # Verificación posterior sobre el MISMO deployment de este run: 200 en /, /aviso-de-privacidad, /robots.txt y /sitemap.xml, y DEV sigue noindex (header + meta + robots.txt). Si el deployment está
       # protegido por Vercel (401/403) y no existe el secreto opcional VERCEL_AUTOMATION_BYPASS_SECRET, solo avisa.
       - name: Verificar noindex en el DEV desplegado
         env:
