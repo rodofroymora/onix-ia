@@ -19,31 +19,46 @@
     4: 'Participan: Seguimiento y el Orquestador'
   };
   var FICHA_SUB = {
-    1: 'El Captador crea una ficha única, con el canal de origen y el permiso de la prospecta registrados.',
-    2: 'La ficha se completa con las respuestas de Laura y el Calificador sugiere una prioridad con su explicación.'
+    1: 'El Captador crea una ficha única, con el canal de origen, el permiso para conversar y la respuesta sobre promociones registrados.',
+    2: 'La ficha se completa con las respuestas de Laura. El Calificador muestra las señales con la frase que las respalda, la regla que se cumplió y una prioridad sugerida que una persona revisa.'
   };
+  var BASE_LOG = [
+    ['Captador', 'agente', 'Creó la ficha de Laura Ejemplo (origen: WhatsApp) y registró el texto del aviso mostrado.'],
+    ['Asistente virtual', 'agente', 'Se presentó como asistente virtual, compartió el aviso de privacidad del negocio, ofreció pasar con una persona y pidió permiso para hacer preguntas.'],
+    ['Asistente virtual', 'agente', 'Pidió por separado el consentimiento para promociones. Laura no aceptó; se guardó con fecha, canal y texto mostrado y la atención siguió igual.'],
+    ['Calificador', 'agente', 'Sugirió prioridad alta con la regla que se cumplió, citando las frases de Laura. Explicación guardada. Criterios de ejemplo.'],
+    ['Redactor', 'agente', 'Dejó un borrador de primer contacto en la cola de aprobación. No se envía sin una persona.']
+  ];
 
-  // Conversación ficticia por paso
+  // Conversación ficticia: saludo con aviso y oferta de persona, permiso para conversar,
+  // preguntas, y el consentimiento para promociones pedido por separado.
   var CHAT = [
-    { k: 'a1', s: 1, side: 'in', who: 'Laura Ejemplo (prospecta ficticia)', text: 'Hola, buenas tardes. Vi su servicio de mantenimiento y quisiera información.' },
-    { k: 'a2', s: 1, side: 'out', who: 'Asistente virtual', text: 'Hola, soy la asistente virtual de Comercial Ejemplo. ¿Te puedo hacer unas preguntas para que la persona indicada te atienda?', chip: 'Aviso de privacidad del negocio' },
+    { k: 'a1', s: 1, side: 'in', who: 'Laura Ejemplo (prospecta ficticia)', text: 'Hola, buenas tardes. Quisiera que me manden una propuesta de mantenimiento para mi local.' },
+    { k: 'a2', s: 1, side: 'out', who: 'Asistente virtual', text: 'Hola, soy la asistente virtual de Comercial Ejemplo. Aquí puedes ver nuestro aviso de privacidad. Si prefieres hablar con una persona, dímelo. ¿Te hago unas preguntas para que la persona indicada te atienda?', chip: 'Aviso de privacidad del negocio' },
     { k: 'a3', s: 1, side: 'in', who: 'Laura Ejemplo', text: 'Sí, adelante.' },
-    { k: 'b1', s: 2, side: 'out', who: 'Asistente virtual', text: 'Gracias, Laura. ¿Qué necesitas?' },
-    { k: 'b2', s: 2, side: 'in', who: 'Laura Ejemplo', text: 'Mantenimiento para mi local. Lo necesito pronto.' },
-    { k: 'b3', s: 2, side: 'out', who: 'Asistente virtual', text: '¿Para cuándo lo necesitas y cómo prefieres que te contactemos?' },
-    { k: 'b4', s: 2, side: 'in', who: 'Laura Ejemplo', text: 'Esta semana. Por WhatsApp, en la tarde.' },
-    { k: 'b5', s: 2, side: 'out', who: 'Asistente virtual', text: 'Listo. Una persona del equipo revisará tu caso. Si prefieres hablar con alguien antes, dímelo y te paso con una persona.' }
+    { k: 'b1', s: 1, side: 'out', who: 'Asistente virtual', text: 'Gracias, Laura. ¿Qué necesitas y para cuándo?' },
+    { k: 'b2', s: 1, side: 'in', who: 'Laura Ejemplo', text: 'Mantenimiento para mi local. Lo necesito pronto.' },
+    { k: 'b3', s: 1, side: 'out', who: 'Asistente virtual', text: '¿Cómo prefieres que te contactemos?' },
+    { k: 'b4', s: 1, side: 'in', who: 'Laura Ejemplo', text: 'Por WhatsApp, en la tarde.' },
+    { k: 'c1', s: 1, side: 'out', who: 'Asistente virtual', text: 'Una pregunta aparte: ¿quieres que Comercial Ejemplo te envíe promociones por WhatsApp? Puedes decir que no y te seguimos atendiendo igual.', chip: 'Consentimiento para promociones, por separado' },
+    { k: 'c2', s: 1, side: 'in', who: 'Laura Ejemplo', text: 'No, gracias.' },
+    { k: 'c3', s: 1, side: 'out', who: 'Asistente virtual', text: 'Sin problema, te seguimos atendiendo igual y no recibirás mensajes comerciales. Una persona del equipo revisará tu caso. Si prefieres hablar con alguien antes, dímelo y te paso con una persona.' }
   ];
 
   var ORIGINAL_DRAFT = $('#draft-text').value;
 
   var state;
-  function fresh() { return { step: 1, approved: false, edited: false, text: ORIGINAL_DRAFT, reviewed: false, seen: {} }; }
+  function fresh() {
+    return { step: 1, approved: false, rejected: false, editing: false, edited: false, text: ORIGINAL_DRAFT, reviewed: false, paused: false, seen: {},
+      log: BASE_LOG.map(function (r) { return { who: r[0], kind: r[1], text: r[2] }; }) };
+  }
+  function addLog(who, kind, text) { state.log.push({ who: who, kind: kind, text: text }); } // bitácora solo acumulativa
   state = fresh();
 
   var stage = $('#stage'), chat = $('#chat'), live = $('#live');
   var prevBtn = $('#prev'), nextBtn = $('#next'), resetBtn = $('#reset');
-  var ta = $('#draft-text'), reviewed = $('#reviewed'), approveBtn = $('#approve');
+  var ta = $('#draft-text'), reviewed = $('#reviewed'), approveBtn = $('#approve'), editBtn = $('#edit'), rejectBtn = $('#reject');
+  var pauseBtn = $('#pause'), resumeBtn = $('#resume');
   var draft = $('#draft'), statusChip = $('#status'), done = $('#done');
 
   function el(tag, cls, text) {
@@ -55,7 +70,7 @@
 
   /* ── Chat ── */
   function renderChat() {
-    var items = CHAT.filter(function (m) { return m.s <= Math.min(state.step, 2); }).map(function (m) { return { k: m.k, m: m }; });
+    var items = CHAT.filter(function (m) { return m.s <= 1; }).map(function (m) { return { k: m.k, m: m }; });
     var shown = {};
     chat.textContent = '';
     var day = el('div', 'chat__day', 'Hoy · conversación ficticia');
@@ -72,30 +87,41 @@
       chat.appendChild(b);
     });
     if (state.step >= 3) {
-      if (!state.approved) {
-        var p = el('div', 'chat__sys chat__sys--pend', 'Borrador en espera de aprobación. Nada se ha enviado a Laura.');
-        if (!state.seen.pend) p.classList.add('is-new');
-        shown.pend = true;
-        chat.appendChild(p);
-      } else {
+      if (state.approved) {
         var o = el('div', 'msg msg--out');
         o.appendChild(el('span', 'msg__who', 'Valeria Ejemplo (persona del equipo)'));
         o.appendChild(el('span', 'msg__text', state.text));
         if (!state.seen.sent) o.classList.add('is-new');
         shown.sent = true;
         chat.appendChild(o);
-        var s = el('div', 'chat__sys chat__sys--ok', 'Enviado después de la aprobación de una persona.');
-        if (!state.seen.sentsys) s.classList.add('is-new');
-        s.style.setProperty('--i', 1);
+        var s2 = el('div', 'chat__sys chat__sys--ok', 'Enviado después de la aprobación de una persona.');
+        if (!state.seen.sentsys) s2.classList.add('is-new');
+        s2.style.setProperty('--i', 1);
         shown.sentsys = true;
-        chat.appendChild(s);
+        chat.appendChild(s2);
+      } else if (state.rejected) {
+        var r = el('div', 'chat__sys chat__sys--rej', 'Primer contacto rechazado por una persona. No se envió nada a Laura.');
+        if (!state.seen.rej) r.classList.add('is-new');
+        shown.rej = true;
+        chat.appendChild(r);
+      } else {
+        var p = el('div', 'chat__sys chat__sys--pend', 'Borrador en espera de aprobación. Nada se ha enviado a Laura.');
+        if (!state.seen.pend) p.classList.add('is-new');
+        shown.pend = true;
+        chat.appendChild(p);
+      }
+      if (state.paused) {
+        var q = el('div', 'chat__sys chat__sys--pend', 'Radar en pausa: no sale mensaje alguno.');
+        if (!state.seen.paused) q.classList.add('is-new');
+        shown.paused = true;
+        chat.appendChild(q);
       }
     }
     state.seen = shown;
     chat.scrollTop = chat.scrollHeight;
   }
 
-  /* ── Ficha (pasos uno y dos) ── */
+  /* ── Ficha ── */
   function renderFicha() {
     var step = state.step;
     var i = 0;
@@ -115,26 +141,38 @@
     $('#ficha-sub').textContent = FICHA_SUB[Math.min(step, 2)];
   }
 
-  /* ── Aprobación (paso tres) ── */
+  /* ── Aprobación ── */
+  function decided() { return state.approved || state.rejected; }
+  function locked() { return decided() || state.paused; }
   function renderApproval() {
     ta.value = state.text;
-    ta.readOnly = state.approved;
+    ta.readOnly = locked() || !state.editing;
     reviewed.checked = state.reviewed || state.approved;
-    reviewed.disabled = state.approved;
+    reviewed.disabled = locked();
+    editBtn.disabled = locked();
+    editBtn.setAttribute('aria-pressed', state.editing ? 'true' : 'false');
+    editBtn.textContent = state.editing ? 'Listo con la edición' : 'Editar';
+    rejectBtn.disabled = locked();
     updateApproveBtn();
-    draft.setAttribute('data-state', state.approved ? 'approved' : 'pending');
-    statusChip.className = 'chip ' + (state.approved ? 'chip--ok' : 'chip--pend');
-    statusChip.textContent = state.approved ? 'Aprobado por una persona' : 'Pendiente de aprobación';
-    done.hidden = !state.approved;
+    var st = state.approved ? 'approved' : state.rejected ? 'rejected' : 'pending';
+    draft.setAttribute('data-state', st);
+    statusChip.className = 'chip ' + (state.approved ? 'chip--ok' : state.rejected ? 'chip--rej' : 'chip--pend');
+    statusChip.textContent = state.approved ? 'Aprobado por una persona' : state.rejected ? 'Rechazado, no se envía' : 'Pendiente de aprobación';
+    done.hidden = !decided();
     if (state.approved) {
       done.textContent = 'Valeria Ejemplo, persona del equipo, ' + (state.edited ? 'editó y aprobó' : 'revisó y aprobó') + ' este primer contacto. Solo entonces se envió.';
+    } else if (state.rejected) {
+      done.textContent = 'Valeria Ejemplo, persona del equipo, rechazó este primer contacto. Rechazado, no se envía: no salió nada hacia Laura.';
     }
+    $('#approve-help').textContent = state.paused
+      ? 'El Radar está en pausa: las acciones de esta cola están desactivadas hasta que una persona autorizada lo reanude.'
+      : 'Sin esta aprobación, el mensaje no sale. «Aprobar» se activa cuando la persona marca que revisó y termina de editar.';
   }
   function updateApproveBtn() {
-    approveBtn.disabled = state.approved || !(reviewed.checked && ta.value.trim().length > 0);
+    approveBtn.disabled = locked() || state.editing || !(reviewed.checked && ta.value.trim().length > 0);
   }
 
-  /* ── Embudo y bitácora (paso cuatro) ── */
+  /* ── Embudo y bitácora ── */
   var OTHERS = {
     nuevos: [
       { n: 'Sofía Ejemplo', p: 'media' },
@@ -166,8 +204,14 @@
       { t: 'Primer contacto por aprobar', list: [] },
       { t: 'Con una persona del equipo', list: OTHERS.persona.map(function (x) { return { lead: x }; }) }
     ];
+    if (state.paused) {
+      cols[0].list.forEach(function (x) { x.lead = { n: x.lead.n, p: x.lead.p, status: 'Pasa directo a una persona', statusCls: 'chip--pend' }; });
+    }
     if (state.approved) {
       cols[3].list.unshift({ lead: laura, hl: true });
+    } else if (state.rejected) {
+      laura.status = 'Rechazado, no se envía'; laura.statusCls = 'chip--rej';
+      cols[2].list.push({ lead: laura, hl: true });
     } else {
       laura.status = 'Pendiente de aprobación'; laura.statusCls = 'chip--pend';
       cols[2].list.push({ lead: laura, hl: true });
@@ -183,23 +227,20 @@
     });
   }
   function renderLog() {
-    var rows = [
-      ['Captador', 'agente', 'Creó la ficha de Laura Ejemplo (origen: WhatsApp) y registró su permiso.'],
-      ['Asistente virtual', 'agente', 'Se presentó como asistente virtual, compartió el aviso de privacidad y le hizo preguntas de calificación.'],
-      ['Calificador', 'agente', 'Sugirió prioridad alta y dejó la explicación por escrito.'],
-      ['Redactor', 'agente', 'Dejó un borrador de primer contacto en la cola de aprobación.']
-    ];
     var ol = $('#log');
     ol.textContent = '';
-    rows.forEach(function (r) { ol.appendChild(logRow(r[0], r[1], r[2])); });
-    if (state.approved) {
-      ol.appendChild(logRow('Valeria Ejemplo', 'persona', (state.edited ? 'Editó y aprobó' : 'Revisó y aprobó') + ' el primer contacto. Solo entonces se envió.'));
-      ol.appendChild(logRow('Seguimiento', 'agente', 'Dejó un recordatorio interno para Valeria: dar el siguiente paso acordado con Laura.'));
-    } else {
-      var li = logRow('Valeria Ejemplo', 'pend', 'Aprobación pendiente. Mientras tanto, no se ha enviado ningún mensaje a Laura.');
-      li.classList.add('is-pending');
-      ol.appendChild(li);
+    state.log.forEach(function (r) { ol.appendChild(logRow(r.who, r.kind, r.text)); });
+    // Pendientes: lista aparte, para que la bitácora solo crezca
+    var pl = $('#pend');
+    pl.textContent = '';
+    var any = false;
+    if (!decided()) {
+      pl.appendChild(logRow('Valeria Ejemplo', 'pend', 'Aprobar, editar o rechazar el primer contacto. Mientras tanto, todavía no se envía mensaje alguno a Laura.')); any = true;
     }
+    if (state.paused) {
+      pl.appendChild(logRow('Persona autorizada', 'pend', 'Reanudar el Radar. Solo una persona autorizada puede hacerlo.')); any = true;
+    }
+    if (!any) pl.appendChild(logRow('Equipo', 'persona', 'Nada pendiente de aprobación por ahora.'));
   }
   function logRow(who, kind, text) {
     var li = el('li');
@@ -211,6 +252,17 @@
     li.appendChild(a);
     li.appendChild(el('span', null, text));
     return li;
+  }
+
+  function renderPause() {
+    var chip = $('#pause-chip');
+    chip.className = 'chip ' + (state.paused ? 'chip--pend' : 'chip--ok');
+    chip.textContent = state.paused ? 'En pausa' : 'Activo';
+    $('#pause-text').textContent = state.paused
+      ? 'En pausa: no sale mensaje alguno y los prospectos nuevos pasan directo a una persona. Solo una persona autorizada puede reanudar.'
+      : 'Una persona puede pausar el Radar desde el panel. En pausa no sale mensaje alguno y los prospectos nuevos pasan directo a una persona.';
+    pauseBtn.hidden = state.paused;
+    resumeBtn.hidden = !state.paused;
   }
 
   /* ── Navegación ── */
@@ -228,11 +280,13 @@
     $('[data-view="resumen"]').hidden = s !== 4;
     if (s <= 2) renderFicha();
     if (s === 3) renderApproval();
-    if (s === 4) { renderFunnel(); renderLog(); }
+    if (s === 4) { renderFunnel(); renderLog(); renderPause(); }
+    $('#pausebar').hidden = !state.paused;
+    stage.setAttribute('data-paused', state.paused ? 'true' : 'false');
     renderChat();
     prevBtn.disabled = s === 1;
     nextBtn.disabled = s === LAST;
-    if (announce) live.textContent = STEP_NAMES[s] + (s === 3 && !state.approved ? '. Hay un borrador pendiente de aprobación.' : '');
+    if (announce) live.textContent = STEP_NAMES[s] + (s === 3 && !decided() ? '. Hay un borrador pendiente de aprobación.' : '');
   }
   function go(n) { state.step = Math.max(1, Math.min(LAST, n)); render(true); }
 
@@ -251,16 +305,61 @@
     updateApproveBtn();
   });
   reviewed.addEventListener('change', function () { state.reviewed = reviewed.checked; updateApproveBtn(); });
+  editBtn.addEventListener('click', function () {
+    if (locked()) return;
+    if (!state.editing) {
+      state.editing = true;
+      renderApproval();
+      ta.focus();
+      live.textContent = 'Modo de edición. Cambia el mensaje y pulsa «Listo con la edición».';
+    } else {
+      state.editing = false;
+      if (state.edited && !state.editLogged) { addLog('Valeria Ejemplo', 'persona', 'Editó el borrador del primer contacto antes de decidir.'); state.editLogged = true; }
+      if (state.edited) state.reviewed = false; // si cambia el texto, se vuelve a revisar
+      renderApproval();
+      editBtn.focus();
+      live.textContent = 'Edición terminada. Marca la casilla de revisión para poder aprobar.';
+    }
+  });
+  rejectBtn.addEventListener('click', function () {
+    if (locked()) return;
+    state.rejected = true; state.editing = false;
+    addLog('Valeria Ejemplo', 'persona', 'Rechazó el primer contacto. Rechazado, no se envía: no salió mensaje alguno.');
+    renderApproval(); renderChat();
+    live.textContent = 'Rechazado, no se envía. No salió nada hacia la prospecta ficticia.';
+    done.setAttribute('tabindex', '-1');
+    done.focus();
+  });
   approveBtn.addEventListener('click', function () {
-    // Único camino de envío: acción explícita de una persona, con la casilla de revisión marcada.
-    if (state.approved || !reviewed.checked || !ta.value.trim()) return;
+    // Único camino de envío: acción explícita de una persona, con la casilla de revisión marcada y sin pausa.
+    if (locked() || state.editing || !reviewed.checked || !ta.value.trim()) return;
     state.text = ta.value.trim();
     state.approved = true;
+    addLog('Valeria Ejemplo', 'persona', 'Revisó la prioridad sugerida y ' + (state.edited ? 'editó y aprobó' : 'aprobó') + ' el primer contacto. Solo entonces se envió (envío simulado).');
+    addLog('Seguimiento', 'agente', 'Dejó un recordatorio interno para Valeria: dar el siguiente paso acordado con Laura.');
     renderApproval();
     renderChat();
     live.textContent = 'Aprobado por una persona. El mensaje se envió a la prospecta ficticia.';
     done.setAttribute('tabindex', '-1');
     done.focus();
+  });
+  pauseBtn.addEventListener('click', function () {
+    if (state.paused) return;
+    state.paused = true;
+    addLog('Persona autorizada', 'persona', 'Pausó el Radar desde el panel.');
+    addLog('Orquestador', 'agente', 'Aplicó la pausa: no sale mensaje alguno y los prospectos nuevos pasan directo a una persona.');
+    render(false);
+    resumeBtn.focus();
+    live.textContent = 'Radar en pausa. Las acciones están desactivadas hasta que una persona autorizada lo reanude.';
+  });
+  resumeBtn.addEventListener('click', function () {
+    if (!state.paused) return;
+    state.paused = false;
+    addLog('Persona autorizada', 'persona', 'Reanudó el Radar desde el panel.');
+    addLog('Orquestador', 'agente', 'Reanudó la operación después de la indicación de la persona autorizada.');
+    render(false);
+    pauseBtn.focus();
+    live.textContent = 'Radar reanudado por una persona autorizada.';
   });
 
   render(false);

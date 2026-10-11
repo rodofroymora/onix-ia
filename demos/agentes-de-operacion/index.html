@@ -4,13 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Agentes de Operación · Demo ilustrativa | ONIX</title>
-  <meta name="description" content="Demo ilustrativa de Agentes de Operación: asistentes virtuales que hacen las tareas repetitivas y una persona de tu equipo que aprueba todo lo que tiene impacto." />
+  <meta name="description" content="Demo ilustrativa de Agentes de Operación: asistentes virtuales hacen las tareas repetitivas y una persona de tu equipo aprueba lo que tiene impacto." />
   <meta name="robots" content="noindex,nofollow" />
   <meta name="theme-color" content="#FFFFFF" />
   <meta name="color-scheme" content="light" />
+  <link rel="canonical" href="https://onix-ia.com/demos/agentes-de-operacion" />
   <link rel="icon" href="data:," />
-  <link rel="preload" href="fonts/geist-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="agentes.css" />
+  <link rel="preload" href="/demos/agentes-de-operacion/fonts/geist-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/demos/agentes-de-operacion/agentes.css" />
   <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
@@ -19,7 +20,7 @@
 <header class="bar">
   <div class="wrap bar__inner">
     <span class="logo" aria-label="ONIX">ÓNIX</span>
-    <p class="legend"><span class="tag"><span class="tag__dot" aria-hidden="true"></span>Ilustrativo</span><span class="legend__text">Datos ficticios: ningún negocio ni persona de esta demo existe.</span></p>
+    <p class="legend"><span class="tag"><span class="tag__dot" aria-hidden="true"></span>Ilustrativo</span><span class="legend__text">Datos ficticios: los negocios y las personas de esta demo son inventados.</span></p>
   </div>
 </header>
 
@@ -27,20 +28,20 @@
   <section class="hero">
     <div class="wrap">
       <span class="kicker">Agentes de Operación · Demo interactiva</span>
-      <h1 class="display">Los agentes hacen lo repetitivo. <em>Una persona aprueba</em> lo que tiene impacto.</h1>
+      <h1 class="display">Las asistentes virtuales hacen lo repetitivo. <em>Una persona aprueba</em> lo que tiene impacto.</h1>
       <p class="lead">Asistentes virtuales que capturan datos, arman borradores de cotización, dan seguimiento y preparan reportes, con una persona de tu equipo aprobando todo lo que importa.</p>
-      <p class="hero__note">Recorre el ejemplo paso a paso. El agente arma el borrador de la cotización, pero la revisa y la envía una persona de tu equipo: nunca sale sola.</p>
+      <p class="hero__note">Recorre el ejemplo paso a paso. La asistente virtual arma el borrador de la cotización, pero la revisa y la envía una persona de tu equipo: nunca sale sola.</p>
     </div>
   </section>
 
   <section class="stage-sec" aria-labelledby="demo-title">
     <div class="wrap">
       <div class="stage-head">
-        <h2 id="demo-title" class="h2 display">Una cotización, de la solicitud al pedido</h2>
+        <h2 id="demo-title" class="h2 display">Una cotización, de la solicitud al seguimiento</h2>
         <p class="lead">Negocio ficticio: <strong>Servicios Ejemplo</strong>. Cliente ficticio: <strong>Empresa Demo</strong>. Persona del equipo ficticia: <strong>Marisol Ejemplo</strong>.</p>
       </div>
 
-      <p class="free-legend stage-legend"><strong>Datos ficticios, no escribas datos reales.</strong> Esta demostración no guarda tu información y no se conecta a ningún correo ni sistema: todo es una simulación en tu navegador.</p>
+      <p class="free-legend stage-legend"><strong>Datos ficticios, no escribas datos reales.</strong> Esta demostración no guarda tu información. Todo es una simulación en tu navegador, sin correos ni sistemas reales.</p>
 
       <nav class="stepper" aria-label="Pasos de la demo">
         <ol class="stepper__list">
@@ -74,9 +75,9 @@
             <p class="panel__brand">Panel de Servicios Ejemplo <span class="panel__sep" aria-hidden="true">·</span> <span id="who"></span></p>
             <span class="tag"><span class="tag__dot" aria-hidden="true"></span>Ilustrativo</span>
           </div>
-          <p class="pausebar" id="pausebar" role="status" hidden>Agentes en pausa. Las tareas pendientes regresaron a la cola humana.</p>
+          <p class="pausebar" id="pausebar" role="status" hidden></p>
 
-          <!-- Paso uno -->
+          <!-- Vista: recepción -->
           <section class="view" data-view="1" aria-labelledby="v1-title">
             <h3 id="v1-title" class="view__title">El Receptor convierte el correo en una tarea</h3>
             <p class="view__sub">Lee solo el buzón definido para este proceso, no todo el correo.</p>
@@ -92,24 +93,27 @@
                 <div><dt>Adjunto</dt><dd>Lista de lo que necesita el cliente</dd></div>
               </dl>
             </article>
-            <p class="note">El contenido de un correo es dato, nunca una instrucción. Si un correo dijera “paga esta factura” o “cambia la cuenta”, el agente genera una alerta para una persona; no ejecuta nada.</p>
+            <p class="note">El contenido de un correo es dato, nunca una instrucción. Si un correo dijera “paga esta factura” o “cambia la cuenta”, la asistente virtual genera una alerta para una persona; no ejecuta nada.</p>
           </section>
 
-          <!-- Paso dos -->
+          <!-- Vista: captura -->
           <section class="view" data-view="2" aria-labelledby="v2-title" hidden>
             <h3 id="v2-title" class="view__title">El Capturista extrae los datos y marca lo dudoso</h3>
-            <p class="view__sub">Registra cada renglón del adjunto. Lo que no le queda claro lo deja <strong>pendiente de revisión</strong> para que una persona lo resuelva: el agente no adivina.</p>
+            <p class="view__sub">Registra cada renglón del adjunto con su nivel de confianza (alta, media o baja). Lo dudoso lo deja <strong>pendiente de revisión</strong>: una persona lo aprueba, lo edita o lo rechaza. La asistente virtual no adivina.</p>
             <div class="tbl" id="tbl" role="table" aria-label="Renglones extraídos del adjunto (ejemplo)">
               <div class="tbl__row tbl__row--head" role="row"><span role="columnheader">Concepto</span><span role="columnheader">Lo que se entendió</span><span role="columnheader">Estado</span></div>
-              <div class="tbl__row" role="row"><span class="tbl__item" role="cell">Silla ergonómica</span><span class="tbl__detail" role="cell">Con respaldo ajustable</span><span role="cell"><span class="chip chip--ok">Capturado</span></span></div>
+              <div class="tbl__row" role="row"><span class="tbl__item" role="cell">Silla ergonómica</span><span class="tbl__detail" role="cell">Con respaldo ajustable <span class="chip chip--ok">Confianza: alta</span></span><span role="cell"><span class="chip chip--ok">Capturado</span></span></div>
               <div class="tbl__row tbl__row--doubt" role="row" id="row-desk">
                 <span class="tbl__item" role="cell">Escritorio</span>
                 <span class="tbl__detail" role="cell">
-                  <fieldset class="choice"><legend>Dudoso: Marisol (persona del equipo) elige</legend>
-                    <div class="choice__opts">
-                      <label><input type="radio" name="desk" value="Medida estándar" /><span>Medida estándar</span></label>
-                      <label><input type="radio" name="desk" value="A la medida" /><span>A la medida</span></label>
-                    </div>
+                  <span class="prop">La asistente virtual propone: <strong>Medida estándar</strong> <span class="chip chip--gap">Confianza: baja</span></span>
+                  <span class="ctrls" role="group" aria-label="Decisión de Marisol sobre el escritorio">
+                    <button type="button" class="btn btn--ghost btn--sm" data-act="approve" data-row="desk">Aprobar</button>
+                    <button type="button" class="btn btn--ghost btn--sm" data-act="edit" data-row="desk" aria-expanded="false">Editar</button>
+                    <button type="button" class="btn btn--ghost btn--sm btn--reject" data-act="reject" data-row="desk">Rechazar</button>
+                  </span>
+                  <fieldset class="choice" id="edit-desk" hidden><legend>Editar: Marisol (persona del equipo) elige</legend>
+                    <div class="choice__opts"><label><input type="radio" name="desk" value="Medida estándar" /><span>Medida estándar</span></label><label><input type="radio" name="desk" value="A la medida" /><span>A la medida</span></label></div>
                   </fieldset>
                 </span>
                 <span role="cell"><span class="chip chip--gap" id="st-desk">Pendiente de revisión</span></span>
@@ -117,25 +121,28 @@
               <div class="tbl__row tbl__row--doubt" role="row" id="row-file">
                 <span class="tbl__item" role="cell">Archivero</span>
                 <span class="tbl__detail" role="cell">
-                  <fieldset class="choice"><legend>Dudoso: Marisol (persona del equipo) elige</legend>
-                    <div class="choice__opts">
-                      <label><input type="radio" name="file" value="Metálico" /><span>Metálico</span></label>
-                      <label><input type="radio" name="file" value="De madera" /><span>De madera</span></label>
-                    </div>
+                  <span class="prop">La asistente virtual propone: <strong>Metálico</strong> <span class="chip chip--gap">Confianza: baja</span></span>
+                  <span class="ctrls" role="group" aria-label="Decisión de Marisol sobre el archivero">
+                    <button type="button" class="btn btn--ghost btn--sm" data-act="approve" data-row="file">Aprobar</button>
+                    <button type="button" class="btn btn--ghost btn--sm" data-act="edit" data-row="file" aria-expanded="false">Editar</button>
+                    <button type="button" class="btn btn--ghost btn--sm btn--reject" data-act="reject" data-row="file">Rechazar</button>
+                  </span>
+                  <fieldset class="choice" id="edit-file" hidden><legend>Editar: Marisol (persona del equipo) elige</legend>
+                    <div class="choice__opts"><label><input type="radio" name="file" value="Metálico" /><span>Metálico</span></label><label><input type="radio" name="file" value="De madera" /><span>De madera</span></label></div>
                   </fieldset>
                 </span>
                 <span role="cell"><span class="chip chip--gap" id="st-file">Pendiente de revisión</span></span>
               </div>
-              <div class="tbl__row" role="row"><span class="tbl__item" role="cell">Lámpara de escritorio</span><span class="tbl__detail" role="cell">Luz cálida</span><span role="cell"><span class="chip chip--ok">Capturado</span></span></div>
+              <div class="tbl__row" role="row"><span class="tbl__item" role="cell">Lámpara de escritorio</span><span class="tbl__detail" role="cell">Luz cálida <span class="chip chip--ok">Confianza: alta</span></span><span role="cell"><span class="chip chip--ok">Capturado</span></span></div>
             </div>
-            <p class="note" id="resolve-note">Elige una opción en cada renglón dudoso para continuar. En un proyecto real, la persona responsable resuelve estos renglones.</p>
+            <p class="note" id="resolve-note">Decide cada renglón dudoso (aprobar, editar o rechazar) para continuar. En un proyecto real, la persona responsable resuelve estos renglones.</p>
           </section>
 
-          <!-- Paso tres -->
+          <!-- Vista: borrador -->
           <section class="view" data-view="3" aria-labelledby="v3-title" hidden>
             <h3 id="v3-title" class="view__title">El Cotizador arma un borrador</h3>
-            <p class="view__sub">Usa el catálogo y las reglas vigentes del negocio. <strong>El agente no envía cotizaciones.</strong></p>
-            <div id="v3-blocked" class="blocked" hidden>Borrador en espera: faltan renglones dudosos por resolver. Vuelve al paso anterior para que una persona los resuelva.</div>
+            <p class="view__sub">Usa el catálogo y las reglas vigentes del negocio. <strong>La asistente virtual no envía cotizaciones.</strong></p>
+            <div id="v3-blocked" class="blocked" hidden></div>
             <article class="draft" id="quote" data-state="pending" aria-labelledby="quote-title">
               <header class="draft__head">
                 <div>
@@ -146,17 +153,17 @@
               </header>
               <p class="draftlabel">Borrador para que tu equipo lo revise y lo envíe</p>
               <div class="tbl" id="quote-tbl" role="table" aria-label="Conceptos del borrador (ejemplo)"></div>
-              <label class="draft__label" for="quote-note" style="margin-top:1.25rem">Notas para el cliente <span class="muted">(puedes ajustarlas)</span></label>
-              <textarea id="quote-note" class="draft__text" rows="4" aria-describedby="free-legend-2">Hola. Con gusto compartimos la cotización de lo que nos pediste. Si algo cambia, avísanos y la ajustamos.</textarea>
-              <p class="free-legend" id="free-legend-2"><strong>Datos ficticios, no escribas datos reales.</strong> Esta demostración no guarda tu información.</p>
+              <p class="draft__label" style="margin-top:1.25rem">Notas para el cliente</p>
+              <p class="notepreview" id="note-view"></p>
+              <p class="draft__help">Para ajustar las notas o decidir sobre el envío, ve al paso siguiente.</p>
             </article>
           </section>
 
-          <!-- Paso cuatro -->
+          <!-- Vista: decisión y envío -->
           <section class="view" data-view="4" aria-labelledby="v4-title" hidden>
             <h3 id="v4-title" class="view__title">Una persona revisa, ajusta y envía</h3>
-            <p class="view__sub">La cotización la envía una persona, desde su propio correo o WhatsApp. El agente no la envía.</p>
-            <div id="v4-blocked" class="blocked" hidden>Aún no hay borrador para enviar: faltan renglones dudosos por resolver en el paso de captura de datos.</div>
+            <p class="view__sub">La cotización la envía una persona, desde su propio correo o WhatsApp. La asistente virtual no la envía. Puede aprobarla, editarla o rechazarla.</p>
+            <div id="v4-blocked" class="blocked" hidden></div>
             <article class="draft" id="send" data-state="pending" aria-labelledby="send-title">
               <header class="draft__head">
                 <div>
@@ -165,36 +172,50 @@
                 </div>
                 <span class="chip chip--pend" id="send-status" role="status">Pendiente de envío por una persona</span>
               </header>
+              <label class="draft__label" for="quote-note">Notas para el cliente <span class="muted">(usa «Editar» para ajustarlas)</span></label>
+              <textarea id="quote-note" class="draft__text" rows="4" readonly aria-describedby="free-legend-2">Hola. Con gusto compartimos la cotización de lo que nos pediste. Si algo cambia, avísanos y la ajustamos.</textarea>
+              <p class="free-legend" id="free-legend-2"><strong>Datos ficticios, no escribas datos reales.</strong> Esta demostración no guarda tu información.</p>
               <div class="draft__gate" id="gate">
                 <label class="check">
                   <input type="checkbox" id="reviewed" />
                   <span>Marisol revisó y ajustó el borrador</span>
                 </label>
-                <button type="button" class="btn btn--approve" id="send-btn" disabled aria-describedby="send-help">Enviar cotización</button>
+                <div class="ctrls" role="group" aria-label="Decisión de la persona">
+                  <button type="button" class="btn btn--approve" id="send-btn" disabled aria-describedby="send-help">Aprobar y enviar</button>
+                  <button type="button" class="btn btn--ghost" id="edit-note" aria-pressed="false">Editar</button>
+                  <button type="button" class="btn btn--ghost btn--reject" id="reject-quote">Rechazar</button>
+                </div>
               </div>
-              <p class="draft__help" id="send-help">Sin este envío, la cotización no sale. El botón se activa cuando la persona confirma que revisó.</p>
+              <p class="draft__help" id="send-help">Sin esta aprobación, la cotización no sale. «Aprobar y enviar» se activa cuando la persona marca que revisó y termina de editar.</p>
+              <p class="draft__done" id="rej-done" tabindex="-1" hidden></p>
               <div id="after" hidden>
                 <p class="draft__done" id="sent-done" tabindex="-1"></p>
-                <div class="wa-preview"><b>WhatsApp interno de Servicios Ejemplo (ejemplo)</b>El agente anotó la solicitud: Empresa Demo aceptó la cotización. Falta que una persona confirme el pedido en sus propios sistemas.</div>
+                <div class="wa-preview" id="wa-prev"><b>WhatsApp interno de Servicios Ejemplo (ejemplo)</b>Queda anotado y se lo mando a tu equipo: Empresa Demo aceptó la cotización. Falta que una persona confirme el pedido en sus propios sistemas.</div>
+                <p class="blocked" id="seg-paused" hidden>Seguimiento está en pausa: la solicitud aceptada no se anotó ni se avisó al equipo. La tarea regresó a la cola humana.</p>
                 <dl class="kv" style="margin-top:.9rem">
                   <div><dt>Pedido</dt><dd><span class="chip chip--pend">Pendiente de confirmación por una persona</span></dd></div>
-                  <div><dt>Qué no hace el agente</dt><dd>No confirma el pedido, no toca inventario ni cobra.</dd></div>
+                  <div><dt>Qué no hace la asistente virtual</dt><dd>No confirma el pedido, no toca inventario ni cobra.</dd></div>
                 </dl>
               </div>
             </article>
           </section>
 
-          <!-- Paso cinco -->
+          <!-- Vista: bitácora y pausa -->
           <section class="view" data-view="5" aria-labelledby="v5-title" hidden>
             <h3 id="v5-title" class="view__title">Bitácora y botón de pausa</h3>
-            <p class="view__sub">Cada acción queda registrada: qué hizo cada agente, qué corrigió una persona y quién aprobó.</p>
-            <ul class="agents" id="agents" aria-label="Estado de los agentes"></ul>
+            <p class="view__sub">Cada acción queda registrada: qué hizo cada agente, qué decidió una persona y quién aprobó. Solo se agregan eventos: nada se reemplaza ni se borra.</p>
+            <ul class="agents" id="agents" aria-label="Estado de cada agente"></ul>
             <div class="pausebox">
-              <p id="pause-help">Desde el panel se puede pausar a todos los agentes. Las tareas pendientes regresan a la cola humana.</p>
-              <button type="button" class="btn btn--danger" id="pause" aria-pressed="false" aria-describedby="pause-help">Pausar</button>
+              <p id="pause-help">Desde el panel se puede pausar a un agente o a todos. Las tareas pendientes regresan a la cola humana y las acciones de ese paso quedan desactivadas. Reanudar lo hace una persona autorizada.</p>
+              <div class="ctrls">
+                <button type="button" class="btn btn--danger" id="pause-all" aria-describedby="pause-help">Pausar a todos</button>
+                <button type="button" class="btn btn--resume" id="resume-all" hidden>Reanudar a todos (persona autorizada)</button>
+              </div>
             </div>
             <h3 class="view__title view__title--2" id="log-title">Bitácora: quién hizo qué y quién aprobó</h3>
             <ol class="log" id="log" aria-labelledby="log-title"></ol>
+            <h3 class="view__title view__title--2" id="pend-title">Pendiente ahora</h3>
+            <ul class="log log--pend" id="pend" aria-labelledby="pend-title"></ul>
           </section>
 
           <div class="panel__nav">
@@ -214,15 +235,15 @@
       <div class="roles__grid">
         <article class="rcard">
           <h3>Se automatiza</h3>
-          <p>Lectura y clasificación de solicitudes, captura de datos, borradores de cotización, recordatorios internos y reportes de lectura.</p>
+          <p>Lectura y orden de solicitudes, captura de datos, borradores de cotización, recordatorios internos y reportes de lectura.</p>
         </article>
         <article class="rcard">
           <h3>Se revisa</h3>
-          <p>Los datos que el agente no tiene claros, todo borrador que vaya hacia un cliente y los reportes antes de compartirse fuera del equipo.</p>
+          <p>Los datos que la asistente virtual no tiene claros, todo borrador que vaya hacia un cliente y los reportes antes de compartirse fuera del equipo.</p>
         </article>
         <article class="rcard rcard--key">
           <h3>Lo aprueba una persona</h3>
-          <p>El envío de cotizaciones, cualquier cambio a datos de clientes y la confirmación de pedidos. Los pagos y cobros el agente no los ejecuta.</p>
+          <p>El envío de cotizaciones, cualquier cambio a datos de clientes y la confirmación de pedidos. Los pagos y cobros la asistente virtual no los ejecuta.</p>
         </article>
       </div>
       <div class="nots">
@@ -244,7 +265,7 @@
       <h2 id="cta-title" class="h2 display">¿Qué tarea repetitiva te gustaría quitarle a tu equipo?</h2>
       <p class="lead">Cuéntanos cómo trabajas hoy y lo platicamos.</p>
       <a class="btn btn--accent" href="https://wa.me/522227097945?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20los%20servicios%20de%20%C3%93NIX.%20Aviso%20de%20privacidad%3A%20https%3A%2F%2Fonix-ia.com%2Faviso-de-privacidad" target="_blank" rel="noopener noreferrer">Escríbenos por WhatsApp</a>
-      <p class="privacy">Al escribirnos por WhatsApp, ÓNIX (Rodolfo Mora) usará tu número y tu mensaje para responderte y darte seguimiento. WhatsApp (Meta) trata los datos de la conversación bajo sus propias condiciones. <a class="privacy__link" href="/aviso-de-privacidad">Aviso de privacidad</a></p>
+      <p class="privacy">Al escribirnos por WhatsApp, ÓNIX (Rodolfo Mora) usará tu número y tu mensaje para responderte y darte seguimiento. WhatsApp (Meta) trata los datos de la conversación bajo sus propias condiciones. <a class="privacy__link" href="/aviso-de-privacidad">Aviso de privacidad de ÓNIX</a></p>
     </div>
   </section>
 </main>
@@ -256,6 +277,6 @@
   </div>
 </footer>
 
-<script src="agentes.js"></script>
+<script src="/demos/agentes-de-operacion/agentes.js"></script>
 </body>
 </html>

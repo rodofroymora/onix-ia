@@ -4,13 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Asistentes de WhatsApp y Voz · Demo ilustrativa | ONIX</title>
-  <meta name="description" content="Demo ilustrativa de Asistentes de WhatsApp y Voz: una asistente virtual que contesta con información aprobada por tu negocio y pasa la conversación a una persona cuando hace falta." />
+  <meta name="description" content="Demo ilustrativa de Asistentes de WhatsApp y Voz: una asistente virtual contesta con información aprobada y pasa con una persona cuando hace falta." />
   <meta name="robots" content="noindex,nofollow" />
   <meta name="theme-color" content="#FFFFFF" />
   <meta name="color-scheme" content="light" />
+  <link rel="canonical" href="https://onix-ia.com/demos/asistentes-whatsapp-voz" />
   <link rel="icon" href="data:," />
-  <link rel="preload" href="fonts/geist-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="asistentes.css" />
+  <link rel="preload" href="/demos/asistentes-whatsapp-voz/fonts/geist-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/demos/asistentes-whatsapp-voz/asistentes.css" />
   <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
@@ -19,7 +20,7 @@
 <header class="bar">
   <div class="wrap bar__inner">
     <span class="logo" aria-label="ONIX">ÓNIX</span>
-    <p class="legend"><span class="tag"><span class="tag__dot" aria-hidden="true"></span>Ilustrativo</span><span class="legend__text">Datos ficticios: ningún negocio ni persona de esta demo existe.</span></p>
+    <p class="legend"><span class="tag"><span class="tag__dot" aria-hidden="true"></span>Ilustrativo</span><span class="legend__text">Datos ficticios: los negocios y las personas de esta demo son inventados.</span></p>
   </div>
 </header>
 
@@ -40,7 +41,7 @@
         <p class="lead">Negocio ficticio: <strong>Negocio Ejemplo</strong>. Cliente ficticio: <strong>Andrés Demo</strong>.</p>
       </div>
 
-      <p class="free-legend stage-legend" id="free-legend"><strong>Datos ficticios, no escribas ni digas datos reales.</strong> Esta demostración no guarda tu información. Es una simulación: no usa micrófono ni reproduce audio, y no tiene campos de texto libre.</p>
+      <p class="free-legend stage-legend" id="free-legend"><strong>Datos ficticios, no escribas datos reales.</strong> En voz: no digas datos reales. Esta demostración no guarda tu información. Es una simulación: no usa micrófono ni reproduce audio, y no tiene campos de texto libre.</p>
 
       <div class="stage-tools" role="group" aria-labelledby="canal-label">
         <span class="stage-tools__label" id="canal-label">Canal de la demo</span>
@@ -80,6 +81,7 @@
               </div>
               <div class="chat" id="chat" role="log" aria-label="Conversación de ejemplo" aria-live="off"></div>
               <p class="phone__sim" id="phone-sim">Conversación simulada de WhatsApp.</p>
+              <p class="phone__legend"><strong>Ilustrativo.</strong> Datos ficticios, no escribas datos reales. En voz: no digas datos reales.</p>
             </div>
           </div>
         </figure>
@@ -90,6 +92,16 @@
             <span class="tag"><span class="tag__dot" aria-hidden="true"></span>Ilustrativo</span>
           </div>
 
+          <section class="pausepanel" aria-labelledby="pause-title">
+            <h3 id="pause-title" class="pausepanel__title">Pausa de la asistente virtual</h3>
+            <p class="pausepanel__sub">Una persona puede pausarla en uno o en ambos canales. En pausa, los mensajes pasan a la bandeja humana y las llamadas, al desvío o al buzón. Reanudar lo hace una persona autorizada.</p>
+            <ul class="pausepanel__list">
+              <li data-pch="wa"><span class="pausepanel__name">WhatsApp</span><span class="chip chip--ok" data-pchip>Activa</span><span class="ctrls"><button type="button" class="btn btn--ghost" data-pause="wa">Pausar</button><button type="button" class="btn btn--ghost" data-resume="wa" hidden>Reanudar (persona autorizada)</button></span></li>
+              <li data-pch="voice"><span class="pausepanel__name">Voz</span><span class="chip chip--ok" data-pchip>Activa</span><span class="ctrls"><button type="button" class="btn btn--ghost" data-pause="voice">Pausar</button><button type="button" class="btn btn--ghost" data-resume="voice" hidden>Reanudar (persona autorizada)</button></span></li>
+            </ul>
+            <p class="pausebar" id="pausebar" role="status" hidden></p>
+          </section>
+
           <section class="view" data-view="1" aria-labelledby="v1-title">
             <h3 id="v1-title" class="view__title">Cómo abre la conversación</h3>
             <p class="view__sub">Antes de responder, la asistente deja claras las reglas del juego.</p>
@@ -97,11 +109,10 @@
               <li><span>Se presenta como <strong>asistente virtual</strong>, nunca como una persona.</span></li>
               <li><span>Ofrece <strong>pasar con una persona</strong> si el cliente lo prefiere.</span></li>
               <li data-ch="wa"><span>Comparte el <strong>aviso de privacidad</strong> del negocio.</span></li>
-              <li data-ch="voice"><span>Avisa que la llamada <strong>se transcribe</strong> y ofrece enviar el aviso de privacidad por WhatsApp.</span></li>
+              <li data-ch="voice"><span>Contesta con un <strong>saludo neutro</strong> y se identifica como asistente virtual desde la primera frase.</span></li>
             </ul>
-            <!-- [REVISIÓN ABOGADO] PROVISIONAL: la apertura de voz (aviso de asistente virtual, transcripción y aviso de privacidad por WhatsApp; "transcripción sí, audio no") es el texto sugerido por Legal y requiere revisión de abogado humano antes de publicarse. No es texto final. Ver asistentes.js (SCRIPT.voice) y README. -->
-            <p class="note" data-ch="voice">Por defecto se transcribe y no se graba audio. Si el negocio decidiera grabar, se avisa y la persona puede negarse: se le pasa con alguien o se toma un recado sin grabar.</p>
-            <p class="note" data-ch="wa">Es domingo en la noche: el equipo de Negocio Ejemplo no está en línea, pero el cliente recibe respuesta con información aprobada.</p>
+            <!-- [REVISIÓN ABOGADO] texto provisional: la apertura de voz definitiva queda pendiente de revisión; esta demo usa un saludo neutro y no muestra ese texto. -->
+            <p class="note" data-ch="wa">Fuera del horario del equipo de Negocio Ejemplo, el cliente recibe respuesta con información aprobada.</p>
           </section>
 
           <section class="view" data-view="2" aria-labelledby="v2-title" hidden>
@@ -136,7 +147,7 @@
 
           <section class="view" data-view="4" aria-labelledby="v4-title" hidden>
             <h3 id="v4-title" class="view__title">Transferencia a una persona</h3>
-            <p class="view__sub">Cuando el cliente lo pide, la asistente pasa la conversación con un resumen para que nadie repita nada.</p>
+            <p class="view__sub">Cuando el cliente lo pide, la asistente pasa la conversación con un resumen para que el cliente no tenga que repetir nada.</p>
             <article class="card" aria-labelledby="tr-title">
               <header class="card__head">
                 <h4 id="tr-title" class="card__title">Resumen para la persona del equipo</h4>
@@ -151,13 +162,17 @@
               <p class="note">Fuera de horario, la asistente toma el recado y avisa al equipo. No promete cuándo contestará una persona.</p>
             </article>
             <h3 class="view__title view__title--2" id="log-title">Bitácora: quién hizo qué</h3>
+            <p class="view__sub">Solo se agregan eventos: nada se reemplaza ni se borra.</p>
             <ol class="log" id="log" aria-labelledby="log-title">
-              <li><div class="log__actor"><span>Asistente virtual</span><span class="chip chip--agente">Automatizado</span></div><span>Se presentó, ofreció una persona y compartió el aviso de privacidad.</span></li>
-              <li><div class="log__actor"><span>Base de respuestas</span><span class="chip chip--agente">Automatizado</span></div><span>Entregó solo información aprobada; marcó una pregunta sin respuesta.</span></li>
-              <li><div class="log__actor"><span>Registro de solicitudes</span><span class="chip chip--agente">Automatizado</span></div><span>Anotó la cita pedida y avisó al equipo.</span></li>
-              <li><div class="log__actor"><span>Transferencia</span><span class="chip chip--agente">Automatizado</span></div><span>Pasó la conversación con su resumen.</span></li>
-              <li class="is-pending"><div class="log__actor"><span>Persona del equipo</span><span class="chip chip--pend">Pendiente</span></div><span>Confirmar la cita en su agenda y responder al cliente. Aún no ocurre en esta demo.</span></li>
+              <li data-base><div class="log__actor"><span>Asistente virtual</span><span class="chip chip--agente">Automatizado</span></div><span>Se presentó, ofreció una persona y compartió el aviso de privacidad.</span></li>
+              <li data-base><div class="log__actor"><span>Base de respuestas</span><span class="chip chip--agente">Automatizado</span></div><span>Entregó solo información aprobada; marcó una pregunta sin respuesta.</span></li>
+              <li data-base><div class="log__actor"><span>Registro de solicitudes</span><span class="chip chip--agente">Automatizado</span></div><span>Anotó la cita pedida y avisó al equipo.</span></li>
+              <li data-base><div class="log__actor"><span>Transferencia</span><span class="chip chip--agente">Automatizado</span></div><span>Pasó la conversación con su resumen.</span></li>
             </ol>
+            <h3 class="view__title view__title--2" id="pend-title">Pendiente ahora</h3>
+            <ul class="log log--pend" id="pend" aria-labelledby="pend-title">
+              <li class="is-pending"><div class="log__actor"><span>Persona del equipo</span><span class="chip chip--pend">Pendiente</span></div><span>Confirmar la cita en su agenda y responder al cliente. Aún no ocurre en esta demo.</span></li>
+            </ul>
           </section>
 
           <div class="panel__nav">
@@ -192,7 +207,7 @@
         <h3>Lo que la asistente no hace</h3>
         <ul>
           <li>No se hace pasar por una persona.</li>
-          <li>No cierra ventas, no negocia, no cobra ni pide datos de pago.</li>
+          <li>No cobra ni pide datos de pago; los acuerdos comerciales los conduce una persona.</li>
           <li>No consulta inventario ni confirma citas o pedidos por su cuenta.</li>
           <li>No da consejos médicos, legales ni financieros.</li>
           <li>No inicia campañas ni mensajes masivos.</li>
@@ -207,7 +222,7 @@
       <h2 id="cta-title" class="h2 display">¿Cómo se vería con tu negocio?</h2>
       <p class="lead">Cuéntanos qué preguntas repite hoy tu equipo y lo platicamos.</p>
       <a class="btn btn--accent" href="https://wa.me/522227097945?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20los%20servicios%20de%20%C3%93NIX.%20Aviso%20de%20privacidad%3A%20https%3A%2F%2Fonix-ia.com%2Faviso-de-privacidad" target="_blank" rel="noopener noreferrer">Escríbenos por WhatsApp</a>
-      <p class="privacy">Al escribirnos por WhatsApp, ÓNIX (Rodolfo Mora) usará tu número y tu mensaje para responderte y darte seguimiento. WhatsApp (Meta) trata los datos de la conversación bajo sus propias condiciones. <a class="privacy__link" href="/aviso-de-privacidad">Aviso de privacidad</a></p>
+      <p class="privacy">Al escribirnos por WhatsApp, ÓNIX (Rodolfo Mora) usará tu número y tu mensaje para responderte y darte seguimiento. WhatsApp (Meta) trata los datos de la conversación bajo sus propias condiciones. <a class="privacy__link" href="/aviso-de-privacidad">Aviso de privacidad de ÓNIX</a></p>
     </div>
   </section>
 </main>
@@ -219,6 +234,6 @@
   </div>
 </footer>
 
-<script src="asistentes.js"></script>
+<script src="/demos/asistentes-whatsapp-voz/asistentes.js"></script>
 </body>
 </html>

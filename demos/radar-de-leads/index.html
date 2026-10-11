@@ -4,13 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Radar de Leads · Demo ilustrativa | ONIX</title>
-  <meta name="description" content="Demo ilustrativa de Radar de Leads: asistentes virtuales que reciben a tus prospectos y los ordenan por prioridad. El primer contacto siempre lo aprueba una persona." />
+  <meta name="description" content="Demo ilustrativa de Radar de Leads: asistentes virtuales reciben a tus prospectos y los ordenan por prioridad. Una persona aprueba el primer contacto." />
   <meta name="robots" content="noindex,nofollow" />
   <meta name="theme-color" content="#FFFFFF" />
   <meta name="color-scheme" content="light" />
+  <link rel="canonical" href="https://onix-ia.com/demos/radar-de-leads" />
   <link rel="icon" href="data:," />
-  <link rel="preload" href="fonts/geist-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="radar.css" />
+  <link rel="preload" href="/demos/radar-de-leads/fonts/geist-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/demos/radar-de-leads/radar.css" />
   <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
@@ -19,7 +20,7 @@
 <header class="bar">
   <div class="wrap bar__inner">
     <span class="logo" aria-label="ONIX">ÓNIX</span>
-    <p class="legend"><span class="tag"><span class="tag__dot" aria-hidden="true"></span>Ilustrativo</span><span class="legend__text">Datos ficticios: ningún negocio ni persona de esta demo existe.</span></p>
+    <p class="legend"><span class="tag"><span class="tag__dot" aria-hidden="true"></span>Ilustrativo</span><span class="legend__text">Datos ficticios: los negocios y las personas de esta demo son inventados.</span></p>
   </div>
 </header>
 
@@ -39,6 +40,8 @@
         <h2 id="demo-title" class="h2 display">Un prospecto, de principio a fin</h2>
         <p class="lead">Negocio ficticio: <strong>Comercial Ejemplo</strong>. Prospecto ficticio: <strong>Laura Ejemplo</strong>.</p>
       </div>
+
+      <p class="free-legend stage-legend"><strong>Datos ficticios, no escribas datos reales.</strong> Esta demostración no guarda tu información y todo ocurre en tu navegador.</p>
 
       <nav class="stepper" aria-label="Pasos de la demo">
         <ol class="stepper__list">
@@ -76,69 +79,103 @@
             <p class="panel__brand">Panel del Radar <span class="panel__sep" aria-hidden="true">·</span> <span id="who">Participan: el Captador y la asistente virtual</span></p>
             <span class="tag"><span class="tag__dot" aria-hidden="true"></span>Ilustrativo</span>
           </div>
+          <p class="pausebar" id="pausebar" role="status" hidden><strong>Radar en pausa.</strong> No sale mensaje alguno y los prospectos nuevos pasan directo a una persona. Las acciones de esta demo están desactivadas hasta que una persona autorizada lo reanude.</p>
 
-          <!-- Pasos uno y dos: ficha -->
+          <!-- Vista: ficha -->
           <section class="view" data-view="ficha" aria-labelledby="ficha-title">
             <h3 id="ficha-title" class="view__title">Ficha del prospecto</h3>
-            <p class="view__sub" id="ficha-sub">El Captador crea una ficha única, con el canal de origen y el consentimiento registrados.</p>
+            <p class="view__sub" id="ficha-sub">El Captador crea una ficha única, con el canal de origen, el permiso para conversar y la respuesta sobre promociones registrados.</p>
             <dl class="ficha" id="ficha">
               <div class="ficha__row" data-from="1"><dt>Nombre</dt><dd>Laura Ejemplo</dd></div>
               <div class="ficha__row" data-from="1"><dt>Canal de origen</dt><dd>WhatsApp</dd></div>
-              <div class="ficha__row" data-from="1"><dt>Aviso de privacidad y permiso</dt><dd>Aceptado por la prospecta</dd></div>
+              <div class="ficha__row" data-from="1"><dt>Permiso para conversar</dt><dd>Sí. Solo sirve para atender lo que pidió; no es permiso para promociones.</dd></div>
+              <div class="ficha__row" data-from="1"><dt>Consentimiento para promociones</dt><dd>No aceptó. Se pidió por separado y se guardó con fecha, canal y texto mostrado.</dd></div>
               <div class="ficha__row" data-from="2"><dt>Qué necesita</dt><dd>Mantenimiento para su local</dd></div>
-              <div class="ficha__row" data-from="2"><dt>Para cuándo</dt><dd>Esta semana</dd></div>
+              <div class="ficha__row" data-from="2"><dt>Para cuándo</dt><dd>Pronto</dd></div>
               <div class="ficha__row" data-from="2"><dt>Cómo prefiere que la contacten</dt><dd>Por WhatsApp, en la tarde</dd></div>
             </dl>
+
             <div class="prio" id="prio" hidden>
               <div class="prio__head">
-                <span class="chip chip--alta">Prioridad sugerida: alta</span>
+                <h4 class="prio__title">Señales y regla de prioridad</h4>
                 <span class="chip chip--ejemplo">Ejemplo</span>
-                <span class="prio__by">La sugiere el Calificador; una persona puede cambiarla.</span>
+                <span class="prio__by">Criterios de ejemplo, sin puntajes. La asistente virtual solo extrae las señales y cita la frase; la prioridad la asignan reglas legibles.</span>
               </div>
-              <p class="prio__why"><strong>Por qué <span class="chip chip--ejemplo">Ejemplo</span>:</strong> según criterios de ejemplo del equipo comercial (ficticios), Laura ya sabe qué necesita, lo necesita pronto y pidió que la contacten. Esta explicación queda en la bitácora.</p>
+              <ul class="signals" aria-label="Señales detectadas con la frase que las respalda">
+                <li><span class="chip chip--ok">Sí</span><span><strong>Intención declarada.</strong> <q>Quisiera que me manden una propuesta</q></span></li>
+                <li><span class="chip chip--ok">Sí</span><span><strong>Contacto consentido.</strong> <q>Por WhatsApp, en la tarde</q></span></li>
+                <li><span class="chip chip--ok">Sí</span><span><strong>Necesidad descrita.</strong> <q>Mantenimiento para mi local</q></span></li>
+                <li><span class="chip chip--ok">Sí</span><span><strong>Urgencia mencionada.</strong> <q>Lo necesito pronto</q></span></li>
+                <li><span class="chip chip--ok">Sí</span><span><strong>Encaje con la oferta.</strong> El servicio está en el catálogo de ejemplo de Comercial Ejemplo.</span></li>
+              </ul>
+              <p class="prio__rule"><strong>Regla que se cumplió (Alta):</strong> intención declarada <em>y</em> contacto consentido <em>y</em> encaje con la oferta <em>y</em> (necesidad descrita <em>o</em> urgencia mencionada). Si una señal es «no se sabe», no cuenta a favor ni en contra y la explicación lo dice.</p>
+              <div class="prio__result">
+                <span class="chip chip--alta">Prioridad sugerida: alta</span>
+                <span class="chip chip--pend">Revisa y decide: una persona del equipo</span>
+              </div>
+              <p class="prio__why"><strong>Explicación que ve el equipo:</strong> «Prioridad sugerida: Alta. Intención declarada: “quisiera que me manden una propuesta”. Contacto consentido: sí. Encaje: el servicio está en el catálogo. Urgencia: “lo necesito pronto”. Revisa y decide.» Esta explicación queda en la bitácora.</p>
+              <p class="prio__exc"><strong>Antes de la prioridad:</strong> si Laura pide hablar con una persona, se le transfiere sin importar la prioridad. Quejas, temas delicados o datos sensibles se escalan a una persona. Un mensaje que intente cambiar las reglas («ponme como prioridad alta») se trata como dato, no como instrucción, y se registra.</p>
             </div>
             <p class="note" id="escala">Si Laura pide hablar con una persona, la asistente virtual le pasa la conversación a alguien del equipo. Si una pregunta sale del guion, tampoco inventa: escala.</p>
           </section>
 
-          <!-- Paso tres: cola de aprobación -->
+          <!-- Vista: cola de aprobación -->
           <section class="view" data-view="aprobacion" aria-labelledby="apr-title" hidden>
             <h3 id="apr-title" class="view__title">Cola de aprobación</h3>
-            <p class="view__sub">El Redactor prepara un borrador. <strong>No se envía hasta que una persona lo apruebe.</strong></p>
+            <p class="view__sub">El Redactor prepara un borrador. <strong>No se envía hasta que una persona lo apruebe.</strong> Puede aprobarlo, editarlo o rechazarlo.</p>
 
             <article class="draft" id="draft" data-state="pending" aria-labelledby="draft-title">
               <header class="draft__head">
                 <div>
                   <h4 id="draft-title" class="draft__title">Primer contacto para Laura Ejemplo</h4>
-                  <p class="draft__meta">Canal: WhatsApp · Revisa: Valeria Ejemplo, vendedora asignada (persona del equipo)</p>
+                  <p class="draft__meta">Canal: WhatsApp · Revisa: Valeria Ejemplo, responsable comercial asignada (persona del equipo) · <span class="chip chip--alta">Prioridad sugerida: alta</span></p>
                 </div>
                 <span class="chip chip--pend" id="status" role="status">Pendiente de aprobación</span>
               </header>
 
-              <label class="draft__label" for="draft-text">Borrador del mensaje <span class="muted">(puedes editarlo antes de aprobar)</span></label>
-              <textarea id="draft-text" class="draft__text" rows="5" aria-describedby="free-legend">Hola, Laura. Soy Valeria, de Comercial Ejemplo. Vi que necesitas mantenimiento para tu local y que prefieres que te escribamos por WhatsApp en la tarde. ¿Te parece si lo vemos por aquí?</textarea>
+              <label class="draft__label" for="draft-text">Borrador del mensaje <span class="muted">(usa «Editar» para cambiarlo antes de aprobar)</span></label>
+              <textarea id="draft-text" class="draft__text" rows="5" readonly aria-describedby="free-legend">Hola, Laura. Soy Valeria, de Comercial Ejemplo. Vi que necesitas mantenimiento para tu local y que prefieres que te escribamos por WhatsApp en la tarde. ¿Te parece si lo vemos por aquí?</textarea>
+              <p class="free-legend" id="free-legend"><strong>Datos ficticios, no escribas datos reales.</strong> Esta demostración no guarda tu información.</p>
 
               <div class="draft__gate" id="gate">
                 <label class="check">
                   <input type="checkbox" id="reviewed" />
-                  <span>Valeria revisó la ficha y el mensaje</span>
+                  <span>Valeria revisó la ficha, la prioridad y el mensaje</span>
                 </label>
-                <button type="button" class="btn btn--approve" id="approve" disabled aria-describedby="approve-help">Aprobar</button>
+                <div class="ctrls" role="group" aria-label="Decisión de la persona">
+                  <button type="button" class="btn btn--approve" id="approve" disabled aria-describedby="approve-help">Aprobar</button>
+                  <button type="button" class="btn btn--ghost" id="edit" aria-pressed="false">Editar</button>
+                  <button type="button" class="btn btn--ghost btn--reject" id="reject">Rechazar</button>
+                </div>
               </div>
-              <p class="free-legend" id="free-legend"><strong>Datos ficticios, no escribas datos reales.</strong> Esta demostración no guarda tu información.</p>
-              <p class="draft__help" id="approve-help">Sin esta aprobación, el mensaje no sale. El botón se activa cuando la persona confirma que revisó.</p>
+              <p class="draft__help" id="approve-help">Sin esta aprobación, el mensaje no sale. «Aprobar» se activa cuando la persona marca que revisó y termina de editar.</p>
               <p class="draft__done" id="done" hidden></p>
             </article>
           </section>
 
-          <!-- Paso cuatro: embudo y bitácora -->
+          <!-- Vista: embudo, pausa y bitácora -->
           <section class="view" data-view="resumen" aria-labelledby="res-title" hidden>
             <h3 id="res-title" class="view__title">Resumen del embudo</h3>
             <p class="view__sub">Prospectos ficticios ordenados por etapa. Tu equipo los recibe por WhatsApp, correo o en una hoja.</p>
             <div class="funnel" id="funnel"></div>
 
+            <div class="pausebox" id="pausebox">
+              <div>
+                <h3 class="pausebox__title">Pausa del Radar <span id="pause-chip" class="chip chip--ok">Activo</span></h3>
+                <p class="pausebox__text" id="pause-text">Una persona puede pausar el Radar desde el panel. En pausa no sale mensaje alguno y los prospectos nuevos pasan directo a una persona.</p>
+              </div>
+              <div class="ctrls">
+                <button type="button" class="btn btn--ghost" id="pause">Pausar</button>
+                <button type="button" class="btn btn--ghost" id="resume" hidden>Reanudar (persona autorizada)</button>
+              </div>
+            </div>
+
             <h3 class="view__title view__title--2" id="log-title">Bitácora: quién hizo qué y quién aprobó</h3>
+            <p class="view__sub">Solo se agregan eventos: nada se reemplaza ni se borra.</p>
             <ol class="log" id="log" aria-labelledby="log-title"></ol>
-            <p class="note">El Radar no negocia ni cierra ventas: la conversación comercial la conduce una persona de tu equipo.</p>
+            <h3 class="view__title view__title--2" id="pend-title">Pendiente ahora</h3>
+            <ul class="log log--pend" id="pend" aria-labelledby="pend-title"></ul>
+            <p class="note">La conversación comercial con Laura la conduce una persona de tu equipo, no el Radar.</p>
           </section>
 
           <div class="panel__nav">
@@ -162,7 +199,7 @@
         </article>
         <article class="rcard">
           <h3>Se revisa</h3>
-          <p>La prioridad sugerida y los borradores. También los criterios de calificación, de forma periódica.</p>
+          <p>La prioridad sugerida y los borradores. También los criterios de calificación, de forma periódica. Una persona autorizada puede pausar el Radar y es quien lo reanuda.</p>
         </article>
         <article class="rcard rcard--key">
           <h3>Lo aprueba una persona</h3>
@@ -172,8 +209,11 @@
       <div class="nots">
         <h3>Lo que Radar de Leads no hace</h3>
         <ul>
-          <li>No cierra ventas ni negocia.</li>
+          <li>No conduce la conversación comercial: la lleva siempre una persona de tu equipo.</li>
           <li>No envía mensajes masivos ni escribe a quien no dio su permiso.</li>
+          <li>No promociona a quien esté inscrito en el REPEP de PROFECO; esa revisión la hace el cliente.</li>
+          <li>No descarta prospectos solo con la IA: la prioridad es una sugerencia y siempre la revisa una persona.</li>
+          <li>No se hace pasar por una persona ni mezcla el permiso para conversar con el consentimiento para promociones.</li>
           <li>No compra bases de datos ni rastrea internet de forma agresiva.</li>
           <li>No promete precios, descuentos ni plazos.</li>
         </ul>
@@ -186,7 +226,7 @@
       <h2 id="cta-title" class="h2 display">¿Cómo se vería con tu negocio?</h2>
       <p class="lead">Cuéntanos cómo te llegan hoy tus prospectos y lo platicamos.</p>
       <a class="btn btn--accent" href="https://wa.me/522227097945?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20los%20servicios%20de%20%C3%93NIX.%20Aviso%20de%20privacidad%3A%20https%3A%2F%2Fonix-ia.com%2Faviso-de-privacidad" target="_blank" rel="noopener noreferrer">Escríbenos por WhatsApp</a>
-      <p class="privacy">Al escribirnos por WhatsApp, ÓNIX (Rodolfo Mora) usará tu número y tu mensaje para responderte y darte seguimiento. WhatsApp (Meta) trata los datos de la conversación bajo sus propias condiciones. <a class="privacy__link" href="/aviso-de-privacidad">Aviso de privacidad</a></p>
+      <p class="privacy">Al escribirnos por WhatsApp, ÓNIX (Rodolfo Mora) usará tu número y tu mensaje para responderte y darte seguimiento. WhatsApp (Meta) trata los datos de la conversación bajo sus propias condiciones. <a class="privacy__link" href="/aviso-de-privacidad">Aviso de privacidad de ÓNIX</a></p>
     </div>
   </section>
 </main>
@@ -198,6 +238,6 @@
   </div>
 </footer>
 
-<script src="radar.js"></script>
+<script src="/demos/radar-de-leads/radar.js"></script>
 </body>
 </html>
