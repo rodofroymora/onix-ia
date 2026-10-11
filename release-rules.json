@@ -581,12 +581,6 @@
         "explicacion": "Toda página demo debe avisar que los datos son ficticios."
       },
       {
-        "id": "demo-ilustrativo",
-        "aplicaA": "paginasDemo",
-        "texto": "Ilustrativo",
-        "explicacion": "Toda página demo debe incluir la palabra «Ilustrativo» (con esa mayúscula inicial)."
-      },
-      {
         "id": "aviso-contable",
         "aplicaA": "paginas",
         "paginas": [
@@ -608,6 +602,7 @@
       "hrefAvisoRegex": "(?:^|/)aviso-de-privacidad(?:\\.html)?(?:[?#].*)?$",
       "nivelesAncestro": 3,
       "definicionCerca": "«CERCA» = en alguno de estos lugares hay un enlace con el texto «Aviso de privacidad de ÓNIX» cuyo href apunta a una página aviso-de-privacidad: (a) cualquiera de los hasta nivelesAncestro (3) ancestros del enlace de WhatsApp, sin llegar a <main>, <body> ni <html>, con todos sus descendientes; (b) el elemento hermano inmediato anterior o posterior (con descendientes) del enlace de WhatsApp o de su padre directo, excepto <main>, <body> y <html>. Un botón flotante hijo de <body> solo se evalúa por (b). Que exista el enlace en otra parte de la página NO basta. Aplica a TODOS los enlaces cuyo href empieza por prefijoHrefWhatsapp (con o sin ?text=), incluidos cabecera, menú móvil, pie y botón flotante. Nota de orden: el destino aviso-de-privacidad.html aún no existe en dev (solo en el PR #6), por lo que el check 03 de enlaces solo pasará cuando ese PR esté fusionado."
-    }
+    },
+    "_NOTA_ilustrativo": "Regla demo-ilustrativo retirada el 10 oct 2026 por decisión de Rodolfo (dueño del sitio): la etiqueta «Ilustrativo» se veía poco profesional. La advertencia al visitante se mantiene por otras vías que siguen siendo obligatorias: la regla demo-datos-ficticios («Datos ficticios, no escribas datos reales») y los nombres ficticios visibles (Negocio Ejemplo, C.P. Demo, RFC-EJEMPLO). PENDIENTE: que el CEO actualice la sección 2 de 00_INSTRUCCIONES_PARA_CLAUDE, que todavía exige esta leyenda."
   }
 }

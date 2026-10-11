@@ -64,7 +64,7 @@
       <p class="layer-tag">Capa 2 · Datos y documentos</p>
       <h1 class="display svc-h1">Tu contador pide los comprobantes del mes. Tú los buscas en cuatro lugares.</h1>
       <p class="lead">Uno llegó por correo, otro es la foto de un ticket en WhatsApp, un tercero está en una carpeta compartida y del cuarto nadie se acuerda. Contabilidad Asistida los junta, los lee, los cruza contra tu estado de cuenta y le entrega a tu contador un paquete que ya está en orden.</p>
-      <p class="dc-nota">ÓNIX no presta servicios contables ni fiscales y no sustituye a tu contador. La IA prepara y ordena; tu contador revisa y decide.</p>
+      <p class="dc-nota">ÓNIX no presta servicios contables ni fiscales y no sustituye a tu contador. La IA prepara y ordena. Tu contador revisa y decide.</p>
     </header>
 
     <div class="dc-stage">
@@ -73,7 +73,7 @@
         <article class="dc-step" data-escena="1">
           <p class="dc-step__k">Centralización</p>
           <h2 class="dc-step__h">Dejan de estar en cuatro lugares.</h2>
-          <p class="dc-step__p">Conectamos los canales por donde ya te llegan los comprobantes —correo, WhatsApp, la carpeta compartida— y todo cae a un mismo expediente del mes. <b>Los duplicados se descartan solos</b>, que es de donde sale buena parte del trabajo repetido.</p>
+          <p class="dc-step__p">Conectamos los canales por donde ya te llegan los comprobantes: correo, WhatsApp y la carpeta compartida. Todo cae a un mismo expediente del mes. <b>Los duplicados se descartan solos</b>, que es de donde sale buena parte del trabajo repetido.</p>
         </article>
 
         <article class="dc-step" data-escena="2">
@@ -85,7 +85,7 @@
         <article class="dc-step" data-escena="3">
           <p class="dc-step__k">Reconciliación</p>
           <h2 class="dc-step__h">Cada movimiento del banco, con su comprobante al lado.</h2>
-          <p class="dc-step__p">Tú exportas de tu estado de cuenta solo las columnas necesarias. Nosotros cruzamos movimientos contra comprobantes y <b>señalamos los que se quedaron sin pareja</b>. Es un dato administrativo —falta un papel—, no un juicio sobre tus impuestos.</p>
+          <p class="dc-step__p">Tú exportas de tu estado de cuenta solo las columnas necesarias. Nosotros cruzamos cada movimiento contra su comprobante y <b>marcamos los que no tienen</b>. Eso significa una sola cosa: falta ese comprobante. No decimos nada sobre tus impuestos.</p>
         </article>
 
         <article class="dc-step" data-escena="4">
@@ -101,7 +101,6 @@
             <span class="dc-bar__dots" aria-hidden="true"><i></i><i></i><i></i></span>
             <span class="dc-bar__n" id="dc-titulo">Negocio Ejemplo · Expediente del mes</span>
             <span class="dc-avance" id="dc-avance" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></span>
-            <span class="dc-ilu">Ilustrativo</span>
           </div>
 
           <div class="dc-body" aria-live="polite">
@@ -128,7 +127,7 @@
                   <div class="dc-campo"><dt>Emisor</dt><dd>Proveedor Ejemplo</dd><span class="dc-conf dc-conf--alta"><i></i>claro</span></div>
                   <div class="dc-campo"><dt>Fecha</dt><dd>día 12</dd><span class="dc-conf dc-conf--alta"><i></i>claro</span></div>
                   <div class="dc-campo"><dt>Concepto</dt><dd>Insumos</dd><span class="dc-conf dc-conf--alta"><i></i>claro</span></div>
-                  <div class="dc-campo"><dt>Importe</dt><dd>oculto en la demostración</dd><span class="dc-conf dc-conf--baja"><i></i>dudoso</span></div>
+                  <div class="dc-campo"><dt>Importe</dt><dd>no se lee bien</dd><span class="dc-conf dc-conf--baja"><i></i>dudoso</span></div>
                 </dl>
               </div>
               <p class="dc-humano"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg><span><b>Se detiene aquí.</b> El importe no coincide entre el XML y el PDF, así que no avanza hasta que alguien de administración lo confirme.</span></p>
@@ -137,10 +136,10 @@
             <section class="dc-scene" id="dc-e3" aria-label="Reconciliación de movimientos">
               <p class="dc-scene__h">Movimientos del mes contra comprobantes</p>
               <div class="dc-rec">
-                <div class="dc-par"><div>Movimiento del día 03<small>cargo</small></div><span class="dc-par__u" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg></span><div>FOLIO-XXXX<small>Proveedor Ejemplo</small></div><span class="dc-et dc-et--ok">pareja</span></div>
-                <div class="dc-par"><div>Movimiento del día 09<small>cargo</small></div><span class="dc-par__u" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg></span><div>FOLIO-XXXX<small>Servicios Ejemplo</small></div><span class="dc-et dc-et--ok">pareja</span></div>
-                <div class="dc-par dc-par--falta"><div>Movimiento del día 12<small>cargo</small></div><span class="dc-par__u" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg></span><div>Sin comprobante<small>dato administrativo</small></div><span class="dc-et dc-et--falta">falta papel</span></div>
-                <div class="dc-par dc-par--falta"><div>Movimiento del día 27<small>cargo</small></div><span class="dc-par__u" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg></span><div>Sin comprobante<small>dato administrativo</small></div><span class="dc-et dc-et--falta">falta papel</span></div>
+                <div class="dc-par"><div>Movimiento del día 03<small>cargo</small></div><span class="dc-par__u" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg></span><div>FOLIO-XXXX<small>Proveedor Ejemplo</small></div><span class="dc-et dc-et--ok">listo</span></div>
+                <div class="dc-par"><div>Movimiento del día 09<small>cargo</small></div><span class="dc-par__u" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg></span><div>FOLIO-XXXX<small>Servicios Ejemplo</small></div><span class="dc-et dc-et--ok">listo</span></div>
+                <div class="dc-par dc-par--falta"><div>Movimiento del día 12<small>cargo</small></div><span class="dc-par__u" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg></span><div>Sin comprobante</div><span class="dc-et dc-et--falta">falta</span></div>
+                <div class="dc-par dc-par--falta"><div>Movimiento del día 27<small>cargo</small></div><span class="dc-par__u" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg></span><div>Sin comprobante</div><span class="dc-et dc-et--falta">falta</span></div>
               </div>
               <p class="dc-entrega"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1z"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg><span><b>Para revisión de tu contador.</b> El paquete del mes sale con el expediente, el cruce y la bitácora. El C.P. Demo revisa, corrige y decide.</span></p>
             </section>
