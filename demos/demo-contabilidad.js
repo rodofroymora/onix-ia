@@ -4,6 +4,7 @@
 (function () {
   'use strict';
 
+  var quieto = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   var pasos   = [].slice.call(document.querySelectorAll('.dc-step'));
   var escenas = [].slice.call(document.querySelectorAll('.dc-scene'));
   var titulo  = document.getElementById('dc-titulo');
@@ -15,15 +16,51 @@
     '4': 'Negocio Ejemplo · Asistente virtual'
   };
 
+  var panel  = document.querySelector('.dc-panel');
+  var avance = document.getElementById('dc-avance');
+  var actual = null;
+
+  /* Escalona la entrada del contenido de la escena. */
+  function escalonar(escena) {
+    [].slice.call(escena.children).forEach(function (hijo, i) {
+      hijo.style.setProperty('--i', i);
+    });
+  }
+
   function encender(n) {
-    escenas.forEach(function (s) { s.classList.toggle('on', s.id === 'dc-e' + n); });
+    if (n === actual) return;
+    actual = n;
+
+    escenas.forEach(function (s) {
+      var entra = s.id === 'dc-e' + n;
+      /* la que estaba encendida sale hacia arriba; las demás, quietas */
+      s.classList.toggle('sale', !entra && s.classList.contains('on'));
+      s.classList.toggle('on', entra);
+      if (entra) escalonar(s);
+    });
+
     pasos.forEach(function (p) { p.classList.toggle('on', p.dataset.escena === n); });
     if (titulo && TITULOS[n]) titulo.textContent = TITULOS[n];
+
+    if (avance) {
+      [].slice.call(avance.children).forEach(function (m, i) {
+        m.classList.toggle('on', String(i + 1) === n);
+      });
+    }
+
+    if (panel && !quieto) {
+      panel.classList.add('cambia');
+      window.clearTimeout(encender._t);
+      encender._t = window.setTimeout(function () { panel.classList.remove('cambia'); }, 420);
+    }
   }
 
   /* Sin IntersectionObserver (o con JS a medias) todo queda legible:
      las escenas se apilan y el panel muestra la primera. */
-  if ('IntersectionObserver' in window && pasos.length) {
+  /* Solo con JS las escenas se superponen. Sin JS quedan apiladas y legibles. */
+  var escenario = document.querySelector('.dc-stage');
+  if (escenario && 'IntersectionObserver' in window && pasos.length) {
+    escenario.classList.add('js-dc');
     var io = new IntersectionObserver(function (entradas) {
       var mejor = null;
       entradas.forEach(function (e) {
@@ -56,7 +93,6 @@
   var chat  = document.getElementById('dc-chat');
   var form  = document.getElementById('dc-form');
   var campo = document.getElementById('dc-q');
-  var quieto = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function burbuja(clase, html) {
     var p = document.createElement('p');

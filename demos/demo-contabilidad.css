@@ -47,7 +47,17 @@
 .dc-panel {
   background: var(--paper); border: 1px solid var(--line);
   border-radius: var(--dc-r); overflow: hidden; box-shadow: var(--sombra);
+  transition: box-shadow var(--dur-lenta, 320ms) var(--ease);
 }
+.dc-panel.cambia { box-shadow: 0 2px 4px rgba(38,38,44,.05), 0 20px 42px -20px rgba(109,40,217,.32); }
+
+/* Avance: cuatro marcas en la barra, una por escena. Orienta sin instruir. */
+.dc-avance { display: inline-flex; gap: .3rem; margin-left: .6rem; }
+.dc-avance i {
+  width: 1.1rem; height: .18rem; border-radius: 2px; background: var(--line);
+  transition: background var(--dur-media, 240ms) var(--ease), width var(--dur-media, 240ms) var(--ease);
+}
+.dc-avance i.on { background: var(--accent); width: 1.8rem; }
 .dc-bar {
   display: flex; align-items: center; gap: .6rem;
   padding: .7rem 1rem; border-bottom: 1px solid var(--line); background: var(--paper-2);
@@ -55,29 +65,51 @@
 .dc-bar__dots { display: inline-flex; gap: .35rem; }
 .dc-bar__dots i { width: .5rem; height: .5rem; border-radius: 50%; background: var(--line); }
 .dc-bar__n { font-size: .8125rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+/* Obligatoria por regla, pero no tiene por qué gritar: etiqueta discreta,
+   del mismo peso que el resto de la barra. */
 .dc-ilu {
-  margin-left: auto; font-family: var(--mono); font-size: .64rem;
-  letter-spacing: .1em; text-transform: uppercase;
-  padding: .25rem .55rem; border-radius: 999px; background: var(--ink); color: var(--on-dark);
+  margin-left: auto; display: inline-flex; align-items: center; gap: .33rem;
+  font-size: .75rem; color: var(--muted); letter-spacing: .005em;
 }
-.dc-body { position: relative; min-height: 25rem; }
+.dc-ilu::before {
+  content: ""; width: .4rem; height: .4rem; border-radius: 50%;
+  background: var(--accent); opacity: .7; flex: none;
+}
+.dc-body { position: relative; }
 .dc-foot {
   padding: .7rem 1rem; border-top: 1px solid var(--line);
   background: var(--paper-2); font-size: .75rem; color: var(--muted); line-height: 1.45;
 }
 
-/* escenas superpuestas que se relevan */
-.dc-scene {
-  position: absolute; inset: 0; padding: clamp(1rem, 2.4vw, 1.5rem);
-  opacity: 0; visibility: hidden; transform: translateY(10px);
+/* ── Escenas ──────────────────────────────────────────────────────────
+   Sin JS se apilan y se leen todas: la página sigue sirviendo.
+   Con JS (clase .js-dc) se superponen y solo una está encendida. */
+.dc-scene { padding: clamp(1rem, 2.4vw, 1.5rem); }
+
+.js-dc .dc-body { min-height: 26rem; }
+.js-dc .dc-scene {
+  position: absolute; inset: 0; overflow: auto;
+  opacity: 0; visibility: hidden;
+  transform: translateY(14px) scale(.985);
+  filter: blur(3px);
   transition: opacity var(--dur-media, 240ms) var(--ease),
               transform var(--dur-lenta, 320ms) var(--ease),
+              filter var(--dur-media, 240ms) var(--ease),
               visibility 0s linear var(--dur-media, 240ms);
-  overflow: auto;
 }
-.dc-scene.on { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
-.no-js .dc-scene, .dc-scene:first-child { opacity: 1; visibility: visible; transform: none; }
-.dc-scene.on ~ .dc-scene:first-child { opacity: 0; }
+.js-dc .dc-scene.on {
+  opacity: 1; visibility: visible; transform: none; filter: none;
+  transition-delay: 0s; z-index: 1;
+}
+/* la que sale se va hacia arriba, para que la entrada se lea como avance */
+.js-dc .dc-scene.sale { transform: translateY(-14px) scale(.985); }
+
+/* El contenido de cada escena entra escalonado, no de golpe. */
+.js-dc .dc-scene.on > * {
+  animation: dc-entra var(--dur-lenta, 320ms) var(--ease) backwards;
+  animation-delay: calc(60ms + var(--i, 0) * 55ms);
+}
+@keyframes dc-entra { from { opacity: 0; transform: translateY(10px); } }
 
 .dc-scene__h { margin: 0 0 1rem; font-size: .9375rem; font-weight: 600; color: var(--ink); }
 
@@ -208,7 +240,10 @@
 @media (prefers-reduced-motion: reduce) {
   .dc-doc__scan, .dc-esc i { animation: none; }
   .dc-campo { animation: none; opacity: 1; transform: none; }
-  .dc-scene { transition: none; }
+  .js-dc .dc-scene { transition: none; filter: none; transform: none; }
+  .js-dc .dc-scene.sale { transform: none; }
+  .js-dc .dc-scene.on > * { animation: none; }
+  .dc-panel.cambia { box-shadow: var(--sombra); }
 }
 
 /* El primer paso arranca arriba, a la par del panel: centrarlo en su bloque
