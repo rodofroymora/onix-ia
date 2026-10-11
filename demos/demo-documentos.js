@@ -63,25 +63,30 @@
      Si no lo encuentra, lo dice; no lo supone. */
   var RESPUESTAS = [
     { re: /contacto|ventas|qui[ée]n ve|representante/i,
+      dominios: ['Proveedores'],
+      fuentes: ['correo de alta'],
       texto: 'El contacto de ventas de Proveedor Ejemplo es Nombre Ejemplo.',
-      cita: 'Correo de alta de proveedor, consolidado en la ficha',
-      ruta: ['Proveedores', 'Proveedor Ejemplo', 'ficha consolidada'] },
+      cita: 'Correo de alta de proveedor, consolidado en la ficha' },
     { re: /documentos|tocan|relacionad|aparece|d[óo]nde sale/i,
+      dominios: ['Proveedores', 'Operación'],
+      fuentes: ['contrato.pdf', 'correo de alta', 'manual.docx'],
       texto: 'Proveedor Ejemplo aparece en el contrato marco, en el correo de alta y en el manual de entregas. Los tres quedaron conectados a la misma entidad aunque vivan en dominios distintos.',
-      cita: 'Red de relaciones: dominios Proveedores y Operación',
-      ruta: ['Proveedores', 'Proveedor Ejemplo', 'Operación'] },
-    { re: /entrega|recib|env[íi]o|reparto/i,
-      texto: 'Al entregar hay que confirmar los datos con quien recibe antes de cerrar la orden.',
-      cita: 'Manual de entregas, versión 3, paso 5',
-      ruta: ['Operación', 'Entrega a domicilio'] },
+      cita: 'Red de relaciones: dominios Proveedores y Operación' },
+    { re: /entrega|recib|env[íi]o|reparto|cumplir/i,
+      dominios: ['Operación', 'Proveedores'],
+      fuentes: ['manual.docx', 'contrato.pdf'],
+      texto: 'Al entregar hay que confirmar los datos con quien recibe antes de cerrar la orden, y las condiciones acordadas con ese proveedor son las de la cláusula cuarta.',
+      cita: 'Manual de entregas, versión 3, paso 5 · Contrato marco, cláusula cuarta' },
     { re: /condicion|cl[áa]usula|contrato|acordad/i,
+      dominios: ['Proveedores'],
+      fuentes: ['contrato.pdf'],
       texto: 'Las condiciones acordadas con ese proveedor son las de la cláusula cuarta del contrato marco.',
-      cita: 'Contrato marco, cláusula cuarta',
-      ruta: ['Proveedores', 'Contrato marco'] },
+      cita: 'Contrato marco, cláusula cuarta' },
     { re: /permiso|vacacion|personal|reglamento/i,
+      dominios: ['Personal'],
+      fuentes: ['reglamento.pdf'],
       texto: 'El trámite se levanta con tu responsable directo y queda registrado antes de tomarse.',
-      cita: 'Reglamento interno, versión 2, apartado 3.1',
-      ruta: ['Personal', 'Reglamento interno'] }
+      cita: 'Reglamento interno, versión 2, apartado 3.1' }
   ];
 
   var chat  = document.getElementById('dv-chat');
@@ -97,44 +102,78 @@
     return p;
   }
 
-  var ruta = document.getElementById('dv-ruta');
+  var controles = [].slice.call(document.querySelectorAll('.dv-quick button'))
+    .concat([].slice.call(document.querySelectorAll('.dv-form button')));
+  var trabajando = false;
 
-  function pintarRuta(pasos) {
-    if (!ruta) return;
-    ruta.innerHTML = '';
-    pasos.forEach(function (p, i) {
-      if (i) {
-        ruta.insertAdjacentHTML('beforeend',
-          '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
-          'stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>');
-      }
-      var b = document.createElement('b');
-      b.textContent = p;
-      ruta.appendChild(b);
-    });
+  function fichas(lista) {
+    return '<span class="dv-fichas">' + lista.map(function (f) {
+      return '<span class="dv-ficha">' + f + '</span>';
+    }).join('') + '</span>';
   }
 
-  function responder(texto) {
-    for (var i = 0; i < RESPUESTAS.length; i++) {
-      var r = RESPUESTAS[i];
-      if (r.re.test(texto)) {
-        pintarRuta(r.ruta);
-        burbuja('dv-msg--in', r.texto + '<span class="dv-cita">' + r.cita + '</span>');
-        return;
-      }
+  /* El rastro de lo que hace el agente, paso a paso y a la vista. */
+  function rastro(r) {
+    var pasos = [
+      { t: 'Leyendo la pregunta' },
+      { t: r ? 'Buscando en la red de dominios' : 'Buscando en la red de dominios',
+        extra: r ? fichas(r.dominios) : '' },
+      { t: r ? 'Abriendo los documentos que conectan' : 'Sin coincidencias en la red',
+        extra: r ? fichas(r.fuentes) : '' },
+      { t: r ? 'Armando la respuesta y sus citas' : 'Nada que citar' }
+    ];
+    var caja = document.createElement('div');
+    caja.className = 'dv-traza';
+    caja.innerHTML = pasos.map(function (p) {
+      return '<span class="dv-tpaso"><span class="dv-tpaso__i"><i></i></span>' +
+             '<span><b>' + p.t + '</b>' + (p.extra || '') + '</span></span>';
+    }).join('');
+    chat.appendChild(caja);
+    return caja;
+  }
+
+  function correrRastro(caja, listo) {
+    var filas = [].slice.call(caja.querySelectorAll('.dv-tpaso'));
+    if (quieto) {
+      filas.forEach(function (f) { f.classList.add('hecho'); });
+      listo();
+      return;
     }
-    pintarRuta(['sin coincidencias en la red']);
-    burbuja('dv-msg--in sin',
-      'Eso no está en ningún documento cargado, así que no lo voy a suponer.' +
-      '<small>Sube el archivo que lo explique y vuelvo a buscar.</small>');
+    var i = 0;
+    (function siguiente() {
+      if (i) filas[i - 1].classList.replace('activo', 'hecho');
+      if (i === filas.length) { listo(); return; }
+      filas[i].classList.add('activo');
+      filas[i].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      i++;
+      window.setTimeout(siguiente, 480);
+    })();
+  }
+
+  function responder(r) {
+    if (r) {
+      burbuja('dv-msg--in', r.texto + '<span class="dv-cita">' + r.cita + '</span>');
+    } else {
+      burbuja('dv-msg--in sin',
+        'Eso no está en ningún documento cargado, así que no lo voy a suponer.' +
+        '<small>Sube el archivo que lo explique y vuelvo a buscar.</small>');
+    }
+    trabajando = false;
+    controles.forEach(function (c) { c.disabled = false; });
   }
 
   function preguntar(texto) {
-    if (!chat || !texto.trim()) return;
+    if (!chat || !texto.trim() || trabajando) return;
+    trabajando = true;
+    controles.forEach(function (c) { c.disabled = true; });
+
     burbuja('dv-msg--out', texto.replace(/[<>]/g, ''));
-    if (quieto) { responder(texto); return; }
-    var esperando = burbuja('dv-msg--in', '<span class="dv-esc" aria-label="escribiendo"><i></i><i></i><i></i></span>');
-    window.setTimeout(function () { esperando.remove(); responder(texto); }, 620);
+
+    var encontrada = null;
+    for (var i = 0; i < RESPUESTAS.length; i++) {
+      if (RESPUESTAS[i].re.test(texto)) { encontrada = RESPUESTAS[i]; break; }
+    }
+    correrRastro(rastro(encontrada), function () { responder(encontrada); });
   }
 
   [].slice.call(document.querySelectorAll('.dv-quick button')).forEach(function (b) {
