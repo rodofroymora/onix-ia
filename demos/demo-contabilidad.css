@@ -27,7 +27,7 @@
   padding: 2rem 0; gap: .7rem;
 }
 .dc-step__k {
-  font-family: var(--mono); font-size: .7rem; letter-spacing: .13em;
+  font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, monospace); font-size: .7rem; letter-spacing: .13em;
   text-transform: uppercase; color: var(--muted);
   transition: color var(--dur-media, 240ms) var(--ease);
 }
@@ -46,7 +46,7 @@
 /* ── Panel ───────────────────────────────────────────────────────────── */
 .dc-panel {
   background: var(--paper); border: 1px solid var(--line);
-  border-radius: var(--dc-r); overflow: hidden; box-shadow: var(--sombra);
+  border-radius: var(--dc-r); overflow: hidden; box-shadow: var(--sombra, 0 1px 2px rgba(38,38,44,.04), 0 12px 28px -18px rgba(38,38,44,.22));
   transition: box-shadow var(--dur-lenta, 320ms) var(--ease);
 }
 .dc-panel.cambia { box-shadow: 0 2px 4px rgba(38,38,44,.05), 0 20px 42px -20px rgba(109,40,217,.32); }
@@ -123,9 +123,9 @@
 .dc-fuente svg { flex: none; color: var(--accent-ink); }
 .dc-fuente span:last-child { margin-left: auto; font-size: .75rem; color: var(--muted); }
 .dc-fuente--out { opacity: .5; }
-.dc-fuente--out span:last-child { color: var(--estado-rev); }
+.dc-fuente--out span:last-child { color: var(--estado-rev, #A8661C); }
 .dc-caja {
-  border: 1px dashed var(--accent-line); background: var(--accent-wash);
+  border: 1px dashed var(--accent-line, #E3D9FB); background: var(--accent-wash, #F4F0FE);
   border-radius: 10px; padding: .85rem;
 }
 .dc-caja b { display: block; font-size: .9375rem; }
@@ -159,16 +159,16 @@
 .dc-campo:nth-child(3){animation-delay:.75s} .dc-campo:nth-child(4){animation-delay:1.05s}
 @keyframes dc-pop { to { opacity:1; transform:none } }
 .dc-campo dt { color: var(--muted); font-size: .75rem; }
-.dc-campo dd { margin: 0; font-family: var(--mono); color: var(--ink); }
+.dc-campo dd { margin: 0; font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, monospace); color: var(--ink); }
 .dc-conf { display: inline-flex; align-items: center; gap: .3rem; font-size: .7rem; white-space: nowrap; }
 .dc-conf i { width: 2.5rem; height: .28rem; border-radius: 2px; background: var(--line); position: relative; overflow: hidden; }
 .dc-conf i::after { content:""; position:absolute; inset:0 auto 0 0; background: currentColor; border-radius: 2px; }
-.dc-conf--alta { color: var(--estado-ok); } .dc-conf--alta i::after { width: 94%; }
-.dc-conf--baja { color: var(--estado-rev); } .dc-conf--baja i::after { width: 38%; }
+.dc-conf--alta { color: var(--estado-ok, #1C7A5E); } .dc-conf--alta i::after { width: 94%; }
+.dc-conf--baja { color: var(--estado-rev, #A8661C); } .dc-conf--baja i::after { width: 38%; }
 .dc-humano {
   margin-top: .8rem; display: flex; flex-wrap: wrap; gap: .6rem; align-items: center;
-  padding: .7rem .85rem; border: 1px solid var(--estado-rev); border-radius: 10px;
-  background: var(--estado-rev-wash); font-size: .8125rem; color: var(--ink-2);
+  padding: .7rem .85rem; border: 1px solid var(--estado-rev, #A8661C); border-radius: 10px;
+  background: var(--estado-rev-wash, #FDF7EF); font-size: .8125rem; color: var(--ink-2);
 }
 .dc-humano b { color: var(--ink); font-weight: 500; }
 
@@ -182,13 +182,13 @@
 .dc-par > div { display: grid; gap: .1rem; min-width: 0; }
 .dc-par small { color: var(--muted); font-size: .7rem; }
 .dc-par__u { color: var(--line); display: grid; place-items: center; }
-.dc-par--falta { border-color: var(--estado-rev); background: var(--estado-rev-wash); }
-.dc-par--falta .dc-par__u { color: var(--estado-rev); }
+.dc-par--falta { border-color: var(--estado-rev, #A8661C); background: var(--estado-rev-wash, #FDF7EF); }
+.dc-par--falta .dc-par__u { color: var(--estado-rev, #A8661C); }
 .dc-et {
   flex: none; font-size: .7rem; padding: .18rem .5rem; border-radius: 999px;
   border: 1px solid currentColor; white-space: nowrap;
 }
-.dc-et--ok { color: var(--estado-ok); } .dc-et--falta { color: var(--estado-rev); }
+.dc-et--ok { color: var(--estado-ok, #1C7A5E); } .dc-et--falta { color: var(--estado-rev, #A8661C); }
 .dc-entrega {
   margin-top: .9rem; display: flex; gap: .65rem; align-items: center;
   padding: .8rem .95rem; border-radius: 10px; background: var(--ink); color: var(--on-dark); font-size: .8125rem;
@@ -226,7 +226,7 @@
   padding: .5rem .95rem; border-radius: 999px;
   background: var(--ink); color: var(--on-dark); border: 1px solid var(--ink);
 }
-.dc-aviso-campo { margin: .55rem 0 0; font-size: .75rem; color: var(--estado-rev); font-weight: 500; }
+.dc-aviso-campo { margin: .55rem 0 0; font-size: .75rem; color: var(--estado-rev, #A8661C); font-weight: 500; }
 
 /* ── Móvil: el panel deja de ser fijo y se intercala ─────────────────── */
 @media (max-width: 900px) {
@@ -243,7 +243,7 @@
   .js-dc .dc-scene { transition: none; filter: none; transform: none; }
   .js-dc .dc-scene.sale { transform: none; }
   .js-dc .dc-scene.on > * { animation: none; }
-  .dc-panel.cambia { box-shadow: var(--sombra); }
+  .dc-panel.cambia { box-shadow: var(--sombra, 0 1px 2px rgba(38,38,44,.04), 0 12px 28px -18px rgba(38,38,44,.22)); }
 }
 
 /* El primer paso arranca arriba, a la par del panel: centrarlo en su bloque
