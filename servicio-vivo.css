@@ -335,29 +335,3 @@
 .rail h3 { font-size: 1.0625rem; font-weight: 600; letter-spacing: -.02em; }
 .rail p { font-size: .9375rem; line-height: 1.5; color: var(--muted); }
 @media (max-width: 960px) { .rail { grid-template-columns: 1fr; gap: 0; } .rail li { padding: 1.5rem 0 1.5rem 3.5rem; border-top: 0; border-left: 2px solid var(--line); } .rail li::before { top: 1.45rem; left: -1.1rem; } .rail li:first-child { border-left-color: var(--accent); } }
-
-/* ── Enlace a la demostración completa ──────────────────────────────────────
-   El marcado lo inyecta scripts/prepare-deploy.js solo en el paquete DEV,
-   porque en producción demos/ no se publica. Aquí viven sus estilos: en
-   producción la clase no aparece y la regla no hace nada. */
-.sv-verdemo__caja {
-  display: flex; flex-wrap: wrap; gap: 1.25rem; align-items: center;
-  justify-content: space-between;
-  padding: clamp(1.2rem, 3vw, 1.9rem);
-  border: 1px solid var(--line); border-radius: 16px;
-  background: var(--paper-2);
-}
-.sv-verdemo__t {
-  margin: .35rem 0 .3rem; font-size: clamp(1.1rem, 2vw, 1.35rem);
-  font-weight: 600; letter-spacing: -.018em; color: var(--ink); text-wrap: balance;
-}
-.sv-verdemo__p { margin: 0; font-size: .9375rem; color: var(--ink-2); max-width: 34rem; }
-.sv-verdemo__a {
-  display: inline-flex; align-items: center; gap: .45rem; flex: none;
-  font-size: .9375rem; font-weight: 500; text-decoration: none;
-  padding: .6rem 1.15rem; border-radius: 999px;
-  border: 1px solid var(--ink); color: var(--ink); background: transparent;
-  transition: background var(--dur-rapida, 180ms) var(--ease), color var(--dur-rapida, 180ms) var(--ease);
-}
-.sv-verdemo__a:hover { background: var(--ink); color: var(--paper); }
-.sv-verdemo__a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
