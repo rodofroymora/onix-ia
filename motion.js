@@ -257,7 +257,15 @@
   }
   function setShift(box, item) {
     var shift = 0;
-    if (item) shift = Math.max(0, item.offsetTop + item.offsetHeight + 12 - box.clientHeight);
+    if (item) {
+      shift = Math.max(0, item.offsetTop + item.offsetHeight + 12 - box.clientHeight);
+      // v17 (H-37): snap to a whole message/bubble so the top one is never cut in half; the newest stays fully visible
+      if (shift > 0) {
+        var kids = box.children, snap = shift;
+        for (var k = 0; k < kids.length; k++) { if (kids[k].offsetTop >= shift) { snap = kids[k].offsetTop; break; } }
+        shift = Math.min(snap, Math.max(shift, item.offsetTop));
+      }
+    }
     box.style.setProperty('--sa-shift', (-shift) + 'px');
   }
   // event thresholds in step units: WhatsApp replies show typing dots first, then the message

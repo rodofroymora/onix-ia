@@ -82,13 +82,14 @@ jobs:
       - name: vercel pull
         run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
 
-      - name: vercel build
-        run: vercel build --prod --token="$VERCEL_TOKEN"
-
+      # Sin `vercel build` ni `--prebuilt`, a propósito. El Build Output API no resuelve
+      # índices de directorio: con él, / y /demos/<demo>/ daban 404 aunque index.html
+      # estuviera en el paquete. Dejando que construya la plataforma, el sitio DEV se
+      # sirve igual que producción, que nunca tuvo el problema por desplegarse así.
       - name: vercel deploy (proyecto DEV)
         id: deploy
         run: |
-          url=$(vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN")
+          url=$(vercel deploy --prod --token="$VERCEL_TOKEN")
           echo "url=$url" >> "$GITHUB_OUTPUT"
           {
             echo "### DEV actualizado"

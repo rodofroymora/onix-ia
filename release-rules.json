@@ -11,9 +11,13 @@
   ],
   "_plazosAprobados_NOTA": "Reglas vigentes: sin plazos ni duraciones. El centinela activa el check (incluye \"24/7\").",
   "preciosAprobados": [
-    "__NINGUNA_APROBADA__"
+    "__NINGUNA_APROBADA__",
+    "$4,900",
+    "$1,490",
+    "$9,900",
+    "$2,990"
   ],
-  "_preciosAprobados_NOTA": "Reglas vigentes: no hay lista de precios pública. Las cifras de casos internos no son precios aprobados.",
+  "_preciosAprobados_NOTA": "Precios del estimador de la landing, aprobados por el dueño del sitio (Rodolfo Mora) el 2026-10-11: implementación desde $4,900 (Arranque) y desde $9,900 (Negocio); mensualidad desde $1,490 (Arranque) y desde $2,990 (Negocio). Siempre con la leyenda «Desde» y «más IVA». El centinela se conserva para que cualquier otro monto siga fallando. Pendiente: revisión legal del texto de rango e IVA.",
   "sectoresPermitidos": [
     "__NINGUNO_APROBADO__"
   ],
@@ -475,6 +479,17 @@
       "valores": [
         "info@onix-ia.com"
       ]
+    },
+    "preciosEstimador": {
+      "explicacion": "Frases exactas aprobadas para el estimador de la landing (index.html). El check 05 las enmascara antes de aplicar la frase prohibida «precio»; cualquier otra forma de precio (otro monto, sin «Desde» o sin «más IVA») sigue bloqueada.",
+      "aprobadoPor": "Rodolfo Mora (dueño del sitio)",
+      "fecha": "2026-10-11",
+      "valores": [
+        "Desde $4,900 más IVA",
+        "Desde $1,490 más IVA",
+        "Desde $9,900 más IVA",
+        "Desde $2,990 más IVA"
+      ]
     }
   },
   "frasesAprobadasReemplazo": [
@@ -577,7 +592,11 @@
           "demo"
         ]
       },
-      "paginasExplicitas": []
+      "paginasExplicitas": [
+        "demos/contabilidad-asistida.html",
+        "demos/documentos-vivos.html"
+      ],
+      "_NOTA_paginasExplicitas": "Registradas el 11 oct 2026. Estas dos demos usan prefijos propios (dca-, dv-) y no coinciden con ninguna clase ni id de marcadores, así que el check NO las reconocía como demos y las reglas de paginasDemo nunca se les aplicaban: pasaban por no ser vistas, no por cumplir. Si se les añade una clase marcadora en el futuro, esta lista puede retirarse."
     },
     "reglas": [
       {
@@ -619,7 +638,8 @@
       },
       {
         "id": "borrador",
-        "texto": "borrador"
+        "texto": "-borrador",
+        "explicacion": "Caza marcadores de versión en borrador como «v3-borrador» en el campo aviso_version. Antes el texto era «borrador» a secas y disparaba con el vocabulario del producto: «borrador de cotización» es justo lo que hacen los Agentes de Operación, y está aprobado en la Matriz base v4. El guion delante distingue el marcador de la palabra."
       }
     ],
     "archivos": [

@@ -51,6 +51,54 @@ function urlDe(root, f) {
 const enRuta = (url, ruta) => url === ruta || url.startsWith(ruta + '/');
 const META_ROBOTS_RE = /<meta\b[^>]*\bname\s*=\s*["']robots["'][^>]*>/i;
 
+/* ── Enlace del servicio a su demo (SOLO DEV) ───────────────────────────────
+   En producción `demos/` se excluye del paquete, así que un enlace fijo en el
+   HTML quedaría roto. Se inyecta aquí, igual que el noindex. */
+const DEMO_POR_SERVICIO = {
+  'contabilidad-asistida.html': ['/demos/contabilidad-asistida', 'Contabilidad Asistida'],
+  'documentos-vivos.html':      ['/demos/documentos-vivos', 'Documentos Vivos'],
+  'radar-de-leads.html':        ['/demos/radar-de-leads', 'Radar de Leads'],
+  'agentes-de-operacion.html':  ['/demos/agentes-de-operacion', 'Agentes de Operación'],
+  'asistentes-whatsapp-y-voz.html': ['/demos/asistentes-whatsapp-voz', 'Asistentes de WhatsApp y Voz'],
+};
+const ANCLA_TRY = '<section class="sv-sec band sv-try"';
+
+function enlaceDemo(href, nombre) {
+  return '\n<section class="sv-sec sv-verdemo" aria-labelledby="verdemo-t">\n' +
+    '  <div class="wrap">\n' +
+    '    <div class="sv-verdemo__caja">\n' +
+    '      <div>\n' +
+    '        <p class="sv-eyebrow">Demostración completa</p>\n' +
+    '        <h2 id="verdemo-t" class="sv-verdemo__t">Ve ' + nombre + ' funcionando de principio a fin.</h2>\n' +
+    '        <p class="sv-verdemo__p">Un recorrido con datos de ejemplo, donde se ve cada paso del sistema.</p>\n' +
+    '      </div>\n' +
+    '      <a class="sv-verdemo__a" href="' + href + '">Abrir la demostración' +
+    '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" ' +
+    'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>\n' +
+    '    </div>\n' +
+    '  </div>\n' +
+    '</section>\n';
+}
+
+/** Inserta el enlace justo después del bloque «Pruébalo» de cada página de servicio. */
+function vincularDemosDev(root) {
+  const puestos = [];
+  for (const [archivo, [href, nombre]] of Object.entries(DEMO_POR_SERVICIO)) {
+    const f = path.join(root, 'servicios', archivo);
+    if (!fs.existsSync(f)) continue;
+    let html = fs.readFileSync(f, 'utf8');
+    if (html.includes('sv-verdemo')) continue;
+    const i = html.indexOf(ANCLA_TRY);
+    if (i === -1) continue;
+    const fin = html.indexOf('</section>', i);
+    if (fin === -1) continue;
+    const corte = fin + '</section>'.length;
+    fs.writeFileSync(f, html.slice(0, corte) + enlaceDemo(href, nombre) + html.slice(corte));
+    puestos.push(archivo);
+  }
+  return puestos;
+}
+
 /** DEV: inyecta noindex en el paquete. Idempotente. Devuelve un resumen. */
 function inyectarNoindexDev(root) {
   const resumen = { paginas: 0, robots: false, header: false };
@@ -164,11 +212,15 @@ function construirPaquete(root, env) {
     if (fs.existsSync(p)) { fs.rmSync(p, { recursive: true, force: true }); removidos.push(n); }
   }
   for (const n of fs.readdirSync(root)) if (/^\.env/.test(n)) { fs.rmSync(path.join(root, n), { force: true }); removidos.push(n); }
-  if (env === 'dev') return { removidos, resumen: inyectarNoindexDev(root), errores: [] };
+  if (env === 'dev') {
+    const resumen = inyectarNoindexDev(root);
+    resumen.enlazadas = vincularDemosDev(root).length;
+    return { removidos, resumen, errores: [] };
+  }
   return { removidos, resumen: null, errores: verificarProd(root, robotsCfg.rutasNoindex || [], robotsCfg.sitemapUrl || null, marcadores) };
 }
 
-module.exports = { NO_PUBLICOS, NO_PUBLICOS_SIEMPRE, NO_PUBLICOS_PROD, inyectarNoindexDev, verificarProd, verificarDemosProd, rutasDemos, construirPaquete, listarHtml, urlDe };
+module.exports = { vincularDemosDev, NO_PUBLICOS, NO_PUBLICOS_SIEMPRE, NO_PUBLICOS_PROD, inyectarNoindexDev, verificarProd, verificarDemosProd, rutasDemos, construirPaquete, listarHtml, urlDe };
 
 if (require.main === module) {
   const root = path.resolve(__dirname, '..');
@@ -188,7 +240,7 @@ if (require.main === module) {
     console.error('✖ El paquete de PRODUCCIÓN no cumple (indexable y sin demos/): se aborta antes de desplegar.');
     process.exit(1);
   }
-  if (env === 'dev') console.log(`✔ DEV: demos/ incluido y noindex inyectado (${r.resumen.paginas} página(s), ${r.resumen.demosHtml} de demos/; robots.txt «Disallow: /», header X-Robots-Tag en vercel.json).`);
+  if (env === 'dev') console.log(`✔ DEV: demos/ incluido y noindex inyectado (${r.resumen.paginas} página(s), ${r.resumen.demosHtml} de demos/; robots.txt «Disallow: /», header X-Robots-Tag en vercel.json; ${r.resumen.enlazadas} enlace(s) a demos).`);
   else console.log('✔ PROD: paquete verificado (sin demos/, sin noindex, robots.txt con Sitemap, sitemap.xml presente).');
   console.log('✔ Paquete de deploy listo (solo archivos públicos del sitio).');
 }

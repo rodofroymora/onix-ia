@@ -68,9 +68,9 @@ for (const [n, v] of [['demos-ia/', ['demos-ia/']], ['demos (sin barra)', ['demo
 prueba('guarda: lista vacía → válida, no exime (demos/ con noindex falla)', correr('main', con({ 'demos/x.html': pag('Demo', NI) }), (j) => { j.robots.rutasExentasDemos = []; }).status, 1);
 // ── H-39 conserva su alcance (paquete público, fuera de demos/)
 prueba('H-39 main: «Aprobar borrador» en demos/ → pasa (fuera de alcance)', correr('main', con({ 'demos/x.html': pag('Demo', NI, '<button>Aprobar borrador</button>') })).status, 0);
-prueba('H-39 main: «borrador» en demos-ia/ → FALLA (sí es paquete público)', correr('main', con({ 'demos-ia/x.html': pag('Demo', '', '<p>borrador</p>') })).status, 1);
-prueba('H-39 main: «borrador» en página normal → FALLA', correr('main', con({ 'servicios.html': pag('Servicios', '', '<p>borrador</p>') })).status, 1);
-prueba('H-39 dev: «borrador» en página normal → no bloquea', correr('dev', con({ 'servicios.html': pag('Servicios', '', '<p>borrador</p>') })).status, 0);
+prueba('H-39 main: «v3-borrador» en demos-ia/ → FALLA (sí es paquete público)', correr('main', con({ 'demos-ia/x.html': pag('Demo', '', '<p>v3-borrador</p>') })).status, 1);
+prueba('H-39 main: «v3-borrador» en página normal → FALLA', correr('main', con({ 'servicios.html': pag('Servicios', '', '<p>v3-borrador</p>') })).status, 1);
+prueba('H-39 dev: «v3-borrador» en página normal → no bloquea', correr('dev', con({ 'servicios.html': pag('Servicios', '', '<p>v3-borrador</p>') })).status, 0);
 
 console.log(fallos ? `\n✖ ${fallos} prueba(s) fallaron.` : '\n✔ Todas las pruebas de la exención de demos/ pasaron.');
 process.exit(fallos ? 1 : 0);

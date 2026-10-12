@@ -1,4 +1,4 @@
-/* Radar de Leads · demo ilustrativa. Estado simulado en el navegador, sin backend.
+/* Radar de Leads · demostración. Estado simulado en el navegador, sin backend.
    Todos los datos son ficticios. El primer contacto solo se envía con la aprobación explícita de una persona. */
 (function () {
   'use strict';
@@ -266,7 +266,7 @@
   }
 
   /* ── Navegación ── */
-  // El textarea crece a su contenido: nunca queda texto oculto ni barra de scroll interna.
+  // El textarea crece a su contenido: no queda texto oculto ni barra de scroll interna.
   function autosize(t) {
     if (!t || t.offsetParent === null) return;
     t.style.height = 'auto';

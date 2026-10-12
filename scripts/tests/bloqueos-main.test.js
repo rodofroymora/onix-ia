@@ -44,7 +44,7 @@ function correr(rama, archivos, ajustes) {
 const con = (extra) => Object.assign({}, limpio, extra);
 
 // ── config real
-prueba('config real: marcadores = FECHA DE VIGENCIA + borrador', base.bloqueosSoloMain.marcadores.map((m) => m.texto), ['FECHA DE VIGENCIA', 'borrador']);
+prueba('config real: marcadores = FECHA DE VIGENCIA + -borrador', base.bloqueosSoloMain.marcadores.map((m) => m.texto), ['FECHA DE VIGENCIA', '-borrador']);
 prueba('config real: excluye demos/', base.bloqueosSoloMain.excluirRutas, ['demos/']);
 
 // ── casos que DEBEN bloquear en main (y se IGNORAN en dev)
@@ -54,20 +54,30 @@ const casos = [
   ['«Fecha De Vigencia» con mayúsculas mezcladas', { 'servicios.html': pag('Servicios', '<p>Fecha De Vigencia</p>') }, 'servicios.html:6'],
   ['«FECHA&nbsp;DE&nbsp;VIGENCIA» con &nbsp;', { 'servicios.html': pag('Servicios', '<p>FECHA&nbsp;DE&nbsp;VIGENCIA</p>') }, 'servicios.html:6'],
   ['«FECHA DE» + salto de línea + «VIGENCIA»', { 'servicios.html': pag('Servicios', '<p>FECHA DE\n   VIGENCIA</p>') }, 'servicios.html:6'],
-  ['«borrador» visible', { 'index.html': pag('Inicio', '<p>Este texto es un borrador.</p>') }, 'index.html:6'],
-  ['«BORRADOR» en mayúsculas', { 'index.html': pag('Inicio', '<p>BORRADOR</p>') }, 'index.html:6'],
   ['«v3-borrador» en data-version', { 'index.html': pag('Inicio', '<div class="legal" data-estado="final" data-version="v3-borrador"></div>') }, 'index.html:6'],
   ['«v3-borrador» en input hidden aviso_version', { 'index.html': pag('Inicio', '<form><input type="hidden" name="aviso_version" value="v3-borrador" /></form>') }, 'index.html:6'],
   ['«borrador» en <meta> (metadato)', { 'index.html': pag('Inicio', '<p>x</p>', '<meta name="aviso_version" content="v3-borrador">\n') }, 'index.html:4'],
-  ['«borrador» en comentario HTML', { 'index.html': pag('Inicio', '<!-- TODO-no: versión borrador -->\n<p>x</p>') }, 'index.html:6'],
   ['«FECHA DE VIGENCIA» en comentario HTML', { 'index.html': pag('Inicio', '<!-- FECHA DE VIGENCIA -->\n<p>x</p>') }, 'index.html:6'],
   ['«borrador» en JSON-LD', { 'index.html': pag('Inicio', '<p>x</p>', '<script type="application/ld+json">{"@type":"Organization","version":"v3-borrador"}</script>\n') }, 'index.html:4'],
-  ['marcador en una página de subcarpeta', { 'servicios/radar.html': pag('Radar', '<p>borrador</p>') }, 'servicios/radar.html:6'],
+  ['marcador en una página de subcarpeta', { 'servicios/radar.html': pag('Radar', '<p>aviso v3-borrador</p>') }, 'servicios/radar.html:6'],
+  ['marcador en robots.txt (comentario)', { 'robots.txt': ROBOTS + '# v3-borrador\n' }, 'robots.txt:5'],
+  ['carpeta que solo se parece a demos/ («demos-ia/») NO está excluida', { 'demos-ia/a.html': pag('Demo', '<p>v3-borrador</p>') }, 'demos-ia/a.html:6'],
   ['marcador en sitemap.xml (comentario)', { 'sitemap.xml': SM.replace('<url>', '<!-- FECHA DE VIGENCIA -->\n<url>') }, 'sitemap.xml:1'],
-  ['marcador en robots.txt (comentario)', { 'robots.txt': ROBOTS + '# borrador\n' }, 'robots.txt:5'],
-  ['FALSO POSITIVO conocido: «borradores» (subcadena) también bloquea', { 'index.html': pag('Inicio', '<p>Guardamos borradores.</p>') }, 'index.html:6'],
-  ['carpeta que solo se parece a demos/ («demos-ia/») NO está excluida', { 'demos-ia/a.html': pag('Demo', '<p>borrador</p>') }, 'demos-ia/a.html:6'],
 ];
+/* Vocabulario del producto: «borrador de cotización» está aprobado en la Matriz base v4
+   y aparece en la página de Agentes de Operación. Antes bloqueaba, y la propia suite lo
+   tenía documentado como «FALSO POSITIVO conocido». Con el marcador «-borrador» ya no. */
+const noBloquean = [
+  ['«borrador» suelto (vocabulario de producto)', { 'index.html': pag('Inicio', '<p>Este texto es un borrador.</p>') }],
+  ['«BORRADOR» en mayúsculas', { 'index.html': pag('Inicio', '<p>BORRADOR</p>') }],
+  ['«borradores» en plural', { 'index.html': pag('Inicio', '<p>Guardamos borradores.</p>') }],
+  ['«Borrador de cotización», el caso real de Agentes', { 'index.html': pag('Inicio', '<p>Borrador de cotización listo para que tu equipo lo revise.</p>') }],
+];
+for (const [n, arch] of noBloquean) {
+  const m = correr('main', con(arch));
+  prueba('main NO bloquea: ' + n, [m.status, m.out.includes('[H-39')], [0, false]);
+}
+
 for (const [n, arch, donde] of casos) {
   const m = correr('main', con(arch));
   prueba(`main BLOQUEA: ${n} → ${donde}`, [m.status, m.out.includes('[H-39') && m.out.includes(donde + ' ')], [1, true]);

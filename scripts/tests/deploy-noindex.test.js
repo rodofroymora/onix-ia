@@ -151,7 +151,7 @@ prueba('verify prod: /robots.txt 404 → error', V.evaluar('prod', { home: home(
 prueba('verify prod: 401 con --tolerar-proteccion → aviso, no error', n(V.evaluar('prod', { home: { status: 401, headers: {}, body: '' } }, { tolerarProteccion: true })), [0, 1]);
 prueba('verify prod: 401 con --tolerar-proteccion --strict → error', n(V.evaluar('prod', { home: { status: 401, headers: {}, body: '' } }, { tolerarProteccion: true, strict: true })), [1, 0]);
 // H-39 en el paquete prod (defensa en profundidad de prepare-deploy)
-for (const [n2, extra] of [['«FECHA DE VIGENCIA» en una página', { 'aviso-de-privacidad.html': pag('Aviso', '  <mark>[FECHA DE VIGENCIA — completar]</mark>\n') }], ['«v3-borrador» en una página', { 'index.html': pag('Inicio', '  <input value="v3-borrador">\n') }], ['«borrador» en robots.txt', { 'robots.txt': ROBOTS_PROD + '# borrador\n' }]]) {
+for (const [n2, extra] of [['«FECHA DE VIGENCIA» en una página', { 'aviso-de-privacidad.html': pag('Aviso', '  <mark>[FECHA DE VIGENCIA — completar]</mark>\n') }], ['«v3-borrador» en una página', { 'index.html': pag('Inicio', '  <input value="v3-borrador">\n') }], ['«borrador» en robots.txt', { 'robots.txt': ROBOTS_PROD + '# v3-borrador\n' }]]) {
   const tmp = sitio(extra); const p = prepara(tmp, 'prod');
   prueba(`prod ABORTA (H-39): ${n2}`, [p.status, /marcador pendiente/.test(p.stderr)], [1, true]); fs.rmSync(tmp, { recursive: true, force: true });
 }

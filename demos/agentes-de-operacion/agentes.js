@@ -1,4 +1,4 @@
-/* Agentes de Operación · demo ilustrativa. Todo simulado en el navegador: sin backend, sin llamadas externas, sin guardar nada.
+/* Agentes de Operación · demostración. Todo simulado en el navegador: sin backend, sin llamadas externas, sin guardar nada.
    Datos ficticios. El borrador solo avanza con la aprobación explícita de una persona. */
 (function () {
   'use strict';
@@ -249,7 +249,7 @@
   }
 
   /* ── Navegación ── */
-  // El textarea crece a su contenido: nunca queda texto oculto ni barra de scroll interna.
+  // El textarea crece a su contenido: no queda texto oculto ni barra de scroll interna.
   function autosize(t) {
     if (!t || t.offsetParent === null) return;
     t.style.height = 'auto';
