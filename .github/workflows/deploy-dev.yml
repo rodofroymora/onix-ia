@@ -1,7 +1,7 @@
 name: Deploy DEV
 
 # Push a dev → deploy al proyecto Vercel de DEV (SEPARADO de producción).
-# NUNCA toca el proyecto de producción `agency-landing` / onix-ia.com.
+# NUNCA toca el proyecto de producción (onix-ia.com).
 # Requiere (Settings → Secrets and variables → Actions): VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_DEV_PROJECT_ID.
 on:
   push:
@@ -39,6 +39,8 @@ jobs:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_DEV_PROJECT_ID }}
+      # Opcional: si existe el secreto VERCEL_PROD_PROJECT_ID, se usa solo para verificar que DEV no apunte a producción.
+      VERCEL_PROD_PROJECT_ID_GUARD: ${{ secrets.VERCEL_PROD_PROJECT_ID }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -52,11 +54,11 @@ jobs:
           [ -z "$VERCEL_ORG_ID" ] && faltan="$faltan VERCEL_ORG_ID"
           [ -z "$VERCEL_PROJECT_ID" ] && faltan="$faltan VERCEL_DEV_PROJECT_ID"
           if [ -n "$faltan" ]; then
-            echo "::error::Faltan secretos en GitHub:$faltan. Pendiente: crear el proyecto Vercel DEV (separado de producción) y cargar los secretos. Ver docs/02_FLUJO_DE_RELEASES.md → Pendientes."
+            echo "::error::Faltan secretos en GitHub:$faltan. Pendiente: crear el proyecto Vercel DEV (separado de producción) y cargar los secretos."
             exit 1
           fi
-          # prj_Jz0E... = proyecto de PRODUCCIÓN agency-landing (onix-ia.com). Jamás desde este workflow.
-          if [ "$VERCEL_PROJECT_ID" = "prj_Jz0EnuwRpBxTt3QhLCV4lJhfUbvt" ]; then
+          # Jamás desplegar el proyecto de PRODUCCIÓN desde este workflow.
+          if [ -n "$VERCEL_PROD_PROJECT_ID_GUARD" ] && [ "$VERCEL_PROJECT_ID" = "$VERCEL_PROD_PROJECT_ID_GUARD" ]; then
             echo "::error::VERCEL_DEV_PROJECT_ID apunta al proyecto de PRODUCCIÓN. Abortando: DEV debe ser un proyecto Vercel distinto."
             exit 1
           fi
@@ -65,21 +67,29 @@ jobs:
       - name: Instalar Vercel CLI
         run: npm install --global vercel@59
 
-      - name: Dejar solo archivos públicos
+      # prepare-deploy.js borra scripts/: se guarda antes el verificador posterior al deploy.
+      - name: Guardar verificador de indexación
+        run: cp scripts/verify-deploy.js "$RUNNER_TEMP/verify-deploy.js"
+
+      - name: Dejar solo archivos públicos e inyectar noindex (DEV; incluye demos/ con noindex)
+        env:
+          DEPLOY_ENV: dev
         run: node scripts/prepare-deploy.js
 
       # El proyecto DEV usa su propio "production" (URL estable *.vercel.app del proyecto DEV).
-      # Eso NO es producción de onix-ia.com: es otro proyecto. noindex lo da vercel.json en la rama dev.
+      # Eso NO es producción de onix-ia.com: es otro proyecto. El FUENTE es indexable: el noindex de DEV se inyecta aquí
+      # (prepare-deploy.js con DEPLOY_ENV=dev) y se verifica después del deploy.
       - name: vercel pull
         run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
 
-      - name: vercel build
-        run: vercel build --prod --token="$VERCEL_TOKEN"
-
+      # Sin `vercel build` ni `--prebuilt`, a propósito. El Build Output API no resuelve
+      # índices de directorio: con él, / y /demos/<demo>/ daban 404 aunque index.html
+      # estuviera en el paquete. Dejando que construya la plataforma, el sitio DEV se
+      # sirve igual que producción, que nunca tuvo el problema por desplegarse así.
       - name: vercel deploy (proyecto DEV)
         id: deploy
         run: |
-          url=$(vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN")
+          url=$(vercel deploy --prod --token="$VERCEL_TOKEN")
           echo "url=$url" >> "$GITHUB_OUTPUT"
           {
             echo "### DEV actualizado"
@@ -87,3 +97,11 @@ jobs:
             echo "- Deployment: $url"
             echo "- Proyecto DEV: separado de producción (onix-ia.com no se toca)"
           } >> "$GITHUB_STEP_SUMMARY"
+
+      # Verificación posterior sobre el MISMO deployment de este run: 200 en /, /aviso-de-privacidad, /robots.txt y /sitemap.xml, y DEV sigue noindex (header + meta + robots.txt). Si el deployment está
+      # protegido por Vercel (401/403) y no existe el secreto opcional VERCEL_AUTOMATION_BYPASS_SECRET, solo avisa.
+      - name: Verificar noindex en el DEV desplegado
+        env:
+          DEPLOY_URL: ${{ steps.deploy.outputs.url }}
+          BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+        run: node "$RUNNER_TEMP/verify-deploy.js" --env dev --url "$DEPLOY_URL"

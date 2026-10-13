@@ -3,7 +3,13 @@
 /**
  * Check 4 · QA smoke: por página <html lang>, <title>, meta description, exactamente un <h1>,
  * imágenes con alt, sin texto residual (TODO / lorem / placeholder...), y regla de robots/noindex
- * según la rama (release-rules.json → robots.dev / robots.main).
+ * según la rama (release-rules.json → robots.dev / robots.main). Hoy ambas son "index": el FUENTE es indexable en dev y
+ * en main; el noindex de DEV se inyecta al desplegar (scripts/prepare-deploy.js, DEPLOY_ENV=dev). robots.rutasNoindex (solo /salud) permite que esa
+ * ruta sea noindex en una rama indexable; cualquier otra página o header noindex sigue fallando.
+ * robots.rutasExentasDemos (solo «demos/»): sus páginas no entran en las reglas de indexación/noindex (nunca se publican).
+ * H-39 (SOLO main): release-rules.json → bloqueosSoloMain. Con CHECK_BRANCH=main falla si el paquete público (páginas .html fuera de demos/,
+ * sitemap.xml, robots.txt) contiene un marcador pendiente («FECHA DE VIGENCIA», «borrador», «v3-borrador»…) en cualquier parte del código
+ * fuente (texto, atributos, comentarios, JSON-LD). En dev NO bloquea (el marcador existe hasta que corre golive.js).
  * Rama: CHECK_BRANCH, o GITHUB_BASE_REF (PR), o GITHUB_REF_NAME, o rama git actual.
  */
 const fs = require('fs');
@@ -74,6 +80,8 @@ for (const f of L.listarHtml()) {
 // --- Regla robots / noindex según rama
 const { rama, origen } = L.ramaObjetivo();
 const esperadoCfg = reglas.robots || {};
+L.validarRutasNoindex(reglas).forEach((e) => R.error('release-rules.json', null, e));
+L.validarRutasExentasDemos(reglas).forEach((e) => R.error('release-rules.json', null, e));
 let clave = rama;
 if (!rama) {
   R.error(null, null, 'No se pudo determinar la rama. Define CHECK_BRANCH=dev|main.');
@@ -88,9 +96,13 @@ if (!rama) {
     R.nota(`Rama: ${rama} (fuente: ${origen}) → regla robots esperada: "${esperado}".`);
     // vercel.json
     let hayNoindexHeader = false;
+    const headersNoindexPermitidos = [], headersNoindexOtros = [];
     try {
       const v = JSON.parse(L.leer(path.join(L.ROOT, 'vercel.json')));
-      for (const h of v.headers || []) for (const kv of h.headers || []) if (/^x-robots-tag$/i.test(kv.key) && /noindex/i.test(kv.value)) hayNoindexHeader = true;
+      for (const h of v.headers || []) for (const kv of h.headers || []) if (/^x-robots-tag$/i.test(kv.key) && /noindex/i.test(kv.value)) {
+        hayNoindexHeader = true;
+        if (L.sourceNoindexPermitido(reglas, h.source)) headersNoindexPermitidos.push(h.source); else headersNoindexOtros.push(h.source);
+      }
     } catch (_) { /* check 3 reporta JSON inválido */ }
     // robots.txt
     const rt = path.join(L.ROOT, 'robots.txt');
@@ -106,20 +118,83 @@ if (!rama) {
     }
     // meta robots por página
     const paginasNoindex = [];
+    const paginasNoindexPermitidas = [];
+    let exentasDemos = 0;
     for (const f of L.listarHtml()) {
+      // robots.rutasExentasDemos («demos/» exacto): no se publican (.vercelignore + prepare-deploy NO_PUBLICOS), no entran en las reglas de indexación.
+      if (L.paginaExentaDemos(reglas, L.rel(f))) { exentasDemos++; continue; }
       const tags = L.etiquetas(L.sinComentariosScriptsEstilos(L.leer(f)));
       if (tags.some((t) => t.tag === 'meta' && (t.attrs.name || '').toLowerCase() === 'robots' && /noindex/i.test(t.attrs.content || ''))) paginasNoindex.push(L.rel(f));
+      if (tags.some((t) => t.tag === 'meta' && (t.attrs.name || '').toLowerCase() === 'robots' && /noindex/i.test(t.attrs.content || '')) && L.rutaNoindexPermitida(reglas, L.urlDePagina(f))) paginasNoindexPermitidas.push(L.rel(f));
     }
-    const todas = L.listarHtml().length;
+    const todas = L.listarHtml().length - exentasDemos;
+    if (exentasDemos) R.nota(`robots.rutasExentasDemos: ${exentasDemos} página(s) de demos/ exentas de las reglas de indexación (no se publican).`);
     if (esperado === 'noindex') {
       if (!hayNoindexHeader) R.error('vercel.json', null, 'Rama con regla "noindex": falta el header X-Robots-Tag "noindex, nofollow" en vercel.json.');
       if (!disallowTodo) R.error('robots.txt', null, 'Rama con regla "noindex": robots.txt debe tener "User-agent: *" y "Disallow: /".');
       if (paginasNoindex.length !== todas) R.error(null, null, `Rama con regla "noindex": ${todas - paginasNoindex.length} página(s) sin <meta name="robots" content="noindex">.`);
     } else {
-      if (hayNoindexHeader) R.error('vercel.json', null, `Rama "${clave}" debe ser indexable ("index") pero vercel.json envía X-Robots-Tag noindex: al promover a producción onix-ia.com quedaría fuera de Google. Decisión del CEO: ajustar antes del release (ver docs/02_FLUJO_DE_RELEASES.md → Pendientes).`);
+      // robots.rutasNoindex: solo /salud puede ser noindex; todo lo demás sigue fallando.
+      const otrasPaginas = paginasNoindex.filter((p) => !paginasNoindexPermitidas.includes(p));
+      if (paginasNoindexPermitidas.length || headersNoindexPermitidos.length) R.nota(`robots.rutasNoindex (${(esperadoCfg.rutasNoindex || []).join(', ')}): noindex permitido solo en ${[...paginasNoindexPermitidas, ...headersNoindexPermitidos.map((x) => 'header ' + x)].join(', ')}. /salud NO debe ir a main sin revisión de un abogado humano y el OK escrito del dueño del sitio.`);
+      if (headersNoindexOtros.length) R.error('vercel.json', null, `Rama "${clave}" debe ser indexable ("index") pero vercel.json envía X-Robots-Tag noindex en: ${headersNoindexOtros.map((x) => JSON.stringify(x)).join(', ')}. Quedaría fuera de Google. (DEV recibe su noindex al desplegar con DEPLOY_ENV=dev, no en el fuente.) Solo se permite noindex acotado a las rutas de robots.rutasNoindex. Requiere decisión del dueño del sitio: ajustar antes del release.`);
       if (disallowTodo) R.error('robots.txt', null, `Rama "${clave}" debe ser indexable pero robots.txt tiene "Disallow: /".`);
-      if (paginasNoindex.length) R.error(null, null, `Rama "${clave}" debe ser indexable pero ${paginasNoindex.length} página(s) tienen <meta name="robots" content="noindex">: ${paginasNoindex.join(', ')}.`);
+      // Fuente production-ready (BLOQUEANTE, igual en dev y en main): sitemap.xml existe y robots.txt lo referencia con una
+      // línea «Sitemap: <URL absoluta https …/sitemap.xml>» (si release-rules.json → robots.sitemapUrl está definida, debe ser exactamente esa).
+      // Se evalúa sobre el robots.txt del FUENTE; el «Disallow: /» que DEV inyecta al desplegar no pasa por aquí.
+      const sitemapCfg = esperadoCfg.sitemapUrl;
+      if (sitemapCfg !== undefined && !(typeof sitemapCfg === 'string' && /^https:\/\/[^\s/]+\/sitemap\.xml$/.test(sitemapCfg))) R.error('release-rules.json', null, 'robots.sitemapUrl debe ser una URL absoluta https que termine en /sitemap.xml (p. ej. https://www.onix-ia.com/sitemap.xml).');
+      const sm = path.join(L.ROOT, 'sitemap.xml');
+      const smTxt = fs.existsSync(sm) ? L.leer(sm) : null;
+      if (smTxt === null) R.error('sitemap.xml', null, `Rama "${clave}" debe ser indexable: falta sitemap.xml en la raíz.`);
+      else if (!/<(urlset|sitemapindex)\b/i.test(smTxt)) R.error('sitemap.xml', null, 'sitemap.xml no es válido: falta <urlset> (o <sitemapindex>).');
+      if (!fs.existsSync(rt)) R.error('robots.txt', null, `Rama "${clave}" debe ser indexable: falta robots.txt en la raíz (con «Sitemap: …»).`);
+      else {
+        const urls = [...L.leer(rt).matchAll(/^[ \t]*sitemap:[ \t]*(\S+)[ \t]*$/gim)].map((m) => m[1]);
+        if (!urls.length) R.error('robots.txt', null, `Rama "${clave}" debe ser indexable: robots.txt debe referenciar el sitemap con una línea «Sitemap: ${typeof sitemapCfg === 'string' ? sitemapCfg : 'https://…/sitemap.xml'}».`);
+        else if (typeof sitemapCfg === 'string' && !urls.includes(sitemapCfg)) R.error('robots.txt', null, `robots.txt referencia ${urls.map((u) => JSON.stringify(u)).join(', ')} pero release-rules.json → robots.sitemapUrl es ${JSON.stringify(sitemapCfg)}.`);
+        else if (typeof sitemapCfg !== 'string' && !urls.some((u) => /^https:\/\/[^\s/]+\/sitemap\.xml$/.test(u))) R.error('robots.txt', null, 'robots.txt: la línea «Sitemap:» debe ser una URL absoluta https que termine en /sitemap.xml.');
+        // Coherencia de host: todas las <loc> del sitemap deben estar en el mismo host que la URL del sitemap (evita mezclar www y apex).
+        if (smTxt !== null && urls.length) {
+          const host = (u) => { try { return new URL(u).host; } catch (_) { return null; } };
+          const h0 = host(typeof sitemapCfg === 'string' ? sitemapCfg : urls[0]);
+          const otros = [...new Set([...smTxt.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/gi)].map((m) => host(m[1])).filter((h) => h !== h0))];
+          if (otros.length) R.error('sitemap.xml', null, `Las <loc> de sitemap.xml deben estar en el host ${h0}; hay otros hosts: ${otros.join(', ')}.`);
+        }
+      }
+      if (otrasPaginas.length) R.error(null, null, `Rama "${clave}" debe ser indexable pero ${otrasPaginas.length} página(s) tienen <meta name="robots" content="noindex">: ${otrasPaginas.join(', ')}.`);
     }
+  }
+}
+
+// --- H-39 · Bloqueos SOLO en main: el sitio no se puede publicar con marcadores pendientes (fecha de vigencia / borrador)
+{
+  const cfg = reglas.bloqueosSoloMain;
+  const ES_MAIN = rama === 'main';
+  const marc = cfg && Array.isArray(cfg.marcadores) ? cfg.marcadores : null;
+  const cfgOk = !!(cfg && marc && marc.length && marc.every((x) => x && typeof x.id === 'string' && typeof x.texto === 'string' && x.texto.trim()) && (cfg.archivos === undefined || Array.isArray(cfg.archivos)) && (cfg.excluirRutas === undefined || Array.isArray(cfg.excluirRutas)));
+  if (cfg !== undefined && !cfgOk) R.error('release-rules.json', null, 'bloqueosSoloMain mal formado: se espera { marcadores: [{id, texto}…], archivos?: [...], excluirRutas?: [...] }.');
+  if (ES_MAIN && cfg === undefined) R.error('release-rules.json', null, 'Falta bloqueosSoloMain: en main es obligatorio (impide publicar con «FECHA DE VIGENCIA» / «borrador»).');
+  if (ES_MAIN && cfgOk) {
+    const norm = (t) => t.trim().split(/\s+/).map(esc).join('(?:\\s|&nbsp;|&#160;|&#xa0;)+');
+    const lista = marc.map((x) => ({ id: x.id, texto: x.texto, re: new RegExp(norm(x.texto), 'giu') }));
+    const excl = (cfg.excluirRutas || []).map((x) => String(x).replace(/^\/+/, ''));
+    const archivos = L.listarHtml().filter((f) => !excl.some((e) => L.rel(f) === e || L.rel(f).startsWith(e.endsWith('/') ? e : e + '/')));
+    for (const a of cfg.archivos || ['sitemap.xml', 'robots.txt']) { const f = path.join(L.ROOT, a); if (fs.existsSync(f)) archivos.push(f); }
+    let hits = 0;
+    for (const f of archivos) {
+      const raw = L.leer(f);
+      for (const { id, texto, re } of lista) {
+        for (const m of raw.matchAll(re)) {
+          hits++;
+          const ini = Math.max(0, m.index - 40);
+          R.error(L.rel(f), L.lineaDe(raw, m.index), `[H-39 ${id}] Marcador pendiente «${m[0]}» (regla «${texto}») en main: no se puede publicar así. Contexto: …${raw.slice(ini, m.index + m[0].length + 40).replace(/\s+/g, ' ')}…`);
+        }
+      }
+    }
+    R.nota(`H-39 (solo main): ${archivos.length} archivo(s) del paquete público revisados (${excl.length ? 'fuera de ' + excl.join(', ') : 'sin exclusiones'}); ${hits} marcador(es) pendiente(s).`);
+  } else if (cfgOk) {
+    R.nota(`H-39 (bloqueosSoloMain) solo aplica con CHECK_BRANCH=main; en "${rama}" no bloquea.`);
   }
 }
 R.terminar();

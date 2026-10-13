@@ -1,8 +1,9 @@
 .env*
 .git
 .github
-docs
 scripts
 release-rules.json
 README.md
 CONTRIBUTING.md
+demos
+# demos: solo se publica en DEV. scripts/prepare-deploy.js (DEPLOY_ENV=dev) quita la línea «demos» de este archivo dentro del paquete; en PROD debe seguir aquí.

@@ -14,6 +14,8 @@ const checks = [
   ['02-cta-unico.js', 'Un solo CTA primario por página'],
   ['03-enlaces-y-assets.js', 'Enlaces internos, anclas y assets'],
   ['04-qa-smoke.js', 'QA smoke (title, description, lang, h1, alt, residuos, robots)'],
+  ['05-frases-prohibidas.js', 'Frases prohibidas (bloqueantes y advertencias)'],
+  ['06-textos-obligatorios.js', 'Textos obligatorios (demo, aviso contable, aviso de privacidad)'],
 ];
 const fallos = [];
 for (const [archivo, titulo] of checks) {
@@ -23,7 +25,7 @@ for (const [archivo, titulo] of checks) {
 console.log('\n══════════ RESUMEN ══════════');
 for (const [, titulo] of checks) console.log((fallos.includes(titulo) ? '✖ FALLÓ  ' : '✔ OK     ') + titulo);
 if (fallos.length) {
-  console.log(`\n✖ ${fallos.length} de ${checks.length} checks fallaron. El PR NO se puede fusionar hasta corregirlos (o, si la regla es incorrecta, actualizar release-rules.json con aprobación del CEO).`);
+  console.log(`\n✖ ${fallos.length} de ${checks.length} checks fallaron. El PR NO se puede fusionar hasta corregirlos (o, si la regla es incorrecta, actualizar release-rules.json con aprobación del dueño del sitio).`);
   process.exit(1);
 }
 console.log('\n✔ Todos los checks pasaron.');

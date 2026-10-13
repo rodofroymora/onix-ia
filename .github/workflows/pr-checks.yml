@@ -1,7 +1,7 @@
 name: PR checks
 
 # Se ejecuta en todo PR hacia dev o main. El job "Checks de release" debe marcarse como
-# status check REQUERIDO en la protección de ramas (ver docs/BRANCH_PROTECTION.md);
+# status check REQUERIDO en la protección de ramas;
 # así un fallo bloquea el merge.
 on:
   pull_request:
@@ -52,11 +52,41 @@ jobs:
           fi
           echo "✔ Sin .env*, .vercel/ ni node_modules versionados"
 
-      - name: Checks automáticos (cifras, CTA único, enlaces/assets, QA smoke)
+      - name: Checks automáticos (cifras, CTA único, enlaces/assets, QA smoke, frases prohibidas, textos obligatorios)
         env:
           # La regla robots/noindex depende de la rama DESTINO del PR (dev o main)
           CHECK_BRANCH: ${{ github.base_ref }}
         run: node scripts/checks/run-all.js
+
+      - name: Pruebas de la regla CTA (WhatsApp con ?text=)
+        run: node scripts/tests/cta-href.test.js
+
+      - name: Pruebas de la excepción «Contáctanos» (ancla interna)
+        run: node scripts/tests/cta-contactanos.test.js
+
+      - name: Pruebas de reglas (centinela, sector exacto, WhatsApp, frases prohibidas)
+        run: node scripts/tests/reglas.test.js
+
+      - name: Pruebas H-39 (marcadores pendientes bloquean solo en main)
+        run: node scripts/tests/bloqueos-main.test.js
+
+      - name: Pruebas de la exención de demos/ en la regla de indexación
+        run: node scripts/tests/demos-exentas.test.js
+
+      - name: Pruebas del noindex al desplegar (prepare-deploy / verify-deploy)
+        run: node scripts/tests/deploy-noindex.test.js
+
+      - name: Casos de prueba del Arquitecto (check 05, v3)
+        run: node scripts/tests/05-frases-arquitecto.test.js
+
+      - name: Pruebas de robots/noindex (solo /salud puede ser noindex en main)
+        run: node scripts/tests/robots.test.js
+
+      - name: Pruebas de textos obligatorios y excepción por ruta
+        run: node scripts/tests/textos-y-rutas.test.js
+
+      - name: Pruebas del paquete de deploy (DEV con demos y noindex; PROD sin demos)
+        run: node scripts/tests/deploy-demos.test.js
 
       - name: Resumen
         if: always()
