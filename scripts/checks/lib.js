@@ -403,6 +403,24 @@ function sourceNoindexPermitido(reglas, source) {
   const rn = (reglas.robots && reglas.robots.rutasNoindex) || [];
   return rn.some((r) => [r, r + '/(.*)', r + '/:path*', r + '/:path(.*)'].includes(String(source || '').trim()));
 }
+/**
+ * robots.rutasExentasDemos (check 04): prefijo de carpeta cuyas páginas NO se evalúan en las reglas de indexación/noindex del fuente,
+ * porque nunca se publican (.vercelignore y prepare-deploy NO_PUBLICOS excluyen demos/). Guarda en código: solo el prefijo exacto «demos/»
+ * (no «demos-ia/», ni «demos», ni otras rutas); cualquier otro valor es error de configuración y entonces no se exime nada.
+ */
+const RUTAS_EXENTAS_DEMOS_PERMITIDAS = ['demos/'];
+function validarRutasExentasDemos(reglas) {
+  const r = reglas.robots && reglas.robots.rutasExentasDemos;
+  if (r === undefined) return [];
+  if (!Array.isArray(r)) return ['robots.rutasExentasDemos debe ser una lista.'];
+  return r.filter((x) => !RUTAS_EXENTAS_DEMOS_PERMITIDAS.includes(x)).map((x) => `robots.rutasExentasDemos: ${JSON.stringify(x)} no está permitido (solo: ${RUTAS_EXENTAS_DEMOS_PERMITIDAS.map((y) => JSON.stringify(y)).join(', ')}).`);
+}
+/** ¿El archivo (ruta relativa, p. ej. "demos/radar.html") está exento de las reglas de indexación por rutasExentasDemos? */
+function paginaExentaDemos(reglas, archivoRel) {
+  if (validarRutasExentasDemos(reglas).length) return false;
+  const r = (reglas.robots && reglas.robots.rutasExentasDemos) || [];
+  return r.some((pre) => String(archivoRel).startsWith(pre));
+}
 /** Categorías exentas para una página (Set). Ignora excepciones inválidas. */
 function categoriasExentas(reglas, archivoRel) {
   const set = new Set();
@@ -443,7 +461,7 @@ function hrefCtaCoincide(href, aprobado, permitirTexto) {
 }
 
 module.exports = {
-  crearDetectorContactanos, TEXTO_CONTACTANOS, validarRutasNoindex, rutaNoindexPermitida, sourceNoindexPermitido, terminosExentosPorRuta, validarRutasConSectorPermitido, normLiteral, regexLiteral, contieneLiteral, construirArbol, descendientes, validarExcepcionesPorRuta, categoriasExentas, frasesExentasPorRuta, esCentinela, listaAprobada, normalizarSector, quitarFormatosWhatsapp, textoAuditable, lineaDeFragmento, hrefCtaCoincide, ROOT, leerReglas, listarArchivos, listarHtml, rel, leer, urlDePagina,
+  crearDetectorContactanos, TEXTO_CONTACTANOS, validarRutasNoindex, validarRutasExentasDemos, paginaExentaDemos, rutaNoindexPermitida, sourceNoindexPermitido, terminosExentosPorRuta, validarRutasConSectorPermitido, normLiteral, regexLiteral, contieneLiteral, construirArbol, descendientes, validarExcepcionesPorRuta, categoriasExentas, frasesExentasPorRuta, esCentinela, listaAprobada, normalizarSector, quitarFormatosWhatsapp, textoAuditable, lineaDeFragmento, hrefCtaCoincide, ROOT, leerReglas, listarArchivos, listarHtml, rel, leer, urlDePagina,
   enmascarar, sinComentariosScriptsEstilos, etiquetas, atributos, lineaDe, decodificar, aTexto,
   textoVisible, contenidoElemento, textoSinSrOnly, normalizar, normalizarPalabra, ramaObjetivo, Reporte,
 };
