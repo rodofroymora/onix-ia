@@ -76,6 +76,9 @@ jobs:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROD_PROJECT_ID }}
+      # Bypass de Deployment Protection del proyecto de PRODUCCIÓN (no el de DEV: cada proyecto tiene el suyo).
+      BYPASS_SECRET: ${{ secrets.VERCEL_PROD_AUTOMATION_BYPASS_SECRET }}
+      DOMINIO: https://www.onix-ia.com
     steps:
       - uses: actions/checkout@v4
         with:
@@ -90,6 +93,7 @@ jobs:
           [ -z "$VERCEL_TOKEN" ] && faltan="$faltan VERCEL_TOKEN"
           [ -z "$VERCEL_ORG_ID" ] && faltan="$faltan VERCEL_ORG_ID"
           [ -z "$VERCEL_PROJECT_ID" ] && faltan="$faltan VERCEL_PROD_PROJECT_ID"
+          [ -z "$BYPASS_SECRET" ] && faltan="$faltan VERCEL_PROD_AUTOMATION_BYPASS_SECRET"
           if [ -n "$faltan" ]; then
             echo "::error::Faltan secretos en el Environment production:$faltan"
             exit 1
@@ -98,13 +102,16 @@ jobs:
       - name: Instalar Vercel CLI
         run: npm install --global vercel@59
 
+      # Deployment que sirve HOY el dominio: destino del rollback automático.
       - name: Registrar deployment de producción ACTUAL (para rollback)
+        id: previo
         run: |
+          prev=$(curl -fsS -H "Authorization: Bearer $VERCEL_TOKEN" "https://api.vercel.com/v13/deployments/www.onix-ia.com?teamId=$VERCEL_ORG_ID" | node -e 'let d="";process.stdin.on("data",c=>d+=c).on("end",()=>{const j=JSON.parse(d);if(!/^dpl_/.test(j.id||""))process.exit(1);console.log(j.id)})')
+          echo "id=$prev" >> "$GITHUB_OUTPUT"
           {
-            echo "### Deployment de producción ANTES de esta promoción (para rollback)"
-            echo '```'
-            vercel inspect onix-ia.com --scope="$VERCEL_ORG_ID" --token="$VERCEL_TOKEN" 2>&1 | grep -E 'id|url|created' | head -5 || true
-            echo '```'
+            echo "### Deployment de producción ANTES de esta promoción (rollback)"
+            echo "- \`$prev\`"
+            echo "- Rollback manual: \`vercel promote $prev --yes --scope <team> --token <token>\`"
           } >> "$GITHUB_STEP_SUMMARY"
 
       # prepare-deploy.js borra scripts/: se guarda antes el verificador posterior al deploy.
@@ -115,8 +122,7 @@ jobs:
       - name: Leer URL del sitemap de las reglas
         run: echo "SITEMAP_URL=$(node -p "require('./release-rules.json').robots.sitemapUrl")" >> "$GITHUB_ENV"
 
-      # DEPLOY_ENV=prod: NO inyecta noindex y ABORTA si el paquete no es indexable (meta/header noindex,
-      # robots.txt con «Disallow: /» o sin «Sitemap:», sin sitemap.xml). Excepción: la ruta /salud (robots.rutasNoindex).
+      # DEPLOY_ENV=prod: NO inyecta noindex y ABORTA si el paquete no es indexable. Quita demos/.
       - name: Dejar solo archivos públicos y verificar que sean indexables y sin demos/ (PROD)
         env:
           DEPLOY_ENV: prod
@@ -125,43 +131,57 @@ jobs:
       - name: vercel pull (production)
         run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
 
-      - name: vercel build
-        run: vercel build --prod --token="$VERCEL_TOKEN"
-
-      - name: vercel deploy --prod
+      # 1) Deployment con destino producción pero SIN asignar el dominio (--skip-domain): nada cambia en onix-ia.com.
+      # Sin `vercel build` ni `--prebuilt`, a propósito: el Build Output API no resuelve índices de directorio
+      # (la home / daba 404 el 12-oct-2026 aunque index.html estaba en el paquete). Igual que DEV desde el PR #22.
+      - name: Deploy candidato (sin dominio)
         id: deploy
         run: |
-          url=$(vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN")
+          out=$(vercel deploy --prod --skip-domain --yes --token="$VERCEL_TOKEN")
+          # Según la versión/entorno el CLI imprime la URL o un JSON ({"deployment":{"url":...}}): se aceptan ambos.
+          url=$(printf '%s' "$out" | node -e 'let d="";process.stdin.on("data",c=>d+=c).on("end",()=>{d=d.trim();let u;try{u=JSON.parse(d).deployment.url}catch{u=(d.match(/https:\/\/\S+\.vercel\.app/g)||[]).pop()}if(!u)process.exit(1);console.log(u)})')
           echo "url=$url" >> "$GITHUB_OUTPUT"
-          {
-            echo "### Producción actualizada"
-            echo "- Deployment: $url"
-            echo "- Dominio: https://onix-ia.com"
-            echo "- Rollback: usar el deployment anterior registrado al inicio de este resumen"
-          } >> "$GITHUB_STEP_SUMMARY"
+          echo "### Candidato: $url (aún sin dominio)" >> "$GITHUB_STEP_SUMMARY"
 
-      # Verificación posterior 1/2 (solo lectura) sobre el MISMO deployment que creó este run (su URL única): 200 en /, /aviso-de-privacidad
-      # (cleanUrls), /robots.txt y /sitemap.xml + contenido (Sitemap en robots, <urlset>, aviso sin «FECHA DE VIGENCIA»/«borrador», sin noindex).
-      # Si Vercel protege la URL única (401/403) y no hay VERCEL_AUTOMATION_BYPASS_SECRET, avisa y la verificación 2/2 (dominio) decide.
-      - name: Verificar el deployment recién creado (URL única de este run)
+      # 2) Verificar el candidato con el bypass del proyecto de producción. Sin tolerancia: una respuesta
+      # protegida o la página de login de Vercel es FALLO (antes se «verificaba» el login).
+      - name: Verificar candidato (antes de tocar el dominio)
         env:
           DEPLOY_URL: ${{ steps.deploy.outputs.url }}
-          BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
         run: |
-          if ! node "$RUNNER_TEMP/verify-deploy.js" --env prod --url "$DEPLOY_URL" --tolerar-proteccion --sitemap "$SITEMAP_URL" --404 /salud; then
-            echo "### ⚠ La verificación del deployment ($DEPLOY_URL) FALLÓ: ver el paso. Rollback: ver el inicio de este resumen." >> "$GITHUB_STEP_SUMMARY"
+          if ! node "$RUNNER_TEMP/verify-deploy.js" --env prod --url "$DEPLOY_URL" --strict --ignorar-header-vercel --sitemap "$SITEMAP_URL" --404 /salud --404 /demos/documentos-vivos; then
+            echo "### ✖ El candidato NO pasó la verificación: el dominio NO se tocó." >> "$GITHUB_STEP_SUMMARY"
             exit 1
           fi
 
-      # Verificación posterior 2/2 (dominio) (solo lectura): producción debe ser indexable. /salud no debe estar publicada (404).
-      # Si falla, el deploy YA ocurrió: avisar al CEO y hacer rollback con el deployment anterior registrado arriba.
-      - name: Verificar indexación en producción (dominio)
+      # 3) Promover: asigna el dominio al candidato ya verificado (sin reconstruir).
+      - name: Promover candidato al dominio
+        id: promover
+        env:
+          DEPLOY_URL: ${{ steps.deploy.outputs.url }}
+        run: vercel promote "$DEPLOY_URL" --yes --scope="$VERCEL_ORG_ID" --token="$VERCEL_TOKEN"
+
+      # 4) Verificar los dominios públicos (sin bypass: así los ve el visitante).
+      - name: Verificar dominios
+        id: dominio
         run: |
-          if ! node "$RUNNER_TEMP/verify-deploy.js" --env prod --url https://www.onix-ia.com --strict --sitemap "$SITEMAP_URL" --404 /salud; then
-            {
-              echo "### ⚠ La verificación posterior FALLÓ"
-              echo "- Producción NO cumple la política de indexación. Avisar al CEO y hacer rollback (Vercel → Instant Rollback al deployment anterior registrado al inicio de este resumen)."
-            } >> "$GITHUB_STEP_SUMMARY"
-            exit 1
-          fi
-          echo "- Verificación posterior: producción indexable (sin noindex, robots.txt con Sitemap, sitemap.xml, /salud 404)." >> "$GITHUB_STEP_SUMMARY"
+          sleep 10
+          ok=1
+          BYPASS_SECRET= node "$RUNNER_TEMP/verify-deploy.js" --env prod --url "$DOMINIO" --strict --sitemap "$SITEMAP_URL" --404 /salud --404 /demos/documentos-vivos || ok=0
+          code=$(curl -s -o /dev/null -w '%{http_code}' -L https://onix-ia.com/); echo "  $code https://onix-ia.com/ (apex, tras redirección)"
+          [ "$code" = "200" ] || ok=0
+          if [ "$ok" != 1 ]; then echo "::error::Los dominios no pasaron la verificación."; exit 1; fi
+          echo "### ✔ Producción verificada en $DOMINIO y https://onix-ia.com" >> "$GITHUB_STEP_SUMMARY"
+
+      # 5) Rollback automático: solo si falló la promoción o la verificación de dominios (el candidato ya estaba verificado).
+      - name: Rollback automático al deployment anterior
+        if: failure() && (steps.promover.outcome == 'failure' || steps.dominio.outcome == 'failure') && steps.previo.outputs.id != ''
+        env:
+          PREV: ${{ steps.previo.outputs.id }}
+        run: |
+          echo "::error::Rollback automático a $PREV"
+          vercel promote "$PREV" --yes --scope="$VERCEL_ORG_ID" --token="$VERCEL_TOKEN"
+          sleep 10
+          code=$(curl -s -o /dev/null -w '%{http_code}' "$DOMINIO/")
+          echo "### ↩ Rollback automático a \`$PREV\` (home: $code)" >> "$GITHUB_STEP_SUMMARY"
+          [ "$code" = "200" ] || { echo "::error::Tras el rollback la home responde $code: intervenir a mano."; exit 1; }
