@@ -14,11 +14,17 @@
   <meta property="og:locale" content="es_MX" />
   <meta property="og:title" content="ÓNIX: IA con cerebro y con sentido para empresas en México" />
   <meta property="og:description" content="Preparamos a las empresas de México para operar con IA: soluciones listas para probar, desarrollos a tu medida y consultoría que cuida tu presupuesto." />
-  <meta name="twitter:card" content="summary" />
+  <meta property="og:image" content="https://www.onix-ia.com/og-onix.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="ÓNIX: IA con cerebro y con sentido." />
+  <meta name="twitter:image" content="https://www.onix-ia.com/og-onix.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="ÓNIX: IA con cerebro y con sentido para empresas en México" />
   <meta name="twitter:description" content="Preparamos a las empresas de México para operar con IA: soluciones listas para probar, desarrollos a tu medida y consultoría que cuida tu presupuesto." />
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230B0B0C'/><circle cx='16' cy='16' r='7' fill='none' stroke='%23FFFFFF' stroke-width='3'/><circle cx='23.5' cy='8.5' r='2.4' fill='%237C3AED'/></svg>" />
   <script>/* motion gate: hidden initial states only exist when JS runs and motion is allowed */(function(d){if(window.matchMedia&&!matchMedia('(prefers-reduced-motion: reduce)').matches){d.classList.add('js');setTimeout(function(){if(!d.classList.contains('motion-ready'))d.classList.remove('js');},3000);}})(document.documentElement);</script>
+  <script>/* intro con scroll: solo con JS y movimiento permitido */(function(d){try{if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;d.classList.add('intro-on');setTimeout(function(){if(!d.classList.contains('intro-ready'))d.classList.remove('intro-on');},4000);}catch(e){}})(document.documentElement);</script>
   <link rel="preload" href="/fonts/geist-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/site.css" />
   <link rel="stylesheet" href="/servicios.css" />
@@ -29,6 +35,35 @@
 </head>
 <body>
 <a class="skip" href="#main">Saltar al contenido</a>
+<div id="intro" class="intro" aria-hidden="true">
+ <div class="intro__stage">
+  <div class="intro__glow"></div>
+  <svg class="intro__svg" viewBox="0 0 1000 1300" preserveAspectRatio="xMidYMid meet">
+    <defs><linearGradient id="intro-water" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2B1757" stop-opacity=".6"/><stop offset="1" stop-color="#0A090D" stop-opacity="0"/></linearGradient></defs>
+    <ellipse data-r2 cx="500" cy="500" rx="350" ry="350" fill="none" stroke="#2B1757" stroke-width="2"/>
+    <circle data-r1 cx="500" cy="500" r="240" fill="none" stroke="#2E2A3A" stroke-width="2"/>
+    <rect data-water-body x="-1000" y="1150" width="3000" height="400" fill="url(#intro-water)"/>
+    <line data-water x1="-1000" y1="1150" x2="2000" y2="1150" stroke="#B9A4FF" stroke-opacity=".35" stroke-width="2"/>
+    <circle data-o cx="500" cy="500" r="150" fill="none" stroke="#F4F2EE" stroke-width="44" stroke-linecap="round" transform="rotate(-90 500 500)"/>
+    <circle data-halo cx="500" cy="260" r="40" fill="#7B4CF5"/>
+    <circle data-dot cx="500" cy="260" r="22" fill="#7B4CF5"/>
+    <circle data-wave cx="0" cy="0" r="0" fill="none" stroke="#B9A4FF" stroke-width="2.5" opacity="0"/>
+  </svg>
+  <div class="intro__chips">
+    <span class="intro__chip" data-chip><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.8 7L4 20l1.1-4.6A8 8 0 1 1 21 12z"/></svg>Asistentes de WhatsApp y Voz</span>
+    <span class="intro__chip" data-chip><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><path d="M12 12l5-5"/></svg>Radar de Leads</span>
+    <span class="intro__chip" data-chip><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg>Documentos Vivos</span>
+    <span class="intro__chip" data-chip><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>Contabilidad Asistida</span>
+    <span class="intro__chip" data-chip><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>Agentes de Operación</span>
+  </div>
+  <div class="intro__brand">
+    <p class="intro__word" data-word>ÓNIX</p>
+    <p class="intro__tag" data-tag>IA con cerebro <span>y con sentido.</span></p>
+  </div>
+  <p class="intro__cue" data-cue><span>Desliza</span><i></i></p>
+  <button type="button" class="intro__skip" data-skip tabindex="-1">Saltar intro</button>
+ </div>
+</div>
 <header class="nav">
   <div class="wrap nav__inner">
     <a href="/" class="logo" aria-label="ÓNIX, inicio">ÓNIX</a>
@@ -67,6 +102,7 @@
       <p class="sv-eyebrow rise" style="--i:0">Consultora de IA y datos · México</p>
       <h1 id="hero-title" class="rise" style="--i:1">IA con cerebro <em>y con sentido.</em></h1>
       <p class="sv-lead rise" style="--i:2">Preparamos a las empresas de México para operar con inteligencia artificial: soluciones listas para probar, desarrollos a tu medida y consultoría que cuida tu presupuesto.</p>
+      <p class="h-free rise" style="--i:3"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Tu consultoría inicial es gratis.</p>
       <div class="h-hero__actions rise" style="--i:3">
         <div class="cta__act"><a href="https://wa.me/522227097945?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20los%20servicios%20de%20%C3%93NIX.%20Aviso%20de%20privacidad%3A%20https%3A%2F%2Fwww.onix-ia.com%2Faviso-de-privacidad" class="btn btn--primary" target="_blank" rel="noopener noreferrer">Escríbenos por WhatsApp<span class="sr-only"> (abre WhatsApp)</span></a><p class="priv-note">Al escribirnos por WhatsApp, ÓNIX (Rodolfo Mora) usará tu número y tu mensaje para responderte y darte seguimiento. WhatsApp (Meta) trata los datos de la conversación bajo sus propias condiciones. <a href="/aviso-de-privacidad">Aviso de privacidad de ÓNIX</a></p></div>
         <a class="link" href="#soluciones">Ver soluciones <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a>
@@ -253,55 +289,36 @@
 <section class="sv-sec band" id="estima" aria-labelledby="est-t">
   <div class="wrap est__grid">
     <div class="est__intro">
-      <p class="sv-eyebrow reveal">Estima tu inversión</p>
-      <h2 id="est-t" class="sv-h2 reveal" style="margin-top:1.25rem">¿Cuánto cuesta? <em>Seis preguntas y lo sabes.</em></h2>
-      <p class="sv-lead reveal" style="margin-top:1.25rem">Contesta con un clic y te decimos qué nivel te corresponde. Sin formularios y sin compromiso.</p>
-      <div class="levels">
-        <article class="level reveal">
-          <p class="level__name">Arranque</p>
-          <p class="level__for">Una solución, un canal, poco volumen.</p>
-          <dl>
-            <div><dt>Implementación</dt><dd>Desde $4,900 más IVA</dd></div>
-            <div><dt>Mensualidad</dt><dd>Desde $1,490 más IVA</dd></div>
-          </dl>
-        </article>
-        <article class="level level--ink reveal">
-          <p class="level__name">Negocio</p>
-          <p class="level__for">Una solución, hasta dos canales, un equipo pequeño.</p>
-          <dl>
-            <div><dt>Implementación</dt><dd>Desde $9,900 más IVA</dd></div>
-            <div><dt>Mensualidad</dt><dd>Desde $2,990 más IVA</dd></div>
-          </dl>
-        </article>
-        <article class="level level--line reveal">
-          <p class="level__name">A tu medida</p>
-          <p class="level__for">Varias soluciones, llamadas, sistemas propios o mucho volumen. Lo vemos en una revisión inicial.</p>
-        </article>
-      </div>
-      <p class="est__fine">El precio final se confirma después de la revisión inicial. Los mensajes de marketing de WhatsApp y las llamadas se cotizan aparte.</p>
+      <p class="sv-eyebrow reveal">Por dónde empezar</p>
+      <h2 id="est-t" class="sv-h2 reveal" style="margin-top:1.25rem">¿No sabes por dónde entrar? <em>Seis preguntas y te digo.</em></h2>
+      <p class="est__lead reveal">Contesta con un clic. Al final te decimos cuál de nuestras soluciones atacaría primero tu problema, con qué alcance y cuál sería el primer paso. Sin formularios y sin compromiso.</p>
+
+      <ul class="est__pts reveal">
+        <li><b>Empezamos chico a propósito.</b> Una solución y un canal. Si funciona, crecemos. Si no, no creciste.</li>
+        <li><b>Tu revisión inicial no tiene costo.</b> Hablamos de tu operación y te decimos por dónde conviene empezar, trabajes con nosotros o no.</li>
+        <li><b>Te contesta Rodolfo</b>, no un formulario.</li>
+      </ul>
+
+      <p class="est__fine reveal">El alcance y la propuesta se definen después de la revisión inicial, cuando ya sabemos de qué estamos hablando.</p>
     </div>
 
-    <div class="est reveal" data-est aria-label="Estimador de inversión">
+    <div class="est reveal" data-est aria-label="Estimador: por dónde empezar">
       <div class="est__bar">
-        <span class="est__who"><span class="est__av" aria-hidden="true">Ó</span><span><strong>Estimador ÓNIX</strong><small>Respuestas con un clic</small></span></span>
+        <span class="est__who"><span class="est__av" aria-hidden="true">Ó</span><span>Asistente de ÓNIX</span></span>
         <span class="est__prog" aria-hidden="true"><i data-est-prog></i></span>
       </div>
       <div class="est__log" data-est-log aria-live="polite">
-        <p class="est__msg">Hola. Te hago seis preguntas rápidas sobre tu negocio y te digo qué nivel te corresponde.</p>
+        <p class="est__msg">Hola. Te hago seis preguntas rápidas y te digo por dónde yo empezaría.</p>
       </div>
       <div class="est__opts" data-est-opts role="group" aria-label="Respuestas"></div>
       <div class="est__res" data-est-res hidden>
         <p class="est__lvl" data-est-lvl></p>
-        <dl class="est__price" data-est-price>
-          <div><dt>Implementación</dt><dd data-est-imp></dd></div>
-          <div><dt>Mensualidad</dt><dd data-est-men></dd></div>
-        </dl>
+        <p class="est__lvl est__lvl--alt" data-est-alcance></p>
         <p class="est__inc" data-est-inc></p>
-        <p class="est__note">Estimación. El precio final se confirma después de la revisión inicial.</p>
-        <div class="cta__act"><a href="https://wa.me/522227097945?text=Hola%2C%20us%C3%A9%20el%20estimador%20de%20%C3%93NIX.%20Aviso%20de%20privacidad%3A%20https%3A%2F%2Fwww.onix-ia.com%2Faviso-de-privacidad" class="btn btn--primary" data-est-wa target="_blank" rel="noopener noreferrer">Escríbenos por WhatsApp<span class="sr-only"> (abre WhatsApp)</span></a><p class="priv-note">Al escribirnos por WhatsApp, ÓNIX (Rodolfo Mora) usará tu número y tu mensaje para responderte y darte seguimiento. WhatsApp (Meta) trata los datos de la conversación bajo sus propias condiciones. <a href="/aviso-de-privacidad">Aviso de privacidad de ÓNIX</a></p></div>
+        <a class="btn btn--accent est__wa" data-est-wa href="https://wa.me/522227097945" target="_blank" rel="noopener noreferrer">Escríbenos por WhatsApp<span class="sr-only"> (abre WhatsApp)</span></a>
+        <p class="est__priv"><a href="/aviso-de-privacidad">Aviso de privacidad de ÓNIX</a></p>
         <button type="button" class="est__again" data-est-again>Volver a empezar</button>
       </div>
-      <p class="est__nojs">Activa JavaScript para usar el estimador. Mientras, los niveles y precios están a la izquierda.</p>
     </div>
   </div>
 </section>
@@ -373,7 +390,7 @@
     <div class="reveal">
       <p class="kicker">Contacto</p>
       <h2 id="contacto-title" class="display h2">¿Hablamos de tu operación?</h2>
-      <p class="lead">Cuéntanos qué te gustaría resolver y te orientamos sobre el primer paso.</p>
+      <p class="lead">Cuéntanos qué te gustaría resolver y te orientamos sobre el primer paso. Tu consultoría inicial es gratis.</p>
       <p class="contact__sub">Cada fase tiene alcance y entregables claros. Platicamos tu caso y te proponemos la ruta.</p>
       <div class="contact__actions">
         <p class="contact__wa">WhatsApp: 222 709 7945, o usa el formulario.</p>
@@ -491,5 +508,6 @@
 <script src="/nav.js" defer></script>
 <script src="/motion.js" defer></script>
 <script src="/home.js" defer></script>
+<script src="/intro.js" defer></script>
 </body>
 </html>
