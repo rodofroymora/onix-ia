@@ -58,7 +58,7 @@ const casos = [
   ['calculamos tus impuestos', 'impuestos-calculo:b'], ['calculamos tu IVA', 'impuestos-calculo:b'], ['clasificación fiscal automática', 'clasificacion-contable-fiscal:b'],
   ['Secretaria AI', 'secretaria:b'], ['Atención con IA por voz', 'nombre-anterior:a'], ['certificados en ISO/IEC 42001', 'certificacion-afirmada:b'],
   ['alineado a NIST AI RMF', 'nist-publico:b'], ['resultados garantizados', 'garantia:b'], ['Pedido confirmado', 'ventas-cobros-inventario:b'],
-  ['se integra automáticamente con tu CRM', 'integracion-automatica:a'], ['operamos contigo en tus oficinas', 'personal-en-sitio:b'],
+  ['se integra automáticamente con tu CRM', 'integracion-automatica:b'], ['operamos contigo en tus oficinas', 'personal-en-sitio:b'],
   ['soluciones para clínicas', 'clinica:b'], ['XAXX010101000', 'rfc-formato-real:b'], ['folio 123e4567-e89b-12d3-a456-426614174000', 'uuid-real:b'],
   ['pipeline STT + LLM', 'jerga-tecnica:a'], ['el asistente virtual', 'asistente-masculino:a'],
   ['Te damos un diagnóstico inicial', 'salud-diagnostico:b'],
