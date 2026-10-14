@@ -400,6 +400,30 @@
       "fuente": "Reglas de contenido › Conexiones; 06-gaps (bandera “Pedido confirmado”). v2.1: las negaciones (“no cierra ventas”) no bloquean"
     },
     {
+      "id": "confirmacion-comercial",
+      "nivel": "bloqueante",
+      "regex": "(?<![\\p{L}\\p{N}_])(?:pedido|venta|pago|compra|orden)s?(?![\\p{L}\\p{N}_])[^.!?¡¿\\n]{0,30}(?<![\\p{L}\\p{N}_])confirmad[oa]s?(?![\\p{L}\\p{N}_])|(?<![\\p{L}\\p{N}_])confirmad[oa]s?(?![\\p{L}\\p{N}_])[^.!?¡¿\\n]{0,30}(?<![\\p{L}\\p{N}_])(?:pedido|venta|pago|compra|orden)s?(?![\\p{L}\\p{N}_])",
+      "flags": "giu",
+      "ejemplo": "Pedido confirmado; compra confirmada; pago confirmado; tu venta quedó confirmada",
+      "fuente": "Spec v8.1 Atención de ventas y reservaciones (13-oct-2026): sin pedidos, ventas, pagos ni compras confirmados en el sitio (solo citas y reservas, confirmadas por una persona). Bloquea aunque diga «por el equipo»."
+    },
+    {
+      "id": "confirmacion-sin-humano",
+      "nivel": "bloqueante",
+      "regex": "(?<![\\p{L}\\p{N}_])confirmad[oa]s?(?![\\p{L}\\p{N}_])(?![^.!?¡¿\\n]{0,40}(?:por el equipo|por una persona|una persona del equipo))",
+      "flags": "giu",
+      "ejemplo": "Tu cita quedó confirmada.",
+      "fuente": "Spec v8.1: la única confirmación mostrada es la humana («confirmada por el equipo de [negocio]»). «confirmado/a» sin «por el equipo»/«una persona» en la misma oración es bloqueante. Los textos exactos aprobados se enmascaran antes (textosExactosAprobados)."
+    },
+    {
+      "id": "nombre-interno-servicio",
+      "nivel": "bloqueante",
+      "regex": "(?<![\\p{L}\\p{N}_])(?:atenci[oó]n de ventas y reservaciones con IA|ventas asistidas)(?![\\p{L}\\p{N}_])",
+      "flags": "giu",
+      "ejemplo": "Atención de ventas y reservaciones con IA; Ventas asistidas",
+      "fuente": "Spec v8.1: nombres internos; el sitio conserva «Asistentes de WhatsApp y Voz»."
+    },
+    {
       "id": "ventas-mencion",
       "nivel": "bloqueante",
       "regex": "(?<![\\p{L}\\p{N}_])(?:cerrar ventas|cierre de ventas|cierra ventas|cerramos ventas)(?![\\p{L}\\p{N}_])",
@@ -409,11 +433,11 @@
     },
     {
       "id": "integracion-automatica",
-      "nivel": "advertencia",
+      "nivel": "bloqueante",
       "regex": "integraci[oó]n autom[aá]tica|se (?:integra|conecta) autom[aá]ticamente|conectado con tu (?:ERP|CRM|sistema)|sincroniza",
       "flags": "giu",
       "ejemplo": "se integra automáticamente con tu CRM",
-      "fuente": "01-oferta › Conexiones: “evaluamos en el diseño si es viable conectarlo”"
+      "fuente": "01-oferta › Conexiones: “evaluamos en el diseño si es viable conectarlo”. Spec v8.1 (Atención de ventas y reservaciones, 13-oct-2026): bloqueante; la conexión solo se promete como «si permite esta conexión» tras confirmación del equipo."
     },
     {
       "id": "personal-en-sitio",
@@ -512,6 +536,45 @@
       "retirado": "diagnóstico (en todo el sitio; solo se tolera en negaciones, como aviso)",
       "reemplazo": "revisión inicial",
       "fuente": "Decisión de dirección 2026-10-10 (opción a) + Nota de Legal (salud)"
+    }
+  ],
+  "_textosExactosAprobados_NOTA": "Spec v8.1 «Atención de ventas y reservaciones con IA» (Arquitecto), punto (c) de pendientes. El check 05 enmascara SOLO la coincidencia EXACTA (mayúsculas, acentos, puntuación; los espacios pueden colapsar) antes de aplicar frasesProhibidas; cualquier variante sigue sujeta a las reglas. Marcadores: [negocio] = nombre de negocio acotado: 1 a 4 palabras que empiezan con mayúscula (letras, dígitos, ’'&-), p. ej. «Negocio Ejemplo»; [medio] = 1 a 8 palabras sin puntuación de oración, p. ej. «el sitio de Negocio Ejemplo». La spec no define la forma del marcador: esta es la decisión de DevOps.",
+  "textosExactosAprobados": [
+    {
+      "id": "recibimos-solicitud",
+      "texto": "Recibimos tu solicitud. Una persona del equipo la confirma y te avisa."
+    },
+    {
+      "id": "cita-confirmada-equipo",
+      "texto": "Tu cita quedó confirmada por el equipo de [negocio]."
+    },
+    {
+      "id": "cita-registro-sistema",
+      "texto": "Cuando tu equipo la confirma, la cita se registra en el sistema que ya usas, si permite esta conexión."
+    },
+    {
+      "id": "demo-confirmacion-humana",
+      "texto": "Demostración: la confirmación la hace una persona de tu equipo."
+    },
+    {
+      "id": "demo-leyenda",
+      "texto": "Demostración con información de ejemplo. Por favor, no incluyas datos personales reales."
+    },
+    {
+      "id": "apertura-asistente",
+      "texto": "Hola, soy la asistente virtual de [negocio]. Puedo ayudarte con información y anotar tu solicitud; si prefieres hablar con una persona, dímelo."
+    },
+    {
+      "id": "apertura-voz-legal",
+      "texto": "Hola, soy la asistente virtual de [negocio]. Esta llamada se transcribe para atenderte. Si prefieres que no se transcriba, o hablar con una persona, dime en cualquier momento. Tu aviso de privacidad está disponible en [medio]; si quieres, te lo envío por mensaje."
+    },
+    {
+      "id": "cta-whatsapp",
+      "texto": "Escríbenos por WhatsApp"
+    },
+    {
+      "id": "enlace-aviso-onix",
+      "texto": "Aviso de privacidad de ÓNIX"
     }
   ],
   "rutasConSectorPermitido": [
