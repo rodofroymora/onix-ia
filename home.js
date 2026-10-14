@@ -163,7 +163,7 @@
     { k: 'sol', q: '¿Qué quieres resolver primero?', o: [
       ['Atender WhatsApp o mi sitio', 0, 'Asistentes de WhatsApp y Voz'],
       ['Ordenar a mis prospectos', 0, 'Radar de Leads'],
-      ['Consultar mis documentos', 0, 'Documentos Vivos'],
+      ['Consultar mis documentos', 0, 'Base de Conocimiento Inteligente'],
       ['Preparar la información para mi contador', 0, 'Contabilidad Asistida'],
       ['Automatizar tareas de operación', 0, 'Agentes de Operación'],
       ['Varias de estas', 2, 'varias soluciones'],

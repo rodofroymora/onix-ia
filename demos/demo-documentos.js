@@ -1,4 +1,4 @@
-/* Demostración · Documentos Vivos.
+/* Demostración · Base de Conocimiento Inteligente.
    El scroll conduce la narración: cada paso enciende su escena en el panel.
    Datos ficticios. No se envía ni se guarda nada. */
 (function () {

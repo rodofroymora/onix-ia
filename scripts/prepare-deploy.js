@@ -61,7 +61,7 @@ function rutasDemos(root) {
    repositorio no lo lleva y el paquete DEV sí. */
 const DEMO_POR_SERVICIO = {
   'contabilidad-asistida.html': ['/demos/contabilidad-asistida', 'Contabilidad Asistida'],
-  'documentos-vivos.html':      ['/demos/documentos-vivos', 'Documentos Vivos'],
+  'documentos-vivos.html':      ['/demos/documentos-vivos', 'Base de Conocimiento Inteligente'],
   'radar-de-leads.html':        ['/demos/radar-de-leads', 'Radar de Leads'],
   'agentes-de-operacion.html':  ['/demos/agentes-de-operacion', 'Agentes de Operación'],
   'asistentes-whatsapp-y-voz.html': ['/demos/asistentes-whatsapp-voz', 'Asistentes de WhatsApp y Voz'],
