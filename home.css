@@ -65,11 +65,11 @@
 .car__track { display: grid; grid-auto-flow: column; grid-auto-columns: min(420px, 84%); gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: max(1.5rem, (100vw - 1200px) / 2); padding: .5rem max(1.5rem, (100vw - 1200px) / 2) 1.5rem; scrollbar-width: none; overscroll-behavior-x: contain; }
 .car__track::-webkit-scrollbar { display: none; }
 .car__track:focus-visible { outline-offset: -4px; }
-.slide { scroll-snap-align: start; display: flex; flex-direction: column; gap: .75rem; min-height: 520px; padding: 1.75rem; border-radius: 24px; background: #fff; border: 1px solid var(--line); transition: transform .45s var(--ease), box-shadow .45s var(--ease), border-color .3s var(--ease); }
+.slide { scroll-snap-align: start; display: flex; flex-direction: column; gap: .55rem; min-height: 430px; padding: 1.25rem; border-radius: 18px; background: #fff; border: 1px solid var(--line); transition: transform .45s var(--ease), box-shadow .45s var(--ease), border-color .3s var(--ease); }
 .slide:hover { transform: translateY(-4px); box-shadow: 0 30px 60px -40px rgba(38,38,44,.35); border-color: var(--accent-line); }
 .slide__layer { font-family: var(--mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent-ink); }
-.slide h3 { font-size: 1.75rem; font-weight: 600; letter-spacing: -.035em; line-height: 1.08; }
-.slide > p { color: var(--ink-2); font-size: 1rem; line-height: 1.5; }
+.slide h3 { font-size: 1.3rem; font-weight: 600; letter-spacing: -.035em; line-height: 1.08; }
+.slide > p { color: var(--ink-2); font-size: .9375rem; line-height: 1.5; }
 .slide__ui { margin-top: auto; border-radius: 16px; background: var(--paper-2); border: 1px solid var(--line); padding: 1rem; display: flex; flex-direction: column; gap: .5rem; min-height: 190px; }
 .slide__go { display: inline-flex; align-items: center; gap: .4rem; min-height: 44px; font-weight: 500; color: var(--accent-ink); text-decoration: none; }
 .slide__go:hover { text-decoration: underline; text-underline-offset: 4px; }
@@ -281,3 +281,15 @@
 .nolim__item svg { flex: none; color: var(--accent-ink, var(--accent)); margin-top: .1rem; }
 .nolim__item b { display: block; font-size: .9375rem; color: var(--ink); font-weight: 500; }
 .nolim__item span { font-size: .875rem; color: var(--ink-2); line-height: 1.5; }
+
+/* ── Ícono de cada solución en el carrusel ──────────────────────────────
+   Las tarjetas se veían planas: puro título y párrafo. El ícono da entrada
+   visual sin robarle espacio a la vista previa, que es lo que de verdad
+   vende. SVG propio, no emoji: el emoji cambia de forma en cada sistema. */
+.slide__ico {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2.6rem; height: 2.6rem; border-radius: 12px; flex: none;
+  background: var(--accent-wash, #F4F0FE); color: var(--accent-ink, #6D28D9);
+  border: 1px solid var(--accent-line, #E3D9FB); margin-bottom: .15rem;
+}
+@media (max-width: 640px) { .slide { min-height: 390px; padding: 1.1rem; } .slide h3 { font-size: 1.2rem; } }
