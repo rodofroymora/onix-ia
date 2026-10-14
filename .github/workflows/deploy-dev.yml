@@ -67,13 +67,18 @@ jobs:
       - name: Instalar Vercel CLI
         run: npm install --global vercel@59
 
-      - name: Dejar solo archivos públicos (DEV incluye demos/ con noindex)
+      # prepare-deploy.js borra scripts/: se guarda antes el verificador posterior al deploy.
+      - name: Guardar verificador de indexación
+        run: cp scripts/verify-deploy.js "$RUNNER_TEMP/verify-deploy.js"
+
+      - name: Dejar solo archivos públicos e inyectar noindex (DEV; incluye demos/ con noindex)
         env:
           DEPLOY_ENV: dev
         run: node scripts/prepare-deploy.js
 
       # El proyecto DEV usa su propio "production" (URL estable *.vercel.app del proyecto DEV).
-      # Eso NO es producción de onix-ia.com: es otro proyecto. noindex lo da vercel.json en la rama dev.
+      # Eso NO es producción de onix-ia.com: es otro proyecto. El FUENTE es indexable: el noindex de DEV se inyecta aquí
+      # (prepare-deploy.js con DEPLOY_ENV=dev) y se verifica después del deploy.
       - name: vercel pull
         run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
 
@@ -92,3 +97,11 @@ jobs:
             echo "- Deployment: $url"
             echo "- Proyecto DEV: separado de producción (onix-ia.com no se toca)"
           } >> "$GITHUB_STEP_SUMMARY"
+
+      # Verificación posterior sobre el MISMO deployment de este run: 200 en /, /aviso-de-privacidad, /robots.txt y /sitemap.xml, y DEV sigue noindex (header + meta + robots.txt). Si el deployment está
+      # protegido por Vercel (401/403) y no existe el secreto opcional VERCEL_AUTOMATION_BYPASS_SECRET, solo avisa.
+      - name: Verificar noindex en el DEV desplegado
+        env:
+          DEPLOY_URL: ${{ steps.deploy.outputs.url }}
+          BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+        run: node "$RUNNER_TEMP/verify-deploy.js" --env dev --url "$DEPLOY_URL"

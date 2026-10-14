@@ -102,13 +102,19 @@
     ]
   },
   "robots": {
-    "_NOTA": "Regla de indexación esperada según la rama BASE del PR (o CHECK_BRANCH). 'noindex' = header X-Robots-Tag noindex en vercel.json + robots.txt Disallow:/ ; 'index' = sin noindex en el sitio. TODO (dueño del sitio): confirmar 'main' (producción) = 'index' para salir a buscadores.",
-    "dev": "noindex",
+    "_NOTA": "Regla de indexación del FUENTE del repo (rama BASE del PR o CHECK_BRANCH). El fuente es indexable en dev Y en main ('index'): páginas sin <meta name=\"robots\" content=\"noindex\">, robots.txt sin «Disallow: /» y con «Sitemap: <robots.sitemapUrl>» (bloqueante), sitemap.xml presente, y vercel.json sin header X-Robots-Tag noindex. DEV sigue siendo noindex, pero se inyecta AL DESPLEGAR (scripts/prepare-deploy.js con DEPLOY_ENV=dev: robots.txt «Disallow: /», header X-Robots-Tag y meta noindex en el paquete) y el workflow lo verifica con curl; nunca se aplica con DEPLOY_ENV=prod. El valor 'noindex' sigue siendo válido para el check 04 (exige noindex en el fuente) pero ya no se usa. La excepción /salud está en rutasNoindex.",
+    "dev": "index",
     "main": "index",
+    "sitemapUrl": "https://www.onix-ia.com/sitemap.xml",
+    "_sitemapUrl_NOTA": "URL del sitemap que robots.txt DEBE referenciar con «Sitemap: …» (check 04, BLOQUEANTE en dev y en main, sobre el robots.txt del fuente; el «Disallow: /» que DEV inyecta al desplegar no cuenta). sitemap.xml debe existir en la raíz y todas sus <loc> deben estar en el mismo host. Host = el de las <loc> y los canonical (www); el apex onix-ia.com redirige 308 a www.",
     "rutasNoindex": [
       "/salud"
     ],
-    "_rutasNoindex_NOTA": "Decisión de dirección 2026-10-10: SOLO la ruta /salud (y sus subrutas «/salud/…», p. ej. salud.html o salud/index.html) puede ser noindex en una rama con regla \"index\" (main): su <meta name=\"robots\" content=\"noindex\"> y, si se usa, un header X-Robots-Tag cuyo source sea exactamente /salud, /salud/(.*) o /salud/:path*. Cualquier otra página o header noindex (incluido el global \"/(.*)\") sigue FALLANDO en main. Guarda en scripts/checks/lib.js: otra ruta en esta lista es error de configuración. Sin efecto en dev (todo el sitio sigue noindex). ⚠ /salud NO debe ir a main hasta que la revise un abogado humano y exista el OK escrito del dueño del sitio (sin compuerta automática: es una nota de gobierno)."
+    "_rutasNoindex_NOTA": "Decisión de dirección 2026-10-10: SOLO la ruta /salud (y sus subrutas «/salud/…», p. ej. salud.html o salud/index.html) puede ser noindex en una rama con regla \"index\" (main): su <meta name=\"robots\" content=\"noindex\"> y, si se usa, un header X-Robots-Tag cuyo source sea exactamente /salud, /salud/(.*) o /salud/:path*. Cualquier otra página o header noindex (incluido el global \"/(.*)\") sigue FALLANDO en main. Guarda en scripts/checks/lib.js: otra ruta en esta lista es error de configuración. Sin efecto en dev (todo el sitio sigue noindex). ⚠ /salud NO debe ir a main hasta que la revise un abogado humano y exista el OK escrito del dueño del sitio (sin compuerta automática: es una nota de gobierno).",
+    "rutasExentasDemos": [
+      "demos/"
+    ],
+    "_rutasExentasDemos_NOTA": "Prefijo EXACTO «demos/» (nunca «demos-ia/» ni otra ruta: la guarda de lib.js rechaza cualquier otro valor). Las páginas bajo demos/ no entran en la regla de indexación del check 04 (meta noindex en el fuente) porque NUNCA se publican: .vercelignore y scripts/prepare-deploy.js (NO_PUBLICOS) las excluyen de DEV y PROD, y hay una prueba que lo garantiza. Es independiente de H-39 (bloqueosSoloMain), cuyo alcance sigue siendo el paquete público."
   },
   "marcadoresProhibidos": [
     "TODO",
@@ -394,6 +400,30 @@
       "fuente": "Reglas de contenido › Conexiones; 06-gaps (bandera “Pedido confirmado”). v2.1: las negaciones (“no cierra ventas”) no bloquean"
     },
     {
+      "id": "confirmacion-comercial",
+      "nivel": "bloqueante",
+      "regex": "(?<![\\p{L}\\p{N}_])(?:pedido|venta|pago|compra|orden)s?(?![\\p{L}\\p{N}_])[^.!?¡¿\\n]{0,30}(?<![\\p{L}\\p{N}_])confirmad[oa]s?(?![\\p{L}\\p{N}_])|(?<![\\p{L}\\p{N}_])confirmad[oa]s?(?![\\p{L}\\p{N}_])[^.!?¡¿\\n]{0,30}(?<![\\p{L}\\p{N}_])(?:pedido|venta|pago|compra|orden)s?(?![\\p{L}\\p{N}_])",
+      "flags": "giu",
+      "ejemplo": "Pedido confirmado; compra confirmada; pago confirmado; tu venta quedó confirmada",
+      "fuente": "Spec v8.1 Atención de ventas y reservaciones (13-oct-2026): sin pedidos, ventas, pagos ni compras confirmados en el sitio (solo citas y reservas, confirmadas por una persona). Bloquea aunque diga «por el equipo»."
+    },
+    {
+      "id": "confirmacion-sin-humano",
+      "nivel": "bloqueante",
+      "regex": "(?<![\\p{L}\\p{N}_])confirmad[oa]s?(?![\\p{L}\\p{N}_])(?![^.!?¡¿\\n]{0,40}(?:por el equipo|por una persona|una persona del equipo))",
+      "flags": "giu",
+      "ejemplo": "Tu cita quedó confirmada.",
+      "fuente": "Spec v8.1: la única confirmación mostrada es la humana («confirmada por el equipo de [negocio]»). «confirmado/a» sin «por el equipo»/«una persona» en la misma oración es bloqueante. Los textos exactos aprobados se enmascaran antes (textosExactosAprobados)."
+    },
+    {
+      "id": "nombre-interno-servicio",
+      "nivel": "bloqueante",
+      "regex": "(?<![\\p{L}\\p{N}_])(?:atenci[oó]n de ventas y reservaciones con IA|ventas asistidas)(?![\\p{L}\\p{N}_])",
+      "flags": "giu",
+      "ejemplo": "Atención de ventas y reservaciones con IA; Ventas asistidas",
+      "fuente": "Spec v8.1: nombres internos; el sitio conserva «Asistentes de WhatsApp y Voz»."
+    },
+    {
       "id": "ventas-mencion",
       "nivel": "bloqueante",
       "regex": "(?<![\\p{L}\\p{N}_])(?:cerrar ventas|cierre de ventas|cierra ventas|cerramos ventas)(?![\\p{L}\\p{N}_])",
@@ -403,11 +433,11 @@
     },
     {
       "id": "integracion-automatica",
-      "nivel": "advertencia",
+      "nivel": "bloqueante",
       "regex": "integraci[oó]n autom[aá]tica|se (?:integra|conecta) autom[aá]ticamente|conectado con tu (?:ERP|CRM|sistema)|sincroniza",
       "flags": "giu",
       "ejemplo": "se integra automáticamente con tu CRM",
-      "fuente": "01-oferta › Conexiones: “evaluamos en el diseño si es viable conectarlo”"
+      "fuente": "01-oferta › Conexiones: “evaluamos en el diseño si es viable conectarlo”. Spec v8.1 (Atención de ventas y reservaciones, 13-oct-2026): bloqueante; la conexión solo se promete como «si permite esta conexión» tras confirmación del equipo."
     },
     {
       "id": "personal-en-sitio",
@@ -506,6 +536,45 @@
       "retirado": "diagnóstico (en todo el sitio; solo se tolera en negaciones, como aviso)",
       "reemplazo": "revisión inicial",
       "fuente": "Decisión de dirección 2026-10-10 (opción a) + Nota de Legal (salud)"
+    }
+  ],
+  "_textosExactosAprobados_NOTA": "Spec v8.1 «Atención de ventas y reservaciones con IA» (Arquitecto), punto (c) de pendientes. El check 05 enmascara SOLO la coincidencia EXACTA (mayúsculas, acentos, puntuación; los espacios pueden colapsar) antes de aplicar frasesProhibidas; cualquier variante sigue sujeta a las reglas. Marcadores: [negocio] = nombre de negocio acotado: 1 a 4 palabras que empiezan con mayúscula (letras, dígitos, ’'&-), p. ej. «Negocio Ejemplo»; [medio] = 1 a 8 palabras sin puntuación de oración, p. ej. «el sitio de Negocio Ejemplo». La spec no define la forma del marcador: esta es la decisión de DevOps.",
+  "textosExactosAprobados": [
+    {
+      "id": "recibimos-solicitud",
+      "texto": "Recibimos tu solicitud. Una persona del equipo la confirma y te avisa."
+    },
+    {
+      "id": "cita-confirmada-equipo",
+      "texto": "Tu cita quedó confirmada por el equipo de [negocio]."
+    },
+    {
+      "id": "cita-registro-sistema",
+      "texto": "Cuando tu equipo la confirma, la cita se registra en el sistema que ya usas, si permite esta conexión."
+    },
+    {
+      "id": "demo-confirmacion-humana",
+      "texto": "Demostración: la confirmación la hace una persona de tu equipo."
+    },
+    {
+      "id": "demo-leyenda",
+      "texto": "Demostración con información de ejemplo. Por favor, no incluyas datos personales reales."
+    },
+    {
+      "id": "apertura-asistente",
+      "texto": "Hola, soy la asistente virtual de [negocio]. Puedo ayudarte con información y anotar tu solicitud; si prefieres hablar con una persona, dímelo."
+    },
+    {
+      "id": "apertura-voz-legal",
+      "texto": "Hola, soy la asistente virtual de [negocio]. Esta llamada se transcribe para atenderte. Si prefieres que no se transcriba, o hablar con una persona, dime en cualquier momento. Tu aviso de privacidad está disponible en [medio]; si quieres, te lo envío por mensaje."
+    },
+    {
+      "id": "cta-whatsapp",
+      "texto": "Escríbenos por WhatsApp"
+    },
+    {
+      "id": "enlace-aviso-onix",
+      "texto": "Aviso de privacidad de ÓNIX"
     }
   ],
   "rutasConSectorPermitido": [
@@ -622,5 +691,26 @@
       "nivelesAncestro": 3,
       "definicionCerca": "«CERCA» = en alguno de estos lugares hay un enlace con el texto «Aviso de privacidad de ÓNIX» cuyo href apunta a una página aviso-de-privacidad: (a) cualquiera de los hasta nivelesAncestro (3) ancestros del enlace de WhatsApp, sin llegar a <main>, <body> ni <html>, con todos sus descendientes; (b) el elemento hermano inmediato anterior o posterior (con descendientes) del enlace de WhatsApp o de su padre directo, excepto <main>, <body> y <html>. Un botón flotante hijo de <body> solo se evalúa por (b). Que exista el enlace en otra parte de la página NO basta. Aplica a TODOS los enlaces cuyo href empieza por prefijoHrefWhatsapp (con o sin ?text=), incluidos cabecera, menú móvil, pie y botón flotante. Nota de orden: el destino aviso-de-privacidad.html aún no existe en dev (solo en el PR #6), por lo que el check 03 de enlaces solo pasará cuando ese PR esté fusionado."
     }
+  },
+  "bloqueosSoloMain": {
+    "_NOTA": "H-39. Bloqueos que aplican SOLO con CHECK_BRANCH=main (check 04): impiden publicar el sitio con marcadores pendientes. En dev NO bloquean (dev conserva «[FECHA DE VIGENCIA — completar al publicar]» y «v3-borrador» hasta que golive.js los reemplaza). Se busca cada texto en el código fuente completo (texto visible, atributos/meta, comentarios, JSON-LD, scripts) de las páginas .html del PAQUETE PÚBLICO, de sitemap.xml y de robots.txt, sin distinguir mayúsculas y tolerando espacios/&nbsp; entre palabras. «borrador» es subcadena (también atrapa «v3-borrador» y «borradores»): riesgo de falso positivo si el copy público usa esa palabra; tendría que reformularse o retirarse de este listado con revisión de código. Alcance = lo que se despliega: se excluye demos/ (prepare-deploy.js la quita del paquete; sus pantallas usan «borrador» legítimamente, p. ej. «Aprobar borrador»).",
+    "marcadores": [
+      {
+        "id": "fecha-vigencia-pendiente",
+        "texto": "FECHA DE VIGENCIA"
+      },
+      {
+        "id": "borrador",
+        "texto": "-borrador",
+        "explicacion": "Caza marcadores de versión en borrador como «v3-borrador» en el campo aviso_version. Antes el texto era «borrador» a secas y disparaba con el vocabulario del producto: «borrador de cotización» es justo lo que hacen los Agentes de Operación, y está aprobado en la Matriz base v4. El guion delante distingue el marcador de la palabra."
+      }
+    ],
+    "archivos": [
+      "sitemap.xml",
+      "robots.txt"
+    ],
+    "excluirRutas": [
+      "demos/"
+    ]
   }
 }

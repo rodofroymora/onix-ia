@@ -67,6 +67,15 @@ jobs:
       - name: Pruebas de reglas (centinela, sector exacto, WhatsApp, frases prohibidas)
         run: node scripts/tests/reglas.test.js
 
+      - name: Pruebas H-39 (marcadores pendientes bloquean solo en main)
+        run: node scripts/tests/bloqueos-main.test.js
+
+      - name: Pruebas de la exención de demos/ en la regla de indexación
+        run: node scripts/tests/demos-exentas.test.js
+
+      - name: Pruebas del noindex al desplegar (prepare-deploy / verify-deploy)
+        run: node scripts/tests/deploy-noindex.test.js
+
       - name: Casos de prueba del Arquitecto (check 05, v3)
         run: node scripts/tests/05-frases-arquitecto.test.js
 
@@ -91,3 +100,6 @@ jobs:
             echo "PR: \`$HEAD\` → \`$BASE\`"
             echo "Los detalles (en español) están en el log de cada paso. Para correrlos local: \`CHECK_BRANCH=$BASE node scripts/checks/run-all.js\`"
           } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Textos exactos aprobados y bloqueos de confirmación (spec v8.1)
+        run: node scripts/tests/textos-exactos-ventas.test.js

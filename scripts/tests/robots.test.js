@@ -52,8 +52,11 @@ function correr(rama, archivos, ajustes) {
   return { status: p.status, out: p.stdout };
 }
 const HDR = (source) => JSON.stringify({ headers: [{ source, headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] }] });
-const ROBOTS_OK = 'User-agent: *\nAllow: /\n';
-const base_main = { 'index.html': pag('Inicio'), 'servicios.html': pag('Servicios'), 'vercel.json': '{}', 'robots.txt': ROBOTS_OK };
+const SMURL = 'https://www.onix-ia.com/sitemap.xml';
+const SM = '<?xml version="1.0"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://www.onix-ia.com/</loc></url></urlset>';
+const ROBOTS_OK = `User-agent: *\nAllow: /\n\nSitemap: ${SMURL}\n`;
+const base_main = { 'index.html': pag('Inicio'), 'servicios.html': pag('Servicios'), 'vercel.json': '{}', 'robots.txt': ROBOTS_OK, 'sitemap.xml': SM };
+prueba('config real: robots.sitemapUrl', base.robots.sitemapUrl, SMURL);
 
 prueba('main: sitio indexable sin noindex → pasa', correr('main', base_main).status, 0);
 prueba('main: /salud (salud.html) con meta noindex → pasa la regla robots', correr('main', Object.assign({}, base_main, { 'salud.html': pag('Salud', META_NOINDEX) })).status, 0);
@@ -75,13 +78,41 @@ prueba('main: rutasNoindex con otra ruta → FALLA (error de configuración)', c
 prueba('main: con rutasNoindex inválida, ni /salud pasa', correr('main', Object.assign({}, base_main, { 'salud.html': pag('Salud', META_NOINDEX) }), (r) => { r.robots.rutasNoindex = ['/salud', '/otra']; }).status, 1);
 prueba('main: sin rutasNoindex, /salud noindex → FALLA', correr('main', Object.assign({}, base_main, { 'salud.html': pag('Salud', META_NOINDEX) }), (r) => { delete r.robots.rutasNoindex; }).status, 1);
 
-// dev: comportamiento sin cambios (todo noindex)
+// dev (config real): el FUENTE es indexable igual que main; el noindex de DEV se inyecta al desplegar (ver deploy-noindex.test.js)
+prueba('config real: robots.dev = robots.main = "index"', [base.robots.dev, base.robots.main], ['index', 'index']);
+prueba('dev: fuente indexable sin noindex → pasa (ya no exige noindex en el fuente)', correr('dev', base_main).status, 0);
+const d1 = correr('dev', Object.assign({}, base_main, { 'index.html': pag('Inicio', META_NOINDEX) }));
+prueba('dev: página con noindex en el fuente → FALLA (igual que main)', [d1.status, /index\.html/.test(d1.out)], [1, true]);
+prueba('dev: header noindex global en vercel.json → FALLA', correr('dev', Object.assign({}, base_main, { 'vercel.json': HDR('/(.*)') })).status, 1);
+prueba('dev: robots.txt «Disallow: /» en el fuente → FALLA', correr('dev', Object.assign({}, base_main, { 'robots.txt': 'User-agent: *\nDisallow: /\n' })).status, 1);
+prueba('dev: /salud noindex → pasa (rutasNoindex aplica también a dev)', correr('dev', Object.assign({}, base_main, { 'salud.html': pag('Salud', META_NOINDEX) })).status, 0);
+prueba('dev: otra página noindex junto a /salud → FALLA', correr('dev', Object.assign({}, base_main, { 'salud.html': pag('Salud', META_NOINDEX), 'servicios.html': pag('Servicios', META_NOINDEX) })).status, 1);
+
+// Sitemap (BLOQUEANTE, igual en dev y en main; se evalúa sobre el robots.txt del FUENTE, no el que DEV inyecta al desplegar)
+const sin = (o, k) => { const c = Object.assign({}, o); delete c[k]; return c; };
+for (const rama of ['dev', 'main']) {
+  const t = (n, archivos, esp, ajustes) => { const r = correr(rama, archivos, ajustes); prueba(`${rama}: ${n}`, [r.status, r.status === 1 ? /ERROR/.test(r.out) : true], esp); return r; };
+  t('robots.txt con «Sitemap:» y sitemap.xml presente → pasa', base_main, [0, true]);
+  const r1 = t('robots.txt SIN «Sitemap:» → FALLA', Object.assign({}, base_main, { 'robots.txt': 'User-agent: *\nAllow: /\n' }), [1, true]); prueba(`${rama}: …y el mensaje habla del sitemap`, /Sitemap/.test(r1.out), true);
+  const r2 = t('falta sitemap.xml → FALLA', sin(base_main, 'sitemap.xml'), [1, true]); prueba(`${rama}: …y el mensaje dice que falta sitemap.xml`, /falta sitemap\.xml/.test(r2.out), true);
+  t('falta robots.txt → FALLA', sin(base_main, 'robots.txt'), [1, true]);
+  t('«Sitemap:» con otra URL (apex en vez de www) → FALLA', Object.assign({}, base_main, { 'robots.txt': 'User-agent: *\nAllow: /\nSitemap: https://onix-ia.com/sitemap.xml\n' }), [1, true]);
+  t('«Sitemap:» con http (no https) → FALLA', Object.assign({}, base_main, { 'robots.txt': 'User-agent: *\nAllow: /\nSitemap: http://www.onix-ia.com/sitemap.xml\n' }), [1, true]);
+  t('«Sitemap:» comentado (#) → FALLA', Object.assign({}, base_main, { 'robots.txt': 'User-agent: *\nAllow: /\n# Sitemap: ' + SMURL + '\n' }), [1, true]);
+  t('sitemap.xml sin <urlset> → FALLA', Object.assign({}, base_main, { 'sitemap.xml': '<html>no es un sitemap</html>' }), [1, true]);
+  t('sitemap.xml con <loc> en otro host (apex) → FALLA', Object.assign({}, base_main, { 'sitemap.xml': SM.replace('https://www.onix-ia.com/', 'https://onix-ia.com/') }), [1, true]);
+  t('robots.sitemapUrl inválida en release-rules (http) → FALLA', base_main, [1, true], (r) => { r.robots.sitemapUrl = 'http://www.onix-ia.com/sitemap.xml'; });
+  t('con config en apex, robots.txt y sitemap en apex → pasa (cambio de una línea en release-rules)', Object.assign({}, base_main, { 'robots.txt': 'User-agent: *\nAllow: /\nSitemap: https://onix-ia.com/sitemap.xml\n', 'sitemap.xml': SM.replace('https://www.onix-ia.com/', 'https://onix-ia.com/') }), [0, true], (r) => { r.robots.sitemapUrl = 'https://onix-ia.com/sitemap.xml'; });
+  t('sin robots.sitemapUrl configurada: cualquier URL https …/sitemap.xml pasa', base_main, [0, true], (r) => { delete r.robots.sitemapUrl; });
+  t('sin robots.sitemapUrl configurada: «Sitemap:» relativa → FALLA', Object.assign({}, base_main, { 'robots.txt': 'User-agent: *\nAllow: /\nSitemap: /sitemap.xml\n' }), [1, true], (r) => { delete r.robots.sitemapUrl; });
+  t('el robots.txt que DEV inyecta («Disallow: /», sin Sitemap) NO es válido como fuente → FALLA', Object.assign({}, base_main, { 'robots.txt': 'User-agent: *\nDisallow: /\n' }), [1, true]);
+}
+
+// compatibilidad: si alguien vuelve a configurar robots.dev = "noindex", el check exige noindex en el fuente como antes
 const dev_ok = { 'index.html': pag('Inicio', META_NOINDEX), 'salud.html': pag('Salud', META_NOINDEX), 'vercel.json': HDR('/(.*)'), 'robots.txt': 'User-agent: *\nDisallow: /\n' };
-prueba('dev: todo noindex (incl. /salud) → pasa', correr('dev', dev_ok).status, 0);
-prueba('dev: una página sin noindex → FALLA', correr('dev', Object.assign({}, dev_ok, { 'servicios.html': pag('Servicios') })).status, 1);
-prueba('dev: /salud sin noindex → FALLA (rutasNoindex no relaja dev)', correr('dev', Object.assign({}, dev_ok, { 'salud.html': pag('Salud') })).status, 1);
-prueba('dev: header global ausente → FALLA', correr('dev', Object.assign({}, dev_ok, { 'vercel.json': '{}' })).status, 1);
-prueba('dev: la comprobación del header no cambia (cualquier source noindex cuenta) → pasa', correr('dev', Object.assign({}, dev_ok, { 'vercel.json': HDR('/salud') })).status, 0);
+const legacy = (r) => { r.robots.dev = 'noindex'; };
+prueba('legado dev=noindex: todo noindex → pasa', correr('dev', dev_ok, legacy).status, 0);
+prueba('legado dev=noindex: una página sin noindex → FALLA', correr('dev', Object.assign({}, dev_ok, { 'servicios.html': pag('Servicios') }), legacy).status, 1);
 
 console.log(fallos ? `\n✖ ${fallos} prueba(s) fallaron.` : '\n✔ Todas las pruebas de robots pasaron.');
 process.exit(fallos ? 1 : 0);
