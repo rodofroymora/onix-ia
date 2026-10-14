@@ -1,4 +1,4 @@
-/* ÓNIX · Documentos Vivos: «Pruébalo».
+/* ÓNIX · Base de Conocimiento Inteligente: «Pruébalo».
    El visitante elige una pregunta de ejemplo y ve el rastro de la búsqueda y la respuesta con sus fuentes.
    Todo el contenido ya está en el HTML (sin JS se ven todas las respuestas). Datos ficticios; no se envía ni se guarda nada. */
 (function () {
