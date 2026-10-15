@@ -69,10 +69,24 @@ function compilar(reglas) {
   }
   for (const t of reglas.textosExactosAprobados || []) {
     if (!t || !t.texto) continue;
-    const src = esc(t.texto.trim()).replace(/\s+/g, '\\s+').replace(/·/g, '[·•|-]');
-    mascaras.push({ id: t.id || 'textoExacto', re: new RegExp(src, 'giu') });
+    mascaras.push({ id: t.id || 'textoExacto', re: regexTextoExacto(t.texto) });
   }
   return { patrones, mascaras, negacion: reglas.negacionPermitida || null, errores };
+}
+
+// textosExactosAprobados (spec v8.1): coincidencia EXACTA (mayúsculas, acentos y puntuación; solo los espacios pueden
+// colapsar), con límites de palabra. Marcadores acotados: [negocio] = 1 a 4 palabras con mayúscula inicial;
+// [medio] = 1 a 8 palabras sin puntuación de oración. Nada de texto arbitrario.
+const PALABRA_NEGOCIO = "\\p{Lu}[\\p{L}\\p{N}'’&-]*";
+const PALABRA_MEDIO = '[\\p{L}\\p{N}][\\p{L}\\p{N}/-]*';
+const MARCADORES_TEXTO = {
+  '[negocio]': `${PALABRA_NEGOCIO}(?: ${PALABRA_NEGOCIO}){0,3}`,
+  '[medio]': `${PALABRA_MEDIO}(?: ${PALABRA_MEDIO}){0,7}`,
+};
+function regexTextoExacto(texto) {
+  const partes = texto.trim().split(/(\[negocio\]|\[medio\])/);
+  const src = partes.map((p) => MARCADORES_TEXTO[p] || esc(p).replace(/\s+/g, '\\s+')).join('');
+  return new RegExp('(?<![\\p{L}\\p{N}_])' + src + '(?![\\p{L}\\p{N}_])', 'gu');
 }
 
 /** Reemplaza cada excepción por espacios (misma longitud) para no mover posiciones. */
@@ -182,7 +196,7 @@ function revisarTexto(texto, comp, urlPagina = null, opciones = {}) {
   return res;
 }
 
-module.exports = { compilar, revisarTexto, enmascararExcepciones, enRuta, negado, estaNegada };
+module.exports = { regexTextoExacto, compilar, revisarTexto, enmascararExcepciones, enRuta, negado, estaNegada };
 
 if (require.main === module) {
   const reglas = L.leerReglas();

@@ -163,7 +163,7 @@
     { k: 'sol', q: '¿Qué quieres resolver primero?', o: [
       ['Atender WhatsApp o mi sitio', 0, 'Asistentes de WhatsApp y Voz'],
       ['Ordenar a mis prospectos', 0, 'Radar de Leads'],
-      ['Consultar mis documentos', 0, 'Documentos Vivos'],
+      ['Consultar mis documentos', 0, 'Base de Conocimiento Inteligente'],
       ['Preparar la información para mi contador', 0, 'Contabilidad Asistida'],
       ['Automatizar tareas de operación', 0, 'Agentes de Operación'],
       ['Varias de estas', 2, 'varias soluciones'],
@@ -174,10 +174,18 @@
     { k: 'con', q: '¿Con qué tendría que conectarse?', o: [['Con nada por ahora', 0], ['Una hoja de cálculo', 1], ['Mi sistema o herramienta comercial', 2]] },
     { k: 'tel', q: '¿Necesitas que también atienda llamadas?', o: [['No', 0], ['Sí', 2]] }
   ];
-  var NIVEL = [
-    { nom: 'Arranque', imp: 'Desde $4,900 más IVA', men: 'Desde $1,490 más IVA', inc: 'Incluye una solución lista, un canal, hasta 300 conversaciones al mes, una persona que recibe o aprueba y una sesión de configuración.' },
-    { nom: 'Negocio', imp: 'Desde $9,900 más IVA', men: 'Desde $2,990 más IVA', inc: 'Incluye una solución lista, hasta dos canales, hasta 1,000 conversaciones al mes, hasta cinco personas, conexión con una hoja de cálculo y un ajuste al mes.' },
-    { nom: 'A tu medida', inc: 'Tu caso combina soluciones, llamadas, sistemas propios o mucho volumen. Lo vemos en una revisión inicial y te proponemos alcance y precio.' }
+  /* El resultado ya no es un precio: es por dónde empezar y con qué alcance.
+     El servicio sale de la primera pregunta; el alcance, del resto. */
+  var ALCANCE = [
+    { nom: 'Acotado',
+      desc: 'Una solución y un canal.',
+      paso: 'Es el mejor punto de partida: se ve si funciona antes de ampliar. El primer paso sería dejar ese canal atendido, con alguien de tu equipo aprobando lo que sale.' },
+    { nom: 'Con más de un frente',
+      desc: 'Varios canales o un equipo que ya se reparte el trabajo.',
+      paso: 'Se puede empezar por uno y sumar el resto después. El primer paso sería elegir el canal que más te duele hoy y dejarlo resuelto.' },
+    { nom: 'A tu medida',
+      desc: 'Tu caso combina varias soluciones, llamadas o sistemas propios.',
+      paso: 'No hay respuesta de catálogo, y está bien. El primer paso sería una revisión inicial para ordenar por dónde conviene entrar, sin comprometerte a nada.' }
   ];
   var i = 0, resp = {}, nivel = 0;
 
@@ -222,21 +230,25 @@
     });
   }
   function terminar() {
-    var N = NIVEL[nivel];
+    var A = ALCANCE[nivel];
+    var servicio = resp.sol.extra || resp.sol.txt;
+    var esMedida = nivel === 2 || /varias|medida/i.test(servicio);
     escribiendo(function () {
-      burbuja(nivel === 2 ? 'Listo. Tu caso necesita una propuesta a tu medida.' : 'Listo. Este es el nivel que te corresponde.');
-      box.querySelector('[data-est-lvl]').innerHTML = '<span>Nivel sugerido</span>' + N.nom;
-      var price = box.querySelector('[data-est-price]');
-      price.hidden = nivel === 2;
-      if (nivel < 2) {
-        box.querySelector('[data-est-imp]').textContent = N.imp;
-        box.querySelector('[data-est-men]').textContent = N.men;
-      }
-      box.querySelector('[data-est-inc]').textContent = N.inc;
-      var sol = resp.sol.extra || resp.sol.txt;
-      var msg = 'Hola, usé el estimador de ÓNIX. Me interesa: ' + sol + '. Nivel sugerido: ' + N.nom +
-        '. Canales: ' + resp.can.txt + '. Mensajes al mes: ' + resp.vol.txt + '. Personas: ' + resp.per.txt +
-        '. Conexión: ' + resp.con.txt + '. Llamadas: ' + resp.tel.txt + '. ' + AVISO;
+      burbuja(esMedida
+        ? 'Listo. Tu caso no tiene una respuesta de catálogo, y está bien: lo vemos juntos.'
+        : 'Listo. Esto es por dónde yo empezaría.');
+
+      box.querySelector('[data-est-lvl]').innerHTML =
+        '<span>Yo empezaría por</span>' + (esMedida ? 'Una revisión inicial' : servicio);
+
+      var alc = box.querySelector('[data-est-alcance]');
+      if (alc) alc.innerHTML = '<span>Alcance</span>' + A.nom;
+
+      box.querySelector('[data-est-inc]').textContent = A.desc + ' ' + A.paso;
+
+      var msg = 'Hola, usé el estimador de ÓNIX. Me interesa: ' + servicio +
+        '. Alcance: ' + A.nom + '. Canales: ' + resp.can.txt + '. Mensajes al mes: ' + resp.vol.txt +
+        '. Personas: ' + resp.per.txt + '. Conexión: ' + resp.con.txt + '. Llamadas: ' + resp.tel.txt + '. ' + AVISO;
       wa.href = BASE + encodeURIComponent(msg);
       res.hidden = false;
       res.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest' });
