@@ -55,7 +55,7 @@ const META_ROBOTS_RE = /<meta\b[^>]*\bname\s*=\s*["']robots["'][^>]*>/i;
    En producción `demos/` se excluye del paquete, así que un enlace fijo en el
    HTML quedaría roto. Se inyecta aquí, igual que el noindex. */
 const DEMO_POR_SERVICIO = {
-  'contabilidad-asistida.html': ['/demos/contabilidad-asistida', 'Contabilidad Asistida'],
+  'contabilidad-asistida.html': ['/demos/contabilidad-asistida', 'Gestión de Comprobantes con IA'],
   'documentos-vivos.html':      ['/demos/documentos-vivos', 'Base de Conocimiento Inteligente'],
   'radar-de-leads.html':        ['/demos/radar-de-leads', 'Radar de Leads'],
   'agentes-de-operacion.html':  ['/demos/agentes-de-operacion', 'Agentes de Operación'],
