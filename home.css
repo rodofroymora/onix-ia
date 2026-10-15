@@ -260,12 +260,12 @@
 /* ── Estimador: resultado por alcance, no por precio ────────────────────── */
 .est__pts { list-style: none; margin: 1.3rem 0 0; padding: 0; display: grid; gap: .7rem; }
 .est__pts li {
-  display: grid; grid-template-columns: auto 1fr; gap: .6rem; align-items: start;
+  position: relative; padding-left: 1rem;
   font-size: .9375rem; line-height: 1.55; color: var(--ink-2);
 }
 .est__pts li::before {
   content: ""; width: .4rem; height: .4rem; border-radius: 50%;
-  background: var(--accent); margin-top: .55rem;
+  background: var(--accent); position: absolute; left: 0; top: .55rem;
 }
 .est__pts b { color: var(--ink); font-weight: 500; }
 .est__lvl--alt { margin-top: .35rem; opacity: .8; }
