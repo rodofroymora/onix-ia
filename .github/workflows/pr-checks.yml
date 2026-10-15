@@ -88,6 +88,9 @@ jobs:
       - name: Pruebas del paquete de deploy (DEV con demos y noindex; PROD sin demos)
         run: node scripts/tests/deploy-demos.test.js
 
+      - name: Pruebas spec v9 Gestión de Comprobantes (bloqueos, textos exactos, pregunta del usuario)
+        run: node scripts/tests/gestion-comprobantes-v9.test.js
+
       - name: Resumen
         if: always()
         env:
