@@ -1,4 +1,4 @@
-/* Demostración · Gestión de Comprobantes con IA.
+/* Demostración · Contabilidad Asistida.
    El scroll conduce la narración: cada paso enciende su escena en el panel.
    Datos ficticios. No se envía ni se guarda nada. */
 (function () {
@@ -106,7 +106,7 @@
   function responder(texto) {
     if (FISCAL.test(texto)) {
       burbuja('dc-msg--in esc',
-        'Esa pregunta le corresponde a tu contador o a un especialista fiscal. Yo te ayudo a ordenar y encontrar tus comprobantes.' +
+        'Esa la resuelve tu contador. Yo no doy orientación en materia fiscal.' +
         '<small>Te paso con administración para que lo canalice con el C.P. Demo.</small>');
       return;
     }

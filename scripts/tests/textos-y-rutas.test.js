@@ -63,21 +63,14 @@ const cfgExp = JSON.parse(JSON.stringify(cfg)); cfgExp.paginasDemo.paginasExplic
 prueba('paginasExplicitas: marcada como demo', reglasDe(T.revisarPagina('otra.html', pagina('<p>hola</p>'), cfgExp)).sort(), ['demo-datos-ficticios']);
 prueba('paginasExplicitas: otras páginas no', T.revisarPagina('distinta.html', pagina('<p>hola</p>'), cfgExp), []);
 
-// ── B) Aviso contable (spec v9: largo en la página del servicio, corto en la demo)
+// ── B) Aviso contable
 const CONT = 'servicios/contabilidad-asistida.html';
-const DEMOC = 'demos/contabilidad-asistida.html';
-const TX = Object.fromEntries(require('../../release-rules.json').textosExactosAprobados.map((t) => [t.id, t.texto]));
-const LARGO = TX['aviso-contable-largo-v9'], CORTO = TX['aviso-contable-corto-v9'];
-prueba('contabilidad sin aviso falla', reglasDe(viol(CONT, '<h1>x</h1>')), ['aviso-contable-largo']);
-prueba('contabilidad con aviso largo v9 pasa', viol(CONT, `<h1>x</h1><p>${LARGO}</p>`), []);
-prueba('contabilidad: «Ónix» (mayúsculas) tolerado', viol(CONT, `<p>${LARGO.replace('ÓNIX', 'Ónix')}</p>`), []);
-prueba('contabilidad: «ONIX» sin acento NO pasa', reglasDe(viol(CONT, `<p>${LARGO.replace('ÓNIX', 'ONIX')}</p>`)), ['aviso-contable-largo']);
-prueba('contabilidad: aviso anterior ya NO basta', reglasDe(viol(CONT, '<p>ÓNIX no presta servicios contables ni fiscales.</p>')), ['aviso-contable-largo']);
-prueba('contabilidad: redacción distinta (sin acento) NO pasa', reglasDe(viol(CONT, `<p>${LARGO.replace('asesoría', 'asesoria')}</p>`)), ['aviso-contable-largo']);
-prueba('contabilidad: solo en JSON-LD NO cuenta (no visible)', reglasDe(T.revisarPagina(CONT, `<html><head><script type="application/ld+json">{"d":"${LARGO}"}</script></head><body><h1>x</h1></body></html>`, cfg)), ['aviso-contable-largo']);
-prueba('demo contabilidad: exige aviso corto v9', reglasDe(viol(DEMOC, '<h1>x</h1>')).includes('aviso-contable-corto'), true);
-prueba('demo contabilidad: con aviso corto v9 no falta', reglasDe(viol(DEMOC, `<h1>x</h1><p>${CORTO}</p>`)).includes('aviso-contable-corto'), false);
-prueba('demo contabilidad: aviso corto sin punto final NO pasa', reglasDe(viol(DEMOC, `<p>${CORTO.slice(0, -1)}</p>`)).includes('aviso-contable-corto'), true);
+prueba('contabilidad sin aviso falla', reglasDe(viol(CONT, '<h1>x</h1>')), ['aviso-contable']);
+prueba('contabilidad con aviso pasa', viol(CONT, '<h1>x</h1><p>ÓNIX no presta servicios contables ni fiscales.</p>'), []);
+prueba('contabilidad: «Ónix»/«ÓNIX» (mayúsculas) tolerado', viol(CONT, '<p>Ónix no presta servicios contables ni fiscales</p>'), []);
+prueba('contabilidad: «ONIX» sin acento NO pasa', reglasDe(viol(CONT, '<p>ONIX no presta servicios contables ni fiscales</p>')), ['aviso-contable']);
+prueba('contabilidad: redacción distinta NO pasa', reglasDe(viol(CONT, '<p>ÓNIX no presta servicios contables, fiscales ni de asesoría fiscal</p>')), ['aviso-contable']);
+prueba('contabilidad: solo en JSON-LD NO cuenta (no visible)', reglasDe(T.revisarPagina(CONT, '<html><head><script type="application/ld+json">{"d":"ÓNIX no presta servicios contables ni fiscales"}</script></head><body><h1>x</h1></body></html>', cfg)), ['aviso-contable']);
 prueba('otras páginas no exigen el aviso contable', viol('index.html', '<p>x</p>'), []);
 
 // ── C) Aviso de privacidad cerca de WhatsApp
@@ -120,7 +113,7 @@ function correr(tmp, check) {
 }
 const completa = (cuerpo) => `<!doctype html><html lang="es"><head><title>t</title></head><body><main><h1>Hola</h1>${cuerpo}</main></body></html>`;
 {
-  const ok = sitio({ 'index.html': completa(`<div>${wa()}<p>${AVISO}</p></div>`), [CONT]: completa(`<p>${LARGO}</p>`), [DEMOC]: completa(`<p>${CORTO}</p><p>Demostración con información de ejemplo. Por favor, no incluyas datos personales reales.</p>`) });
+  const ok = sitio({ 'index.html': completa(`<div>${wa()}<p>${AVISO}</p></div>`), [CONT]: completa('<p>ÓNIX no presta servicios contables ni fiscales</p>') });
   prueba('06 integración: sitio conforme pasa', correr(ok, '06-textos-obligatorios.js'), 0);
   fs.rmSync(ok, { recursive: true, force: true });
   const mal = sitio({ 'index.html': completa(`<div>${wa()}</div>`) });

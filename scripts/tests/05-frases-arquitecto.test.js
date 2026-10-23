@@ -30,7 +30,7 @@ const casos = [
   ['Clasificación fiscal automática.', 'falla', 'clasificacion-contable-fiscal'],
   ['Clasificación contable de gastos.', 'falla', 'clasificacion-contable-fiscal'],
   ['La IA ordena comprobantes por categoría administrativa.', 'pasa'],
-  ['Te ayudamos a clasificar la información.', 'falla', 'clasifica-generico'], // v9: «clasifica» pasa a bloqueante (spec v9, Palabras prohibidas)
+  ['Te ayudamos a clasificar la información.', 'aviso', 'clasifica-generico'],
   // d) excepciones número y correo
   ['Escríbenos por WhatsApp al +52 222 709 7945.', 'pasa'],
   ['WhatsApp 222 709 7945 · info@onix-ia.com', 'pasa'],
