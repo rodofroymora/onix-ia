@@ -223,11 +223,11 @@
     },
     {
       "id": "clasifica-generico",
-      "nivel": "bloqueante",
+      "nivel": "advertencia",
       "regex": "(?<![\\p{L}])clasific[\\p{L}\\p{N}_]*",
       "flags": "giu",
       "ejemplo": "clasifica",
-      "fuente": "Decisión de dirección 2026-10-10 (en texto de cliente usar “ordena por categoría administrativa”). Spec v9 «Gestión de Comprobantes con IA» › Palabras prohibidas (Legal): en texto público se usa «Organizador» y «ordena», nunca «Clasificador» ni «clasifica» (bloqueante desde v9)."
+      "fuente": "Decisión de dirección 2026-10-10 (en texto de cliente usar “ordena por categoría administrativa”)"
     },
     {
       "id": "credenciales-sat-pedir",
@@ -334,38 +334,6 @@
       "fuente": "Decisión de dirección (Contabilidad)"
     },
     {
-      "id": "fiscal-v9-prohibidas",
-      "nivel": "bloqueante",
-      "regex": "(?<![\\p{L}\\p{N}_])(?:contabilidad electr[oó]nica|cumplimiento fiscal|conciliaci[oó]n fiscal|evitas? multas|ahorras? impuestos|contador(?:a)? virtual|IA contadora)(?![\\p{L}\\p{N}_])",
-      "flags": "giu",
-      "ejemplo": "contabilidad electrónica; cumplimiento fiscal; conciliación fiscal; evita multas; ahorra impuestos; contador virtual; IA contadora",
-      "fuente": "Spec v9 «Gestión de Comprobantes con IA» › Palabras prohibidas (Legal). Bloqueante también en negación (el aviso aprobado no usa estas palabras)."
-    },
-    {
-      "id": "pregunta-deducible",
-      "nivel": "bloqueante",
-      "regex": "¿\\s*esto\\s+es\\s+deducible\\s*\\?",
-      "flags": "giu",
-      "ejemplo": "¿Esto es deducible?",
-      "fuente": "Spec v9: «¿esto es deducible?» solo como pregunta del usuario en la demo (ver preguntasUsuarioPermitidas); en cualquier otro lugar es bloqueante."
-    },
-    {
-      "id": "fiscal-vigente-cancelada",
-      "nivel": "bloqueante",
-      "regex": "(?<![\\p{L}\\p{N}_])(?:vigentes?|cancelad[oa]s?)(?![\\p{L}\\p{N}_])[^.;\\n]{0,40}(?<![\\p{L}\\p{N}_])(?:SAT|CFDI|facturas?|comprobantes? fiscal(?:es)?)(?![\\p{L}\\p{N}_])",
-      "flags": "giu",
-      "ejemplo": "factura cancelada ante el SAT; vigente ante el SAT",
-      "fuente": "Spec v9 «Gestión de Comprobantes con IA» › Palabras prohibidas (Legal): «vigente» y «cancelada» solo en sentido fiscal. Contexto = SAT, CFDI, factura o comprobante fiscal en la misma oración (40 caracteres después). El orden inverso (factura … vigente/cancelada) ya lo cubre fiscal-juicio. «vigente» fuera de ese contexto (aviso, identificación) no bloquea."
-    },
-    {
-      "id": "nombre-anterior-contabilidad",
-      "nivel": "bloqueante",
-      "regex": "(?<![\\p{L}\\p{N}_])contabilidad asistida(?![\\p{L}\\p{N}_])",
-      "flags": "giu",
-      "ejemplo": "Contabilidad Asistida",
-      "fuente": "Spec v9 «Gestión de Comprobantes con IA» › Palabras prohibidas (Legal): nombre anterior; el servicio se llama «Gestión de Comprobantes con IA» (las rutas /contabilidad-asistida se conservan)."
-    },
-    {
       "id": "impuestos-calculo",
       "nivel": "bloqueante",
       "regex": "(?<![\\p{L}\\p{N}_])calcul[\\p{L}]*\\s+(?:(?:tus?|sus?|los|las|el|nuestros?)\\s+)?(?:impuestos|IVA|ISR|retenciones|contribuciones)(?![\\p{L}\\p{N}_])|(?<![\\p{L}\\p{N}_])(?:declaraci[oó]n(?:es)? (?:pre)?llenadas?|DIOT|contabilidad electr[oó]nica)(?![\\p{L}\\p{N}_])",
@@ -421,7 +389,7 @@
       "regex": "(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))garantiza[\\p{L}\\p{N}_]*|(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))garant[ií]as? de resultad|resultados garantizados|(?:(?<![\\p{L}\\p{N}_])(?=[\\p{L}\\p{N}_])|(?<=[\\p{L}\\p{N}_])(?![\\p{L}\\p{N}_]))100\\s?%",
       "flags": "giu",
       "ejemplo": "resultados garantizados",
-      "fuente": "01-oferta › Qué no prometemos. Spec v9 «Gestión de Comprobantes con IA» › Palabras prohibidas (Legal): «garantiza»."
+      "fuente": "01-oferta › Qué no prometemos"
     },
     {
       "id": "ventas-cobros-inventario",
@@ -570,7 +538,7 @@
       "fuente": "Decisión de dirección 2026-10-10 (opción a) + Nota de Legal (salud)"
     }
   ],
-  "_textosExactosAprobados_NOTA": "Spec v8.1 «Atención de ventas y reservaciones con IA» (Arquitecto), punto (c) de pendientes. El check 05 enmascara SOLO la coincidencia EXACTA (mayúsculas, acentos, puntuación; los espacios pueden colapsar) antes de aplicar frasesProhibidas; cualquier variante sigue sujeta a las reglas. Marcadores: [negocio] = nombre de negocio acotado: 1 a 4 palabras que empiezan con mayúscula (letras, dígitos, ’'&-), p. ej. «Negocio Ejemplo»; [medio] = 1 a 8 palabras sin puntuación de oración, p. ej. «el sitio de Negocio Ejemplo». La spec no define la forma del marcador: esta es la decisión de DevOps. v9 (Gestión de Comprobantes con IA): aviso corto, aviso largo y respuesta fiscal fija, literales de la spec v9.",
+  "_textosExactosAprobados_NOTA": "Spec v8.1 «Atención de ventas y reservaciones con IA» (Arquitecto), punto (c) de pendientes. El check 05 enmascara SOLO la coincidencia EXACTA (mayúsculas, acentos, puntuación; los espacios pueden colapsar) antes de aplicar frasesProhibidas; cualquier variante sigue sujeta a las reglas. Marcadores: [negocio] = nombre de negocio acotado: 1 a 4 palabras que empiezan con mayúscula (letras, dígitos, ’'&-), p. ej. «Negocio Ejemplo»; [medio] = 1 a 8 palabras sin puntuación de oración, p. ej. «el sitio de Negocio Ejemplo». La spec no define la forma del marcador: esta es la decisión de DevOps.",
   "textosExactosAprobados": [
     {
       "id": "recibimos-solicitud",
@@ -607,18 +575,6 @@
     {
       "id": "enlace-aviso-onix",
       "texto": "Aviso de privacidad de ÓNIX"
-    },
-    {
-      "id": "aviso-contable-corto-v9",
-      "texto": "ÓNIX no presta servicios contables ni fiscales. La IA ordena y prepara tus comprobantes; las decisiones fiscales son de tu negocio y, en su caso, de tu contador."
-    },
-    {
-      "id": "aviso-contable-largo-v9",
-      "texto": "ÓNIX no presta servicios contables, fiscales ni de asesoría fiscal y no sustituye a un contador, profesional fiscal o despacho contable. Gestión de Comprobantes con IA es una herramienta de automatización administrativa: reúne, ordena, asigna categorías administrativas y prepara tus comprobantes y movimientos para revisión. No calcula impuestos, retenciones ni contribuciones; no presenta declaraciones; no valida ni verifica facturas (CFDI) ante el SAT; no emite, timbra ni cancela facturas, y nunca te pedirá tu e.firma ni tu contraseña del SAT. La revisión, las decisiones fiscales y la responsabilidad ante el SAT corresponden a tu negocio y, en su caso, a tu contador. Te recomendamos usar esta herramienta junto con un contador."
-    },
-    {
-      "id": "respuesta-fiscal-fija-v9",
-      "texto": "Esa pregunta le corresponde a tu contador o a un especialista fiscal. Yo te ayudo a ordenar y encontrar tus comprobantes."
     }
   ],
   "rutasConSectorPermitido": [
@@ -713,28 +669,16 @@
         "explicacion": "Toda página demo debe llevar esta leyenda literal (mayúsculas, acentos y puntuación exactos). La leyenda anterior ya no se acepta."
       },
       {
-        "id": "aviso-contable-largo",
+        "id": "aviso-contable",
         "aplicaA": "paginas",
         "paginas": [
           "servicios/contabilidad-asistida.html"
         ],
-        "texto": "ÓNIX no presta servicios contables, fiscales ni de asesoría fiscal y no sustituye a un contador, profesional fiscal o despacho contable. Gestión de Comprobantes con IA es una herramienta de automatización administrativa: reúne, ordena, asigna categorías administrativas y prepara tus comprobantes y movimientos para revisión. No calcula impuestos, retenciones ni contribuciones; no presenta declaraciones; no valida ni verifica facturas (CFDI) ante el SAT; no emite, timbra ni cancela facturas, y nunca te pedirá tu e.firma ni tu contraseña del SAT. La revisión, las decisiones fiscales y la responsabilidad ante el SAT corresponden a tu negocio y, en su caso, a tu contador. Te recomendamos usar esta herramienta junto con un contador.",
+        "texto": "ÓNIX no presta servicios contables ni fiscales",
         "ignorarMayusculasEn": [
           "ÓNIX"
         ],
-        "explicacion": "Spec v9: aviso versión larga (Contador + Legal) visible en la página del servicio. Reemplaza al aviso anterior «ÓNIX no presta servicios contables ni fiscales»."
-      },
-      {
-        "id": "aviso-contable-corto",
-        "aplicaA": "paginas",
-        "paginas": [
-          "demos/contabilidad-asistida.html"
-        ],
-        "texto": "ÓNIX no presta servicios contables ni fiscales. La IA ordena y prepara tus comprobantes; las decisiones fiscales son de tu negocio y, en su caso, de tu contador.",
-        "ignorarMayusculasEn": [
-          "ÓNIX"
-        ],
-        "explicacion": "Spec v9: aviso corto aprobado dentro de la demo (pantalla de entrada y pie)."
+        "explicacion": "La página de Contabilidad Asistida y su demo deben llevar este aviso visible (no basta con JSON-LD o metas). Esta página hoy no tiene elementos demo; si se añade uno, aplican además las reglas de páginas demo."
       }
     ],
     "avisoPrivacidadCercaDeWhatsapp": {
@@ -767,17 +711,6 @@
     ],
     "excluirRutas": [
       "demos/"
-    ]
-  },
-  "preguntasUsuarioPermitidas": {
-    "_NOTA": "Spec v9: «¿esto es deducible?» solo se permite como PREGUNTA DEL USUARIO dentro de la demo. El check 05 la omite únicamente si es el contenido completo (texto exacto, mayúscula inicial opcional) de un elemento con la clase indicada en una de las páginas indicadas; en cualquier otro lugar siguen aplicando las reglas (fiscal-palabra-suelta).",
-    "paginas": [
-      "demos/contabilidad-asistida.html"
-    ],
-    "clase": "dc-msg--out",
-    "textos": [
-      "¿Esto es deducible?",
-      "¿esto es deducible?"
     ]
   }
 }
