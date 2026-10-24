@@ -64,7 +64,7 @@ prueba('paginasExplicitas: marcada como demo', reglasDe(T.revisarPagina('otra.ht
 prueba('paginasExplicitas: otras páginas no', T.revisarPagina('distinta.html', pagina('<p>hola</p>'), cfgExp), []);
 
 // ── B) Aviso contable (spec v9: largo en la página del servicio, corto en la demo)
-const CONT = 'servicios/contabilidad-asistida.html';
+const CONT = 'servicios/gestion-de-comprobantes-con-ia.html';
 const DEMOC = 'demos/contabilidad-asistida.html';
 const TX = Object.fromEntries(require('../../release-rules.json').textosExactosAprobados.map((t) => [t.id, t.texto]));
 const LARGO = TX['aviso-contable-largo-v9'], CORTO = TX['aviso-contable-corto-v9'];
@@ -157,7 +157,7 @@ const T1 = '<p>Finalidades del tratamiento.</p>', T2 = '<p>Datos personales sens
 const cada = (archivo, aj) => [run({ [archivo]: completa(T1) }, '05-frases-prohibidas.js', aj), run({ [archivo]: completa(T2) }, '05-frases-prohibidas.js', aj)];
 prueba('05: «tratamiento» y «salud» (cada una por separado) pasan en el aviso', cada(AV), [0, 0]);
 prueba('05: cada término FALLA por separado en index.html', cada('index.html'), [1, 1]);
-prueba('05: cada término FALLA por separado en servicios/contabilidad-asistida.html', cada('servicios/contabilidad-asistida.html'), [1, 1]);
+prueba('05: cada término FALLA por separado en servicios/gestion-de-comprobantes-con-ia.html', cada('servicios/gestion-de-comprobantes-con-ia.html'), [1, 1]);
 prueba('05: cada término FALLA en una página de nombre parecido (mi-aviso-de-privacidad.html)', cada('mi-aviso-de-privacidad.html'), [1, 1]);
 prueba('05: cada término FALLA en aviso-de-privacidad/otra.html (no es la ruta exacta)', cada('aviso-de-privacidad/otra.html'), [1, 1]);
 prueba('05: sin la excepción de términos, el aviso falla con cada término', cada(AV, (r) => { r.excepcionesPorRuta = r.excepcionesPorRuta.filter((e) => !e.terminos); }), [1, 1]);

@@ -44,7 +44,7 @@ Nombre de la rama: `cambio/<corto>`, en minúsculas y con guiones, p. ej. `cambi
 
 ### Gestión de Comprobantes con IA (spec v9)
 
-- **Nombre:** «Gestión de Comprobantes con IA» (antes Contabilidad Asistida). Las rutas `/servicios/contabilidad-asistida` y `/demos/contabilidad-asistida` se conservan. «Contabilidad Asistida» en texto visible es bloqueante (`nombre-anterior-contabilidad`).
+- **Nombre:** «Gestión de Comprobantes con IA» (antes Contabilidad Asistida). La ruta del servicio es `/servicios/gestion-de-comprobantes-con-ia` (301 desde `/servicios/contabilidad-asistida`, en vercel.json); `/demos/contabilidad-asistida` se conserva. «Contabilidad Asistida» en texto visible es bloqueante (`nombre-anterior-contabilidad`).
 - **Palabras prohibidas (check 05, bloqueantes):** `fiscal-v9-prohibidas` (contabilidad electrónica, cumplimiento fiscal, conciliación fiscal, evita multas, ahorra impuestos, contador virtual, IA contadora; con o sin acento, también en negación), `garantia` (garantiza/garantizado), `clasifica-generico` (clasifica, Clasificador, Clasificación: usar «ordena»/«Organizador»), `fiscal-vigente-cancelada` y `fiscal-juicio` («vigente»/«cancelada» solo bloquean junto a SAT, CFDI, factura o comprobante fiscal en la misma oración).
 - **Textos exactos (`textosExactosAprobados`):** aviso corto, aviso largo y respuesta fiscal fija de la spec v9, literales. Cualquier variante (acento, mayúscula, puntuación) vuelve a pasar por las reglas.
 - **Avisos obligatorios (check 06):** la página del servicio lleva el aviso largo (`aviso-contable-largo`); la demo, el aviso corto (`aviso-contable-corto`). El aviso anterior ya no basta.

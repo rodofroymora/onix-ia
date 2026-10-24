@@ -716,7 +716,7 @@
         "id": "aviso-contable-largo",
         "aplicaA": "paginas",
         "paginas": [
-          "servicios/contabilidad-asistida.html"
+          "servicios/gestion-de-comprobantes-con-ia.html"
         ],
         "texto": "ÓNIX no presta servicios contables, fiscales ni de asesoría fiscal y no sustituye a un contador, profesional fiscal o despacho contable. Gestión de Comprobantes con IA es una herramienta de automatización administrativa: reúne, ordena, asigna categorías administrativas y prepara tus comprobantes y movimientos para revisión. No calcula impuestos, retenciones ni contribuciones; no presenta declaraciones; no valida ni verifica facturas (CFDI) ante el SAT; no emite, timbra ni cancela facturas, y nunca te pedirá tu e.firma ni tu contraseña del SAT. La revisión, las decisiones fiscales y la responsabilidad ante el SAT corresponden a tu negocio y, en su caso, a tu contador. Te recomendamos usar esta herramienta junto con un contador.",
         "ignorarMayusculasEn": [

@@ -9,5 +9,12 @@
     "deploymentEnabled": {
       "main": false
     }
-  }
+  },
+  "redirects": [
+    {
+      "source": "/servicios/contabilidad-asistida",
+      "destination": "/servicios/gestion-de-comprobantes-con-ia",
+      "permanent": true
+    }
+  ]
 }
