@@ -34,6 +34,27 @@ const esc = (s) => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const conG = (flags) => (String(flags || 'u').includes('g') ? String(flags || 'u') : String(flags || 'u') + 'g');
 const NIVELES = ['bloqueante', 'advertencia'];
 
+/**
+ * P39-01: el texto precargado de los enlaces (p. ej. wa.me/?text=…) va URL-encoded y el visitante lo envía tal cual,
+ * así que se decodifica y se audita junto con el texto visible.
+ */
+function textoHrefsDecodificados(html) {
+  let out = '';
+  const re = /href\s*=\s*("([^"]*)"|'([^']*)')/gi;
+  let m;
+  while ((m = re.exec(html))) {
+    const href = (m[2] !== undefined ? m[2] : m[3]).replace(/&amp;/g, '&');
+    const q = href.indexOf('?');
+    if (q < 0) continue;
+    for (const par of href.slice(q + 1).split('&')) {
+      const [k, v] = par.split('=');
+      if (k !== 'text' || !v) continue;
+      try { out += ' \n ' + decodeURIComponent(v.replace(/\+/g, ' ')); } catch (e) { /* href mal codificado: lo revisa el check 03 */ }
+    }
+  }
+  return out;
+}
+
 /** Compila reglas y excepciones desde release-rules.json. Devuelve { patrones, mascaras, negacion, errores }. */
 function compilar(reglas) {
   const patrones = [];
@@ -87,6 +108,23 @@ function regexTextoExacto(texto) {
   const partes = texto.trim().split(/(\[negocio\]|\[medio\])/);
   const src = partes.map((p) => MARCADORES_TEXTO[p] || esc(p).replace(/\s+/g, '\\s+')).join('');
   return new RegExp('(?<![\\p{L}\\p{N}_])' + src + '(?![\\p{L}\\p{N}_])', 'gu');
+}
+
+/**
+ * Spec v9 (preguntasUsuarioPermitidas): borra del HTML el texto de una pregunta permitida SOLO cuando es el contenido
+ * completo de un elemento con la clase indicada (burbuja del usuario) en una de las páginas indicadas.
+ */
+function omitirPreguntasUsuario(html, nombre, reglas) {
+  const cfg = reglas && reglas.preguntasUsuarioPermitidas;
+  if (!cfg || !Array.isArray(cfg.textos) || !cfg.clase) return html;
+  if (Array.isArray(cfg.paginas) && !cfg.paginas.includes(nombre)) return html;
+  const clase = esc(cfg.clase);
+  let h = html;
+  for (const t of cfg.textos) {
+    const re = new RegExp(`(<([a-z][a-z0-9]*)\\b[^>]*\\bclass\\s*=\\s*["'][^"']*(?<![\\w-])${clase}(?![\\w-])[^"']*["'][^>]*>)\\s*${esc(t)}\\s*(</\\2\\s*>)`, 'gu');
+    h = h.replace(re, (m, a, tag, c) => a + ' '.repeat(m.length - a.length - c.length) + c);
+  }
+  return h;
 }
 
 /** Reemplaza cada excepción por espacios (misma longitud) para no mover posiciones. */
@@ -196,7 +234,7 @@ function revisarTexto(texto, comp, urlPagina = null, opciones = {}) {
   return res;
 }
 
-module.exports = { regexTextoExacto, compilar, revisarTexto, enmascararExcepciones, enRuta, negado, estaNegada };
+module.exports = { omitirPreguntasUsuario, regexTextoExacto, compilar, revisarTexto, enmascararExcepciones, enRuta, negado, estaNegada };
 
 if (require.main === module) {
   const reglas = L.leerReglas();
@@ -216,7 +254,7 @@ if (require.main === module) {
     if (exentas.size) R.nota(`${nombre}: excepción por ruta activa para las frases: ${[...exentas].join(', ')}.`);
     const terminos = L.terminosExentosPorRuta(reglas, nombre);
     if (terminos.size) R.nota(`${nombre}: excepción por ruta activa para las palabras: ${[...terminos].join(', ')}.`);
-    const hallazgos = revisarTexto(L.textoAuditable(html), comp, L.urlDePagina(f), { exentas, terminos });
+    const hallazgos = revisarTexto(L.textoAuditable(omitirPreguntasUsuario(html, nombre, reglas)) + textoHrefsDecodificados(html), comp, L.urlDePagina(f), { exentas, terminos });
     for (const p of hallazgos.permitidas) R.nota(`${nombre}: [${p.id}] "${p.coincidencia}" permitida (${p.motivo}).`);
     for (const h of hallazgos) {
       const linea = L.lineaDeFragmento(html, h.coincidencia);

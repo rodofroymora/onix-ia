@@ -1,4 +1,4 @@
-/* ÓNIX · Contabilidad Asistida: "Pruébalo".
+/* ÓNIX · Gestión de Comprobantes con IA: "Pruébalo".
    El visitante marca qué documentos del mes ya llegaron y ve cómo avanza el paquete
    para su contador y qué falta. Datos ficticios (Negocio Ejemplo, C.P. Demo).
    No se envía ni se guarda nada. Sin JS, el HTML ya muestra el estado inicial. */

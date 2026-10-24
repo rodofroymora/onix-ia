@@ -158,13 +158,15 @@
   var wa = box.querySelector('[data-est-wa]');
   var BASE = 'https://wa.me/522227097945?text=';
   var AVISO = 'Aviso de privacidad: https://www.onix-ia.com/aviso-de-privacidad';
+  /* Aviso corto v9 (P39-04): visible siempre que el resultado nombre Gestión de Comprobantes con IA. */
+  var AVISO_COMPROBANTES = 'ÓNIX no presta servicios contables ni fiscales. La IA ordena y prepara tus comprobantes; las decisiones fiscales son de tu negocio y, en su caso, de tu contador.';
   /* n: 0 Arranque · 1 Negocio · 2 A tu medida. El nivel final es el más alto que marque cualquier respuesta. */
   var PREG = [
     { k: 'sol', q: '¿Qué quieres resolver primero?', o: [
       ['Atender WhatsApp o mi sitio', 0, 'Asistentes de WhatsApp y Voz'],
       ['Ordenar a mis prospectos', 0, 'Radar de Leads'],
       ['Consultar mis documentos', 0, 'Base de Conocimiento Inteligente'],
-      ['Preparar la información para mi contador', 0, 'Contabilidad Asistida'],
+      ['Preparar la información para mi contador', 0, 'Gestión de Comprobantes con IA'],
       ['Automatizar tareas de operación', 0, 'Agentes de Operación'],
       ['Varias de estas', 2, 'varias soluciones'],
       ['Otra cosa', 2, 'algo a la medida']] },
@@ -244,7 +246,8 @@
       var alc = box.querySelector('[data-est-alcance]');
       if (alc) alc.innerHTML = '<span>Alcance</span>' + A.nom;
 
-      box.querySelector('[data-est-inc]').textContent = A.desc + ' ' + A.paso;
+      box.querySelector('[data-est-inc]').textContent = A.desc + ' ' + A.paso +
+        (servicio === 'Gestión de Comprobantes con IA' ? ' ' + AVISO_COMPROBANTES : '');
 
       var msg = 'Hola, usé el estimador de ÓNIX. Me interesa: ' + servicio +
         '. Alcance: ' + A.nom + '. Canales: ' + resp.can.txt + '. Mensajes al mes: ' + resp.vol.txt +
