@@ -14,7 +14,7 @@
     {
       "source": "/servicios/contabilidad-asistida",
       "destination": "/servicios/gestion-de-comprobantes-con-ia",
-      "permanent": true
+      "statusCode": 301
     }
   ]
 }
