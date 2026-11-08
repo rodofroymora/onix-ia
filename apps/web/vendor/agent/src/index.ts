@@ -23,7 +23,7 @@ export { AnthropicProvider, AnthropicError } from './anthropic-provider.js';
 export function providerFromEnv(env: Record<string, string | undefined> = process.env): LLMProvider | null {
   const key = env.ANTHROPIC_API_KEY?.trim();
   if (!key) return null;
-  return new AnthropicProvider(key, env.ONIX_LLM_MODEL?.trim() || undefined);
+  return new AnthropicProvider(key, env.ONIX_LLM_MODEL?.trim() || undefined, env.ANTHROPIC_WORKSPACE_ID?.trim() || undefined);
 }
 
 export function createProvider(flags: AgentFeatureFlags = DEFAULT_FEATURE_FLAGS): LLMProvider {

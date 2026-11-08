@@ -14,6 +14,7 @@ export class AnthropicError extends Error {
   /** Explicación corta para mostrar en pantalla. */
   get hint(): string {
     const d = this.detail.toLowerCase();
+    if (d.includes('workspace')) return 'La clave no pertenece a un workspace: crea la clave dentro de un workspace en la Console o agrega ANTHROPIC_WORKSPACE_ID en Vercel.';
     if (d.includes('credit') || d.includes('balance')) return 'La cuenta de Anthropic no tiene saldo o créditos disponibles.';
     if (this.status === 401 || d.includes('api key') || d.includes('authentication')) return 'La clave ANTHROPIC_API_KEY no es válida.';
     if (this.status === 404 || d.includes('model')) return 'El modelo configurado no está disponible para esta cuenta.';
@@ -28,6 +29,8 @@ export class AnthropicProvider implements LLMProvider {
   constructor(
     private readonly apiKey: string,
     private readonly model: string = 'claude-sonnet-5-5',
+    /** Para claves de organización sin workspace: ID del workspace a usar. */
+    private readonly workspaceId?: string,
   ) {}
 
   async complete(req: LLMCompletionRequest): Promise<LLMCompletionResponse> {
@@ -44,6 +47,7 @@ export class AnthropicProvider implements LLMProvider {
         'x-api-key': this.apiKey,
         'anthropic-version': '2023-06-01',
         'content-type': 'application/json',
+        ...(this.workspaceId ? { 'anthropic-workspace-id': this.workspaceId } : {}),
       },
       body: JSON.stringify({
         model: this.model,
