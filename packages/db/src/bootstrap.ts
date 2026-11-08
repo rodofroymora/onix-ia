@@ -48,10 +48,26 @@ export async function applyMigrations(client: PGlite, sqlDirectory = defaultSqlD
 
 export async function applyMigrationsFor(govern: GovernDb, sqlDirectory = defaultSqlDir()) {
   if (govern.kind === 'postgres') {
+    // Varias instancias serverless pueden arrancar a la vez: migrar en UNA transacción
+    // con advisory lock y volver a revisar adentro, para que solo una cree el esquema.
     const pool = govern.client as Pool;
-    await applySqlFiles(async (sqlText) => {
-      await pool.query(sqlText);
-    }, sqlDirectory);
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      await client.query('SELECT pg_advisory_xact_lock(7342000)');
+      const exists = await client.query("SELECT to_regclass('public.organizations') AS t");
+      if (!exists.rows[0]?.t) {
+        await applySqlFiles(async (sqlText) => {
+          await client.query(sqlText);
+        }, sqlDirectory);
+      }
+      await client.query('COMMIT');
+    } catch (err) {
+      await client.query('ROLLBACK').catch(() => {});
+      throw err;
+    } finally {
+      client.release();
+    }
     return;
   }
   const pglite = govern.client as PGlite;
