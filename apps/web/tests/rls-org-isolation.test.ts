@@ -5,7 +5,10 @@ import { createMemoryDb, organizations, techProfiles, withOrg } from '@onix/db';
 import { describe, expect, it } from 'vitest';
 
 const repoRoot = path.resolve(__dirname, '../../..');
-const sqlDir = path.resolve(repoRoot, 'packages/db/sql');
+// En el monorepo vive en packages/db/sql; en el checkout aislado de publish, en vendor/db/sql.
+const sqlDir = [path.resolve(repoRoot, 'packages/db/sql'), path.resolve(__dirname, '../vendor/db/sql')].find(
+  (d) => existsSync(path.join(d, '0001_init.sql')),
+) ?? path.resolve(repoRoot, 'packages/db/sql');
 
 describe('RLS org isolation', () => {
   it('govern_set_org fija el tenant y withOrg aísla en capa de app', async () => {

@@ -1,7 +1,7 @@
 'use server';
 
 import { and, eq } from 'drizzle-orm';
-import { aiUseCases, triageValidations } from '@onix/db';
+import { aiUseCases, assessments, triageValidations } from '@onix/db';
 import { triage } from '@onix/engine';
 import { revalidatePath } from 'next/cache';
 import { appendAudit } from '@/lib/audit';
@@ -9,6 +9,19 @@ import { getDb, withOrg } from '@/lib/db';
 import { requireWriteAccess } from '@/lib/session';
 
 const ALLOWED_STATUS = ['Propuesto', 'En revisión', 'Aprobado', 'Descartado'] as const;
+const ALLOWED_RISK = ['Bajo', 'Medio', 'Alto', 'Inaceptable'] as const;
+const ALLOWED_ORIGIN = ['manual', 'import', 'discovery'] as const;
+type Risk = (typeof ALLOWED_RISK)[number];
+
+function parseRisk(value: unknown): Risk {
+  const v = String(value ?? '');
+  return (ALLOWED_RISK as readonly string[]).includes(v) ? (v as Risk) : 'Medio';
+}
+
+function parseOrigin(value: unknown, fallback = 'manual'): string {
+  const v = String(value ?? '');
+  return (ALLOWED_ORIGIN as readonly string[]).includes(v) ? v : fallback;
+}
 
 /** CU-06: discovery solo puede entrar como Propuesto. */
 function enforceOriginStatus(origin: string, status: string): string {
@@ -20,9 +33,9 @@ function enforceOriginStatus(origin: string, status: string): string {
 export async function createUseCaseAction(formData: FormData) {
   const session = await requireWriteAccess();
   const name = String(formData.get('name') ?? '').trim();
-  const origin = String(formData.get('origin') ?? 'manual');
+  const origin = parseOrigin(formData.get('origin'));
   const status = enforceOriginStatus(origin, String(formData.get('status') ?? 'Propuesto'));
-  const risk = String(formData.get('risk') ?? 'Medio') as 'Bajo' | 'Medio' | 'Alto' | 'Inaceptable';
+  const risk = parseRisk(formData.get('risk'));
   const description = String(formData.get('description') ?? '');
   const area = String(formData.get('area') ?? '');
 
@@ -59,7 +72,7 @@ export async function createUseCaseAction(formData: FormData) {
 export async function updateUseCaseAction(formData: FormData) {
   const session = await requireWriteAccess();
   const id = String(formData.get('id') ?? '');
-  const origin = String(formData.get('origin') ?? 'manual');
+  const origin = parseOrigin(formData.get('origin'));
   const status = enforceOriginStatus(origin, String(formData.get('status') ?? 'Propuesto'));
 
   const { db } = getDb();
@@ -69,7 +82,7 @@ export async function updateUseCaseAction(formData: FormData) {
       .set({
         name: String(formData.get('name') ?? ''),
         description: String(formData.get('description') ?? ''),
-        risk: String(formData.get('risk') ?? 'Medio') as 'Bajo' | 'Medio' | 'Alto' | 'Inaceptable',
+        risk: parseRisk(formData.get('risk')),
         area: String(formData.get('area') ?? ''),
         origin,
         status,
@@ -115,13 +128,21 @@ export async function runTriageAction(formData: FormData) {
   const opinions = String(formData.get('opinions') ?? '')
     .split(',')
     .map((s) => Number(s.trim()))
-    .filter((n) => Number.isFinite(n));
+    .filter((n) => Number.isInteger(n) && n >= 1 && n <= 4);
 
   const result = triage({ opinions });
   if (!result) throw new Error('Opiniones inválidas');
 
   const { db } = getDb();
   await withOrg(db, session.user.organizationId, async (tx) => {
+    // La FK no respeta RLS: verificar que la evaluación sea de la organización del usuario.
+    const [owned] = await tx
+      .select({ id: assessments.id })
+      .from(assessments)
+      .where(and(eq(assessments.id, assessmentId), eq(assessments.organizationId, session.user.organizationId)))
+      .limit(1);
+    if (!owned) throw new Error('Evaluación no válida para esta organización');
+
     const [row] = await tx
       .insert(triageValidations)
       .values({
@@ -162,13 +183,13 @@ export async function importUseCasesFromRows(
   await withOrg(db, session.user.organizationId, async (tx) => {
     for (const row of rows) {
       if (!row.name?.trim()) continue;
-      const origin = row.origin ?? 'import';
+      const origin = parseOrigin(row.origin, 'import');
       const status = enforceOriginStatus(origin, row.status ?? 'Propuesto');
       await tx.insert(aiUseCases).values({
         organizationId: session.user.organizationId,
         name: row.name.trim(),
         description: row.description ?? '',
-        risk: (row.risk as 'Bajo' | 'Medio' | 'Alto' | 'Inaceptable') || 'Medio',
+        risk: parseRisk(row.risk),
         area: row.area ?? '',
         origin,
         status,

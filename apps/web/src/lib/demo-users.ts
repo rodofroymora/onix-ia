@@ -1,3 +1,5 @@
+import { createHash, timingSafeEqual } from 'node:crypto';
+
 export type AppRole = 'consultant' | 'client_admin' | 'client_reader';
 
 export interface DemoUser {
@@ -6,10 +8,20 @@ export interface DemoUser {
   role: AppRole;
 }
 
-/** Contraseña demo solo desde entorno; nunca hardcodeada en el código. */
+/** Contraseña demo de las cuentas del cliente: solo desde entorno, nunca en el código. */
 export function getDemoPassword(): string | undefined {
   const value = process.env.DEMO_PASSWORD?.trim();
   return value || undefined;
+}
+
+/**
+ * Contraseña de la cuenta consultor (ve todas las organizaciones).
+ * Si CONSULTANT_PASSWORD está definida, se exige esa; si no, usa DEMO_PASSWORD
+ * para no romper el acceso actual de la demo.
+ */
+export function getConsultantPassword(): string | undefined {
+  const value = process.env.CONSULTANT_PASSWORD?.trim();
+  return value || getDemoPassword();
 }
 
 export const DEMO_USERS: DemoUser[] = [
@@ -30,12 +42,21 @@ export const DEMO_USERS: DemoUser[] = [
   },
 ];
 
+/** Comparación en tiempo constante (hash previo para igualar longitudes). */
+function safeEqual(a: string, b: string): boolean {
+  const ha = createHash('sha256').update(a).digest();
+  const hb = createHash('sha256').update(b).digest();
+  return timingSafeEqual(ha, hb);
+}
+
 export function findDemoUser(email: string, password: string): DemoUser | null {
-  const expected = getDemoPassword();
-  if (!expected) return null;
   const normalized = email.trim().toLowerCase();
   const user = DEMO_USERS.find((u) => u.email === normalized);
-  if (!user || password !== expected) return null;
+  const expected = user?.role === 'consultant' ? getConsultantPassword() : getDemoPassword();
+  if (!expected) return null;
+  // Comparar siempre, aunque el usuario no exista, para no filtrar cuáles existen por tiempo.
+  const ok = safeEqual(password, expected);
+  if (!user || !ok) return null;
   return user;
 }
 

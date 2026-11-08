@@ -252,6 +252,15 @@ export async function saveRespondentAnswerAction(input: {
   const payload = verifyRespondentToken(input.token);
   if (!payload) throw new Error('Token de respondente inválido');
   if (!input.questionId) throw new Error('Pregunta requerida');
+  const isNoSe = input.valueText === 'no_se';
+  if (isNoSe) {
+    if (input.valueInt !== null) throw new Error('Respuesta inválida');
+  } else {
+    if (input.valueText != null) throw new Error('Respuesta inválida');
+    if (!Number.isInteger(input.valueInt) || input.valueInt! < 1 || input.valueInt! > 4) {
+      throw new Error('La respuesta debe ser un nivel de 1 a 4');
+    }
+  }
 
   const { db } = getDb();
   await withOrg(db, payload.organizationId, async (tx) => {
@@ -272,7 +281,7 @@ export async function saveRespondentAnswerAction(input: {
     }
 
     const [assessment] = await tx
-      .select({ id: assessments.id })
+      .select({ id: assessments.id, questionnaireVersionId: assessments.questionnaireVersionId })
       .from(assessments)
       .where(
         and(
@@ -282,6 +291,21 @@ export async function saveRespondentAnswerAction(input: {
       )
       .limit(1);
     if (!assessment) throw new Error('Evaluación no válida para esta organización');
+
+    // La pregunta debe pertenecer a la versión congelada del cuestionario de esta evaluación.
+    const [question] = await tx
+      .select({ id: questions.id, kind: questions.kind })
+      .from(questions)
+      .where(
+        and(
+          eq(questions.id, input.questionId),
+          eq(questions.questionnaireVersionId, assessment.questionnaireVersionId),
+        ),
+      )
+      .limit(1);
+    if (!question || question.kind !== 'maturity') {
+      throw new Error('La pregunta no pertenece a esta evaluación');
+    }
 
     const existing = await tx
       .select()

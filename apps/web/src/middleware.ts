@@ -17,14 +17,24 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  // Detrás del proxy del host la petición llega como http aunque el usuario use https:
+  // hay que buscar la cookie segura (__Secure-authjs.session-token) en ese caso.
+  const forwardedProto = req.headers.get('x-forwarded-proto')?.split(',')[0]?.trim();
+  const secureCookie =
+    forwardedProto === 'https' ||
+    req.nextUrl.protocol === 'https:' ||
+    (process.env.AUTH_URL ?? '').startsWith('https://');
+
   const token = await getToken({
     req,
     secret: authSecret,
+    secureCookie,
   });
 
   if (!token) {
     const url = req.nextUrl.clone();
     url.pathname = '/login';
+    url.search = '';
     url.searchParams.set('callbackUrl', pathname);
     return NextResponse.redirect(url);
   }

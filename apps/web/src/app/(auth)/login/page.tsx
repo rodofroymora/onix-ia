@@ -1,6 +1,8 @@
+import { AuthError } from 'next-auth';
 import { redirect } from 'next/navigation';
 import { auth, signIn } from '@/lib/auth';
 import { DEMO_USERS } from '@/lib/demo-users';
+import { safeCallbackPath } from '@/lib/safe-redirect';
 
 export default async function LoginPage({
   searchParams,
@@ -9,17 +11,21 @@ export default async function LoginPage({
 }) {
   const session = await auth();
   const params = await searchParams;
-  if (session?.user) redirect(params.callbackUrl || '/');
+  const callbackUrl = safeCallbackPath(params.callbackUrl);
+  if (session?.user) redirect(callbackUrl);
 
   async function loginAction(formData: FormData) {
     'use server';
     const email = String(formData.get('email') ?? '');
     const password = String(formData.get('password') ?? '');
-    const callbackUrl = String(formData.get('callbackUrl') ?? '/');
+    const target = safeCallbackPath(formData.get('callbackUrl'));
     try {
-      await signIn('credentials', { email, password, redirectTo: callbackUrl });
+      await signIn('credentials', { email, password, redirectTo: target });
     } catch (err) {
-      // next-auth throws NEXT_REDIRECT on success
+      // En éxito Auth.js lanza NEXT_REDIRECT, que debe propagarse.
+      if (err instanceof AuthError) {
+        redirect(`/login?error=1&callbackUrl=${encodeURIComponent(target)}`);
+      }
       throw err;
     }
   }
@@ -30,7 +36,7 @@ export default async function LoginPage({
         <p className="font-display text-3xl tracking-tight text-ink">Ónix</p>
         <p className="mt-1 text-sm text-ink-muted">Govern — acceso de demostración</p>
         <form action={loginAction} className="mt-8 space-y-4">
-          <input type="hidden" name="callbackUrl" value={params.callbackUrl || '/'} />
+          <input type="hidden" name="callbackUrl" value={callbackUrl} />
           <label className="block text-sm">
             <span className="mb-1 block text-ink-muted">Correo</span>
             <input

@@ -11,11 +11,14 @@ import { RespondentWizard } from '@/components/panels/RespondentWizard';
 
 async function findInvitation(id: string, organizationId: string) {
   const { db } = getDb();
-  const [inv] = await db
-    .select()
-    .from(invitations)
-    .where(and(eq(invitations.id, id), eq(invitations.organizationId, organizationId)))
-    .limit(1);
+  // invitations tiene RLS: la consulta debe correr con el tenant del token firmado.
+  const [inv] = await withOrg(db, organizationId, (tx) =>
+    tx
+      .select()
+      .from(invitations)
+      .where(and(eq(invitations.id, id), eq(invitations.organizationId, organizationId)))
+      .limit(1),
+  );
   return inv ?? null;
 }
 
@@ -72,16 +75,18 @@ export default async function RespondentPortalPage({
     );
   }
 
-  const [assessment] = await db
-    .select()
-    .from(assessments)
-    .where(
-      and(
-        eq(assessments.id, payload.assessmentId),
-        eq(assessments.organizationId, payload.organizationId),
-      ),
-    )
-    .limit(1);
+  const [assessment] = await withOrg(db, payload.organizationId, (tx) =>
+    tx
+      .select()
+      .from(assessments)
+      .where(
+        and(
+          eq(assessments.id, payload.assessmentId),
+          eq(assessments.organizationId, payload.organizationId),
+        ),
+      )
+      .limit(1),
+  );
   if (!assessment) notFound();
 
   const qs = await db

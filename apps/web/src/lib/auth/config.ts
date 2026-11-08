@@ -4,6 +4,7 @@ import { eq } from 'drizzle-orm';
 import { organizations } from '@onix/db';
 import type { AppRole } from '../demo-users';
 import { loadDemoAuthUser } from '../demo-auth-store';
+import { clearFailures, isRateLimited, recordFailure } from '../rate-limit';
 import { getDb } from '../db';
 
 declare module 'next-auth' {
@@ -42,11 +43,17 @@ export const authConfig: NextAuthConfig = {
         password: { label: 'Contraseña', type: 'password' },
       },
       async authorize(credentials) {
-        const email = String(credentials?.email ?? '');
+        const email = String(credentials?.email ?? '').trim().toLowerCase();
         const password = String(credentials?.password ?? '');
-        // Snapshot de seed (.data/demo-auth.json) — evita PGlite en el hot path de Auth.js.
-        const user = loadDemoAuthUser(email, password);
-        if (!user) return null;
+        if (!email || !password) return null;
+        const key = `login:${email}`;
+        if (isRateLimited(key)) return null;
+        const user = await loadDemoAuthUser(email, password);
+        if (!user) {
+          recordFailure(key);
+          return null;
+        }
+        clearFailures(key);
         return user;
       },
     }),
