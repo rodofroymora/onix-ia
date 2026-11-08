@@ -4,6 +4,24 @@ import type { LLMCompletionRequest, LLMCompletionResponse, LLMProvider } from '.
  * Proveedor Anthropic (Messages API) sin SDK. Solo se usa si hay ANTHROPIC_API_KEY.
  * Los datos se envían por API; según los términos comerciales de Anthropic no se usan para entrenar.
  */
+export class AnthropicError extends Error {
+  constructor(
+    readonly status: number,
+    readonly detail: string,
+  ) {
+    super(`Anthropic respondió ${status}${detail ? ` (${detail.slice(0, 300)})` : ''}`);
+  }
+  /** Explicación corta para mostrar en pantalla. */
+  get hint(): string {
+    const d = this.detail.toLowerCase();
+    if (d.includes('credit') || d.includes('balance')) return 'La cuenta de Anthropic no tiene saldo o créditos disponibles.';
+    if (this.status === 401 || d.includes('api key') || d.includes('authentication')) return 'La clave ANTHROPIC_API_KEY no es válida.';
+    if (this.status === 404 || d.includes('model')) return 'El modelo configurado no está disponible para esta cuenta.';
+    if (this.status === 429) return 'Se alcanzó el límite de uso de la API; intenta en unos minutos.';
+    return `El modelo no respondió (${this.status}).`;
+  }
+}
+
 export class AnthropicProvider implements LLMProvider {
   readonly id = 'anthropic';
 
@@ -30,13 +48,21 @@ export class AnthropicProvider implements LLMProvider {
       body: JSON.stringify({
         model: this.model,
         max_tokens: req.maxTokens ?? 900,
-        temperature: req.temperature ?? 0.3,
+        // Solo se manda si se pide: algunos modelos recientes rechazan parámetros de muestreo.
+        ...(req.temperature != null ? { temperature: req.temperature } : {}),
         system: system || undefined,
         messages,
       }),
     });
     if (!res.ok) {
-      throw new Error(`Anthropic respondió ${res.status}`);
+      let detail = '';
+      try {
+        const err = (await res.json()) as { error?: { type?: string; message?: string } };
+        detail = [err.error?.type, err.error?.message].filter(Boolean).join(': ');
+      } catch {
+        /* sin cuerpo */
+      }
+      throw new AnthropicError(res.status, detail);
     }
     const json = (await res.json()) as { content?: { type: string; text?: string }[]; model?: string };
     const content = (json.content ?? [])

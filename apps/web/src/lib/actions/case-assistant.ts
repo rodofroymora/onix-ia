@@ -13,6 +13,7 @@ import {
 } from '@onix/templates';
 import { appendAudit } from '@/lib/audit';
 import { getDb, withOrg } from '@/lib/db';
+import { llmHint } from '@/lib/server/narrative';
 import { requireWriteAccess } from '@/lib/session';
 
 export interface CaseSuggestion {
@@ -37,6 +38,7 @@ export interface CaseAssistState {
   source: 'llm' | 'datos';
   suggestion: CaseSuggestion | null;
   error?: string;
+  llmError?: string;
 }
 
 const has = (t: string, ...words: string[]) => words.some((w) => t.includes(w));
@@ -174,6 +176,7 @@ export async function assistCaseAction(_prev: CaseAssistState | null, formData: 
 
   let suggestion: CaseSuggestion | null = null;
   let source: CaseAssistState['source'] = 'datos';
+  let llmError: string | undefined;
   const provider = providerFromEnv();
   if (provider) {
     try {
@@ -188,6 +191,7 @@ export async function assistCaseAction(_prev: CaseAssistState | null, formData: 
       source = 'llm';
     } catch (err) {
       console.error('[asistente-caso] fallo del proveedor, uso reglas', err);
+      llmError = llmHint(err);
     }
   }
   if (!suggestion || !suggestion.description) suggestion = heuristic(raw, name);
@@ -202,5 +206,5 @@ export async function assistCaseAction(_prev: CaseAssistState | null, formData: 
       meta: { source },
     }),
   );
-  return { ok: true, source, suggestion };
+  return { ok: true, source, suggestion, llmError };
 }

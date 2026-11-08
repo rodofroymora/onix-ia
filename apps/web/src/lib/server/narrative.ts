@@ -94,7 +94,7 @@ export async function writeWithAssistant(
   task: AssistantTask,
   o: OrgOverview,
   orgName: string,
-): Promise<{ text: string; source: 'llm' | 'datos'; sources: string[] }> {
+): Promise<{ text: string; source: 'llm' | 'datos'; sources: string[]; llmError?: string }> {
   const { providerFromEnv } = await import('@onix/agent');
   const ctx = contextFrom(o);
   const provider = providerFromEnv();
@@ -109,7 +109,14 @@ export async function writeWithAssistant(
       if (res.content) return { text: res.content, source: 'llm', sources: ctx.sources };
     } catch (err) {
       console.error('[asistente] fallo del proveedor, uso redacción con datos', err);
+      return { text: fallback(task, o), source: 'datos', sources: ctx.sources, llmError: llmHint(err) };
     }
   }
   return { text: fallback(task, o), source: 'datos', sources: ctx.sources };
+}
+
+/** Mensaje corto y sin secretos de por qué falló el modelo. */
+export function llmHint(err: unknown): string {
+  const e = err as { hint?: string; message?: string };
+  return e?.hint ?? 'El modelo no respondió.';
 }

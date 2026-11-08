@@ -212,26 +212,77 @@ export function searchAgents(query: string, agents: AgentRow[], extraTerms: stri
     .sort((x, y) => y.score - x.score);
 }
 
-/** Con modelo configurado, amplía la búsqueda con términos relacionados (si no, regresa vacío). */
-export async function expandQueryWithModel(query: string): Promise<string[]> {
+export interface AgentAnswer {
+  answer: string;
+  hits: SearchHit[];
+  source: 'llm' | 'reglas';
+  llmError?: string;
+}
+
+/** Respuesta en lenguaje natural sobre los agentes de la organización (modelo si hay; si no, búsqueda por contexto). */
+export async function askAboutAgents(query: string, agents: AgentRow[]): Promise<AgentAnswer> {
   const { providerFromEnv } = await import('@onix/agent');
   const provider = providerFromEnv();
-  if (!provider || query.trim().length < 3) return [];
-  try {
-    const res = await provider.complete({
-      messages: [
-        {
-          role: 'system',
-          content:
-            'Devuelve SOLO un arreglo JSON de hasta 8 palabras en español relacionadas con la búsqueda, para encontrar agentes de IA en una empresa (sinónimos, áreas, sistemas, datos). Sin texto adicional.',
-        },
-        { role: 'user', content: query.slice(0, 300) },
-      ],
-    });
-    const json = res.content.slice(res.content.indexOf('['), res.content.lastIndexOf(']') + 1);
-    const arr = JSON.parse(json) as unknown;
-    return Array.isArray(arr) ? arr.filter((x): x is string => typeof x === 'string').slice(0, 8) : [];
-  } catch {
-    return [];
+  let llmError: string | undefined;
+  if (provider && query.trim().length >= 3 && agents.length) {
+    const catalog = agents
+      .slice(0, 120)
+      .map((a, i) =>
+        [
+          `#${i + 1}`,
+          a.name,
+          `plataforma: ${a.platformName} (${a.vendor})`,
+          `estado: ${a.status}`,
+          `riesgo: ${a.risk}`,
+          `dueño: ${a.ownerName ?? 'sin dueño'}`,
+          a.managed ? 'gestionado' : 'no gestionado',
+          `caso: ${a.useCaseName ?? 'sin caso en el inventario'}`,
+          a.description ? `qué hace: ${a.description}` : '',
+          a.dataSources.length ? `datos: ${a.dataSources.join(', ')}` : '',
+          a.capabilities.length ? `puede: ${a.capabilities.join(', ')}` : '',
+        ]
+          .filter(Boolean)
+          .join(' | '),
+      )
+      .join('\n');
+    try {
+      const res = await provider.complete({
+        maxTokens: 700,
+        messages: [
+          {
+            role: 'system',
+            content: [
+              'Eres el Asistente Ónix. Respondes preguntas sobre los agentes de IA registrados en una empresa mediana en México.',
+              'Usa SOLO el catálogo que te doy. Si nada aplica, dilo. No inventes agentes ni datos.',
+              'Responde SOLO con JSON válido: {"answer": "2 o 3 frases en español de México, tratando de tú, sin guiones largos", "matches": [{"n": número del catálogo, "why": "razón corta"}]}.',
+              'En matches pon solo los agentes relevantes, del más al menos relevante, máximo 10.',
+            ].join(' '),
+          },
+          { role: 'user', content: `Catálogo:\n${catalog}\n\nPregunta: ${query.slice(0, 300)}` },
+        ],
+      });
+      const json = res.content.slice(res.content.indexOf('{'), res.content.lastIndexOf('}') + 1);
+      const parsed = JSON.parse(json) as { answer?: unknown; matches?: { n?: unknown; why?: unknown }[] };
+      const list = agents.slice(0, 120);
+      const seen = new Set<string>();
+      const hits: SearchHit[] = [];
+      for (const [i, m] of (Array.isArray(parsed.matches) ? parsed.matches : []).entries()) {
+        const a = list[Number(m.n) - 1];
+        if (!a || seen.has(a.id)) continue;
+        seen.add(a.id);
+        hits.push({ id: a.id, score: Math.max(20, 100 - i * 9), why: [typeof m.why === 'string' ? m.why.slice(0, 160) : 'relacionado'] });
+      }
+      const answer = typeof parsed.answer === 'string' ? parsed.answer.slice(0, 600) : '';
+      if (answer) return { answer, hits, source: 'llm' };
+    } catch (err) {
+      console.error('[discovery] fallo del modelo, uso búsqueda por contexto', err);
+      llmError = (err as { hint?: string })?.hint ?? 'El modelo no respondió.';
+    }
   }
+  const hits = searchAgents(query, agents);
+  const top = hits.slice(0, 3).map((h) => agents.find((a) => a.id === h.id)!.name);
+  const answer = hits.length
+    ? `Encontré ${hits.length} ${hits.length === 1 ? 'agente relacionado' : 'agentes relacionados'}${top.length ? `; los más cercanos son ${top.join(', ')}` : ''}.`
+    : 'No encontré agentes relacionados con esa búsqueda.';
+  return { answer, hits, source: 'reglas', llmError };
 }

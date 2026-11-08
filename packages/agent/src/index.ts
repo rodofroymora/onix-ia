@@ -17,7 +17,7 @@ export type {
 } from './types.js';
 export { DEFAULT_FEATURE_FLAGS } from './types.js';
 export { StubLLMProvider } from './stub-provider.js';
-export { AnthropicProvider } from './anthropic-provider.js';
+export { AnthropicProvider, AnthropicError } from './anthropic-provider.js';
 
 /** Proveedor según entorno: Anthropic si hay ANTHROPIC_API_KEY, si no, null (el llamador usa su modo sin LLM). */
 export function providerFromEnv(env: Record<string, string | undefined> = process.env): LLMProvider | null {

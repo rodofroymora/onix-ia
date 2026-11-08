@@ -43,6 +43,7 @@ export function AssistantCard({ defaultTask = 'resumen_ejecutivo' }: { defaultTa
             <p className="whitespace-pre-line">{state.text}</p>
             <p className="mt-3 text-[11px] text-ink-subtle">
               {state.source === 'llm' ? 'Redactado con IA' : 'Borrador armado con tus datos'} · Fuentes: {state.sources.join(', ')}. Revísalo antes de usarlo.
+              {state.llmError ? <span className="mt-1 block text-warning">{state.llmError}</span> : null}
             </p>
           </>
         ) : (

@@ -98,7 +98,9 @@ export function CaseAssistant({ formId }: { formId: string }) {
             </ul>
           ) : null}
           <div className="mt-3 flex items-center justify-between gap-2">
-            <span className="text-[11px] text-ink-subtle">{state?.source === 'llm' ? 'Redactado con el modelo' : 'Armado con reglas (sin modelo configurado)'}</span>
+            <span className="text-[11px] text-ink-subtle">
+              {state?.source === 'llm' ? 'Redactado con IA' : state?.llmError ? `Armado con reglas. ${state.llmError}` : 'Armado con reglas (sin modelo configurado)'}
+            </span>
             <button
               type="button"
               className="onix-btn-primary py-1.5"

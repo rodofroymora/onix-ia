@@ -13,6 +13,7 @@ export interface AssistantState {
   source: 'llm' | 'datos';
   sources: string[];
   task: AssistantTask;
+  llmError?: string;
 }
 
 export async function askAssistantAction(_prev: AssistantState | null, formData: FormData): Promise<AssistantState> {
@@ -21,7 +22,7 @@ export async function askAssistantAction(_prev: AssistantState | null, formData:
     ? (String(formData.get('task')) as AssistantTask)
     : 'resumen_ejecutivo';
   const o = await loadOrgOverview(session.user.organizationId);
-  const { text, source, sources } = await writeWithAssistant(task, o, session.user.organizationName ?? '');
+  const { text, source, sources, llmError } = await writeWithAssistant(task, o, session.user.organizationName ?? '');
 
   const { db } = getDb();
   await withOrg(db, session.user.organizationId, (tx) =>
@@ -30,9 +31,9 @@ export async function askAssistantAction(_prev: AssistantState | null, formData:
       actorUserId: session.user.id,
       action: 'assistant.suggest',
       entityType: 'assistant',
-      meta: { task, source },
+      meta: { task, source, llmError: llmError ?? null },
     }),
   );
 
-  return { text, source, sources, task };
+  return { text, source, sources, task, llmError };
 }

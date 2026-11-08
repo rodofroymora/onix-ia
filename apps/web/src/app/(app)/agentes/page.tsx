@@ -1,13 +1,13 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
-import { Search, X } from 'lucide-react';
+import { Search, Sparkles, X } from 'lucide-react';
 import { AGENT_CHANNELS, AGENT_PLATFORMS, AGENT_PUBLISHERS, AGENT_STATUSES } from '@onix/templates';
 import { AgentMap } from '@/components/agents/AgentMap';
 import { Card, Kpi, PageHeader } from '@/components/ui/PageHeader';
 import { RiskDot } from '@/components/ui/RiskDot';
 import { Tabs } from '@/components/ui/Tabs';
 import { createCaseFromAgentAction, saveAgentAction } from '@/lib/actions/agents';
-import { expandQueryWithModel, loadAgents, searchAgents, type AgentRow } from '@/lib/server/agents';
+import { askAboutAgents, loadAgents, type AgentRow } from '@/lib/server/agents';
 import { requireSession } from '@/lib/session';
 
 type SP = { tab?: string; q?: string; agente?: string; estado?: string; publicador?: string; plataforma?: string; canal?: string; ambito?: string };
@@ -184,8 +184,8 @@ export default async function AgentesPage({ searchParams }: { searchParams: Prom
       (!p.canal || a.channel === p.canal),
   );
   const q = (p.q ?? '').trim().slice(0, 200);
-  const extra = q ? await expandQueryWithModel(q) : [];
-  const hits = q ? searchAgents(q, filtered, extra) : null;
+  const ai = q ? await askAboutAgents(q, filtered) : null;
+  const hits = ai ? ai.hits : null;
   const hitIds = hits ? hits.map((h) => h.id) : null;
   const list = hits ? hits.map((h) => filtered.find((a) => a.id === h.id)!).filter(Boolean) : filtered;
 
@@ -255,7 +255,7 @@ export default async function AgentesPage({ searchParams }: { searchParams: Prom
           <input
             name="q"
             defaultValue={q}
-            placeholder="Busca por contexto: ¿hay algo que lea contratos?, agentes con datos de clientes, cobranza…"
+            placeholder="Pregúntale al Asistente: ¿hay algo que lea contratos?, ¿qué agentes tocan datos de clientes?"
             className="onix-input rounded-full pl-9"
           />
         </label>
@@ -271,11 +271,18 @@ export default async function AgentesPage({ searchParams }: { searchParams: Prom
         ) : null}
       </form>
 
-      {hits ? (
-        <p className="mt-3 text-[13px] text-ink-muted">
-          {hits.length ? `${hits.length} agentes relacionados con "${q}"` : `Nada relacionado con "${q}". Prueba con otras palabras o registra el agente.`}
-          {extra.length ? <span className="text-ink-subtle"> · también buscamos: {extra.join(', ')}</span> : null}
-        </p>
+      {ai ? (
+        <div className="mt-4 flex gap-3 rounded-xl border border-border bg-surface px-4 py-3.5">
+          <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-accent" strokeWidth={1.6} />
+          <div className="min-w-0">
+            <p className="text-[14px] leading-relaxed text-ink">{ai.answer}</p>
+            <p className="mt-1 text-[11px] text-ink-subtle">
+              {ai.source === 'llm' ? 'Respuesta del Asistente Ónix con el catálogo de agentes' : 'Búsqueda por contexto (sin modelo)'} · {hits!.length}{' '}
+              {hits!.length === 1 ? 'agente' : 'agentes'} relacionados
+              {ai.llmError ? <span className="text-warning"> · {ai.llmError}</span> : null}
+            </p>
+          </div>
+        </div>
       ) : null}
 
       <div className="mt-5">
@@ -326,7 +333,7 @@ export default async function AgentesPage({ searchParams }: { searchParams: Prom
                         {h ? <span className="shrink-0 text-[11px] tabular-nums text-ink-subtle">{h.score}%</span> : <RiskDot risk={a.risk as 'Bajo'} />}
                       </div>
                       <p className="truncate text-[11px] text-ink-subtle">
-                        {h ? `coincide en ${h.why.join(', ')}` : `${a.platformName} · ${a.riskMismatch ? 'riesgo distinto a su caso' : !a.useCaseId ? 'sin caso en el inventario' : !a.managed ? 'no gestionado' : 'sin dueño'}`}
+                        {h ? (ai?.source === 'llm' ? h.why[0] : `coincide en ${h.why.join(', ')}`) : `${a.platformName} · ${a.riskMismatch ? 'riesgo distinto a su caso' : !a.useCaseId ? 'sin caso en el inventario' : !a.managed ? 'no gestionado' : 'sin dueño'}`}
                       </p>
                     </Link>
                   </li>
