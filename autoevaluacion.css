@@ -30,10 +30,11 @@
 .ae-peek { background: var(--card); border: 1px solid var(--line); border-radius: 24px; padding: clamp(1.5rem, 2.4vw, 2rem); box-shadow: var(--sombra); }
 .ae-peek__k { font-family: var(--mono); font-size: .75rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
 .ae-peek ul { list-style: none; margin: 1rem 0 0; padding: 0; display: flex; flex-direction: column; }
-.ae-peek li { display: grid; grid-template-columns: 44px 1fr; gap: 1rem; align-items: start; padding-block: 1rem; border-top: 1px solid var(--line); }
+.ae-peek li { display: grid; grid-template-columns: 56px 1fr; align-items: center; gap: 1rem; align-items: start; padding-block: 1rem; border-top: 1px solid var(--line); }
 .ae-peek li:first-child { border-top: 0; padding-top: .25rem; }
-.ae-peek__i { width: 44px; height: 44px; border-radius: 12px; background: var(--accent-wash); color: var(--accent-ink); display: flex; align-items: center; justify-content: center; }
-.ae-peek b { display: block; font-weight: 600; letter-spacing: -.01em; margin-bottom: .2rem; }
+.ae-peek__i { position: relative; width: 56px; height: 56px; border-radius: 16px; color: var(--ink); background: linear-gradient(160deg, var(--card), var(--paper-2)); border: 1px solid var(--line); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), 0 1px 2px rgba(38, 38, 44, .06); display: flex; align-items: center; justify-content: center; transition: transform var(--dur-media) var(--ease), border-color var(--dur-media) var(--ease); }
+.ae-peek li:hover .ae-peek__i { transform: translateY(-2px); border-color: var(--accent-line); }
+.ae-peek b { color: var(--ink); display: block; font-weight: 600; letter-spacing: -.01em; margin-bottom: .2rem; }
 .ae-peek li span:last-child { color: var(--muted); font-size: .9375rem; line-height: 1.5; }
 
 /* ── Botón secundario propio (no es CTA) ─────────────────────────────── */
