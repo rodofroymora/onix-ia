@@ -9,6 +9,8 @@ const globalForDb = globalThis as unknown as {
 function findRepoRoot(start = process.cwd()): string {
   let dir = start;
   for (let i = 0; i < 8; i++) {
+    // Preferir carpeta con snapshot demo (apps/web en publish) o monorepo.
+    if (existsSync(path.join(dir, '.data', 'demo-auth.json'))) return dir;
     if (existsSync(path.join(dir, 'pnpm-workspace.yaml'))) return dir;
     const parent = path.dirname(dir);
     if (parent === dir) break;

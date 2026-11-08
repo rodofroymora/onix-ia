@@ -12,6 +12,7 @@ interface DemoAuthSnapshot {
 function findRepoRoot(start = process.cwd()): string {
   let dir = start;
   for (let i = 0; i < 8; i++) {
+    if (existsSync(path.join(dir, '.data', 'demo-auth.json'))) return dir;
     if (existsSync(path.join(dir, 'pnpm-workspace.yaml'))) return dir;
     const parent = path.dirname(dir);
     if (parent === dir) break;

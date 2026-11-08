@@ -1,0 +1,26 @@
+{
+  "organizationId": "49b24a59-2e4c-4994-8d6e-2717dfead923",
+  "organizationName": "Grupo Altamar (demo)",
+  "users": [
+    {
+      "id": "f66f526a-a5e8-49cd-8572-5725ccf1a369",
+      "email": "consultant@onix-ia.com",
+      "name": "Consultor Ónix"
+    },
+    {
+      "id": "30899057-2692-47d7-b08f-fc0b6ab5ce32",
+      "email": "admin@altamar.demo",
+      "name": "Admin Altamar"
+    },
+    {
+      "id": "9d2f69af-4b2b-4d50-9dda-6ea8a596e467",
+      "email": "lector@altamar.demo",
+      "name": "Lector Altamar"
+    },
+    {
+      "id": "2787fd7c-cf2f-422d-b778-a9797532b7de",
+      "email": "gobierno@grupoaltamar.demo",
+      "name": "Ana Ruiz"
+    }
+  ]
+}

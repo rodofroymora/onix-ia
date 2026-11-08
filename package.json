@@ -13,7 +13,8 @@
     "test:e2e": "pnpm db:migrate && pnpm db:seed && pnpm --filter @onix/web test:e2e",
     "db:generate": "pnpm --filter @onix/db db:generate",
     "db:migrate": "pnpm --filter @onix/db db:migrate",
-    "db:seed": "pnpm --filter @onix/db db:seed"
+    "db:seed": "pnpm --filter @onix/db db:seed",
+    "vendor:web": "bash scripts/sync-web-vendor.sh"
   },
   "devDependencies": {
     "turbo": "^2.3.3",
