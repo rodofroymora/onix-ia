@@ -143,6 +143,8 @@
   }
 })();
 
+/* Cuestionario corto de la landing anterior. La renovación de nov-2026 lo retira del HTML de inicio.
+   La lógica se conserva y no hace nada si no existe [data-est]. No es la autoevaluación de 19 preguntas. */
 /* ── Estimador: preguntas con un clic, reglas fijas, mensaje de WhatsApp ya escrito ── */
 (function () {
   'use strict';

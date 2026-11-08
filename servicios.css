@@ -1,7 +1,7 @@
 /* ÓNIX · Servicios (DEV). Menú nuevo + páginas de servicio. Usa los tokens de site.css / index (no redefine la paleta). */
 
-/* ── Nav: menú Servicios ───────────────────────────────── */
-.nav__item { display: inline-flex; align-items: center; }
+/* ── Nav: submenú Servicios (panel, no megamenú) ──────── */
+.nav__item { position: static; display: inline-flex; align-items: center; }
 .nav__links .nav__trigger {
   display: inline-flex; align-items: center; gap: .35rem; min-height: 44px; padding: 0 .75rem;
   font-size: .9375rem; font-weight: 450; color: var(--muted); border-radius: 8px;
@@ -10,19 +10,21 @@
 }
 .nav__trigger:hover, .nav__trigger[aria-expanded="true"] { color: var(--ink); text-decoration-color: var(--line); }
 .nav__trigger[aria-current="page"] { color: var(--ink); text-decoration-color: var(--accent); }
-.nav__trigger svg { transition: transform .3s var(--ease); }
-.nav__trigger[aria-expanded="true"] svg { transform: rotate(180deg); }
-.mega { position: absolute; left: 0; right: 0; top: 100%; background: var(--paper); border-bottom: 1px solid var(--line); box-shadow: 0 30px 50px -34px rgba(11,11,12,.28); }
+.nav-chev { display: block; flex: none; transform-box: fill-box; transform-origin: center; transition: transform .3s var(--ease); }
+.nav__trigger[aria-expanded="true"] .nav-chev,
+.mm-acc[aria-expanded="true"] .nav-chev { transform: rotate(180deg); }
+@media (prefers-reduced-motion: reduce) { .nav-chev { transition: none; } }
+.mega {
+  position: absolute; z-index: 40; top: calc(100% + .35rem); left: auto; right: 1rem;
+  width: min(42rem, calc(100vw - 2rem)); max-height: min(72vh, 36rem); overflow: auto;
+  background: var(--paper); border: 1px solid var(--line); border-radius: 16px;
+  box-shadow: var(--sombra, 0 12px 28px -18px rgba(38,38,44,.22));
+  padding: 1rem 1.1rem 1.15rem;
+}
 .mega[hidden] { display: none; }
-.mega__in { padding-block: 1.75rem 2rem; }
-.mega__all { display: inline-flex; align-items: center; gap: .4rem; min-height: 44px; font-weight: 500; letter-spacing: -.01em; color: var(--accent); text-decoration: none; margin-bottom: 1rem; }
-.mega__all:hover { color: var(--accent-ink); text-decoration: underline; text-underline-offset: 5px; }
-.mega__grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0 clamp(1rem, 2vw, 1.75rem); }
-.mega__col { border-top: 1px solid var(--line); padding-top: 1rem; display: flex; flex-direction: column; }
-.mega__title { font-size: .8125rem; font-weight: 600; letter-spacing: .02em; color: var(--accent-ink); margin-bottom: .5rem; }
-.mega__col a { display: flex; align-items: center; min-height: 40px; font-size: 1rem; font-weight: 500; letter-spacing: -.015em; line-height: 1.25; color: var(--ink); text-decoration: none; border-radius: 8px; }
-.mega__col a:hover { color: var(--accent-ink); }
-.mega__desc { margin-top: .5rem; font-size: .875rem; line-height: 1.45; color: var(--muted); }
+.mega__panel { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .9fr); gap: .25rem 1.25rem; }
+.mega__title { font-size: .75rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--accent-ink); margin: .15rem .35rem .35rem; }
+.mega__list { list-style: none; display: flex; flex-direction: column; }
 .nav__links a[aria-current="page"], .nav__links .nav__trigger[aria-current="page"] { color: var(--ink); }
 
 /* breakpoint of the new (longer) menu */
@@ -35,13 +37,14 @@
 /* ── Mobile menu: accordion + fixed CTA ─────────────────── */
 .mmenu { overflow-y: auto; padding-bottom: 0; }
 .mmenu .mm-acc { display: flex; width: 100%; align-items: center; justify-content: space-between; min-height: 60px; font-size: 1.625rem; font-weight: 500; letter-spacing: -.03em; text-align: left; border-bottom: 1px solid var(--line); }
-.mmenu .mm-acc svg { transition: transform .3s var(--ease); flex: none; }
-.mmenu .mm-acc[aria-expanded="true"] svg { transform: rotate(180deg); }
+.mmenu .mm-acc .nav-chev { margin-left: .75rem; }
 .mmenu .mm-acc[aria-current="page"] { color: var(--accent); }
 .mm-sub { padding: .25rem 0 .75rem .25rem; border-bottom: 1px solid var(--line); }
 .mm-sub[hidden] { display: none; }
 .mm-sub__title { margin: 1rem 0 .1rem; font-size: .8125rem; font-weight: 600; letter-spacing: .02em; color: var(--accent-ink); }
-.mmenu .mm-sub a:not(.btn) { min-height: 48px; font-size: 1.1875rem; letter-spacing: -.02em; border-bottom: 0; }
+.mmenu .mm-sub a:not(.btn) { flex-direction: column; align-items: flex-start; justify-content: center; min-height: 44px; padding: .45rem 0; font-size: 1.0625rem; letter-spacing: -.02em; border-bottom: 0; line-height: 1.3; }
+.mmenu .mm-list { list-style: none; display: flex; flex-direction: column; }
+.mmenu .mm-sub a small { display: block; font-size: .8125rem; font-weight: 450; color: var(--muted); line-height: 1.35; }
 .mmenu .mm-sub a.mm-all { color: var(--accent-ink); }
 .mm-cta { position: sticky; bottom: 0; margin-top: auto; padding: 1rem 0 1.25rem; background: linear-gradient(to bottom, rgba(255,255,255,0), var(--paper) 22%); }
 .mm-cta .btn { margin-top: 0; width: 100%; }
@@ -180,11 +183,14 @@
 
 @media (prefers-reduced-motion: no-preference) { .js .tl li, .js .caps li, .js .layers li { } }
 
-/* mega links live inside .nav__links: neutralise its link styling */
-.nav__links .mega a:not(.btn) { padding: 0; color: var(--ink); text-decoration: none; font-size: 1rem; min-height: 40px; font-weight: 500; }
-.nav__links .mega a:not(.btn):hover { color: var(--accent-ink); text-decoration: none; }
-.nav__links .mega a.mega__all { color: var(--accent); min-height: 44px; margin-bottom: .75rem; }
-.nav__links .mega a.mega__all:hover { color: var(--accent-ink); text-decoration: underline; text-decoration-color: currentColor; }
+/* enlaces del submenú: no heredan el subrayado de la barra */
+.nav__links .mega a:not(.btn) {
+  display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
+  min-height: 44px; padding: .4rem .45rem; border-radius: 8px;
+  color: var(--ink); text-decoration: none; font-size: 1.0625rem; font-weight: 550; letter-spacing: -.015em; line-height: 1.35; text-wrap: pretty;
+}
+.nav__links .mega a:not(.btn):hover, .nav__links .mega a:not(.btn):focus-visible { color: var(--ink); background: var(--paper-2); text-decoration: none; }
+.nav__links .mega a small { display: block; margin-top: .15rem; font-size: .9375rem; font-weight: 450; color: var(--ink-2); line-height: 1.35; }
 .footer__map { grid-template-columns: 1fr; }
 .footer__svc { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); column-gap: 1.5rem; }
 
@@ -232,9 +238,11 @@
 .footer__layers { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1.25rem 1.5rem; }
 .footer__layers h3 { font-size: .8125rem; font-weight: 600; letter-spacing: .02em; color: var(--accent-ink); margin-bottom: .25rem; }
 .footer__layers ul { display: flex; flex-direction: column; }
-.footer__layers a { display: inline-flex; align-items: center; min-height: 40px; text-decoration: none; color: var(--muted); line-height: 1.3; }
+.footer__layers a { display: inline-flex; align-items: center; min-height: 44px; text-decoration: none; color: var(--ink-2); line-height: 1.35; font-size: 1rem; }
 .footer__layers a:hover { color: var(--ink); }
+.footer__layers.footer__layers--duo { grid-template-columns: minmax(0, 1.15fr) minmax(0, .9fr); }
 @media (max-width: 1000px) { .footer__layers { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 700px) { .footer__layers.footer__layers--duo { grid-template-columns: 1fr; } }
 @media (max-width: 560px) { .footer__layers { grid-template-columns: 1fr; } }
 .hero h1 em { display: inline; }
 
