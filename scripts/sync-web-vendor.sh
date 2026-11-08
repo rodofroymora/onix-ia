@@ -30,4 +30,7 @@ data["dependencies"] = deps
 p.write_text(json.dumps(data, indent=2) + "\n")
 PY
 
+# vendor/*/tsconfig.json extiende ../../tsconfig.base.json, que resuelve a apps/web/tsconfig.base.json
+cp tsconfig.base.json apps/web/tsconfig.base.json
+
 echo "Vendor sync OK → apps/web/vendor"
