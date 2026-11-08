@@ -125,11 +125,11 @@ export default async function PlanPage({
             <section className="onix-panel mt-6 overflow-hidden">
               <div className="flex flex-wrap items-center gap-1.5 border-b border-border px-4 py-3">
                 <span className="mr-1 text-[12px] text-ink-subtle">Dimensión</span>
-                <Link href={href({ dim: undefined })} className={`rounded-full px-2 py-0.5 text-[12px] ${!p.dim ? 'bg-ink text-canvas' : 'text-ink-muted hover:text-ink'}`}>
+                <Link href={href({ dim: undefined })} className={`rounded-full px-2 py-0.5 text-[12px] ${!p.dim ? 'onix-seg-active' : 'text-ink-muted hover:text-ink'}`}>
                   Todas
                 </Link>
                 {DIMS.map((d) => (
-                  <Link key={d.k} href={href({ dim: d.k })} className={`rounded-full px-2 py-0.5 text-[12px] ${p.dim === d.k ? 'bg-ink text-canvas' : 'text-ink-muted hover:text-ink'}`}>
+                  <Link key={d.k} href={href({ dim: d.k })} className={`rounded-full px-2 py-0.5 text-[12px] ${p.dim === d.k ? 'onix-seg-active' : 'text-ink-muted hover:text-ink'}`}>
                     {d.n.split(' ')[0]}
                   </Link>
                 ))}

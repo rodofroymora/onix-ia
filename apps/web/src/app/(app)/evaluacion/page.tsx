@@ -327,14 +327,14 @@ export default async function EvaluacionPage({
                 title="Mapa de respuestas por persona"
                 aside={
                   <div className="flex flex-wrap gap-1">
-                    <Link href="/evaluacion?tab=resultados" className={`rounded-full px-2 py-0.5 text-[11px] ${!params.dim ? 'bg-ink text-canvas' : 'text-ink-muted hover:text-ink'}`}>
+                    <Link href="/evaluacion?tab=resultados" className={`rounded-full px-2 py-0.5 text-[11px] ${!params.dim ? 'onix-seg-active' : 'text-ink-muted hover:text-ink'}`}>
                       Desacuerdos
                     </Link>
                     {DIMS.map((d) => (
                       <Link
                         key={d.k}
                         href={`/evaluacion?tab=resultados&dim=${d.k}`}
-                        className={`rounded-full px-2 py-0.5 text-[11px] ${params.dim === d.k ? 'bg-ink text-canvas' : 'text-ink-muted hover:text-ink'}`}
+                        className={`rounded-full px-2 py-0.5 text-[11px] ${params.dim === d.k ? 'onix-seg-active' : 'text-ink-muted hover:text-ink'}`}
                       >
                         {d.n.split(' ')[0]}
                       </Link>

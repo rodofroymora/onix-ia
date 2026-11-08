@@ -220,11 +220,11 @@ export function PlanLineage({ stages, actions, deps }: { stages: LineageStage[];
 
         <svg className="pointer-events-none absolute inset-0 h-full w-full overflow-visible" aria-hidden>
           <defs>
-            <marker id="arr-up" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-              <path d="M0,0 L10,5 L0,10 z" fill="var(--onix-accent)" />
+            <marker id="arr-up" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse">
+              <path d="M2,1.5 L8,5 L2,8.5" fill="none" stroke="var(--onix-accent)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
             </marker>
-            <marker id="arr-down" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-              <path d="M0,0 L10,5 L0,10 z" fill="var(--onix-text-muted)" />
+            <marker id="arr-down" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse">
+              <path d="M2,1.5 L8,5 L2,8.5" fill="none" stroke="var(--onix-text-muted)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
             </marker>
           </defs>
           {edges.map((e) => {
@@ -237,7 +237,7 @@ export function PlanLineage({ stages, actions, deps }: { stages: LineageStage[];
                   d={path(e)}
                   fill="none"
                   stroke={color}
-                  strokeWidth={1 + e.dep.weight / 40}
+                  strokeWidth={1 + e.dep.weight / 80}
                   strokeDasharray={e.dir === 'down' ? '5 4' : undefined}
                   markerEnd={`url(#arr-${e.dir})`}
                 />

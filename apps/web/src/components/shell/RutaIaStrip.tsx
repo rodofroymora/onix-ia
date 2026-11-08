@@ -25,12 +25,12 @@ export function RutaIaStrip({ done = [] }: { done?: string[] }) {
             <Link
               href={step.href}
               className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 transition ${
-                active ? 'bg-ink text-canvas' : isDone ? 'text-ink' : 'text-ink-subtle hover:text-ink'
+                active ? 'onix-seg-active' : isDone ? 'text-ink' : 'text-ink-subtle hover:text-ink'
               }`}
             >
               <span
                 className={`flex h-4 w-4 items-center justify-center rounded-full border text-[10px] ${
-                  active ? 'border-canvas/40' : isDone ? 'border-ink bg-ink text-canvas' : 'border-border-strong'
+                  active ? 'border-accent/50' : isDone ? 'border-ink bg-ink text-canvas' : 'border-border-strong'
                 }`}
               >
                 {isDone && !active ? <Check className="h-2.5 w-2.5" strokeWidth={3} /> : i + 1}

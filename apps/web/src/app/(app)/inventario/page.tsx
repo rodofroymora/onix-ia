@@ -96,13 +96,13 @@ export default async function InventarioPage({
             <div className="flex flex-wrap items-center gap-1.5 border-b border-border px-4 py-3">
               <span className="mr-1 text-[12px] text-ink-subtle">Riesgo</span>
               {RISKS.map((r) => (
-                <Link key={r} href={qs({ riesgo: p.riesgo === r ? undefined : r })} className={`rounded-full px-2 py-0.5 text-[12px] ${p.riesgo === r ? 'bg-ink text-canvas' : 'text-ink-muted hover:text-ink'}`}>
+                <Link key={r} href={qs({ riesgo: p.riesgo === r ? undefined : r })} className={`rounded-full px-2 py-0.5 text-[12px] ${p.riesgo === r ? 'onix-seg-active' : 'text-ink-muted hover:text-ink'}`}>
                   {r}
                 </Link>
               ))}
               <span className="ml-3 mr-1 text-[12px] text-ink-subtle">Estatus</span>
               {STATUSES.map((s) => (
-                <Link key={s} href={qs({ estatus: p.estatus === s ? undefined : s })} className={`rounded-full px-2 py-0.5 text-[12px] ${p.estatus === s ? 'bg-ink text-canvas' : 'text-ink-muted hover:text-ink'}`}>
+                <Link key={s} href={qs({ estatus: p.estatus === s ? undefined : s })} className={`rounded-full px-2 py-0.5 text-[12px] ${p.estatus === s ? 'onix-seg-active' : 'text-ink-muted hover:text-ink'}`}>
                   {s}
                 </Link>
               ))}

@@ -240,7 +240,7 @@ export default async function AgentesPage({ searchParams }: { searchParams: Prom
           <Link
             key={k}
             href={href({ ambito: k === 'produccion' ? undefined : k })}
-            className={`rounded-full px-3 py-1 ${scope === k ? 'bg-ink text-canvas' : 'text-ink-muted hover:text-ink'}`}
+            className={`rounded-full px-3 py-1 ${scope === k ? 'onix-seg-active' : 'text-ink-muted hover:text-ink'}`}
           >
             {l}
           </Link>

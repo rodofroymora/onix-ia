@@ -260,7 +260,7 @@ export function AgentMap({ agents, highlight }: { agents: MapAgent[]; highlight:
             ['datos', 'Agentes y datos'],
           ] as const
         ).map(([k, l]) => (
-          <button key={k} type="button" onClick={() => setMode(k)} className={`rounded-md px-2.5 py-1 transition ${mode === k ? 'bg-ink text-canvas' : 'text-ink-muted hover:text-ink'}`}>
+          <button key={k} type="button" onClick={() => setMode(k)} className={`rounded-md px-2.5 py-1 transition ${mode === k ? 'onix-seg-active' : 'text-ink-muted hover:text-ink'}`}>
             {l}
           </button>
         ))}

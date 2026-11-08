@@ -14,7 +14,7 @@ export function Tabs({
   const current = search.get('tab') ?? items.find((i) => !i.hidden)?.id;
 
   return (
-    <div className="flex flex-wrap gap-5 border-b border-border pb-2">
+    <div className="inline-flex max-w-full flex-wrap gap-1 rounded-full border border-border bg-surface p-1">
       {items
         .filter((i) => !i.hidden)
         .map((item) => {
@@ -23,7 +23,11 @@ export function Tabs({
             <Link
               key={item.id}
               href={`${basePath}?tab=${item.id}`}
-              className={`onix-tab ${active ? 'onix-tab-active' : ''}`}
+              className={`rounded-full px-3.5 py-1.5 text-[13px] transition ${
+                active
+                  ? 'bg-[color-mix(in_srgb,var(--onix-accent)_14%,transparent)] font-medium text-accent shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--onix-accent)_28%,transparent)]'
+                  : 'text-ink-muted hover:bg-canvas-subtle hover:text-ink'
+              }`}
             >
               {item.label}
             </Link>
