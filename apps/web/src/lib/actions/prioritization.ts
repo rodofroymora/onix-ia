@@ -43,7 +43,12 @@ export async function updateWeightsAction(formData: FormData) {
       await tx
         .update(prioritizationWeights)
         .set(values)
-        .where(eq(prioritizationWeights.id, existing[0].id));
+        .where(
+          and(
+            eq(prioritizationWeights.id, existing[0].id),
+            eq(prioritizationWeights.organizationId, session.user.organizationId),
+          ),
+        );
     } else {
       await tx.insert(prioritizationWeights).values({
         organizationId: session.user.organizationId,

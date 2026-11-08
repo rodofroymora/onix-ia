@@ -98,14 +98,25 @@ export async function draftReportWithAssistantAction(formData: FormData) {
   if (res?.content) {
     const { db } = getDb();
     await withOrg(db, session.user.organizationId, async (tx) => {
-      const [row] = await tx.select().from(reports).where(eq(reports.id, reportId)).limit(1);
+      const [row] = await tx
+        .select()
+        .from(reports)
+        .where(
+          and(eq(reports.id, reportId), eq(reports.organizationId, session.user.organizationId)),
+        )
+        .limit(1);
       if (!row) return;
       const payload = {
         ...(row.payload as Record<string, unknown>),
         body: res.content,
         assistantStub: true,
       };
-      await tx.update(reports).set({ payload, updatedAt: new Date() }).where(eq(reports.id, reportId));
+      await tx
+        .update(reports)
+        .set({ payload, updatedAt: new Date() })
+        .where(
+          and(eq(reports.id, reportId), eq(reports.organizationId, session.user.organizationId)),
+        );
     });
     revalidatePath(`/reportes/${reportId}`);
   }

@@ -2,8 +2,7 @@ node_modules
 dist
 .turbo
 .data
-!apps/web/.data/
-!apps/web/.data/**
+apps/web/.data
 *.log
 .env
 .env.*

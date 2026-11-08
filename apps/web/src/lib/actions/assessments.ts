@@ -75,11 +75,23 @@ export async function inviteRespondentAction(formData: FormData) {
   const { db } = getDb();
 
   await withOrg(db, session.user.organizationId, async (tx) => {
+    const [assessment] = await tx
+      .select({ id: assessments.id })
+      .from(assessments)
+      .where(
+        and(
+          eq(assessments.id, assessmentId),
+          eq(assessments.organizationId, session.user.organizationId),
+        ),
+      )
+      .limit(1);
+    if (!assessment) throw new Error('Evaluación no encontrada en tu organización');
+
     const [inv] = await tx
       .insert(invitations)
       .values({
         organizationId: session.user.organizationId,
-        assessmentId,
+        assessmentId: assessment.id,
         email,
         role: 'member',
         status: 'pending',
@@ -90,7 +102,7 @@ export async function inviteRespondentAction(formData: FormData) {
 
     const signed = signRespondentToken({
       invitationId: inv!.id,
-      assessmentId,
+      assessmentId: assessment.id,
       organizationId: session.user.organizationId,
       email,
       exp: createRespondentExpiry(),
@@ -171,9 +183,21 @@ export async function publishAssessmentAction(formData: FormData) {
         routeIndex: result.route,
         updatedAt: new Date(),
       })
-      .where(eq(assessments.id, assessmentId));
+      .where(
+        and(
+          eq(assessments.id, assessmentId),
+          eq(assessments.organizationId, session.user.organizationId),
+        ),
+      );
 
-    await tx.delete(dimensionResults).where(eq(dimensionResults.assessmentId, assessmentId));
+    await tx
+      .delete(dimensionResults)
+      .where(
+        and(
+          eq(dimensionResults.assessmentId, assessmentId),
+          eq(dimensionResults.organizationId, session.user.organizationId),
+        ),
+      );
     for (const d of result.dims) {
       await tx.insert(dimensionResults).values({
         organizationId: session.user.organizationId,
@@ -184,7 +208,14 @@ export async function publishAssessmentAction(formData: FormData) {
       });
     }
 
-    await tx.delete(gaps).where(eq(gaps.assessmentId, assessmentId));
+    await tx
+      .delete(gaps)
+      .where(
+        and(
+          eq(gaps.assessmentId, assessmentId),
+          eq(gaps.organizationId, session.user.organizationId),
+        ),
+      );
     for (const g of findGaps(result.dims)) {
       await tx.insert(gaps).values({
         organizationId: session.user.organizationId,
@@ -240,12 +271,25 @@ export async function saveRespondentAnswerAction(input: {
       throw new Error('Invitación expirada');
     }
 
+    const [assessment] = await tx
+      .select({ id: assessments.id })
+      .from(assessments)
+      .where(
+        and(
+          eq(assessments.id, payload.assessmentId),
+          eq(assessments.organizationId, payload.organizationId),
+        ),
+      )
+      .limit(1);
+    if (!assessment) throw new Error('Evaluación no válida para esta organización');
+
     const existing = await tx
       .select()
       .from(answers)
       .where(
         and(
           eq(answers.assessmentId, payload.assessmentId),
+          eq(answers.organizationId, payload.organizationId),
           eq(answers.questionId, input.questionId),
         ),
       )
@@ -259,7 +303,12 @@ export async function saveRespondentAnswerAction(input: {
           valueText: input.valueText ?? null,
           updatedAt: new Date(),
         })
-        .where(eq(answers.id, existing[0].id));
+        .where(
+          and(
+            eq(answers.id, existing[0].id),
+            eq(answers.organizationId, payload.organizationId),
+          ),
+        );
     } else {
       await tx.insert(answers).values({
         organizationId: payload.organizationId,
@@ -304,6 +353,11 @@ export async function consumeInvitationAction(token: string) {
     await tx
       .update(invitations)
       .set({ status: 'accepted', updatedAt: new Date() })
-      .where(eq(invitations.id, payload.invitationId));
+      .where(
+        and(
+          eq(invitations.id, payload.invitationId),
+          eq(invitations.organizationId, payload.organizationId),
+        ),
+      );
   });
 }

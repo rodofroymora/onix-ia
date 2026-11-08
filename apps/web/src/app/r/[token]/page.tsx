@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { answers, invitations, questions, assessments } from '@onix/db';
 import { notFound, redirect } from 'next/navigation';
 import {
@@ -9,9 +9,13 @@ import { getDb, withOrg } from '@/lib/db';
 import { verifyRespondentToken } from '@/lib/respondent-token';
 import { RespondentWizard } from '@/components/panels/RespondentWizard';
 
-async function findInvitation(id: string) {
+async function findInvitation(id: string, organizationId: string) {
   const { db } = getDb();
-  const [inv] = await db.select().from(invitations).where(eq(invitations.id, id)).limit(1);
+  const [inv] = await db
+    .select()
+    .from(invitations)
+    .where(and(eq(invitations.id, id), eq(invitations.organizationId, organizationId)))
+    .limit(1);
   return inv ?? null;
 }
 
@@ -43,12 +47,9 @@ export default async function RespondentPortalPage({
   if (!payload) notFound();
 
   const { db } = getDb();
-  const invitation = await findInvitation(payload.invitationId);
+  const invitation = await findInvitation(payload.invitationId, payload.organizationId);
   if (!invitation) notFound();
-  if (
-    invitation.organizationId !== payload.organizationId ||
-    invitation.assessmentId !== payload.assessmentId
-  ) {
+  if (invitation.assessmentId !== payload.assessmentId) {
     notFound();
   }
   if (invitation.status === 'accepted' || invitation.status === 'revoked' || invitation.status === 'expired') {
@@ -74,7 +75,12 @@ export default async function RespondentPortalPage({
   const [assessment] = await db
     .select()
     .from(assessments)
-    .where(eq(assessments.id, payload.assessmentId))
+    .where(
+      and(
+        eq(assessments.id, payload.assessmentId),
+        eq(assessments.organizationId, payload.organizationId),
+      ),
+    )
     .limit(1);
   if (!assessment) notFound();
 

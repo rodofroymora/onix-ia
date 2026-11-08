@@ -91,12 +91,23 @@ export async function updateActionProgressAction(formData: FormData) {
       .where(and(eq(actions.id, actionId), eq(actions.organizationId, session.user.organizationId)));
 
     if (evidenceStatus !== 'none') {
-      const existing = await tx.select().from(evidences).where(eq(evidences.actionId, actionId)).limit(1);
+      const existing = await tx
+        .select()
+        .from(evidences)
+        .where(
+          and(eq(evidences.actionId, actionId), eq(evidences.organizationId, session.user.organizationId)),
+        )
+        .limit(1);
       if (existing[0]) {
         await tx
           .update(evidences)
           .set({ status: evidenceStatus, updatedAt: new Date() })
-          .where(eq(evidences.id, existing[0].id));
+          .where(
+            and(
+              eq(evidences.id, existing[0].id),
+              eq(evidences.organizationId, session.user.organizationId),
+            ),
+          );
       } else {
         await tx.insert(evidences).values({
           organizationId: session.user.organizationId,

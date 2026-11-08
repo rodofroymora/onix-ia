@@ -1,6 +1,6 @@
 'use server';
 
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import {
   memberships,
   organizations,
@@ -99,7 +99,12 @@ export async function updateResponsibilityMapAction(formData: FormData) {
     await tx
       .update(responsibilityMaps)
       .set({ roles, updatedAt: new Date() })
-      .where(eq(responsibilityMaps.id, mapId));
+      .where(
+        and(
+          eq(responsibilityMaps.id, mapId),
+          eq(responsibilityMaps.organizationId, session.user.organizationId),
+        ),
+      );
     await appendAudit(tx, {
       organizationId: session.user.organizationId,
       actorUserId: session.user.id,
