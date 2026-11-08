@@ -16,7 +16,7 @@ import type { GovernTx } from './client.js';
 import * as schema from './schema/index.js';
 import { CASE_CLASSIFICATION, seedDemoExtras } from './demo-seed-extras.js';
 
-export const DEMO_SEED_VERSION = '6';
+export const DEMO_SEED_VERSION = '7';
 
 type UserRow = typeof schema.users.$inferSelect;
 type QvRow = typeof schema.questionnaireVersions.$inferSelect;

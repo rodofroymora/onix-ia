@@ -6,11 +6,11 @@ import { AgentMap } from '@/components/agents/AgentMap';
 import { Card, Kpi, PageHeader } from '@/components/ui/PageHeader';
 import { RiskDot } from '@/components/ui/RiskDot';
 import { Tabs } from '@/components/ui/Tabs';
-import { saveAgentAction } from '@/lib/actions/agents';
+import { createCaseFromAgentAction, saveAgentAction } from '@/lib/actions/agents';
 import { expandQueryWithModel, loadAgents, searchAgents, type AgentRow } from '@/lib/server/agents';
 import { requireSession } from '@/lib/session';
 
-type SP = { tab?: string; q?: string; agente?: string; estado?: string; publicador?: string; plataforma?: string; canal?: string };
+type SP = { tab?: string; q?: string; agente?: string; estado?: string; publicador?: string; plataforma?: string; canal?: string; ambito?: string };
 
 function Select({ name, label, value, options }: { name: string; label: string; value?: string; options: { k: string; n: string }[] }) {
   return (
@@ -48,6 +48,29 @@ function AgentDrawer({ a, cases, canWrite, closeHref }: { a: AgentRow | null; ca
             <X className="h-4 w-4" />
           </Link>
         </div>
+        {a && a.riskMismatch ? (
+          <div className="mx-6 mt-5 rounded-lg border border-border bg-canvas-subtle px-4 py-3 text-[12px] text-ink-muted">
+            <span className="text-warning">Riesgo distinto.</span> Este agente tiene riesgo <span className="text-ink">{a.risk}</span>, pero su caso del inventario dice{' '}
+            <span className="text-ink">{a.caseRisk}</span>. Revisa el caso para que el triaje y los controles cubran lo que de verdad corre.
+          </div>
+        ) : null}
+        {a && a.useCaseId ? (
+          <div className="mx-6 mt-5 flex items-center justify-between gap-3 text-[13px]">
+            <span className="text-ink-muted">
+              Caso del inventario: <span className="text-ink">{a.useCaseName}</span>
+            </span>
+            <Link href={`/inventario?caso=${a.useCaseId}`} className="shrink-0 text-accent hover:underline">
+              Abrir caso
+            </Link>
+          </div>
+        ) : null}
+        {a && !a.useCaseId && canWrite ? (
+          <form action={createCaseFromAgentAction} className="mx-6 mt-5 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-dashed border-border px-4 py-3">
+            <input type="hidden" name="agentId" value={a.id} />
+            <span className="text-[12px] text-ink-muted">Este agente no tiene caso en el inventario, así que nadie ha evaluado su riesgo ni su valor.</span>
+            <button className="onix-btn-ghost py-1.5">Crear caso desde este agente</button>
+          </form>
+        ) : null}
         <form action={saveAgentAction} className="space-y-4 px-6 py-5">
           {a ? <input type="hidden" name="id" value={a.id} /> : null}
           <fieldset disabled={!canWrite} className="space-y-4">
@@ -88,7 +111,7 @@ function AgentDrawer({ a, cases, canWrite, closeHref }: { a: AgentRow | null; ca
               </label>
               <label className="text-[12px] text-ink-muted">
                 Estado
-                <select name="status" defaultValue={a?.status ?? 'Activo'} className="onix-input mt-1">
+                <select name="status" defaultValue={a?.status ?? 'En producción'} className="onix-input mt-1">
                   {AGENT_STATUSES.map((p) => (
                     <option key={p}>{p}</option>
                   ))}
@@ -151,8 +174,10 @@ export default async function AgentesPage({ searchParams }: { searchParams: Prom
   const canWrite = session.user.role !== 'client_reader';
   const { agents, cases } = await loadAgents(session.user.organizationId);
 
+  const scope = p.ambito === 'todos' ? 'todos' : 'produccion';
   const filtered = agents.filter(
     (a) =>
+      (scope === 'todos' || a.status === 'En producción') &&
       (!p.estado || a.status === p.estado) &&
       (!p.publicador || a.publisher === p.publicador) &&
       (!p.plataforma || a.platform === p.plataforma) &&
@@ -167,8 +192,13 @@ export default async function AgentesPage({ searchParams }: { searchParams: Prom
   const atRisk = agents.filter((a) => a.risk === 'Alto' || a.risk === 'Inaceptable');
   const noOwner = agents.filter((a) => !a.ownerName);
   const unmanaged = agents.filter((a) => !a.managed);
+  const inProd = agents.filter((a) => a.status === 'En producción');
+  const noCase = agents.filter((a) => !a.useCaseId);
+  const mismatch = agents.filter((a) => a.riskMismatch);
   const idle = agents.filter((a) => a.status === 'Inactivo');
-  const selected = p.agente === 'nuevo' ? null : p.agente ? agents.find((a) => a.id === p.agente) ?? null : undefined;
+  const selected =
+    p.agente === 'nuevo' ? null : p.agente && !p.agente.startsWith('caso:') ? agents.find((a) => a.id === p.agente && !a.fromInventory) ?? null : undefined;
+  const openHref = (a: AgentRow) => (a.fromInventory ? `/inventario?caso=${a.useCaseId}` : href({ agente: a.id }));
   const href = (patch: Partial<SP>) => {
     const next = { ...p, ...patch };
     const s = new URLSearchParams(Object.entries(next).filter(([, v]) => v) as [string, string][]).toString();
@@ -193,14 +223,33 @@ export default async function AgentesPage({ searchParams }: { searchParams: Prom
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Kpi label="Agentes totales" value={agents.length} sub={`${new Set(agents.map((a) => a.platform)).size} plataformas`} />
-        <Kpi label="En riesgo" value={atRisk.length} sub="riesgo alto o inaceptable" />
-        <Kpi label="Sin dueño" value={noOwner.length} sub={noOwner.slice(0, 2).map((a) => a.name).join(', ') || 'Todos tienen dueño'} />
-        <Kpi label="No gestionados" value={unmanaged.length} sub={`${idle.length} inactivos para retirar`} />
+        <Kpi label="En producción" value={inProd.length} sub={`de ${agents.length} en ${new Set(agents.map((a) => a.platform)).size} plataformas`} />
+        <Kpi label="En riesgo" value={atRisk.length} sub={mismatch.length ? `riesgo alto o inaceptable · ${mismatch.length} distinto a su caso` : 'riesgo alto o inaceptable'} />
+        <Kpi label="Sin caso en el inventario" value={noCase.length} sub={`${unmanaged.length} no gestionados · ${noOwner.length} sin dueño`} />
+        <Kpi label="Inactivos" value={idle.length} sub="candidatos a retirar" />
       </div>
 
-      <form action="/agentes" className="mt-6 flex flex-wrap items-center gap-2">
+      <div className="mt-6 flex items-center gap-1 text-[13px]">
+        {(
+          [
+            ['produccion', `En producción · ${inProd.length}`],
+            ['todos', `Todos · ${agents.length}`],
+          ] as const
+        ).map(([k, l]) => (
+          <Link
+            key={k}
+            href={href({ ambito: k === 'produccion' ? undefined : k })}
+            className={`rounded-full px-3 py-1 ${scope === k ? 'bg-ink text-canvas' : 'text-ink-muted hover:text-ink'}`}
+          >
+            {l}
+          </Link>
+        ))}
+        <span className="ml-2 text-[12px] text-ink-subtle">Incluye los casos del inventario en producción, aunque no tengan agente registrado.</span>
+      </div>
+
+      <form action="/agentes" className="mt-3 flex flex-wrap items-center gap-2">
         <input type="hidden" name="tab" value={tab} />
+        {scope === 'todos' ? <input type="hidden" name="ambito" value="todos" /> : null}
         <label className="relative min-w-[260px] flex-1">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-subtle" />
           <input
@@ -258,6 +307,8 @@ export default async function AgentesPage({ searchParams }: { searchParams: Prom
                   ownerName: a.ownerName,
                   monthlyUsers: a.monthlyUsers,
                   dataSources: a.dataSources,
+                  fromInventory: a.fromInventory,
+                  useCaseId: a.useCaseId,
                 }))}
                 highlight={hitIds}
               />
@@ -265,17 +316,17 @@ export default async function AgentesPage({ searchParams }: { searchParams: Prom
           </div>
           <Card title={hits ? 'Resultados' : 'Requieren atención'}>
             <ul className="-my-1 divide-y divide-border">
-              {(hits ? list : [...unmanaged, ...noOwner.filter((a) => a.managed), ...atRisk.filter((a) => a.managed && a.ownerName)]).slice(0, 9).map((a) => {
+              {(hits ? list : [...new Set([...mismatch, ...filtered.filter((a) => !a.useCaseId && (a.risk === 'Alto' || a.risk === 'Inaceptable' || !a.managed)), ...filtered.filter((a) => !a.ownerName)])]).slice(0, 9).map((a) => {
                 const h = hits?.find((x) => x.id === a.id);
                 return (
                   <li key={a.id}>
-                    <Link href={href({ agente: a.id })} className="block py-2.5">
+                    <Link href={openHref(a)} className="block py-2.5">
                       <div className="flex items-center justify-between gap-2">
                         <span className="truncate text-[13px] text-ink">{a.name}</span>
                         {h ? <span className="shrink-0 text-[11px] tabular-nums text-ink-subtle">{h.score}%</span> : <RiskDot risk={a.risk as 'Bajo'} />}
                       </div>
                       <p className="truncate text-[11px] text-ink-subtle">
-                        {h ? `coincide en ${h.why.join(', ')}` : `${a.platformName} · ${!a.managed ? 'no gestionado' : !a.ownerName ? 'sin dueño' : `riesgo ${a.risk}`}`}
+                        {h ? `coincide en ${h.why.join(', ')}` : `${a.platformName} · ${a.riskMismatch ? 'riesgo distinto a su caso' : !a.useCaseId ? 'sin caso en el inventario' : !a.managed ? 'no gestionado' : 'sin dueño'}`}
                       </p>
                     </Link>
                   </li>
@@ -291,6 +342,7 @@ export default async function AgentesPage({ searchParams }: { searchParams: Prom
               <tr>
                 <th>Agente</th>
                 <th>Plataforma</th>
+                <th>Caso del inventario</th>
                 <th>Canal</th>
                 <th>Dueño</th>
                 <th>Riesgo</th>
@@ -303,9 +355,10 @@ export default async function AgentesPage({ searchParams }: { searchParams: Prom
               {list.map((a) => (
                 <tr key={a.id} className="hover:bg-canvas-subtle/60">
                   <td>
-                    <Link href={href({ agente: a.id })} className="hover:underline">
+                    <Link href={openHref(a)} className="hover:underline">
                       {a.name}
                     </Link>
+                    {a.fromInventory ? <span className="ml-2 onix-chip">del inventario</span> : null}
                     <span className="block text-[11px] text-ink-subtle">
                       {a.publisher}
                       {a.managed ? '' : ' · no gestionado'}
@@ -313,6 +366,16 @@ export default async function AgentesPage({ searchParams }: { searchParams: Prom
                     </span>
                   </td>
                   <td className="text-ink-muted">{a.platformName}</td>
+                  <td className={a.useCaseId ? 'text-ink-muted' : 'text-danger'}>
+                    {a.useCaseId ? (
+                      <Link href={`/inventario?caso=${a.useCaseId}`} className="hover:underline">
+                        {a.useCaseName}
+                      </Link>
+                    ) : (
+                      'Sin caso'
+                    )}
+                    {a.riskMismatch ? <span className="block text-[11px] text-warning">riesgo distinto al del caso</span> : null}
+                  </td>
                   <td className="text-ink-muted">{a.channel}</td>
                   <td className={a.ownerName ? 'text-ink-muted' : 'text-danger'}>{a.ownerName ?? 'Sin dueño'}</td>
                   <td>
@@ -329,7 +392,7 @@ export default async function AgentesPage({ searchParams }: { searchParams: Prom
       )}
 
       <p className="mt-4 text-[11px] text-ink-subtle">
-        Hoy los agentes se registran a mano o se descubren en la telemetría. La conexión directa con Microsoft 365, Google y AWS para descubrirlos solos está en el roadmap.
+        Los agentes se registran a mano o se descubren en la telemetría, y los casos en producción del inventario aparecen aquí aunque no tengan agente registrado. La conexión directa con Microsoft 365, Google y AWS para descubrirlos solos está en el roadmap.
       </p>
 
       {selected !== undefined ? <AgentDrawer a={selected} cases={cases} canWrite={canWrite} closeHref={href({ agente: undefined })} /> : null}

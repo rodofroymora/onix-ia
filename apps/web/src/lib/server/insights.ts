@@ -240,7 +240,7 @@ export async function loadOrgOverview(organizationId: string) {
       .where(eq(aiUsageMetrics.organizationId, organizationId))
       .orderBy(aiUsageMetrics.period);
     const agentRows = await tx
-      .select({ id: aiAgents.id, risk: aiAgents.risk, managed: aiAgents.managed, ownerName: aiAgents.ownerName, platform: aiAgents.platform, status: aiAgents.status })
+      .select({ id: aiAgents.id, name: aiAgents.name, useCaseId: aiAgents.useCaseId, monthlyUsers: aiAgents.monthlyUsers, risk: aiAgents.risk, managed: aiAgents.managed, ownerName: aiAgents.ownerName, platform: aiAgents.platform, status: aiAgents.status, channel: aiAgents.channel })
       .from(aiAgents)
       .where(eq(aiAgents.organizationId, organizationId));
 

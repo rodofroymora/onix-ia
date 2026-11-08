@@ -95,8 +95,19 @@ export async function loadShellData(organizationId: string) {
         .limit(1);
       if (anyInv.length) pending.unshift({ id: 'publish', label: 'Todos contestaron', detail: 'Guarda y publica los resultados', href: '/evaluacion' });
     }
-    const agents = await tx.select({ id: aiAgents.id, name: aiAgents.name, platform: aiAgents.platform }).from(aiAgents).where(eq(aiAgents.organizationId, organizationId));
-    palette.push(...agents.map((a) => ({ id: `ag-${a.id}`, label: a.name, group: 'Agentes' as const, href: `/agentes?agente=${a.id}`, hint: a.platform })));
+    const agents = await tx
+      .select({ id: aiAgents.id, name: aiAgents.name, platform: aiAgents.platform, risk: aiAgents.risk, useCaseId: aiAgents.useCaseId })
+      .from(aiAgents)
+      .where(eq(aiAgents.organizationId, organizationId));
+    const RANK: Record<string, number> = { Bajo: 1, Medio: 2, Alto: 3, Inaceptable: 4 };
+    for (const ag of agents) {
+      const c = ag.useCaseId ? cases.find((x) => x.id === ag.useCaseId) : undefined;
+      if (!c && (ag.risk === 'Alto' || ag.risk === 'Inaceptable'))
+        pending.push({ id: `agc-${ag.id}`, label: 'Agente de riesgo sin caso', detail: `${ag.name} · riesgo ${ag.risk}`, href: `/agentes?ambito=todos&agente=${ag.id}` });
+      else if (c && (RANK[ag.risk] ?? 0) > (RANK[c.risk] ?? 0))
+        pending.push({ id: `agr-${ag.id}`, label: 'Riesgo distinto al del caso', detail: `${ag.name} (${ag.risk}) vs. ${c.name} (${c.risk})`, href: `/inventario?caso=${c.id}` });
+    }
+    palette.push(...agents.map((a) => ({ id: `ag-${a.id}`, label: a.name, group: 'Agentes' as const, href: `/agentes?ambito=todos&agente=${a.id}`, hint: a.platform })));
     const done: string[] = [];
     if (completed.length) done.push('/evaluacion');
     if (cases.length) done.push('/inventario');

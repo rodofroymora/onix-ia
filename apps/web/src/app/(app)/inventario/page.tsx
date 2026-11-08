@@ -131,6 +131,10 @@ export default async function InventarioPage({
                               {c.area || 'Sin área'}
                               {c.inProduction ? ' · en producción' : ''}
                               {c.origin === 'import' ? ' · importado' : ''}
+                              {(() => {
+                                const n = o.agents.filter((x) => x.useCaseId === c.id).length;
+                                return n ? ` · ${n} ${n === 1 ? 'agente' : 'agentes'}` : '';
+                              })()}
                             </span>
                           </Link>
                         </td>
@@ -273,7 +277,15 @@ export default async function InventarioPage({
         </div>
       )}
 
-      {drawerOpen ? <CaseDrawer c={selected} canWrite={canWrite} sector={sector} closeHref={qs({ caso: undefined })} /> : null}
+      {drawerOpen ? (
+        <CaseDrawer
+          c={selected}
+          canWrite={canWrite}
+          sector={sector}
+          closeHref={qs({ caso: undefined })}
+          agents={selected ? o.agents.filter((a) => a.useCaseId === selected.id) : []}
+        />
+      ) : null}
     </div>
   );
 }

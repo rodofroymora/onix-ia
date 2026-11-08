@@ -452,7 +452,7 @@ export const aiAgents = pgTable('ai_agents', {
   publisher: text('publisher').notNull().default('Organización'),
   channel: text('channel').notNull().default('Interno'),
   ownerName: text('owner_name'),
-  status: text('status').notNull().default('Activo'),
+  status: text('status').notNull().default('En producción'),
   risk: text('risk').notNull().default('Medio'),
   managed: boolean('managed').notNull().default(true),
   useCaseId: uuid('use_case_id').references(() => aiUseCases.id, { onDelete: 'set null' }),

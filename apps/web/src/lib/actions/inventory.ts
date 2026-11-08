@@ -52,7 +52,8 @@ export async function saveUseCaseAction(formData: FormData) {
   const name = String(formData.get('name') ?? '').trim();
   if (!name) throw new Error('Nombre requerido');
   const origin = parseOrigin(formData.get('origin'));
-  const status = enforceOriginStatus(origin, String(formData.get('status') ?? 'Propuesto'));
+  // CU-06: lo descubierto entra como Propuesto; después se puede revisar y aprobar.
+  const status = id ? enforceOriginStatus('manual', String(formData.get('status') ?? 'Propuesto')) : enforceOriginStatus(origin, String(formData.get('status') ?? 'Propuesto'));
   const risk = parseRisk(formData.get('risk'));
   // Un caso inaceptable nunca puede quedar aprobado ni en producción.
   const finalStatus = risk === 'Inaceptable' && status === 'Aprobado' ? 'En revisión' : status;

@@ -105,7 +105,7 @@ export const AGENT_PLATFORMS: CatalogOption[] = [
 
 export const AGENT_CHANNELS: string[] = ['Teams', 'Web', 'WhatsApp', 'Correo', 'API', 'Interno'];
 export const AGENT_PUBLISHERS: string[] = ['Microsoft', 'Organización', 'Terceros'];
-export const AGENT_STATUSES: string[] = ['Activo', 'Piloto', 'Inactivo', 'Bloqueado'];
+export const AGENT_STATUSES: string[] = ['En producción', 'Piloto', 'Inactivo', 'Bloqueado'];
 
 /** Herramientas y modelos sugeridos (el campo admite otros). */
 export const TOOL_SUGGESTIONS: string[] = [

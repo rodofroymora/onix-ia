@@ -3,27 +3,100 @@ import { aiAgents, aiUseCases } from '@onix/db';
 import { AGENT_PLATFORMS } from '@onix/templates';
 import { getDb, withOrg } from '@/lib/db';
 
+const RISK_ORDER: Record<string, number> = { Bajo: 1, Medio: 2, Alto: 3, Inaceptable: 4 };
+
+/** Adivina la plataforma de un caso del inventario por su herramienta o proveedor. */
+function platformFromCase(tech: string | null, vendor: string | null): string {
+  const t = `${tech ?? ''} ${vendor ?? ''}`.toLowerCase();
+  if (t.includes('copilot studio')) return 'copilot_studio';
+  if (t.includes('365') || t.includes('copilot')) return 'agent_builder';
+  if (t.includes('azure') || t.includes('foundry')) return 'azure_foundry';
+  if (t.includes('vertex')) return 'vertex';
+  if (t.includes('gemini') || t.includes('google')) return 'gemini_ent';
+  if (t.includes('bedrock') || t.includes('aws') || t.includes('amazon')) return 'bedrock';
+  if (t.includes('chatgpt') || t.includes('openai') || t.includes('gpt')) return 'openai';
+  if (t.includes('claude') || t.includes('anthropic')) return 'claude';
+  if (t.includes('salesforce') || t.includes('agentforce')) return 'salesforce';
+  if (t.includes('servicenow')) return 'servicenow';
+  if (t.includes('n8n')) return 'n8n';
+  if (t.includes('make') || t.includes('zapier')) return 'make';
+  return 'custom';
+}
+
 export async function loadAgents(organizationId: string) {
   const { db } = getDb();
   return withOrg(db, organizationId, async (tx) => {
     const rows = await tx.select().from(aiAgents).where(eq(aiAgents.organizationId, organizationId));
     const cases = await tx
-      .select({ id: aiUseCases.id, name: aiUseCases.name })
+      .select({
+        id: aiUseCases.id,
+        name: aiUseCases.name,
+        risk: aiUseCases.risk,
+        status: aiUseCases.status,
+        inProduction: aiUseCases.inProduction,
+        description: aiUseCases.description,
+        ownerName: aiUseCases.ownerName,
+        technology: aiUseCases.technology,
+        vendor: aiUseCases.vendor,
+        customerFacing: aiUseCases.customerFacing,
+      })
       .from(aiUseCases)
       .where(eq(aiUseCases.organizationId, organizationId));
-    const caseName = new Map(cases.map((c) => [c.id, c.name]));
+    const caseById = new Map(cases.map((c) => [c.id, c]));
+    const meta = (platform: string) => ({
+      platformName: AGENT_PLATFORMS.find((p) => p.k === platform)?.n ?? platform,
+      vendor: AGENT_PLATFORMS.find((p) => p.k === platform)?.d ?? 'Otro',
+    });
+    const real = rows.map((a) => {
+      const c = a.useCaseId ? caseById.get(a.useCaseId) : undefined;
+      return {
+        ...a,
+        dataSources: (Array.isArray(a.dataSources) ? a.dataSources : []) as string[],
+        capabilities: (Array.isArray(a.capabilities) ? a.capabilities : []) as string[],
+        useCaseName: c?.name ?? null,
+        caseRisk: c?.risk ?? null,
+        // El agente corre con más riesgo que el que declara su caso del inventario.
+        riskMismatch: Boolean(c && (RISK_ORDER[a.risk] ?? 0) > (RISK_ORDER[c.risk] ?? 0)),
+        fromInventory: false,
+        ...meta(a.platform),
+      };
+    });
+    // Casos en producción sin agente registrado: también se muestran en Discovery.
+    const linked = new Set(rows.map((a) => a.useCaseId).filter(Boolean));
+    const virtual = cases
+      .filter((c) => c.inProduction && !linked.has(c.id))
+      .map((c) => {
+        const platform = platformFromCase(c.technology, c.vendor);
+        return {
+          id: `caso:${c.id}`,
+          organizationId,
+          name: c.name,
+          description: c.description,
+          platform,
+          publisher: 'Organización',
+          channel: c.customerFacing ? 'Web' : 'Interno',
+          ownerName: c.ownerName,
+          status: 'En producción',
+          risk: c.risk as string,
+          managed: true,
+          useCaseId: c.id,
+          dataSources: [] as string[],
+          capabilities: [] as string[],
+          monthlyUsers: 0,
+          lastActivity: null,
+          origin: 'inventario',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          useCaseName: c.name,
+          caseRisk: c.risk as string,
+          riskMismatch: false,
+          fromInventory: true,
+          ...meta(platform),
+        };
+      });
     return {
-      agents: rows
-        .map((a) => ({
-          ...a,
-          dataSources: (Array.isArray(a.dataSources) ? a.dataSources : []) as string[],
-          capabilities: (Array.isArray(a.capabilities) ? a.capabilities : []) as string[],
-          useCaseName: a.useCaseId ? caseName.get(a.useCaseId) ?? null : null,
-          platformName: AGENT_PLATFORMS.find((p) => p.k === a.platform)?.n ?? a.platform,
-          vendor: AGENT_PLATFORMS.find((p) => p.k === a.platform)?.d ?? 'Otro',
-        }))
-        .sort((x, y) => y.monthlyUsers - x.monthlyUsers),
-      cases,
+      agents: [...real, ...virtual].sort((x, y) => y.monthlyUsers - x.monthlyUsers),
+      cases: cases.map((c) => ({ id: c.id, name: c.name, risk: c.risk, inProduction: c.inProduction })),
     };
   });
 }

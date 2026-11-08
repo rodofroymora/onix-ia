@@ -41,7 +41,7 @@ type AgentSeed = {
 };
 
 const AGENTS: AgentSeed[] = [
-  { name: 'Concierge WhatsApp', platform: 'azure_foundry', publisher: 'Organización', channel: 'WhatsApp', owner: 'Mariana López', risk: 'Medio', useCase: 'Asistente de reservaciones por WhatsApp', data: ['PMS de reservaciones', 'Tarifas'], caps: ['Responder dudas', 'Crear prerreservas'], users: 4200, desc: 'Atiende huéspedes por WhatsApp, cotiza y crea prerreservas que confirma un agente.' },
+  { name: 'Concierge WhatsApp', platform: 'azure_foundry', publisher: 'Organización', channel: 'WhatsApp', owner: 'Mariana López', risk: 'Alto', useCase: 'Asistente de reservaciones por WhatsApp', data: ['PMS de reservaciones', 'Tarifas', 'Pasarela de pagos'], caps: ['Responder dudas', 'Crear prerreservas', 'Cobrar anticipos'], users: 4200, desc: 'Atiende huéspedes por WhatsApp, cotiza, crea prerreservas y desde octubre cobra anticipos con liga de pago.' },
   { name: 'Cotizador de grupos', platform: 'azure_foundry', publisher: 'Organización', channel: 'Web', owner: 'Diego Ramos', risk: 'Medio', data: ['Tarifas', 'CRM de ventas'], caps: ['Cotizar eventos'], users: 180, desc: 'Arma cotizaciones de grupos y bodas con tarifas vigentes.' },
   { name: 'Copiloto de ventas', platform: 'copilot_studio', publisher: 'Organización', channel: 'Teams', owner: 'Diego Ramos', risk: 'Medio', useCase: 'Copiloto para ventas corporativas', data: ['CRM de ventas', 'SharePoint de ventas'], caps: ['Resumir cuentas', 'Redactar propuestas'], users: 35, desc: 'Prepara reuniones con clientes corporativos y redacta propuestas.' },
   { name: 'Mesa de ayuda TI', platform: 'copilot_studio', publisher: 'Organización', channel: 'Teams', owner: 'Carlos Méndez', risk: 'Bajo', data: ['Base de conocimiento TI'], caps: ['Restablecer contraseñas', 'Abrir tickets'], users: 410, desc: 'Responde dudas de TI y abre tickets en la mesa de servicio.' },
@@ -57,7 +57,6 @@ const AGENTS: AgentSeed[] = [
   { name: 'Detección de fraude', platform: 'bedrock', publisher: 'Terceros', channel: 'API', owner: 'Ricardo Salas', risk: 'Alto', useCase: 'Detección de fraude en pagos', data: ['Pasarela de pagos'], caps: ['Marcar transacciones'], users: 6, desc: 'Marca transacciones sospechosas para revisión manual.' },
   { name: 'Conciliación de facturas', platform: 'bedrock', publisher: 'Organización', channel: 'Interno', owner: 'Ricardo Salas', risk: 'Medio', data: ['ERP financiero', 'Facturas SAT'], caps: ['Leer facturas', 'Conciliar'], users: 9, desc: 'Lee facturas y propone conciliaciones contables.' },
   { name: 'Respuesta a reseñas', platform: 'openai', publisher: 'Organización', channel: 'Web', owner: 'Paola Garza', risk: 'Bajo', useCase: 'Respuesta a reseñas en línea', data: ['Reseñas públicas'], caps: ['Redactar respuestas'], users: 8, desc: 'GPT que propone respuestas a reseñas de huéspedes.' },
-  { name: 'Contenido de redes', platform: 'openai', publisher: 'Organización', channel: 'Web', owner: 'Paola Garza', risk: 'Bajo', useCase: 'Contenido para redes sociales', data: ['Banco de fotos'], caps: ['Redactar posts', 'Generar imágenes'], users: 6, desc: 'GPT para calendario y textos de redes sociales.' },
   { name: 'GPT de contratos', platform: 'openai', publisher: 'Terceros', channel: 'Web', risk: 'Alto', managed: false, data: ['Contratos de proveedores'], caps: ['Revisar contratos'], users: 4, desc: 'GPT público usado por un abogado externo con contratos reales.' },
   { name: 'Traductor de menús', platform: 'openai', publisher: 'Terceros', channel: 'Web', risk: 'Bajo', managed: false, data: ['Menús'], caps: ['Traducir'], users: 11, desc: 'GPT público para traducir menús y avisos.' },
   { name: 'Asistente jurídico', platform: 'claude', publisher: 'Organización', channel: 'Web', owner: 'Laura Ortiz', risk: 'Medio', data: ['Contratos de proveedores', 'Políticas'], caps: ['Revisar cláusulas'], users: 5, desc: 'Proyecto de Claude con plantillas de contratos para revisar cláusulas de IA.' },
@@ -126,7 +125,7 @@ export async function seedDemoExtras(
         publisher: a.publisher,
         channel: a.channel,
         ownerName: a.owner ?? null,
-        status: a.status ?? 'Activo',
+        status: a.status ?? 'En producción',
         risk: a.risk ?? 'Medio',
         managed: a.managed ?? true,
         useCaseId: a.useCase ? caseIds[a.useCase] ?? null : null,

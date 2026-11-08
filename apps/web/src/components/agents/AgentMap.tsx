@@ -16,6 +16,8 @@ export interface MapAgent {
   ownerName: string | null;
   monthlyUsers: number;
   dataSources: string[];
+  fromInventory?: boolean;
+  useCaseId?: string | null;
 }
 
 type Kind = 'platform' | 'agent' | 'data';
@@ -230,6 +232,11 @@ export function AgentMap({ agents, highlight }: { agents: MapAgent[]; highlight:
     return { x: (sx - view.x) / view.k, y: (sy - view.y) / view.k };
   };
   const open = (id: string) => {
+    const hit = agents.find((x) => x.id === id);
+    if (hit?.fromInventory && hit.useCaseId) {
+      router.push(`/inventario?caso=${hit.useCaseId}`);
+      return;
+    }
     const next = new URLSearchParams(params.toString());
     next.set('agente', id);
     router.push(`/agentes?${next.toString()}`, { scroll: false });
@@ -239,7 +246,7 @@ export function AgentMap({ agents, highlight }: { agents: MapAgent[]; highlight:
     lines: [
       `${a.platformName} · riesgo ${a.risk} · ${a.status}`,
       `${a.ownerName ? `Dueño: ${a.ownerName}` : 'Sin dueño'}${a.managed ? '' : ' · no gestionado'}`,
-      `${a.monthlyUsers.toLocaleString('es-MX')} usuarios al mes`,
+      a.fromInventory ? 'Caso en producción del inventario sin agente registrado' : `${a.monthlyUsers.toLocaleString('es-MX')} usuarios al mes`,
     ],
   });
   const platformDim = (n: Node) => hl && !(n.members ?? []).some((a) => hl.has(a.id));
@@ -355,9 +362,9 @@ export function AgentMap({ agents, highlight }: { agents: MapAgent[]; highlight:
                           cx={n.x + dx}
                           cy={n.y + dy}
                           r={rr}
-                          fill={RISK_FILL[a.risk] ?? 'var(--onix-accent)'}
-                          stroke={a.managed ? 'var(--onix-surface)' : 'var(--onix-text)'}
-                          strokeWidth={a.managed ? 2 : 1.4}
+                          fill={a.fromInventory ? 'var(--onix-surface)' : RISK_FILL[a.risk] ?? 'var(--onix-accent)'}
+                          stroke={a.fromInventory ? RISK_FILL[a.risk] ?? 'var(--onix-accent)' : a.managed ? 'var(--onix-surface)' : 'var(--onix-text)'}
+                          strokeWidth={a.fromInventory ? 2.5 : a.managed ? 2 : 1.4}
                           strokeDasharray={a.managed ? undefined : '2.5 2'}
                           opacity={a.status === 'Inactivo' || a.status === 'Bloqueado' ? 0.4 : 1}
                         />
@@ -409,9 +416,9 @@ export function AgentMap({ agents, highlight }: { agents: MapAgent[]; highlight:
                   cx={n.x}
                   cy={n.y}
                   r={n.r}
-                  fill={RISK_FILL[a.risk] ?? 'var(--onix-accent)'}
-                  stroke={a.managed ? 'var(--onix-surface)' : 'var(--onix-text)'}
-                  strokeWidth={a.managed ? 2 : 1.4}
+                  fill={a.fromInventory ? 'var(--onix-surface)' : RISK_FILL[a.risk] ?? 'var(--onix-accent)'}
+                  stroke={a.fromInventory ? RISK_FILL[a.risk] ?? 'var(--onix-accent)' : a.managed ? 'var(--onix-surface)' : 'var(--onix-text)'}
+                  strokeWidth={a.fromInventory ? 2.5 : a.managed ? 2 : 1.4}
                   strokeDasharray={a.managed ? undefined : '2.5 2'}
                 />
                 {view.k > fit.k * 1.8 || isHl ? (
@@ -447,6 +454,10 @@ export function AgentMap({ agents, highlight }: { agents: MapAgent[]; highlight:
         <span className="inline-flex items-center gap-1.5">
           <span className="h-2.5 w-2.5 rounded-full border border-dashed border-ink" />
           No gestionado
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <span className="h-2.5 w-2.5 rounded-full border-2 border-accent" />
+          Caso del inventario sin agente
         </span>
         <span className="text-ink-subtle">Arrastra las burbujas, acerca con la rueda y toca un agente para ver su ficha.</span>
       </div>

@@ -77,12 +77,16 @@ export function CaseDrawer({
   canWrite,
   sector,
   closeHref,
+  agents = [],
 }: {
   c: CaseRow | null;
   canWrite: boolean;
   sector?: string | null;
   closeHref: string;
+  agents?: { id: string; name: string; platform: string; risk: string; status: string; ownerName: string | null; monthlyUsers: number; managed: boolean }[];
 }) {
+  const RANK: Record<string, number> = { Bajo: 1, Medio: 2, Alto: 3, Inaceptable: 4 };
+  const riskier = c ? agents.filter((a) => (RANK[a.risk] ?? 0) > (RANK[c.risk] ?? 0)) : [];
   const isNew = !c;
   const s = c ? suggestRisk(c, sector) : null;
   const comp = c ? completeness(c) : null;
@@ -114,6 +118,39 @@ export function CaseDrawer({
             <span className="onix-chip mr-2">Sugerencia</span>
             Por sus atributos, el triaje sugiere riesgo <span className="text-ink">{s.level}</span> ({s.why.join(', ') || 'sin factores'}). Lo valida:{' '}
             {s.validators.join(', ')}.
+          </div>
+        ) : null}
+        {c ? (
+          <div className="mx-6 mt-5 rounded-lg border border-border px-4 py-3">
+            <div className="flex items-center justify-between gap-3">
+              <p className="onix-label">Agentes que lo ejecutan</p>
+              <Link href="/agentes?ambito=todos&tab=registro" className="text-[12px] text-accent hover:underline">
+                Agent Discovery
+              </Link>
+            </div>
+            {agents.length ? (
+              <ul className="mt-2 space-y-1.5 text-[13px]">
+                {agents.map((a) => (
+                  <li key={a.id} className="flex items-center justify-between gap-3">
+                    <Link href={`/agentes?ambito=todos&agente=${a.id}`} className="min-w-0 truncate text-ink hover:underline">
+                      {a.name}
+                    </Link>
+                    <span className="shrink-0 text-[11px] text-ink-subtle">
+                      {a.status} · {a.monthlyUsers.toLocaleString('es-MX')} usuarios · riesgo {a.risk}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-1.5 text-[12px] text-ink-subtle">
+                {c.inProduction ? 'Está en producción pero no tiene agente registrado; aparece en Agent Discovery como caso del inventario.' : 'Aún no hay agentes ligados a este caso.'}
+              </p>
+            )}
+            {riskier.length ? (
+              <p className="mt-2 text-[12px] text-warning">
+                {riskier.map((a) => a.name).join(', ')} corre con riesgo {riskier[0]!.risk}, mayor al de este caso ({c.risk}). Revisa el riesgo.
+              </p>
+            ) : null}
           </div>
         ) : null}
         {c && missing.length ? (
