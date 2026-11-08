@@ -174,12 +174,13 @@
       </div>
 
       <div class="report__row">
-        <section class="fig">
+        <section class="fig ae-rv">
           <div class="fig__cap"><span class="fig__n">Figura 4</span><h3 id="f4Title">Ruta de gobierno del caso de uso</h3></div>
-          <div class="matrix" id="matrix"></div>
+          <div class="matrix" id="matrix" role="group" aria-label="Matriz de rutas de gobierno: toca una celda para ver qué implica"></div>
           <p class="matrix__axis">Nivel de riesgo</p>
+          <div class="mx-detail" id="mxDetail" aria-live="polite"></div>
         </section>
-        <section class="fig">
+        <section class="fig ae-rv">
           <div class="fig__cap"><span class="fig__n">Figura 5</span><h3>Perfil del caso de uso</h3></div>
           <div class="profile" id="profile"></div>
           <div class="factors" id="factors"></div>
@@ -188,25 +189,29 @@
         </section>
       </div>
 
-      <section class="fig">
-        <div class="fig__cap"><span class="fig__n">Figura 6</span><h3>Plan por etapas</h3></div>
+      <section class="fig fig--road ae-rv" aria-labelledby="f6Title">
+        <div class="fig__cap fig__cap--row">
+          <div><span class="fig__n">Figura 6</span><h3 id="f6Title">Plan por etapas</h3></div>
+          <p class="road__total" id="roadTotal" aria-live="polite"></p>
+        </div>
+        <p class="road__hint">Baja para recorrer las etapas o toca una para ir directo. Marca lo que ya tienes y mira cuánto te falta.</p>
         <div class="road" id="road"></div>
-        <p class="fig__note">Cada etapa cierra con evidencia, no con una fecha. Resaltadas, las acciones ligadas a tus dimensiones más bajas.</p>
+        <p class="fig__note">Cada etapa cierra con evidencia, no con una fecha. Resaltadas, las acciones ligadas a tus dimensiones más bajas. Lo que marques se queda en esta página: no lo guardamos.</p>
       </section>
 
       <div class="report__row">
-        <section class="fig">
+        <section class="fig ae-rv">
           <div class="fig__cap"><span class="fig__n">Recomendaciones</span><h3>Tus tres prioridades</h3></div>
           <ol class="ae-prio" id="prio"></ol>
         </section>
-        <section class="fig">
+        <section class="fig ae-rv">
           <div class="fig__cap"><span class="fig__n">Marco legal</span><h3>Leyes que conviene revisar</h3></div>
           <ul class="laws" id="laws"></ul>
           <p class="fig__note">Orientativo. No es asesoría legal.</p>
         </section>
       </div>
 
-      <div class="report__tools">
+      <div class="report__tools ae-rv">
         <button class="btn ae-ghost" type="button" id="printBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Guardar mi reporte en PDF</button>
         <p>Se genera en tu dispositivo. No pedimos tu correo.</p>
       </div>
@@ -216,17 +221,63 @@
   </div>
 </section>
 
-<!-- 4 · Siguiente paso (CTA único) -->
+<!-- 4 · Profundiza: versiones de la evaluación -->
+<section class="ae-sec ae-tiers" aria-labelledby="tiers-t"><div class="wrap">
+  <div class="ae-tiers__head ae-rv">
+    <p class="sv-eyebrow">Profundiza</p>
+    <h2 id="tiers-t" class="sv-h2">Cuando necesites más que <em>una autoevaluación.</em></h2>
+    <p class="ae-tiers__lead">La autoevaluación es una primera foto. Si quieres decidir con evidencia, o que te acompañemos a ponerlo en marcha, hay dos versiones más.</p>
+  </div>
+  <ol class="tiers__track ae-rv" aria-hidden="true"><li><span>Foto rápida</span></li><li><span>Decidir con evidencia</span></li><li><span>Ponerlo en marcha</span></li></ol>
+  <div class="tiers" id="tiers">
+    <article class="tier ae-rv" data-tier="0" aria-labelledby="t0">
+      <p class="tier__rec" hidden></p>
+      <p class="tier__k"><span class="tier__badge tier__badge--free">Gratis</span>En esta página</p>
+      <h3 id="t0">Autoevaluación</h3>
+      <p class="tier__d">Tu nivel de preparación y el perfil de tu caso principal, en unos minutos.</p>
+      <ul class="tier__list">
+        <li class="st">19 preguntas</li>
+        <li class="st">Nivel por dimensión y por capa</li>
+        <li class="st">Ruta de gobierno de tu caso principal</li>
+        <li class="st">Plan por etapas y reporte en PDF</li>
+      </ul>
+      <a class="tier__go" href="#cuestionario">Hacer mi autoevaluación</a>
+    </article>
+    <article class="tier tier--feat ae-rv" data-tier="1" aria-labelledby="t1">
+      <p class="tier__rec" hidden></p>
+      <p class="tier__k"><span class="tier__badge">Versión de pago</span>Parte de Ruta IA</p>
+      <h3 id="t1">Evaluación completa</h3>
+      <p class="tier__d">Decide con evidencia, no solo con lo que se declara.</p>
+      <ul class="tier__list">
+        <li class="st">Cuestionario ampliado y todos tus casos de uso</li>
+        <li class="st">Revisamos tus documentos como evidencia</li>
+        <li class="st">Madurez declarada contra madurez con evidencia</li>
+        <li class="st">Política de uso de IA y plan por etapas a tu medida</li>
+        <li class="st">Sesión para presentarte los resultados</li>
+      </ul>
+      <a class="tier__go" href="/servicios/estrategia-de-ia">Conocer Ruta IA</a>
+    </article>
+    <article class="tier ae-rv" data-tier="2" aria-labelledby="t2">
+      <p class="tier__rec" hidden></p>
+      <p class="tier__k"><span class="tier__badge">Versión de pago</span>Ruta IA a tu medida</p>
+      <h3 id="t2">Acompañamiento</h3>
+      <p class="tier__d">Te acompañamos a poner en marcha el plan con tu equipo.</p>
+      <ul class="tier__list">
+        <li class="st">Todo lo de la evaluación completa</li>
+        <li class="st">Entrevistas con tu equipo</li>
+        <li class="st">Modelo operativo, roles y responsables</li>
+        <li class="st">Plan de implementación y seguimiento por etapa</li>
+      </ul>
+      <a class="tier__go" href="#escribenos">Platiquemos tu caso</a>
+    </article>
+  </div>
+  <p class="ae-tiers__note ae-rv">El alcance de cada versión depende de tu empresa; lo definimos juntos en la consultoría inicial, que es gratis. ¿Ya usas IA y quieres revisar su seguridad? Conoce <a href="/servicios/auditoria-de-ia">Auditoría IA Confiable</a>.</p>
+</div></section>
+
+<!-- 5 · Siguiente paso (CTA único) -->
 <section class="cta dark" aria-labelledby="cta-title"><div class="wrap cta__in"><div><p class="ae-cta-k" id="nextKicker">Siguiente paso recomendado</p><h2 id="cta-title">Platiquemos tu resultado.</h2><p id="nextText">Te ayudamos a decidir qué hacer con IA, en qué orden y con qué reglas. Tu consultoría inicial es gratis.</p></div><div class="cta__act" id="escribenos"><a href="https://wa.me/522227097945?text=Hola%2C%20hice%20la%20autoevaluaci%C3%B3n%20de%20IA%20de%20%C3%93NIX%20y%20quiero%20platicar%20mi%20resultado.%20Aviso%20de%20privacidad%3A%20https%3A%2F%2Fwww.onix-ia.com%2Faviso-de-privacidad" class="btn btn--accent" id="waCta" target="_blank" rel="noopener noreferrer">Escríbenos por WhatsApp<span class="sr-only"> (abre WhatsApp)</span></a><p class="priv-note">El mensaje lleva un resumen de tu resultado (nivel, ruta y prioridades), sin datos personales; puedes editarlo antes de enviarlo. Al escribirnos por WhatsApp, ÓNIX (Rodolfo Mora) usará tu número y tu mensaje para responderte y darte seguimiento. WhatsApp (Meta) trata los datos de la conversación bajo sus propias condiciones. <a href="/aviso-de-privacidad">Aviso de privacidad de ÓNIX</a></p></div></div></section>
 
-<!-- 5 · Profundiza -->
-<section class="sv-sec" aria-labelledby="rel-t"><div class="wrap">
-  <h2 id="rel-t" class="sv-h2">Cuando necesites más que <em>una autoevaluación.</em></h2>
-  <div class="rel ae-rel">
-    <article class="scard"><h3>Ruta IA</h3><p>Revisión inicial de tu operación, casos de uso priorizados, plan por fases y política de uso responsable de IA.</p><a class="scard__go" href="/servicios/estrategia-de-ia">Conocer el servicio <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span class="sr-only">: Ruta IA</span></a></article>
-    <article class="scard"><h3>Auditoría IA Confiable</h3><p>Revisamos cómo usa IA tu empresa y te damos un plan de mejora priorizado, con base en buenas prácticas de marcos como ISO/IEC 42001, ISO/IEC 27001 y OWASP. ÓNIX no es organismo certificador y no está certificado.</p><a class="scard__go" href="/servicios/auditoria-de-ia">Conocer el servicio <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span class="sr-only">: Auditoría IA Confiable</span></a></article>
-  </div>
-</div></section>
+
 </main>
 
 <footer class="footer">
