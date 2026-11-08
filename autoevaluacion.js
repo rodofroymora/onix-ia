@@ -44,12 +44,30 @@
   ];
 
   var RECS = {
-    est: { t: 'Liga cada uso de IA a una meta del negocio', w: 'Define para cada caso el beneficio esperado, su línea base y quién responde por él.', s: 'Ruta IA' },
-    rol: { t: 'Nombra a un responsable y arma el inventario', w: 'Una persona aprueba herramientas y mantiene la lista de qué se usa, con qué cuenta y quién es el dueño.', s: 'Ruta IA' },
-    dat: { t: 'Define qué datos no salen de la empresa', w: 'Escribe las reglas en una página, autoriza herramientas y actualiza tu aviso de privacidad para contemplar la IA.', s: 'Ruta IA' },
-    rie: { t: 'Revisa riesgos antes de lanzar', w: 'Usa un checklist corto por caso y pide aprobación humana en decisiones que afecten a clientes.', s: 'Auditoría IA Confiable' },
-    seg: { t: 'Controla accesos y prueba lo que construyes', w: 'Cuentas empresariales, permisos mínimos, pruebas antes de operar y monitoreo después.', s: 'Auditoría IA Confiable' },
-    per: { t: 'Publica una política de uso y capacita', w: 'Una política clara de una página y una sesión por rol para que todo el equipo conozca las reglas.', s: 'Ruta IA' }
+    est: { t: 'Liga cada uso de IA a un beneficio medible', s: 'Ruta IA',
+      w: 'Para cada caso de uso, define el beneficio esperado (tiempo ahorrado, errores evitados, ingresos o satisfacción del cliente), su línea base y quién responde por el resultado.',
+      def: ['Línea base', 'Es el valor del indicador hoy, antes de usar IA: por ejemplo, cuánto tarda una cotización o cuántos errores de captura hay en un periodo. Sin ella no puedes demostrar si la IA mejoró algo.'],
+      a: ['Elige un indicador por caso de uso y mide su valor actual.', 'Fija una meta y una fecha de revisión.', 'Asigna una persona dueña del resultado y compara contra la línea base en cada revisión.'] },
+    rol: { t: 'Define principios de IA y un inventario de herramientas autorizadas', s: 'Ruta IA',
+      w: 'Acuerden los principios de responsabilidad y ética que guían el uso de IA (transparencia, supervisión humana, privacidad y trato justo) y quién decide sobre IA en la empresa.',
+      def: ['Inventario de herramientas', 'Lista de las herramientas y agentes de IA autorizados y permitidos por la organización: para qué se usa cada uno, con qué cuenta, qué datos puede usar y quién es su dueño.'],
+      a: ['Publica los principios y nombra a un responsable o comité de IA.', 'Levanta el inventario de lo que ya se usa, incluido lo que cada persona usa por su cuenta.', 'Clasifica cada herramienta: autorizada, permitida con restricciones o no permitida.'] },
+    dat: { t: 'Establece políticas de datos para IA', s: 'Ruta IA',
+      w: 'Las políticas de datos dicen qué información puede usarse en cada herramienta de IA y bajo qué condiciones, incluidos los datos personales y financieros.',
+      def: ['Clasificación de la información', 'Pública, interna, confidencial y sensible. Cada nivel se relaciona con las herramientas autorizadas que lo pueden procesar y con los controles que necesita.'],
+      a: ['Clasifica tu información por nivel de sensibilidad.', 'Define qué nivel puede usar cada herramienta autorizada.', 'Actualiza tu aviso de privacidad para contemplar el uso de IA y comunica las reglas al equipo.'] },
+    rie: { t: 'Revisa riesgos antes de lanzar', s: 'Auditoría IA Confiable',
+      w: 'Evalúa cada caso con un marco de gestión de riesgos para modelos de lenguaje, como OWASP Top 10 para aplicaciones con LLM e ISO/IEC 42001, define mecanismos que mitiguen cada riesgo y establece supervisión humana (HITL, human in the loop) en las decisiones que afectan datos sensibles, la operación o a clientes.',
+      lv: [['c-ok', 'Impacto bajo', 'Uso interno con información pública o interna. La IA actúa sola y queda registro.'], ['c-rev', 'Impacto medio', 'Afecta la operación o usa información confidencial. La IA propone y una persona aprueba antes de ejecutar.'], ['c-alto', 'Impacto alto', 'Usa datos sensibles o afecta a clientes. Una persona decide, con registro, opción de revertir y forma de pausar la IA.']],
+      a: ['Lista los riesgos de cada caso con el marco elegido.', 'Clasifica cada decisión por impacto, como en la tabla, y asigna su nivel de supervisión humana.', 'Define el mecanismo que mitiga cada riesgo y quién lo revisa.'] },
+    seg: { t: 'Controla accesos, prueba y monitorea', s: 'Auditoría IA Confiable',
+      w: 'Usa cuentas empresariales con permisos mínimos, prueba cada solución antes de operar y monitorea su desempeño, costos e incidentes después del lanzamiento.',
+      def: ['Pruebas antes de operar', 'Casos reales y casos de ataque: respuestas incorrectas, fugas de información e instrucciones maliciosas escondidas en lo que recibe la IA (prompt injection).'],
+      a: ['Cuentas empresariales con acceso de mínimo permiso.', 'Pruebas con casos reales y casos de ataque antes de lanzar.', 'Registro de actividad y alertas en operación.'] },
+    per: { t: 'Publica una política de uso de IA y capacita', s: 'Ruta IA',
+      w: 'La política de uso de IA dice qué se puede hacer, con qué herramientas, con qué datos y qué no está permitido. Debe ser corta, conocida por todos y aceptada formalmente.',
+      def: ['Capacitación por rol', 'Dirección, quienes usan IA en su día a día y quienes la construyen necesitan saber cosas distintas; cada grupo recibe lo que le toca aplicar.'],
+      a: ['Redacta la política en lenguaje claro y pide aceptación formal.', 'Capacita por rol.', 'Revisa la política cuando cambien herramientas, datos o regulación.'] }
   };
   var SVC_URL = { 'Ruta IA': '/servicios/estrategia-de-ia', 'Auditoría IA Confiable': '/servicios/auditoria-de-ia' };
   var ROUTE_INFO = [
@@ -58,9 +76,9 @@
     'Revisión de riesgo a fondo antes de lanzar: pruebas con casos reales, monitoreo y un plan de respuesta si algo falla.'
   ];
   var WAVES = [
-    { n: 'Etapa 1 · Bases', t: 'Bases', hz: 'Para empezar', ev: 'Cierra cuando hay responsable, inventario y política de uso publicada.', a: [['Responsable de IA', 'rol'], ['Inventario de herramientas y agentes', 'rol'], ['Reglas de datos y herramientas autorizadas', 'dat'], ['Política de uso aceptable', 'per']] },
-    { n: 'Etapa 2 · Controles', t: 'Controles', hz: 'Cuando las bases estén listas', ev: 'Cierra cuando cada caso nuevo pasa el checklist y las pruebas antes de operar.', a: [['Checklist de riesgo antes de lanzar', 'rie'], ['Pruebas antes de operar', 'seg'], ['Aprobación humana en decisiones clave', 'rie'], ['Metas y métricas de valor por caso', 'est']] },
-    { n: 'Etapa 3 · Mejora continua', t: 'Mejora continua', hz: 'Para sostenerlo', ev: 'Se sostiene con revisiones periódicas y registro de lo que se corrige.', a: [['Monitoreo en operación', 'seg'], ['Reevaluación ante cambios de modelo o datos', 'rie'], ['Capacitación por rol', 'per'], ['Revisión periódica de política y valor', 'est']] }
+    { n: 'Etapa 1 · Bases', t: 'Bases', hz: 'Para empezar', a: [['Principios de responsabilidad y ética de IA', 'rol'], ['Inventario de herramientas y agentes autorizados', 'rol'], ['Políticas de datos', 'dat'], ['Política de uso de IA', 'per']] },
+    { n: 'Etapa 2 · Controles', t: 'Controles', hz: 'Cuando las bases estén listas', a: [['Evaluación de riesgos con un marco para LLM', 'rie'], ['Pruebas antes de operar', 'seg'], ['Supervisión humana (HITL) según el impacto', 'rie'], ['Metas y métricas de valor por caso', 'est']] },
+    { n: 'Etapa 3 · Mejora continua', t: 'Mejora continua', hz: 'Para sostenerlo', a: [['Monitoreo en operación', 'seg'], ['Reevaluación ante cambios de modelo o datos', 'rie'], ['Capacitación por rol', 'per'], ['Revisión periódica de política y valor', 'est']] }
   ];
   var LAW_BASE = { n: 'Ley Federal de Protección de Datos Personales en Posesión de los Particulares', w: 'Aviso de privacidad y derechos de las personas frente a decisiones automatizadas.' };
   var LAWS = [
@@ -178,7 +196,10 @@
 
     $('prio').innerHTML = r.weak.map(function (x, xi) {
       var rec = RECS[x.k];
-      return '<li class="st" style="--d:' + xi + '"><div><h4>' + rec.t + '</h4><p>' + esc(x.n) + ': ' + x.s + ' de 100. ' + rec.w + '</p><p class="svc">Te ayuda: <a href="' + SVC_URL[rec.s] + '">' + rec.s + '</a></p></div></li>';
+      return '<li class="st" style="--d:' + xi + '"><div class="prio__main"><p class="prio__dim"><span class="ae-pill ' + RC[2 - Math.min(2, x.l - 1)] + '">' + esc(x.n) + ' · ' + x.s + ' de 100</span></p><h4>' + rec.t + '</h4><p>' + rec.w + '</p>' +
+        (rec.def ? '<p class="prio__def"><b>' + rec.def[0] + '.</b> ' + rec.def[1] + '</p>' : '') +
+        (rec.lv ? '<ul class="prio__lv">' + rec.lv.map(function (l) { return '<li><span class="ae-pill ' + l[0] + '">' + l[1] + '</span><span>' + l[2] + '</span></li>'; }).join('') + '</ul>' : '') +
+        '</div><div class="prio__side"><p class="prio__k">Cómo empezar</p><ol class="prio__steps">' + rec.a.map(function (a) { return '<li>' + a + '</li>'; }).join('') + '</ol><p class="svc">Te ayuda: <a href="' + SVC_URL[rec.s] + '">' + rec.s + '</a></p></div></li>';
     }).join('');
 
     $('laws').innerHTML = [LAW_BASE].concat(LAWS[d.area]).map(function (l, li) { return '<li class="st" style="--d:' + li + '"><b>' + esc(l.n) + '</b><span>' + esc(l.w) + '</span></li>'; }).join('');
@@ -263,8 +284,7 @@
           return '<li class="st" style="--d:' + ai + '"><label class="act' + (a.pri ? ' pri' : '') + '" for="' + id + '"><input type="checkbox" id="' + id + '" data-s="' + si + '">' +
             '<span class="act__box" aria-hidden="true">' + CHECK + '</span><span class="act__body"><span class="act__t">' + esc(a.t) + '</span><small>' + esc(DIMS.filter(function (x) { return x.k === a.k; })[0].n) + '</small></span>' +
             (a.pri ? '<span class="act__tag">Prioridad</span>' : '') + '</label></li>';
-        }).join('') + '</ul>' +
-        '<p class="stage__ev"><span>Evidencia de cierre</span>' + esc(s.w.ev) + '</p></section>';
+        }).join('') + '</ul>' + '</section>';
     }).join('') + '</div>';
     $('road').innerHTML = nav + body;
     roadActive = -1;
