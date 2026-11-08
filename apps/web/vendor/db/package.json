@@ -31,10 +31,12 @@
     "@electric-sql/pglite": "^0.2.16",
     "@onix/engine": "file:../engine",
     "@onix/templates": "file:../templates",
-    "drizzle-orm": "^0.38.3"
+    "drizzle-orm": "^0.38.3",
+    "pg": "^8.13.1"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
+    "@types/pg": "^8.11.10",
     "drizzle-kit": "^0.30.1",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",

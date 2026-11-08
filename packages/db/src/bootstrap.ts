@@ -3,6 +3,7 @@ import { randomBytes } from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { PGlite } from '@electric-sql/pglite';
+import type { Pool } from 'pg';
 import { eq } from 'drizzle-orm';
 import { compute, findGaps } from '@onix/engine';
 import {
@@ -26,13 +27,37 @@ export function defaultSqlDir(): string {
   return candidates[0]!;
 }
 
-export async function applyMigrations(client: PGlite, sqlDirectory = defaultSqlDir()) {
+export async function applySqlFiles(
+  run: (sqlText: string) => Promise<void>,
+  sqlDirectory = defaultSqlDir(),
+) {
   const files = ['0001_init.sql', '0002_inventory_origin_status.sql', 'rls.sql'];
   for (const f of files) {
     const full = path.join(sqlDirectory, f);
     if (!existsSync(full)) throw new Error(`No existe ${full}`);
-    await client.exec(readFileSync(full, 'utf8'));
+    await run(readFileSync(full, 'utf8'));
   }
+}
+
+/** @deprecated Prefer applyMigrationsFor(govern). */
+export async function applyMigrations(client: PGlite, sqlDirectory = defaultSqlDir()) {
+  await applySqlFiles(async (sqlText) => {
+    await client.exec(sqlText);
+  }, sqlDirectory);
+}
+
+export async function applyMigrationsFor(govern: GovernDb, sqlDirectory = defaultSqlDir()) {
+  if (govern.kind === 'postgres') {
+    const pool = govern.client as Pool;
+    await applySqlFiles(async (sqlText) => {
+      await pool.query(sqlText);
+    }, sqlDirectory);
+    return;
+  }
+  const pglite = govern.client as PGlite;
+  await applySqlFiles(async (sqlText) => {
+    await pglite.exec(sqlText);
+  }, sqlDirectory);
 }
 
 async function ensureDemoUsers(db: GovernDb['db'], orgId: string) {
@@ -98,7 +123,7 @@ export async function ensureDemoSeed(
   govern: GovernDb,
   opts: { snapshotPath: string; sqlDirectory?: string },
 ) {
-  const { db, client } = govern;
+  const { db } = govern;
 
   let orgs: { id: string; name: string; slug: string }[] = [];
   try {
@@ -111,7 +136,7 @@ export async function ensureDemoSeed(
       .from(schema.organizations)
       .limit(1);
   } catch {
-    await applyMigrations(client, opts.sqlDirectory ?? defaultSqlDir());
+    await applyMigrationsFor(govern, opts.sqlDirectory ?? defaultSqlDir());
     orgs = [];
   }
 

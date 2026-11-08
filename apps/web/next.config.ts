@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
   // Evita que Next tome el lockfile del monorepo cuando hay package-lock local (publish).
   outputFileTracingRoot: path.join(__dirname),
   transpilePackages: ['@onix/ui', '@onix/db', '@onix/engine', '@onix/templates', '@onix/agent'],
-  serverExternalPackages: ['@electric-sql/pglite'],
+  serverExternalPackages: ['@electric-sql/pglite', 'pg'],
   experimental: {
     serverActions: {
       bodySizeLimit: '4mb',

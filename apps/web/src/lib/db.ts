@@ -1,6 +1,11 @@
 import { existsSync } from 'node:fs';
 import path from 'node:path';
-import { createDb, withOrg, type GovernDb } from '@onix/db';
+import {
+  createDb,
+  createPostgresDb,
+  withOrg,
+  type GovernDb,
+} from '@onix/db';
 
 const globalForDb = globalThis as unknown as {
   __onixGovern?: GovernDb;
@@ -9,7 +14,6 @@ const globalForDb = globalThis as unknown as {
 function findRepoRoot(start = process.cwd()): string {
   let dir = start;
   for (let i = 0; i < 8; i++) {
-    // Preferir carpeta con snapshot demo (apps/web en publish) o monorepo.
     if (existsSync(path.join(dir, '.data', 'demo-auth.json'))) return dir;
     if (existsSync(path.join(dir, 'pnpm-workspace.yaml'))) return dir;
     const parent = path.dirname(dir);
@@ -24,18 +28,29 @@ function resolveDataDir(): string {
     return path.resolve(process.env.PGLITE_DATA_DIR);
   }
   if (process.env.DATABASE_URL?.startsWith('file:')) {
-    // file:/abs/path → /abs/path (evitar pasar URL a fs)
     return path.resolve(process.env.DATABASE_URL.slice('file:'.length));
   }
   return path.join(findRepoRoot(), '.data', 'govern.pg');
 }
 
+function isPostgresUrl(url: string | undefined): url is string {
+  return !!url && /^postgres(ql)?:\/\//i.test(url);
+}
+
 export function getDb(): GovernDb {
   if (!globalForDb.__onixGovern) {
-    const dataDir = resolveDataDir();
-    globalForDb.__onixGovern = createDb(dataDir);
+    const url = process.env.DATABASE_URL;
+    if (isPostgresUrl(url)) {
+      globalForDb.__onixGovern = createPostgresDb(url);
+    } else {
+      globalForDb.__onixGovern = createDb(resolveDataDir());
+    }
   }
   return globalForDb.__onixGovern;
+}
+
+export function isUsingPostgres(): boolean {
+  return isPostgresUrl(process.env.DATABASE_URL);
 }
 
 export { withOrg, resolveDataDir };
