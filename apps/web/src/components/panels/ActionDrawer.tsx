@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { X } from 'lucide-react';
+import { Paperclip, X } from 'lucide-react';
 import { DIMS } from '@onix/engine';
 import {
   addDependencyAction,
@@ -10,7 +10,15 @@ import {
 } from '@/lib/actions/plan';
 import type { ActionRow } from '@/lib/server/insights';
 
-type EvidenceRow = { id: string; status: string; label: string; url: string | null; notes: string | null; createdAt: Date };
+type EvidenceRow = {
+  id: string;
+  status: string;
+  label: string;
+  url: string | null;
+  notes: string | null;
+  createdAt: Date;
+  files?: { id: string; filename: string; size: number }[];
+};
 
 const EV_STATUS: Record<string, string> = { pending: 'Por revisar', approved: 'Aprobada', rejected: 'Rechazada', none: 'Sin evidencia' };
 
@@ -25,6 +33,7 @@ export function ActionDrawer({
   allActions,
   deps,
   depError,
+  fileError = null,
 }: {
   a: ActionRow;
   stageName: string;
@@ -35,6 +44,7 @@ export function ActionDrawer({
   allActions: { id: string; title: string }[];
   deps: { id: string; fromActionId: string; toActionId: string; weight: number }[];
   depError: string | null;
+  fileError?: string | null;
 }) {
   const titleOf = (id: string) => allActions.find((x) => x.id === id)?.title ?? 'Acción';
   const upstream = deps.filter((d) => d.toActionId === a.id);
@@ -159,6 +169,12 @@ export function ActionDrawer({
                           {e.url}
                         </a>
                       ) : null}
+                      {e.files?.map((f) => (
+                        <a key={f.id} href={`/api/evidencia/${f.id}`} target="_blank" rel="noopener" className="mt-1 flex items-center gap-1.5 text-[12px] text-accent hover:underline">
+                          <Paperclip className="h-3.5 w-3.5" strokeWidth={1.6} />
+                          {f.filename} <span className="text-ink-subtle">· {Math.max(1, Math.round(f.size / 1024))} KB</span>
+                        </a>
+                      ))}
                       {e.notes ? <p className="mt-1 text-[12px] text-ink-subtle">{e.notes}</p> : null}
                     </div>
                     <span className="onix-chip shrink-0">{EV_STATUS[e.status] ?? e.status}</span>
@@ -184,6 +200,12 @@ export function ActionDrawer({
                 <input type="hidden" name="actionId" value={a.id} />
                 <input name="label" required placeholder="Qué comprueba (ej. política firmada)" className="onix-input" />
                 <input name="url" type="url" placeholder="Enlace al documento (opcional)" className="onix-input" />
+                <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-border px-3 py-2.5 text-[12px] text-ink-muted transition hover:border-accent hover:text-ink">
+                  <Paperclip className="h-4 w-4" strokeWidth={1.6} />
+                  <input name="file" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,.docx,.xlsx,.pptx,.csv,.txt" className="min-w-0 flex-1 text-[12px] file:mr-2 file:rounded-md file:border-0 file:bg-canvas-subtle file:px-2 file:py-1 file:text-[12px] file:text-ink" />
+                </label>
+                <p className="text-[11px] text-ink-subtle">PDF, imagen u Office de hasta 3.5 MB.</p>
+                {fileError ? <p className="text-[12px] text-danger">{fileError}</p> : null}
                 <button className="onix-btn-ghost w-full">Subir evidencia</button>
               </form>
             ) : null}

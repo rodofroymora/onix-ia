@@ -20,7 +20,7 @@ export const HELP: HelpEntry[] = [
     k: 'evaluacion',
     title: 'Lanzar la evaluación e invitar',
     href: '/evaluacion',
-    keywords: ['evaluacion', 'lanzar', 'invitar', 'invitacion', 'cuestionario', 'respondente', 'correo', 'whatsapp', 'enlace', 'contestar'],
+    keywords: ['evaluacion', 'lanzar', 'invitar', 'invitacion', 'invitar responsable', 'cuestionario', 'respondente', 'correo', 'whatsapp', 'enlace', 'contestar'],
     answer:
       'En Evaluación:\n- **Lanzar:** elige la ruta de preguntas (15, 27 o 38) y lanza la evaluación.\n- **Invitar:** escribe nombre, correo y las funciones que cubre; solo verá las preguntas de esas áreas. Puedes mandar el enlace por correo, WhatsApp o copiarlo.\n- **Contestar ahora:** abre el cuestionario para ti mismo, sin correo.\n- **Publicar:** cuando todos contestan, usa "Guardar y publicar resultados".',
   },
@@ -120,12 +120,25 @@ const norm = (s: string) =>
     .normalize('NFD')
     .replace(/\p{Diacritic}/gu, '');
 
-/** Mejor entrada de la guía para una pregunta (sin modelo). */
+const STOP = new Set(['de', 'la', 'el', 'los', 'las', 'un', 'una', 'y', 'o', 'en', 'a', 'que', 'como', 'mi', 'mis', 'se', 'por', 'para', 'con', 'lo']);
+const stem = (w: string) => (w.length > 5 ? w.slice(0, 5) : w);
+const words = (s: string) =>
+  norm(s)
+    .replace(/[^a-z0-9ñ\s]/g, ' ')
+    .split(/\s+/)
+    .filter((w) => w && !STOP.has(w));
+
+/** Mejor entrada de la guía para una pregunta (sin modelo); compara raíces para tolerar conjugaciones. */
 export function matchHelp(question: string): HelpEntry | null {
-  const q = norm(question);
+  const q = words(question).map(stem);
   let best: { e: HelpEntry; s: number } | null = null;
   for (const e of HELP) {
-    const s = e.keywords.reduce((t, k) => t + (q.includes(norm(k)) ? k.split(' ').length + 1 : 0), 0) + (q.includes(norm(e.title)) ? 3 : 0);
+    let s = 0;
+    for (const k of e.keywords) {
+      const kw = words(k).map(stem);
+      if (kw.length && kw.every((w) => q.some((t) => t === w || (w.length >= 4 && t.startsWith(w))))) s += kw.length + 1;
+    }
+    if (words(e.title).map(stem).every((w) => q.includes(w))) s += 3;
     if (s > 0 && (!best || s > best.s)) best = { e, s };
   }
   return best?.e ?? null;

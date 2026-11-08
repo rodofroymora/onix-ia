@@ -17,7 +17,7 @@ const fmtDate = (d: string | null) =>
 export default async function PlanPage({
   searchParams,
 }: {
-  searchParams: Promise<{ tab?: string; accion?: string; dim?: string; dep?: string }>;
+  searchParams: Promise<{ tab?: string; accion?: string; dim?: string; dep?: string; archivo?: string }>;
 }) {
   const session = await requireSession();
   const p = await searchParams;
@@ -27,7 +27,8 @@ export default async function PlanPage({
   const isConsultant = session.user.role === 'consultant';
   const today = new Date().toISOString().slice(0, 10);
   const dimName = (k: string | null) => DIMS.find((d) => d.k === k)?.n ?? 'General';
-  const evOf = (id: string) => o.evidences.filter((e) => e.actionId === id);
+  const evOf = (id: string) =>
+    o.evidences.filter((e) => e.actionId === id).map((e) => ({ ...e, files: o.evidenceFiles.filter((f) => f.evidenceId === e.id) }));
   const evState = (id: string) => {
     const ev = evOf(id);
     if (ev.some((e) => e.status === 'approved')) return 'Aprobada';
@@ -238,6 +239,7 @@ export default async function PlanPage({
           allActions={o.actions.map((a) => ({ id: a.id, title: a.title }))}
           deps={o.deps.filter((d) => d.toActionId === selected.id || d.fromActionId === selected.id)}
           depError={p.dep === 'ciclo' ? 'Esa dependencia haría un círculo (A depende de B y B de A). No se guardó.' : null}
+          fileError={p.archivo === 'grande' ? 'El archivo pesa más de 3.5 MB. Comprímelo o comparte un enlace.' : p.archivo === 'tipo' ? 'Ese tipo de archivo no se acepta. Usa PDF, imagen u Office.' : null}
           canWrite={canWrite}
           isConsultant={isConsultant}
           closeHref={href({ accion: undefined })}

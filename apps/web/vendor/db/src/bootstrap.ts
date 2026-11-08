@@ -30,6 +30,7 @@ export const MIGRATION_FILES = [
   '0003_v1_completo.sql',
   '0004_catalogos_telemetria_agentes.sql',
   '0005_agentes_produccion.sql',
+  '0006_acceso_real.sql',
 ] as const;
 const BASELINE = ['0001_init.sql', '0002_inventory_origin_status.sql', 'rls.sql'];
 
@@ -145,9 +146,14 @@ async function ensureDemoUsers(tx: Tx, orgId: string) {
     if (!userId) {
       const [row] = await tx
         .insert(schema.users)
-        .values({ email: u.email, name: u.name, locale: 'es-MX' })
+        .values({ email: u.email, name: u.name, locale: 'es-MX', isConsultant: u.email === 'consultant@onix-ia.com', defaultOrganizationId: orgId })
         .returning();
       userId = row!.id;
+    } else {
+      await tx
+        .update(schema.users)
+        .set({ isConsultant: u.email === 'consultant@onix-ia.com', defaultOrganizationId: orgId })
+        .where(eq(schema.users.id, userId));
     }
     // memberships tiene RLS: esta consulta corre con govern_set_org(orgId) ya fijado.
     const mem = await tx

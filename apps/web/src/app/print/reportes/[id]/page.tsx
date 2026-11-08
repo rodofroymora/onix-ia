@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { ReportDocument } from '@/components/reports/ReportDocument';
 import { reportKind } from '@/lib/report-kinds';
 import { loadOrgOverview } from '@/lib/server/insights';
+import { fromSnapshot, type ReportSnapshot } from '@/lib/server/report-snapshot';
 import { loadReport } from '@/lib/server/org-data';
 import { requireSession } from '@/lib/session';
 
@@ -10,9 +11,10 @@ export default async function ReportPrintPage({ params }: { params: Promise<{ id
   const { id } = await params;
   const report = await loadReport(session.user.organizationId, id);
   if (!report) notFound();
-  const o = await loadOrgOverview(session.user.organizationId);
+  const snap = (report.payload as { snapshot?: ReportSnapshot }).snapshot;
+  const o = snap ? fromSnapshot(snap) : await loadOrgOverview(session.user.organizationId);
   const payload = report.payload as { body?: string; note?: string };
-  const date = new Date(report.updatedAt).toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
+  const date = new Date(snap?.takenAt ?? report.updatedAt).toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
 
   return (
     <div data-theme="light" className="min-h-screen bg-white">

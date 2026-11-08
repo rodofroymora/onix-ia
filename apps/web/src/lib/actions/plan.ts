@@ -1,13 +1,27 @@
 'use server';
 
 import { and, eq, inArray } from 'drizzle-orm';
-import { actionDependencies, actions, evidences, plans, stages, type GovernTx } from '@onix/db';
+import { actionDependencies, actions, evidenceFiles, evidences, plans, stages, type GovernTx } from '@onix/db';
 import { ACTION_LIBRARY } from '@onix/templates';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { appendAudit } from '@/lib/audit';
 import { getDb, withOrg } from '@/lib/db';
 import { requireConsultant, requireWriteAccess } from '@/lib/session';
+
+const MAX_EVIDENCE_BYTES = 3.5 * 1024 * 1024;
+const EVIDENCE_TYPES: Record<string, string> = {
+  pdf: 'application/pdf',
+  png: 'image/png',
+  jpg: 'image/jpeg',
+  jpeg: 'image/jpeg',
+  webp: 'image/webp',
+  docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  csv: 'text/csv',
+  txt: 'text/plain',
+};
 
 /** CU-09: poblar plan desde biblioteca de acciones. */
 export async function seedPlanFromLibraryAction() {
@@ -129,6 +143,16 @@ export async function submitEvidenceAction(formData: FormData) {
   const urlRaw = String(formData.get('url') ?? '').trim();
   const url = /^https?:\/\//i.test(urlRaw) ? urlRaw.slice(0, 500) : null;
   if (!label) throw new Error('Describe la evidencia');
+  // Archivo opcional (hasta 3.5 MB, tipos de oficina e imagen).
+  const file = formData.get('file');
+  let upload: { name: string; type: string; data: Buffer } | null = null;
+  if (file && typeof file === 'object' && 'arrayBuffer' in file && file.size > 0) {
+    const f = file as File;
+    const ext = f.name.toLowerCase().split('.').pop() ?? '';
+    if (!EVIDENCE_TYPES[ext]) redirect(`/plan?accion=${actionId}&archivo=tipo`);
+    if (f.size > MAX_EVIDENCE_BYTES) redirect(`/plan?accion=${actionId}&archivo=grande`);
+    upload = { name: f.name.replace(/[^\w.\- áéíóúñÁÉÍÓÚÑ()]/g, '_').slice(0, 160), type: EVIDENCE_TYPES[ext]!, data: Buffer.from(await f.arrayBuffer()) };
+  }
   const { db } = getDb();
   await withOrg(db, session.user.organizationId, async (tx) => {
     const row = await loadAction(tx, session.user.organizationId, actionId);
@@ -136,6 +160,16 @@ export async function submitEvidenceAction(formData: FormData) {
       .insert(evidences)
       .values({ organizationId: session.user.organizationId, actionId: row.id, status: 'pending', label, url, notes: null })
       .returning();
+    if (upload) {
+      await tx.insert(evidenceFiles).values({
+        organizationId: session.user.organizationId,
+        evidenceId: ev!.id,
+        filename: upload.name,
+        contentType: upload.type,
+        size: upload.data.length,
+        data: upload.data,
+      });
+    }
     if (Number(row.progress) < 75) {
       await tx.update(actions).set({ progress: '75', updatedAt: new Date() }).where(eq(actions.id, row.id));
     }
@@ -145,10 +179,11 @@ export async function submitEvidenceAction(formData: FormData) {
       action: 'evidence.submit',
       entityType: 'evidence',
       entityId: ev!.id,
-      meta: { actionId: row.id },
+      meta: { actionId: row.id, file: upload ? { name: upload.name, size: upload.data.length } : null },
     });
   });
   revalidatePath('/plan');
+  redirect(`/plan?accion=${actionId}`);
 }
 
 /** El consultor (o responsable designado) aprueba o rechaza: aprobada cierra al 100%, rechazada regresa a 75%. */

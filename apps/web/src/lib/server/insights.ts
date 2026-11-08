@@ -3,6 +3,7 @@ import {
   actionDependencies,
   actions,
   aiAgents,
+  evidenceFiles,
   aiUsageMetrics,
   aiUseCases,
   answers,
@@ -283,6 +284,12 @@ export async function loadOrgOverview(organizationId: string) {
       stages: stageRows,
       actions: actionRows,
       evidences: evidenceRows,
+      evidenceFiles: evidenceRows.length
+        ? await tx
+            .select({ id: evidenceFiles.id, evidenceId: evidenceFiles.evidenceId, filename: evidenceFiles.filename, size: evidenceFiles.size, contentType: evidenceFiles.contentType })
+            .from(evidenceFiles)
+            .where(and(eq(evidenceFiles.organizationId, organizationId), inArray(evidenceFiles.evidenceId, evidenceRows.map((e) => e.id))))
+        : [],
       tech: tech ?? null,
       targets,
       projection,

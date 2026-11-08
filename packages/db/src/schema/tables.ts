@@ -1,5 +1,6 @@
 import {
   boolean,
+  customType,
   date,
   integer,
   jsonb,
@@ -35,6 +36,7 @@ export const organizations = pgTable('organizations', {
   country: text('country').notNull().default('MX'),
   /** Metas de madurez por dimensión (0 a 100). */
   maturityTargets: jsonb('maturity_targets').notNull().default({}),
+  reevalRemindedFor: date('reeval_reminded_for'),
   /** Cada cuántos meses toca reevaluar (recordatorio). */
   reevaluationMonths: integer('reevaluation_months').notNull().default(6),
   /** sha256 de la clave para enviar telemetría por API. */
@@ -47,6 +49,12 @@ export const users = pgTable('users', {
   email: text('email').notNull().unique(),
   name: text('name').notNull(),
   locale: text('locale').notNull().default('es-MX'),
+  /** scrypt$N$sal$hash; null = solo cuenta demo o invitación pendiente. */
+  passwordHash: text('password_hash'),
+  /** Consultor de Ónix: puede ver y crear organizaciones. */
+  isConsultant: boolean('is_consultant').notNull().default(false),
+  defaultOrganizationId: uuid('default_organization_id'),
+  lastLoginAt: timestamp('last_login_at', { withTimezone: true }),
   ...timestamps,
 });
 
@@ -164,6 +172,8 @@ export const invitations = pgTable(
     /** Funciones del mapa de responsables que cubre (dirección, ti, seguridad, ...). */
     functions: jsonb('functions').notNull().default([]),
     completedAt: timestamp('completed_at', { withTimezone: true }),
+    lastRemindedAt: timestamp('last_reminded_at', { withTimezone: true }),
+    remindersSent: integer('reminders_sent').notNull().default(0),
     ...timestamps,
   },
   (t) => [index('invitations_org_idx').on(t.organizationId)],
@@ -498,5 +508,60 @@ export const actionDependencies = pgTable('action_dependencies', {
     .references(() => actions.id, { onDelete: 'cascade' }),
   /** Qué tanto depende (1 a 100). */
   weight: integer('weight').notNull().default(50),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+
+const bytea = customType<{ data: Buffer; driverData: Buffer }>({
+  dataType() {
+    return 'bytea';
+  },
+});
+
+export const userInvites = pgTable('user_invites', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  organizationId: uuid('organization_id')
+    .notNull()
+    .references(() => organizations.id, { onDelete: 'cascade' }),
+  email: text('email').notNull(),
+  name: text('name'),
+  role: membershipRoleEnum('role').notNull().default('admin'),
+  asConsultant: boolean('as_consultant').notNull().default(false),
+  tokenHash: text('token_hash').notNull(),
+  expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+  acceptedAt: timestamp('accepted_at', { withTimezone: true }),
+  invitedBy: uuid('invited_by').references(() => users.id, { onDelete: 'set null' }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const passwordResets = pgTable('password_resets', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  tokenHash: text('token_hash').notNull().unique(),
+  expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+  usedAt: timestamp('used_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const authAttempts = pgTable('auth_attempts', {
+  key: text('key').primaryKey(),
+  count: integer('count').notNull().default(0),
+  resetAt: timestamp('reset_at', { withTimezone: true }).notNull(),
+});
+
+export const evidenceFiles = pgTable('evidence_files', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  organizationId: uuid('organization_id')
+    .notNull()
+    .references(() => organizations.id, { onDelete: 'cascade' }),
+  evidenceId: uuid('evidence_id')
+    .notNull()
+    .references(() => evidences.id, { onDelete: 'cascade' }),
+  filename: text('filename').notNull(),
+  contentType: text('content_type').notNull(),
+  size: integer('size').notNull(),
+  data: bytea('data').notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 });

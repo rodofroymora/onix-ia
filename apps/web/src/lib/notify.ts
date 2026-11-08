@@ -67,3 +67,26 @@ export async function sendInvitationEmail(input: {
   if (!res.ok) throw new Error(`Resend respondió ${res.status}`);
   return 'sent';
 }
+
+const escHtml = (v: string) => v.replace(/[&<>"']/g, (ch) => `&#${ch.charCodeAt(0)};`);
+
+/** Envío genérico por Resend; sin clave no hace nada y regresa 'skipped'. */
+export async function sendEmail(input: { to: string; subject: string; paragraphs: string[]; cta?: { label: string; href: string }; footnote?: string }): Promise<'sent' | 'skipped'> {
+  const key = process.env.RESEND_API_KEY?.trim();
+  if (!key) return 'skipped';
+  const from = process.env.EMAIL_FROM?.trim() || 'ÓNIX <onboarding@resend.dev>';
+  const html = `
+    <div style="font-family:-apple-system,Segoe UI,sans-serif;font-size:15px;color:#1d1d1f;line-height:1.5;max-width:520px">
+      ${input.paragraphs.map((p) => `<p>${escHtml(p)}</p>`).join('')}
+      ${input.cta ? `<p><a href="${escHtml(input.cta.href)}" style="display:inline-block;background:#5b4bd0;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none">${escHtml(input.cta.label)}</a></p>` : ''}
+      ${input.footnote ? `<p style="color:#6e6e73;font-size:13px">${escHtml(input.footnote)}</p>` : ''}
+      <p style="color:#6e6e73;font-size:12px">Ónix Govern · onix-ia.com</p>
+    </div>`;
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ from, to: [input.to], subject: input.subject, html }),
+  });
+  if (!res.ok) throw new Error(`Resend respondió ${res.status}`);
+  return 'sent';
+}

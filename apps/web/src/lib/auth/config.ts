@@ -4,6 +4,7 @@ import { eq } from 'drizzle-orm';
 import { organizations } from '@onix/db';
 import type { AppRole } from '../demo-users';
 import { loadDemoAuthUser } from '../demo-auth-store';
+import { loadRealUser } from './user-store';
 import { clearFailures, isRateLimited, recordFailure } from '../rate-limit';
 import { getDb } from '../db';
 
@@ -37,7 +38,7 @@ declare module 'next-auth/jwt' {
 export const authConfig: NextAuthConfig = {
   providers: [
     Credentials({
-      name: 'Demo',
+      name: 'Ónix Govern',
       credentials: {
         email: { label: 'Correo', type: 'email' },
         password: { label: 'Contraseña', type: 'password' },
@@ -47,13 +48,14 @@ export const authConfig: NextAuthConfig = {
         const password = String(credentials?.password ?? '');
         if (!email || !password) return null;
         const key = `login:${email}`;
-        if (isRateLimited(key)) return null;
-        const user = await loadDemoAuthUser(email, password);
+        if (await isRateLimited(key)) return null;
+        // Primero cuentas reales; las cuentas demo solo entran a la empresa demo.
+        const user = (await loadRealUser(email, password).catch(() => null)) ?? (await loadDemoAuthUser(email, password));
         if (!user) {
-          recordFailure(key);
+          await recordFailure(key);
           return null;
         }
-        clearFailures(key);
+        await clearFailures(key);
         return user;
       },
     }),

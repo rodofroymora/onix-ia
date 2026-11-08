@@ -1,5 +1,6 @@
-import { and, desc, eq } from 'drizzle-orm';
+import { and, desc, eq, gt, isNull } from 'drizzle-orm';
 import {
+  userInvites,
   actions,
   aiUseCases,
   assessments,
@@ -168,7 +169,11 @@ export async function loadOrganizationPage(organizationId: string) {
       .from(memberships)
       .innerJoin(users, eq(users.id, memberships.userId))
       .where(eq(memberships.organizationId, organizationId));
-    return { org: org ?? null, maps, members };
+    const invites = await tx
+      .select({ id: userInvites.id, email: userInvites.email, name: userInvites.name, role: userInvites.role, asConsultant: userInvites.asConsultant, expiresAt: userInvites.expiresAt })
+      .from(userInvites)
+      .where(and(eq(userInvites.organizationId, organizationId), isNull(userInvites.acceptedAt), gt(userInvites.expiresAt, new Date())));
+    return { org: org ?? null, maps, members, invites };
   });
 }
 

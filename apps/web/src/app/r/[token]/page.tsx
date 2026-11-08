@@ -293,6 +293,8 @@ export default async function RespondentPortalPage({
       </form>
       <p className="mt-6 text-center text-[11px] text-ink-subtle">
         Revisión orientativa con base en buenas prácticas de marcos como ISO/IEC 42001, ISO/IEC 27001 y OWASP. ÓNIX no es organismo certificador.
+        <br />
+        <a href="/privacidad" className="hover:underline">Aviso de privacidad</a> · <a href="/terminos" className="hover:underline">Términos de uso</a>
       </p>
     </Shell>
   );

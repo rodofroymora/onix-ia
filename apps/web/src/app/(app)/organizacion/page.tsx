@@ -1,6 +1,8 @@
 import { FUNCTIONS } from '@onix/templates';
 import { Card, PageHeader } from '@/components/ui/PageHeader';
 import { updateResponsibilityMapAction } from '@/lib/actions/organizations';
+import { revokeInviteAction } from '@/lib/actions/users';
+import { InviteUserForm } from '@/components/panels/InviteUserForm';
 import { loadOrganizationPage } from '@/lib/server/org-data';
 import { requireSession } from '@/lib/session';
 
@@ -8,6 +10,7 @@ const ROLE_LABEL: Record<string, string> = {
   owner: 'Propietario',
   admin: 'Administración',
   viewer: 'Solo lectura',
+  member: 'Administración',
   consultant: 'Consultor',
 };
 
@@ -88,7 +91,30 @@ export default async function OrganizacionPage() {
                 <span className="onix-chip shrink-0">{ROLE_LABEL[m.role] ?? m.role}</span>
               </li>
             ))}
+            {data.invites.map((i) => (
+              <li key={i.id} className="flex items-center justify-between gap-3 py-2.5">
+                <div className="min-w-0">
+                  <p className="truncate text-[14px] text-ink-muted">{i.name ?? i.email}</p>
+                  <p className="truncate text-[12px] text-ink-subtle">
+                    {i.email} · invitación pendiente hasta {new Date(i.expiresAt).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })}
+                  </p>
+                </div>
+                {canWrite ? (
+                  <form action={revokeInviteAction}>
+                    <input type="hidden" name="inviteId" value={i.id} />
+                    <button className="text-[12px] text-ink-subtle hover:text-danger">Cancelar</button>
+                  </form>
+                ) : (
+                  <span className="onix-chip shrink-0">{i.asConsultant ? 'Consultor' : ROLE_LABEL[i.role] ?? i.role}</span>
+                )}
+              </li>
+            ))}
           </ul>
+          {canWrite ? (
+            <div className="mt-3">
+              <InviteUserForm allowConsultant={session.user.role === 'consultant'} />
+            </div>
+          ) : null}
         </Card>
       </div>
     </div>

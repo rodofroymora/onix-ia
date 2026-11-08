@@ -19,14 +19,14 @@ export async function POST(req: Request) {
   const hex = m[1]!;
   const orgId = `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
   // Frena intentos de adivinar la clave (fallos por organización).
-  if (isRateLimited(`telemetry:${orgId}`)) return NextResponse.json({ error: 'Demasiados intentos' }, { status: 429 });
+  if (await isRateLimited(`telemetry:${orgId}`)) return NextResponse.json({ error: 'Demasiados intentos' }, { status: 429 });
 
   const { db } = getDb();
   const [org] = await db.select({ hash: organizations.ingestKeyHash }).from(organizations).where(eq(organizations.id, orgId)).limit(1);
   const given = createHash('sha256').update(key).digest();
   const expected = org?.hash ? Buffer.from(org.hash, 'hex') : null;
   if (!expected || expected.length !== given.length || !timingSafeEqual(expected, given)) {
-    recordFailure(`telemetry:${orgId}`);
+    await recordFailure(`telemetry:${orgId}`);
     return NextResponse.json({ error: 'Clave inválida' }, { status: 401 });
   }
 
