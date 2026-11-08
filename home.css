@@ -300,14 +300,23 @@
 .home-hero .lead { margin-top: 1.35rem; max-width: 40em; color: var(--ink-2); }
 .home-hero .hero__actions { margin-top: 1.75rem; align-items: flex-start; }
 .home .priv-note { opacity: 1; color: var(--ink-2); max-width: 42em; }
-.home-micro { margin-top: 1rem; max-width: 38em; color: var(--ink-2); font-size: 1rem; line-height: 1.5; }
+.btn--secondary { background: transparent; color: var(--ink); border: 1px solid var(--ink); box-shadow: none; }
+.btn--secondary:hover { background: var(--paper-2); color: var(--ink); border-color: var(--ink); box-shadow: none; }
 .home-method { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem 1.75rem; margin-top: clamp(2.75rem, 6vw, 4.25rem); padding-top: 1.35rem; border-top: 1px solid var(--line); }
 .home-method li { display: flex; flex-direction: column; gap: .3rem; }
 .home-method span { font-variant-numeric: tabular-nums; font-weight: 600; font-size: .875rem; color: var(--accent-ink); }
 .home-method strong { font-size: 1.2rem; letter-spacing: -.03em; line-height: 1.2; }
 .home-method p { color: var(--ink-2); font-size: .975rem; line-height: 1.45; }
 .home-method__note { margin-top: .9rem; color: var(--ink-2); font-size: .9375rem; }
-.home .h2 { max-width: 18em; }
+.home .h2,
+.js .home .h2,
+.js .home .h2:not(.is-in) {
+  max-width: 18em;
+  opacity: 1;
+  transform: none;
+  filter: none;
+  transition: none;
+}
 .home .section .lead, .home .sv-sec .lead { color: var(--ink-2); }
 .home-offer li { display: grid; grid-template-columns: 2.25rem minmax(0, 1fr); gap: .2rem 1rem; padding: 1.45rem 0; border-top: 1px solid var(--line); }
 .home-offer li:last-child { border-bottom: 1px solid var(--line); }
@@ -315,7 +324,7 @@
 .home-offer h3 { font-size: clamp(1.3rem, 2vw, 1.6rem); font-weight: 600; letter-spacing: -.03em; line-height: 1.2; }
 .home-offer .tag { display: block; margin-top: .3rem; color: var(--accent-ink); font-size: .9375rem; font-weight: 500; }
 .home-offer p { margin-top: .55rem; color: var(--ink); max-width: 40em; }
-.home-offer .may { margin-top: .4rem; color: var(--ink-2); font-size: .9375rem; }
+.home-offer .may { margin-top: .4rem; color: var(--ink-2); font-size: 1rem; line-height: 1.5; }
 .home-offer .link { margin-top: .15rem; }
 .home-points { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem 2rem; margin-top: 1.75rem; }
 .home-points li { border-top: 1px solid var(--line); padding-top: 1rem; }
