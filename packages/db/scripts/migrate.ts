@@ -7,7 +7,7 @@ async function main() {
   mkdirSync(path.dirname(dataDir), { recursive: true });
   const client = new PGlite(dataDir);
 
-  const files = ['0001_init.sql', 'rls.sql'];
+  const files = ['0001_init.sql', '0002_inventory_origin_status.sql', 'rls.sql'];
   for (const f of files) {
     const full = path.join(sqlDir, f);
     if (!existsSync(full)) throw new Error(`No existe ${full}`);

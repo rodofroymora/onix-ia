@@ -1,0 +1,13 @@
+---
+description: Lenguaje y tono de producto
+globs:
+  - "**/apps/web/**/*.{tsx,ts}"
+  - "**/packages/templates/**"
+---
+
+# Lenguaje
+
+- UI en español de México, tuteo.
+- Usar «Revisión inicial», nunca «diagnóstico».
+- No afirmar certificación ni dictamen legal.
+- Copias breves y directas; evitar anglicismos innecesarios.

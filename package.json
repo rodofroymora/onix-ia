@@ -9,7 +9,8 @@
     "test": "turbo run test",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
-    "dev": "turbo run dev",
+    "dev": "pnpm --filter @onix/web dev",
+    "test:e2e": "pnpm db:migrate && pnpm db:seed && pnpm --filter @onix/web test:e2e",
     "db:generate": "pnpm --filter @onix/db db:generate",
     "db:migrate": "pnpm --filter @onix/db db:migrate",
     "db:seed": "pnpm --filter @onix/db db:seed"

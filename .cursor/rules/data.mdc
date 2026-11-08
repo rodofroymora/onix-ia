@@ -1,0 +1,16 @@
+---
+description: Reglas de datos y multi-tenant
+globs:
+  - "**/packages/db/**"
+  - "**/apps/web/src/lib/**"
+  - "**/apps/web/src/app/**"
+---
+
+# Datos
+
+- Antes de consultas de negocio: `govern_set_org` (helper `withOrg`).
+- Bitácora `audit_logs` append-only en mutaciones.
+- Madurez oficial solo vía `@onix/engine` `compute` al publicar evaluación.
+- Proyecciones (brechas, priorización) se almacenan aparte; no sustituyen el score oficial.
+- Inventario: `origin=discovery` fuerza `status=Propuesto` (CU-06).
+- Portal respondente: token HMAC de un solo uso con expiración.

@@ -2,7 +2,7 @@
 
 Plataforma SaaS de gobierno de IA para organizaciones en México.
 
-> Esta es la revisión inicial del monorepo (`feature/govern-v1`). No constituye certificación ni un dictamen legal.
+> Revisión inicial orientativa. No constituye certificación ni un dictamen legal.
 
 ## Paquetes
 
@@ -13,23 +13,41 @@ Plataforma SaaS de gobierno de IA para organizaciones en México.
 | `@onix/ui` | Tokens CSS (acento `#6E5BD8`, neutros cálidos, claro/oscuro) |
 | `@onix/templates` | Cuestionario v1, plantillas sectoriales, biblioteca de acciones, catálogo IA |
 | `@onix/agent` | Interfaz LLM + stubs con feature flags |
+| `@onix/web` | App Next.js (Auth.js demo, Ruta IA, CU v1) |
 
 ## Arranque local
 
 ```bash
 pnpm install
-pnpm test
-pnpm build
-```
-
-Base de datos local (PGlite en `.data/govern.pg`):
-
-```bash
-pnpm db:generate
 pnpm db:migrate
 pnpm db:seed
+pnpm --filter @onix/web dev
 ```
+
+También: `pnpm dev` (alias a la app web).
+
+Abre http://localhost:3000 e inicia sesión con:
+
+| Correo | Rol | Contraseña |
+|--------|-----|------------|
+| `consultant@onix-ia.com` | consultant | `Altamar2026!` |
+| `admin@altamar.demo` | client_admin | `Altamar2026!` |
+| `lector@altamar.demo` | client_reader | `Altamar2026!` |
+
+Seed crea **Grupo Altamar (demo)** con evaluación publicada, inventario, plan e informe.
+
+## Calidad
+
+```bash
+pnpm test
+pnpm build
+pnpm test:e2e   # requiere build previo de @onix/web + Playwright browsers
+```
+
+## Variables
+
+Copia `.env.example` → `.env` / `apps/web/.env.local`. Ver `docs/decisions.md` para atajos de v1.
 
 ## Lenguaje
 
-Copia en español de México. Usamos «Revisión inicial», nunca «diagnóstico». No afirmamos certificación.
+Copia en español de México (tú). Usamos «Revisión inicial», nunca «diagnóstico». No afirmamos certificación.

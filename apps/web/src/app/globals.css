@@ -1,0 +1,62 @@
+@import "@onix/ui/tokens.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body {
+    @apply min-h-full bg-canvas text-ink antialiased;
+    font-family: var(--onix-font-sans);
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  a {
+    @apply text-inherit no-underline;
+  }
+
+  ::selection {
+    background: var(--onix-accent-muted);
+  }
+}
+
+@layer components {
+  .onix-shell {
+    background:
+      radial-gradient(1200px 500px at 10% -10%, color-mix(in srgb, var(--onix-accent) 8%, transparent), transparent 60%),
+      radial-gradient(900px 400px at 100% 0%, color-mix(in srgb, var(--onix-warning) 6%, transparent), transparent 55%),
+      var(--onix-bg);
+  }
+
+  .onix-panel {
+    @apply rounded-lg border border-border bg-surface shadow-sm;
+  }
+
+  .onix-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-md px-3.5 py-2 text-sm font-medium transition;
+  }
+
+  .onix-btn-primary {
+    @apply onix-btn bg-accent text-accent-contrast hover:bg-accent-hover;
+  }
+
+  .onix-btn-ghost {
+    @apply onix-btn border border-border bg-surface text-ink hover:bg-canvas-subtle;
+  }
+
+  .onix-input {
+    @apply w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-ink outline-none ring-accent focus:ring-2;
+  }
+
+  .onix-tab {
+    @apply rounded-md px-3 py-1.5 text-sm text-ink-muted transition hover:text-ink;
+  }
+
+  .onix-tab-active {
+    @apply bg-accent-muted text-ink;
+  }
+}

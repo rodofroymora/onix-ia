@@ -8,9 +8,12 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
     }
   },
+  "files": ["dist", "sql", "scripts"],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "vitest run --passWithNoTests",
@@ -22,6 +25,8 @@
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.2.16",
+    "@onix/engine": "workspace:*",
+    "@onix/templates": "workspace:*",
     "drizzle-orm": "^0.38.3"
   },
   "devDependencies": {

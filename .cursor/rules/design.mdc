@@ -1,0 +1,15 @@
+---
+description: Diseño visual Ónix Govern
+globs:
+  - "**/apps/web/**/*.{tsx,css}"
+  - "**/packages/ui/**"
+---
+
+# Diseño
+
+- Importar `@onix/ui/tokens.css`. Acento `#6E5BD8`.
+- Estética refinada tipo Apple: clara, con atmósfera sutil (no degradados púrpura).
+- Sin emoji. Iconos Lucide.
+- Riesgo: punto atenuado + texto (`RiskDot`), no badges chillones.
+- Claro/oscuro vía tokens (`data-theme="dark"`).
+- Tipografía: tokens `--onix-font-*` (IBM Plex / Söhne), no Inter/Roboto/Arial por defecto.

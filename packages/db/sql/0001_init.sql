@@ -185,6 +185,8 @@ CREATE TABLE IF NOT EXISTS ai_use_cases (
   recommended boolean NOT NULL DEFAULT false,
   in_production boolean NOT NULL DEFAULT false,
   area text,
+  origin text NOT NULL DEFAULT 'manual',
+  status text NOT NULL DEFAULT 'Propuesto',
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
 );

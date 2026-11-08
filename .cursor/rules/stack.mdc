@@ -1,0 +1,14 @@
+---
+description: Stack técnico de Ónix Govern
+globs:
+  - "**/*"
+---
+
+# Stack
+
+- Monorepo pnpm + Turborepo.
+- App: Next.js App Router (`apps/web`), TypeScript strict.
+- Paquetes: `@onix/engine` (puro), `@onix/db` (Drizzle + PGlite/Postgres), `@onix/ui`, `@onix/templates`, `@onix/agent`.
+- Auth demo: Auth.js (next-auth v5) Credentials. Sesión con `role` + `organizationId`.
+- Tests: Vitest en paquetes; Playwright e2e en `@onix/web`.
+- No inventar datos de clientes reales; usar seed demo (Grupo Altamar).

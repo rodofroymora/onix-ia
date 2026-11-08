@@ -11,3 +11,7 @@ coverage
 *.tsbuildinfo
 drizzle/meta
 packages/db/drizzle
+apps/web/.next
+apps/web/test-results
+apps/web/playwright-report
+apps/web/blob-report

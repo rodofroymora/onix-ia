@@ -239,6 +239,10 @@ export const aiUseCases = pgTable('ai_use_cases', {
   recommended: boolean('recommended').notNull().default(false),
   inProduction: boolean('in_production').notNull().default(false),
   area: text('area'),
+  /** manual | discovery | import */
+  origin: text('origin').notNull().default('manual'),
+  /** Propuesto | En revisión | Aprobado | Descartado */
+  status: text('status').notNull().default('Propuesto'),
   ...timestamps,
 });
 
