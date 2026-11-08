@@ -1,6 +1,6 @@
 'use server';
 
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { prioritizationWeights } from '@onix/db';
 import { normalizeWeights } from '@onix/engine';
 import { revalidatePath } from 'next/cache';
