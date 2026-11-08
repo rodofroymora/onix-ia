@@ -504,6 +504,12 @@
         "info@onix-ia.com"
       ]
     },
+    "formulaLegalAutoevaluacion": {
+      "explicacion": "Oración exacta pedida por Legal y Marketing para /autoevaluacion (PR #48). Niega certificación y garantía. No autoriza la palabra «garantiza» en ningún otro texto: «No garantizamos» sigue bloqueado. No aprueba leyes, precios ni el nombre comercial.",
+      "valores": [
+        "ÓNIX no es organismo certificador ni está certificado, y nuestro trabajo no constituye una certificación ni garantiza el cumplimiento de esas normas."
+      ]
+    },
     "preciosEstimador": {
       "explicacion": "Frases exactas aprobadas para el estimador de la landing (index.html). El check 05 las enmascara antes de aplicar la frase prohibida «precio»; cualquier otra forma de precio (otro monto, sin «Desde» o sin «más IVA») sigue bloqueada.",
       "aprobadoPor": "Rodolfo Mora (dueño del sitio)",
