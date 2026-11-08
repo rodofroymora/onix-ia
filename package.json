@@ -1,0 +1,22 @@
+{
+  "name": "onix-plataforma",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Ónix Govern — plataforma SaaS de gobierno de IA",
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "dev": "turbo run dev",
+    "db:generate": "pnpm --filter @onix/db db:generate",
+    "db:migrate": "pnpm --filter @onix/db db:migrate",
+    "db:seed": "pnpm --filter @onix/db db:seed"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

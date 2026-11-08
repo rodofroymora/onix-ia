@@ -1,0 +1,7 @@
+{
+  "version": "v1",
+  "label": "Cuestionario Govern v1",
+  "maturityCount": 38,
+  "routes": { "rapida": 15, "estandar": 27, "completa": 38 },
+  "note": "Revisión inicial orientativa. No constituye certificación ni dictamen legal."
+}
