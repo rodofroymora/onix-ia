@@ -10,12 +10,13 @@
 }
 .nav__trigger:hover, .nav__trigger[aria-expanded="true"] { color: var(--ink); text-decoration-color: var(--line); }
 .nav__trigger[aria-current="page"] { color: var(--ink); text-decoration-color: var(--accent); }
-.nav__trigger svg { transition: transform .3s var(--ease); }
-.nav__trigger[aria-expanded="true"] svg { transform: rotate(180deg); }
-@media (prefers-reduced-motion: reduce) { .nav__trigger svg, .mmenu .mm-acc svg { transition: none; } }
+.nav-chev { display: block; flex: none; transform-box: fill-box; transform-origin: center; transition: transform .3s var(--ease); }
+.nav__trigger[aria-expanded="true"] .nav-chev,
+.mm-acc[aria-expanded="true"] .nav-chev { transform: rotate(180deg); }
+@media (prefers-reduced-motion: reduce) { .nav-chev { transition: none; } }
 .mega {
   position: absolute; z-index: 40; top: calc(100% + .4rem); left: 0; right: auto;
-  width: min(38rem, calc(100vw - 2.5rem)); max-height: min(72vh, 36rem); overflow: auto;
+  width: min(44rem, calc(100vw - 2.5rem)); max-height: min(72vh, 36rem); overflow: auto;
   background: var(--paper); border: 1px solid var(--line); border-radius: 16px;
   box-shadow: var(--sombra, 0 12px 28px -18px rgba(38,38,44,.22));
   padding: 1rem 1.1rem 1.15rem;
@@ -36,8 +37,7 @@
 /* ── Mobile menu: accordion + fixed CTA ─────────────────── */
 .mmenu { overflow-y: auto; padding-bottom: 0; }
 .mmenu .mm-acc { display: flex; width: 100%; align-items: center; justify-content: space-between; min-height: 60px; font-size: 1.625rem; font-weight: 500; letter-spacing: -.03em; text-align: left; border-bottom: 1px solid var(--line); }
-.mmenu .mm-acc svg { transition: transform .3s var(--ease); flex: none; }
-.mmenu .mm-acc[aria-expanded="true"] svg { transform: rotate(180deg); }
+.mmenu .mm-acc .nav-chev { margin-left: .75rem; }
 .mmenu .mm-acc[aria-current="page"] { color: var(--accent); }
 .mm-sub { padding: .25rem 0 .75rem .25rem; border-bottom: 1px solid var(--line); }
 .mm-sub[hidden] { display: none; }
@@ -187,7 +187,7 @@
 .nav__links .mega a:not(.btn) {
   display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
   min-height: 44px; padding: .4rem .45rem; border-radius: 8px;
-  color: var(--ink); text-decoration: none; font-size: .975rem; font-weight: 550; letter-spacing: -.015em; line-height: 1.25;
+  color: var(--ink); text-decoration: none; font-size: .975rem; font-weight: 550; letter-spacing: -.015em; line-height: 1.35; text-wrap: pretty;
 }
 .nav__links .mega a:not(.btn):hover, .nav__links .mega a:not(.btn):focus-visible { color: var(--ink); background: var(--paper-2); text-decoration: none; }
 .nav__links .mega a small { display: block; margin-top: .15rem; font-size: .8125rem; font-weight: 450; color: var(--muted); line-height: 1.35; }
