@@ -1,9 +1,10 @@
 'use server';
 
-import { and, eq } from 'drizzle-orm';
-import { actions, evidences, plans, stages, type GovernTx } from '@onix/db';
+import { and, eq, inArray } from 'drizzle-orm';
+import { actionDependencies, actions, evidences, plans, stages, type GovernTx } from '@onix/db';
 import { ACTION_LIBRARY } from '@onix/templates';
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 import { appendAudit } from '@/lib/audit';
 import { getDb, withOrg } from '@/lib/db';
 import { requireConsultant, requireWriteAccess } from '@/lib/session';
@@ -184,4 +185,67 @@ export async function reviewEvidenceAction(formData: FormData) {
   });
   revalidatePath('/plan');
   revalidatePath('/');
+}
+
+/** Linaje: la acción `to` depende de `from` en `weight`%. Rechaza ciclos. */
+export async function addDependencyAction(formData: FormData) {
+  const session = await requireWriteAccess();
+  const orgId = session.user.organizationId;
+  const fromId = String(formData.get('fromActionId') ?? '');
+  const toId = String(formData.get('toActionId') ?? '');
+  const weight = Math.round(Number(formData.get('weight')));
+  if (!fromId || !toId || fromId === toId) throw new Error('Elige dos acciones distintas');
+  if (!Number.isFinite(weight) || weight < 1 || weight > 100) throw new Error('El porcentaje va de 1 a 100');
+  const { db } = getDb();
+  let problem = '';
+  await withOrg(db, orgId, async (tx) => {
+    const acts = await tx.select({ id: actions.id }).from(actions).where(and(eq(actions.organizationId, orgId), inArray(actions.id, [fromId, toId])));
+    if (acts.length !== 2) throw new Error('Acción no encontrada');
+    const deps = await tx.select().from(actionDependencies).where(eq(actionDependencies.organizationId, orgId));
+    // ¿toId ya es prerrequisito (directo o indirecto) de fromId? Entonces sería un ciclo.
+    const seen = new Set<string>();
+    const stack = [fromId];
+    while (stack.length) {
+      const cur = stack.pop()!;
+      if (cur === toId) {
+        problem = 'ciclo';
+        return;
+      }
+      if (seen.has(cur)) continue;
+      seen.add(cur);
+      for (const d of deps) if (d.toActionId === cur) stack.push(d.fromActionId);
+    }
+    await tx
+      .insert(actionDependencies)
+      .values({ organizationId: orgId, fromActionId: fromId, toActionId: toId, weight })
+      .onConflictDoUpdate({ target: [actionDependencies.fromActionId, actionDependencies.toActionId], set: { weight } });
+    await appendAudit(tx, {
+      organizationId: orgId,
+      actorUserId: session.user.id,
+      action: 'action.dependency_set',
+      entityType: 'action',
+      entityId: toId,
+      meta: { fromId, weight },
+    });
+  });
+  revalidatePath('/plan');
+  redirect(`/plan?accion=${toId}${problem ? `&dep=${problem}` : ''}`);
+}
+
+export async function removeDependencyAction(formData: FormData) {
+  const session = await requireWriteAccess();
+  const orgId = session.user.organizationId;
+  const id = String(formData.get('dependencyId') ?? '');
+  const { db } = getDb();
+  await withOrg(db, orgId, async (tx) => {
+    await tx.delete(actionDependencies).where(and(eq(actionDependencies.id, id), eq(actionDependencies.organizationId, orgId)));
+    await appendAudit(tx, {
+      organizationId: orgId,
+      actorUserId: session.user.id,
+      action: 'action.dependency_removed',
+      entityType: 'action_dependency',
+      entityId: id,
+    });
+  });
+  revalidatePath('/plan');
 }

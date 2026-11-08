@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
-const PUBLIC = ['/login', '/r', '/api/auth', '/api/health'];
+const PUBLIC = ['/login', '/r', '/api/auth', '/api/health', '/api/telemetria'];
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;

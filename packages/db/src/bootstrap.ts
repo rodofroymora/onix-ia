@@ -28,6 +28,7 @@ export const MIGRATION_FILES = [
   '0002_inventory_origin_status.sql',
   'rls.sql',
   '0003_v1_completo.sql',
+  '0004_catalogos_telemetria_agentes.sql',
 ] as const;
 const BASELINE = ['0001_init.sql', '0002_inventory_origin_status.sql', 'rls.sql'];
 

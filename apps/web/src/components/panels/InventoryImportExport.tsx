@@ -1,5 +1,7 @@
 'use client';
 
+import { AI_TYPES, BUSINESS_AREAS, STRATEGIC_OBJECTIVES, VALUE_TYPES, catalogName } from '@onix/templates';
+
 import { useRef, useState } from 'react';
 import * as XLSX from 'xlsx';
 import { useRouter } from 'next/navigation';
@@ -21,12 +23,14 @@ type CaseLite = {
   valueScore: number | null;
   strategicObjective: string | null;
   effort: number | null;
+  aiType?: string | null;
+  valueType?: string | null;
 };
 
 const HEADERS = [
   'Nombre', 'Descripción', 'Área', 'Dueño', 'Tecnología', 'Proveedor', 'Riesgo',
   'Usa datos personales (sí/no)', 'Decide sobre personas (sí/no)', 'De cara al cliente (sí/no)',
-  'Valor estimado (1 a 5)', 'Objetivo estratégico', 'Esfuerzo (1 a 5)', 'Estatus',
+  'Valor estimado (1 a 5)', 'Objetivo estratégico', 'Esfuerzo (1 a 5)', 'Estatus', 'Tipo de IA', 'Tipo de valor',
 ];
 
 const yes = (v: unknown) => /^(s[ií]|si|yes|true|1|x)$/i.test(String(v ?? '').trim());
@@ -50,6 +54,8 @@ function toRow(r: Record<string, unknown>): ImportRow {
     valueScore: Number(get(r, 'Valor estimado (1 a 5)', 'Valor')) || null,
     strategicObjective: String(get(r, 'Objetivo estratégico', 'Objetivo') ?? ''),
     effort: Number(get(r, 'Esfuerzo (1 a 5)', 'Esfuerzo')) || null,
+    aiType: String(get(r, 'Tipo de IA', 'aiType') ?? ''),
+    valueType: String(get(r, 'Tipo de valor', 'valueType') ?? ''),
   };
 }
 
@@ -64,6 +70,16 @@ export function InventoryImportExport({ cases }: { cases: CaseLite[] }) {
     const sheet = XLSX.utils.json_to_sheet(rows, { header: HEADERS });
     const book = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(book, sheet, 'Inventario');
+    // Hoja de referencia con las listas estándar para que todos clasifiquen igual.
+    const n = Math.max(AI_TYPES.length, VALUE_TYPES.length, STRATEGIC_OBJECTIVES.length, BUSINESS_AREAS.length);
+    const lists = Array.from({ length: n }, (_, i) => ({
+      'Tipo de IA': AI_TYPES[i]?.n ?? '',
+      'Tipo de valor': VALUE_TYPES[i]?.n ?? '',
+      'Objetivo estratégico': STRATEGIC_OBJECTIVES[i]?.n ?? '',
+      'Área': BUSINESS_AREAS[i] ?? '',
+      Riesgo: ['Bajo', 'Medio', 'Alto', 'Inaceptable'][i] ?? '',
+    }));
+    XLSX.utils.book_append_sheet(book, XLSX.utils.json_to_sheet(lists), 'Listas');
     XLSX.writeFile(book, file);
   }
 
@@ -84,6 +100,8 @@ export function InventoryImportExport({ cases }: { cases: CaseLite[] }) {
         'Objetivo estratégico': c.strategicObjective ?? '',
         'Esfuerzo (1 a 5)': c.effort ?? '',
         Estatus: c.status,
+        'Tipo de IA': catalogName(AI_TYPES, c.aiType) ?? '',
+        'Tipo de valor': catalogName(VALUE_TYPES, c.valueType) ?? '',
       })),
       'inventario-ia.xlsx',
     );

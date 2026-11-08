@@ -35,6 +35,10 @@ export const organizations = pgTable('organizations', {
   country: text('country').notNull().default('MX'),
   /** Metas de madurez por dimensión (0 a 100). */
   maturityTargets: jsonb('maturity_targets').notNull().default({}),
+  /** Cada cuántos meses toca reevaluar (recordatorio). */
+  reevaluationMonths: integer('reevaluation_months').notNull().default(6),
+  /** sha256 de la clave para enviar telemetría por API. */
+  ingestKeyHash: text('ingest_key_hash'),
   ...timestamps,
 });
 
@@ -134,6 +138,7 @@ export const assessments = pgTable(
     /** inicial | reevaluacion */
     kind: text('kind').notNull().default('inicial'),
     previousAssessmentId: uuid('previous_assessment_id'),
+    publishedAt: timestamp('published_at', { withTimezone: true }),
     createdBy: uuid('created_by').references(() => users.id),
     ...timestamps,
   },
@@ -273,6 +278,12 @@ export const aiUseCases = pgTable('ai_use_cases', {
   integration: integer('integration'),
   infrastructure: integer('infrastructure'),
   skills: integer('skills'),
+  /** Listas estándar (ver @onix/templates catalogs). */
+  aiType: text('ai_type'),
+  valueType: text('value_type'),
+  dataClassification: text('data_classification'),
+  deployment: text('deployment'),
+  userScope: text('user_scope'),
   ...timestamps,
 });
 
@@ -427,4 +438,65 @@ export const governMeta = pgTable('govern_meta', {
   key: text('key').primaryKey(),
   value: text('value').notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+
+export const aiAgents = pgTable('ai_agents', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  organizationId: uuid('organization_id')
+    .notNull()
+    .references(() => organizations.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),
+  description: text('description'),
+  platform: text('platform').notNull(),
+  publisher: text('publisher').notNull().default('Organización'),
+  channel: text('channel').notNull().default('Interno'),
+  ownerName: text('owner_name'),
+  status: text('status').notNull().default('Activo'),
+  risk: text('risk').notNull().default('Medio'),
+  managed: boolean('managed').notNull().default(true),
+  useCaseId: uuid('use_case_id').references(() => aiUseCases.id, { onDelete: 'set null' }),
+  dataSources: jsonb('data_sources').notNull().default([]),
+  capabilities: jsonb('capabilities').notNull().default([]),
+  monthlyUsers: integer('monthly_users').notNull().default(0),
+  lastActivity: date('last_activity'),
+  origin: text('origin').notNull().default('manual'),
+  ...timestamps,
+});
+
+export const aiUsageMetrics = pgTable('ai_usage_metrics', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  organizationId: uuid('organization_id')
+    .notNull()
+    .references(() => organizations.id, { onDelete: 'cascade' }),
+  period: date('period').notNull(),
+  tool: text('tool').notNull(),
+  useCaseId: uuid('use_case_id').references(() => aiUseCases.id, { onDelete: 'set null' }),
+  agentId: uuid('agent_id').references(() => aiAgents.id, { onDelete: 'set null' }),
+  activeUsers: integer('active_users').notNull().default(0),
+  requests: integer('requests').notNull().default(0),
+  costMxn: integer('cost_mxn').notNull().default(0),
+  incidents: integer('incidents').notNull().default(0),
+  /** false = uso no autorizado (shadow AI). */
+  sanctioned: boolean('sanctioned').notNull().default(true),
+  source: text('source').notNull().default('manual'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const actionDependencies = pgTable('action_dependencies', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  organizationId: uuid('organization_id')
+    .notNull()
+    .references(() => organizations.id, { onDelete: 'cascade' }),
+  /** La acción de la que se depende (prerrequisito). */
+  fromActionId: uuid('from_action_id')
+    .notNull()
+    .references(() => actions.id, { onDelete: 'cascade' }),
+  /** La acción que depende. */
+  toActionId: uuid('to_action_id')
+    .notNull()
+    .references(() => actions.id, { onDelete: 'cascade' }),
+  /** Qué tanto depende (1 a 100). */
+  weight: integer('weight').notNull().default(50),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 });

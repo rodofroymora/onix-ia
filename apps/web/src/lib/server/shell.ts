@@ -1,5 +1,5 @@
-import { and, eq, inArray } from 'drizzle-orm';
-import { actions, aiUseCases, assessments, evidences, invitations } from '@onix/db';
+import { and, desc, eq, inArray } from 'drizzle-orm';
+import { actions, aiAgents, aiUseCases, assessments, evidences, invitations, organizations } from '@onix/db';
 import { getDb, withOrg } from '@/lib/db';
 import type { PaletteItem } from '@/components/shell/CommandPalette';
 import type { PendingItem } from '@/components/shell/PendingTray';
@@ -15,6 +15,8 @@ const NAV_ITEMS: PaletteItem[] = [
   { id: 'nav-plan', label: 'Plan por etapas', group: 'Ir a', href: '/plan' },
   { id: 'nav-back', label: 'Backlog de acciones', group: 'Ir a', href: '/plan?tab=backlog' },
   { id: 'nav-rep', label: 'Reportes', group: 'Ir a', href: '/reportes' },
+  { id: 'nav-agents', label: 'Agent Discovery: mapa de agentes', group: 'Ir a', href: '/agentes' },
+  { id: 'nav-tel', label: 'Telemetría de uso de IA', group: 'Ir a', href: '/telemetria' },
   { id: 'nav-org', label: 'Organización y responsables', group: 'Ir a', href: '/organizacion' },
 ];
 
@@ -66,10 +68,35 @@ export async function loadShellData(organizationId: string) {
     ];
 
     const completed = await tx
-      .select({ id: assessments.id })
+      .select({ id: assessments.id, publishedAt: assessments.publishedAt, updatedAt: assessments.updatedAt })
       .from(assessments)
       .where(and(eq(assessments.organizationId, organizationId), eq(assessments.status, 'completed')))
+      .orderBy(desc(assessments.createdAt))
       .limit(1);
+    const [org] = await tx.select({ months: organizations.reevaluationMonths }).from(organizations).where(eq(organizations.id, organizationId)).limit(1);
+    if (completed[0] && !openAssess.length) {
+      const due = new Date(completed[0].publishedAt ?? completed[0].updatedAt);
+      due.setMonth(due.getMonth() + (org?.months ?? 6));
+      const days = Math.ceil((due.getTime() - Date.now()) / 86_400_000);
+      if (days <= 30) {
+        pending.unshift({
+          id: 'reeval',
+          label: days < 0 ? 'Reevaluación vencida' : 'Reevaluación próxima',
+          detail: days < 0 ? `Venció hace ${-days} días` : `En ${days} días: lanza la reevaluación`,
+          href: '/evaluacion',
+        });
+      }
+    }
+    if (openAssess.length && !pendingInv.length) {
+      const anyInv = await tx
+        .select({ id: invitations.id })
+        .from(invitations)
+        .where(and(eq(invitations.organizationId, organizationId), inArray(invitations.assessmentId, openAssess.map((a) => a.id))))
+        .limit(1);
+      if (anyInv.length) pending.unshift({ id: 'publish', label: 'Todos contestaron', detail: 'Guarda y publica los resultados', href: '/evaluacion' });
+    }
+    const agents = await tx.select({ id: aiAgents.id, name: aiAgents.name, platform: aiAgents.platform }).from(aiAgents).where(eq(aiAgents.organizationId, organizationId));
+    palette.push(...agents.map((a) => ({ id: `ag-${a.id}`, label: a.name, group: 'Agentes' as const, href: `/agentes?agente=${a.id}`, hint: a.platform })));
     const done: string[] = [];
     if (completed.length) done.push('/evaluacion');
     if (cases.length) done.push('/inventario');

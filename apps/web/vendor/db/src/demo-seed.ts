@@ -14,8 +14,9 @@ import {
 import { maturityForRoute } from '@onix/templates';
 import type { GovernTx } from './client.js';
 import * as schema from './schema/index.js';
+import { CASE_CLASSIFICATION, seedDemoExtras } from './demo-seed-extras.js';
 
-export const DEMO_SEED_VERSION = '5';
+export const DEMO_SEED_VERSION = '6';
 
 type UserRow = typeof schema.users.$inferSelect;
 type QvRow = typeof schema.questionnaireVersions.$inferSelect;
@@ -128,6 +129,7 @@ async function seedAssessment(
       createdBy: args.owner.id,
       createdAt: args.createdAt,
       updatedAt: args.createdAt,
+      publishedAt: new Date(args.createdAt.getTime() + 3 * DAY),
     })
     .returning();
 
@@ -368,13 +370,19 @@ export async function seedDemoV2(
       valueScore: 3, strategicFit: 2, dataQuality: 1, effort: 4, techMaturity: 2, integration: 2, infrastructure: 2, skills: 1,
     },
   ];
+  const caseIds: Record<string, string> = {};
   for (const c of cases) {
-    await tx.insert(schema.aiUseCases).values({
-      ...c,
-      organizationId: org.id,
-      assessmentId: current.id,
-      origin: c.origin ?? 'manual',
-    });
+    const [row] = await tx
+      .insert(schema.aiUseCases)
+      .values({
+        ...c,
+        ...(CASE_CLASSIFICATION[c.name] ?? {}),
+        organizationId: org.id,
+        assessmentId: current.id,
+        origin: c.origin ?? 'manual',
+      })
+      .returning();
+    caseIds[c.name] = row!.id;
   }
 
   await tx.insert(schema.triageValidations).values([
@@ -430,6 +438,7 @@ export async function seedDemoV2(
     { title: 'Métricas de valor por caso de IA', summary: 'Línea base y meta para cada caso aprobado.', dim: 'est', stage: 'Mejora continua', progress: '0', due: 120, lift: 9 },
     { title: 'Revisión trimestral del portafolio de IA', summary: 'Comité revisa valor, riesgo y avance cada trimestre.', dim: 'est', stage: 'Mejora continua', progress: '0', due: 150, lift: 7 },
   ];
+  const actionIds: Record<string, string> = {};
   for (const a of planActions) {
     const [row] = await tx
       .insert(schema.actions)
@@ -449,6 +458,7 @@ export async function seedDemoV2(
         liftPoints: a.lift,
       })
       .returning();
+    actionIds[a.title] = row!.id;
     if (a.evidence) {
       await tx.insert(schema.evidences).values({
         organizationId: org.id,
@@ -461,6 +471,8 @@ export async function seedDemoV2(
       });
     }
   }
+
+  await seedDemoExtras(tx, org.id, caseIds, actionIds);
 
   await tx.insert(schema.reports).values({
     organizationId: org.id,

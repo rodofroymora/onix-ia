@@ -7,7 +7,7 @@ import { Search } from 'lucide-react';
 export interface PaletteItem {
   id: string;
   label: string;
-  group: 'Ir a' | 'Casos de IA' | 'Acciones del plan';
+  group: 'Ir a' | 'Casos de IA' | 'Acciones del plan' | 'Agentes';
   href: string;
   hint?: string;
 }

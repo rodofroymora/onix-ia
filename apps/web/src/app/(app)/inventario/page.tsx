@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
+import { AI_TYPES, VALUE_TYPES, catalogName, type CatalogOption } from '@onix/templates';
 import { Plus } from 'lucide-react';
 import { StackBar } from '@/components/charts';
 import { CaseDrawer } from '@/components/panels/CaseDrawer';
@@ -17,7 +18,7 @@ const STATUSES = ['Propuesto', 'En revisión', 'Aprobado', 'Descartado'];
 export default async function InventarioPage({
   searchParams,
 }: {
-  searchParams: Promise<{ tab?: string; caso?: string; riesgo?: string; estatus?: string }>;
+  searchParams: Promise<{ tab?: string; caso?: string; riesgo?: string; estatus?: string; tipo?: string; valor?: string }>;
 }) {
   const session = await requireSession();
   const p = await searchParams;
@@ -26,9 +27,21 @@ export default async function InventarioPage({
   const canWrite = session.user.role !== 'client_reader';
   const sector = o.org?.sector ?? null;
 
-  const filtered = o.cases.filter((c) => (!p.riesgo || c.risk === p.riesgo) && (!p.estatus || c.status === p.estatus));
+  const filtered = o.cases.filter(
+    (c) =>
+      (!p.riesgo || c.risk === p.riesgo) &&
+      (!p.estatus || c.status === p.estatus) &&
+      (!p.tipo || c.aiType === p.tipo) &&
+      (!p.valor || c.valueType === p.valor),
+  );
+  const tally = (key: 'aiType' | 'valueType', list: CatalogOption[]) =>
+    [...list.map((t) => ({ k: t.k, n: t.n, v: o.cases.filter((c) => c[key] === t.k).length })), { k: '', n: 'Sin clasificar', v: o.cases.filter((c) => !c[key]).length }]
+      .filter((x) => x.v > 0)
+      .sort((x, y) => y.v - x.v);
+  const byType = tally('aiType', AI_TYPES);
+  const byValue = tally('valueType', VALUE_TYPES);
   const qs = (patch: Record<string, string | undefined>) => {
-    const next = { tab: p.tab, riesgo: p.riesgo, estatus: p.estatus, ...patch };
+    const next = { tab: p.tab, riesgo: p.riesgo, estatus: p.estatus, tipo: p.tipo, valor: p.valor, ...patch };
     const s = new URLSearchParams(Object.entries(next).filter(([, v]) => v) as [string, string][]).toString();
     return `/inventario${s ? `?${s}` : ''}`;
   };
@@ -100,7 +113,7 @@ export default async function InventarioPage({
                   <tr>
                     <th>Caso</th>
                     <th>Dueño</th>
-                    <th>Tecnología</th>
+                    <th>Tipo y tecnología</th>
                     <th>Riesgo</th>
                     <th>Estatus</th>
                     <th className="text-right">Ficha</th>
@@ -122,7 +135,10 @@ export default async function InventarioPage({
                           </Link>
                         </td>
                         <td className="text-ink-muted">{c.ownerName ?? '·'}</td>
-                        <td className="max-w-[180px] truncate text-ink-muted">{c.technology ?? '·'}</td>
+                        <td className="max-w-[200px] text-ink-muted">
+                          <span className="block truncate text-ink">{catalogName(AI_TYPES, c.aiType) ?? 'Sin clasificar'}</span>
+                          <span className="block truncate text-[11px] text-ink-subtle">{c.technology ?? '·'}</span>
+                        </td>
                         <td>
                           <RiskDot risk={c.risk} />
                         </td>
@@ -155,6 +171,30 @@ export default async function InventarioPage({
             <Card title="Por riesgo">
               <StackBar parts={RISKS.map((r, i) => ({ label: r, value: o.cases.filter((c) => c.risk === r).length, tone: (i + 1) as 1 | 2 | 3 | 4 }))} />
             </Card>
+            {(['tipo', 'valor'] as const).map((key) => {
+              const rows = key === 'tipo' ? byType : byValue;
+              const max = Math.max(1, ...rows.map((r) => r.v));
+              return (
+                <Card key={key} title={key === 'tipo' ? 'Por tipo de IA' : 'Por tipo de valor'}>
+                  <div className="space-y-2.5">
+                    {rows.map((r) => {
+                      const active = p[key] === r.k && r.k !== '';
+                      return (
+                        <Link key={r.n} href={r.k ? qs({ [key]: active ? undefined : r.k }) : qs({})} className="block">
+                          <div className="flex justify-between text-[12px]">
+                            <span className={`truncate ${active ? 'font-medium text-accent' : r.k ? 'text-ink' : 'text-ink-subtle'}`}>{r.n}</span>
+                            <span className="tabular-nums text-ink-muted">{r.v}</span>
+                          </div>
+                          <div className="onix-bar mt-1">
+                            <div className={`h-full ${r.k ? 'bg-accent' : 'bg-border-strong'}`} style={{ width: `${(r.v / max) * 100}%` }} />
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </Card>
+              );
+            })}
             <Card title="Por área">
               <div className="space-y-2.5">
                 {areas.map(({ a, n }) => (

@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import { DIMS, levelName } from '@onix/engine';
 import { AssistantCard } from '@/components/assistant/AssistantCard';
+import { TrendChart } from '@/components/charts/TrendChart';
+import { mxn, summarizeUsage } from '@/lib/server/telemetry';
 import { MeterRow, RadarChart, Ring, SeriesKey, StackBar } from '@/components/charts';
 import { Card, Empty, Kpi, PageHeader } from '@/components/ui/PageHeader';
 import { RiskDot } from '@/components/ui/RiskDot';
@@ -48,6 +50,7 @@ export default async function HomePage() {
     { name: 'Meta', values: DIMS.map((d) => o.targets[d.k] ?? 0), style: 'dashed' as const },
     { name: 'Actual', values: o.officialDims.map((d) => d.score), style: 'solid' as const },
   ];
+  const tel = summarizeUsage(o.usage);
   const top = o.prioritized.filter((p) => !p.blocked && p.score != null).slice(0, 5);
   const stageProgress = o.stages.map((s) => {
     const acts = o.actions.filter((a) => a.stageId === s.id);
@@ -118,6 +121,67 @@ export default async function HomePage() {
         <Kpi label="Casos de IA" value={o.cases.length} sub={`${high.length} de riesgo alto o inaceptable`} />
         <Kpi label="Por aclarar" value={o.disagreements.length} sub={`desacuerdos · ${blind} "No sé" · ${o.uncovered.length} funciones sin responsable`} />
       </div>
+
+      {o.nextReevaluation && o.nextReevaluation.daysLeft <= 30 ? (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface px-5 py-3.5 text-[13px]">
+          <span className="text-ink">
+            {o.nextReevaluation.daysLeft >= 0
+              ? `La reevaluación toca en ${o.nextReevaluation.daysLeft} días.`
+              : `La reevaluación venció hace ${-o.nextReevaluation.daysLeft} días.`}{' '}
+            <span className="text-ink-muted">Se programa cada {o.nextReevaluation.months} meses.</span>
+          </span>
+          <Link href="/evaluacion" className="onix-btn-ghost py-1.5">
+            Lanzar reevaluación
+          </Link>
+        </div>
+      ) : null}
+
+      {tel.last ? (
+        <div className="grid gap-4 lg:grid-cols-5">
+          <Card
+            title="Uso de IA"
+            className="lg:col-span-3"
+            aside={
+              <Link href="/telemetria" className="inline-flex items-center gap-1 text-[12px] text-ink-muted hover:text-ink">
+                Telemetría <ArrowUpRight className="h-3.5 w-3.5" />
+              </Link>
+            }
+          >
+            <TrendChart
+              labels={tel.monthly.map((m) => m.label)}
+              series={[
+                { name: 'Solicitudes en herramientas autorizadas', values: tel.monthly.map((m) => m.sanctionedRequests), tone: 'solid' },
+                { name: 'Uso no autorizado', values: tel.monthly.map((m) => m.shadowRequests), tone: 'muted' },
+              ]}
+              height={190}
+            />
+          </Card>
+          <Card title={`Este mes · ${tel.last.label}`} className="lg:col-span-2">
+            <dl className="grid grid-cols-2 gap-x-4 gap-y-5">
+              {[
+                ['Usuarios activos', tel.last.users.toLocaleString('es-MX'), tel.change.users],
+                ['Solicitudes', tel.last.requests.toLocaleString('es-MX'), tel.change.requests],
+                ['Costo MXN', mxn(tel.last.cost), tel.change.cost],
+                ['Uso no autorizado', `${tel.shadowShare}%`, null],
+              ].map(([l, v, c]) => (
+                <div key={String(l)}>
+                  <dt className="text-[11px] text-ink-subtle">{l}</dt>
+                  <dd className="mt-1 text-[20px] font-semibold tabular-nums leading-none text-ink">{v}</dd>
+                  {c != null ? <dd className="mt-1 text-[11px] text-ink-subtle">{`${Number(c) >= 0 ? '+' : ''}${c}% vs. mes anterior`}</dd> : null}
+                </div>
+              ))}
+            </dl>
+            <div className="mt-5 flex items-center justify-between border-t border-border pt-4 text-[13px]">
+              <span className="text-ink-muted">
+                {o.agents.length} agentes · {o.agents.filter((a) => !a.managed).length} sin gestionar · {o.agents.filter((a) => !a.ownerName).length} sin dueño
+              </span>
+              <Link href="/agentes" className="text-accent hover:underline">
+                Ver mapa
+              </Link>
+            </div>
+          </Card>
+        </div>
+      ) : null}
 
       <div className="grid gap-4 lg:grid-cols-5">
         <Card

@@ -3,6 +3,7 @@ import { AppNav } from '@/components/shell/AppNav';
 import { CommandPalette } from '@/components/shell/CommandPalette';
 import { OrgSwitcher } from '@/components/shell/OrgSwitcher';
 import { PendingTray } from '@/components/shell/PendingTray';
+import { ThemeToggle } from '@/components/shell/ThemeToggle';
 import { Providers } from '@/components/shell/Providers';
 import { RutaIaStrip } from '@/components/shell/RutaIaStrip';
 import { SignOutButton } from '@/components/shell/SignOutButton';
@@ -49,6 +50,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             </div>
             {orgs.length > 1 ? <OrgSwitcher orgs={orgs} /> : null}
             <CommandPalette items={shell.palette} />
+            <ThemeToggle />
             <PendingTray items={shell.pending} />
           </header>
           <main className="mx-auto w-full max-w-[1240px] flex-1 px-4 py-8 sm:px-8">{children}</main>

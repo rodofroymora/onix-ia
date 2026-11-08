@@ -3,8 +3,36 @@ import { X } from 'lucide-react';
 import { saveUseCaseAction } from '@/lib/actions/inventory';
 import { completeness, feasibility, missingForPriority, suggestRisk, type CaseRow } from '@/lib/server/insights';
 import { RiskDot } from '@/components/ui/RiskDot';
+import { CaseAssistant } from '@/components/assistant/CaseAssistant';
+import {
+  AI_TYPES,
+  BUSINESS_AREAS,
+  DATA_CLASSES,
+  DEPLOYMENTS,
+  STRATEGIC_OBJECTIVES,
+  TOOL_SUGGESTIONS,
+  USER_SCOPES,
+  VALUE_TYPES,
+  VENDOR_SUGGESTIONS,
+  type CatalogOption,
+} from '@onix/templates';
 
-const AREAS = ['Atención a clientes', 'Marketing y contenido', 'Personal y reclutamiento', 'Finanzas y crédito', 'Operación interna', 'Otra área'];
+function Pick({ name, label, options, value, hint }: { name: string; label: string; options: CatalogOption[]; value: string | null; hint?: string }) {
+  return (
+    <label className="block text-[12px] text-ink-muted">
+      {label}
+      <select name={name} defaultValue={value ?? ''} className="onix-input mt-1">
+        <option value="">Elegir</option>
+        {options.map((o) => (
+          <option key={o.k} value={o.k} title={o.d}>
+            {o.n}
+          </option>
+        ))}
+      </select>
+      {hint ? <span className="mt-1 block text-[11px] text-ink-subtle">{hint}</span> : null}
+    </label>
+  );
+}
 
 function Scale({ name, label, value, hint }: { name: string; label: string; value: number | null; hint?: string }) {
   return (
@@ -92,7 +120,8 @@ export function CaseDrawer({
           <p className="mx-6 mt-3 text-[12px] text-ink-subtle">Para priorizarlo falta: {missing.join(', ')}.</p>
         ) : null}
 
-        <form action={saveUseCaseAction} className="space-y-5 px-6 py-5">
+        <form action={saveUseCaseAction} id="case-form" className="space-y-5 px-6 py-5">
+          {canWrite ? <CaseAssistant formId="case-form" /> : null}
           {c ? <input type="hidden" name="id" value={c.id} /> : null}
           <fieldset disabled={!canWrite} className="space-y-5">
             <div className="space-y-4">
@@ -109,7 +138,7 @@ export function CaseDrawer({
                   Área
                   <select name="area" defaultValue={c?.area ?? ''} className="onix-input mt-1">
                     <option value="">Elegir</option>
-                    {AREAS.map((a) => (
+                    {[...BUSINESS_AREAS, ...(c?.area && !BUSINESS_AREAS.includes(c.area) ? [c.area] : [])].map((a) => (
                       <option key={a}>{a}</option>
                     ))}
                   </select>
@@ -121,17 +150,36 @@ export function CaseDrawer({
               </div>
             </div>
 
+            <Section title="Clasificación">
+              <Pick name="aiType" label="Tipo de IA" options={AI_TYPES} value={c?.aiType ?? null} />
+              <div className="grid grid-cols-2 gap-3">
+                <Pick name="dataClassification" label="Datos que usa" options={DATA_CLASSES} value={c?.dataClassification ?? null} />
+                <Pick name="userScope" label="Quién lo usa" options={USER_SCOPES} value={c?.userScope ?? null} />
+              </div>
+            </Section>
+
             <Section title="Tecnología">
               <div className="grid grid-cols-2 gap-3">
                 <label className="text-[12px] text-ink-muted">
                   Herramienta o modelo
-                  <input name="technology" defaultValue={c?.technology ?? ''} className="onix-input mt-1" />
+                  <input name="technology" list="tool-options" defaultValue={c?.technology ?? ''} className="onix-input mt-1" placeholder="Elegir o escribir" />
+                  <datalist id="tool-options">
+                    {TOOL_SUGGESTIONS.map((t) => (
+                      <option key={t} value={t} />
+                    ))}
+                  </datalist>
                 </label>
                 <label className="text-[12px] text-ink-muted">
                   Proveedor
-                  <input name="vendor" defaultValue={c?.vendor ?? ''} className="onix-input mt-1" />
+                  <input name="vendor" list="vendor-options" defaultValue={c?.vendor ?? ''} className="onix-input mt-1" placeholder="Elegir o escribir" />
+                  <datalist id="vendor-options">
+                    {VENDOR_SUGGESTIONS.map((t) => (
+                      <option key={t} value={t} />
+                    ))}
+                  </datalist>
                 </label>
               </div>
+              <Pick name="deployment" label="Cómo está desplegado" options={DEPLOYMENTS} value={c?.deployment ?? null} />
             </Section>
 
             <Section title="Impacto y autonomía">
@@ -149,11 +197,17 @@ export function CaseDrawer({
             </Section>
 
             <Section title="Valor">
+              <Pick name="valueType" label="Tipo de valor" options={VALUE_TYPES} value={c?.valueType ?? null} />
               <Scale name="valueScore" label="Valor estimado" value={c?.valueScore ?? null} hint="1 bajo, 5 muy alto" />
               <div className="grid grid-cols-2 gap-3">
                 <label className="text-[12px] text-ink-muted">
                   Objetivo del negocio
-                  <input name="strategicObjective" defaultValue={c?.strategicObjective ?? ''} className="onix-input mt-1" />
+                  <select name="strategicObjective" defaultValue={c?.strategicObjective ?? ''} className="onix-input mt-1">
+                    <option value="">Elegir</option>
+                    {[...STRATEGIC_OBJECTIVES.map((o) => o.n), ...(c?.strategicObjective && !STRATEGIC_OBJECTIVES.some((o) => o.n === c.strategicObjective) ? [c.strategicObjective] : [])].map((n) => (
+                      <option key={n}>{n}</option>
+                    ))}
+                  </select>
                 </label>
                 <label className="text-[12px] text-ink-muted">
                   Valor anual (MXN, opcional)

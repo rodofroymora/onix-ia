@@ -7,13 +7,16 @@ import {
   dimensionResults,
   gaps,
   invitations,
+  organizations,
   questions,
   questionnaireVersions,
 } from '@onix/db';
+import type { GovernTx } from '@onix/db';
 import { aggregateRespondentAnswers, compute, findGaps, type RespondentAnswer } from '@onix/engine';
 import { FUNCTIONS, maturityForRoute } from '@onix/templates';
 import { sendInvitationEmail } from '@/lib/notify';
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 import { appendAudit } from '@/lib/audit';
 import { getDb, withOrg } from '@/lib/db';
 import {
@@ -79,7 +82,58 @@ export async function launchAssessmentAction(formData: FormData) {
   revalidatePath('/evaluacion');
 }
 
-/** CU-03: invitar respondente con magic link firmado. */
+type Tx = GovernTx;
+
+/** Crea la invitación con su enlace firmado (HMAC) y devuelve el token. */
+async function createInvitation(
+  tx: Tx,
+  input: { organizationId: string; assessmentId: string; email: string; name: string | null; functions: string[]; actorUserId: string },
+): Promise<string> {
+  const [inv] = await tx
+    .insert(invitations)
+    .values({
+      organizationId: input.organizationId,
+      assessmentId: input.assessmentId,
+      email: input.email,
+      respondentName: input.name,
+      functions: input.functions,
+      role: 'member',
+      status: 'pending',
+      token: randomBytes(16).toString('hex'),
+      expiresAt: new Date(createRespondentExpiry()),
+    })
+    .returning();
+  const signed = signRespondentToken({
+    invitationId: inv!.id,
+    assessmentId: input.assessmentId,
+    organizationId: input.organizationId,
+    email: input.email,
+    exp: createRespondentExpiry(),
+  });
+  await tx.update(invitations).set({ token: signed }).where(eq(invitations.id, inv!.id));
+  await appendAudit(tx, {
+    organizationId: input.organizationId,
+    actorUserId: input.actorUserId,
+    action: 'invitation.create',
+    entityType: 'invitation',
+    entityId: inv!.id,
+    meta: { email: input.email },
+  });
+  return signed;
+}
+
+async function assertAssessmentInOrg(tx: Tx, assessmentId: string, organizationId: string) {
+  const [assessment] = await tx
+    .select({ id: assessments.id, status: assessments.status })
+    .from(assessments)
+    .where(and(eq(assessments.id, assessmentId), eq(assessments.organizationId, organizationId)))
+    .limit(1);
+  if (!assessment) throw new Error('Evaluación no encontrada en tu organización');
+  if (assessment.status === 'completed') throw new Error('La evaluación ya se publicó');
+  return assessment;
+}
+
+/** CU-03: invitar respondente con magic link firmado y mandarle el correo si hay proveedor. */
 export async function inviteRespondentAction(formData: FormData) {
   const session = await requireWriteAccess();
   const email = String(formData.get('email') ?? '').trim().toLowerCase();
@@ -92,62 +146,112 @@ export async function inviteRespondentAction(formData: FormData) {
     .filter((f) => validFns.has(f));
   if (!email || !assessmentId) throw new Error('Datos incompletos');
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error('Correo inválido');
-  let signedToken = '';
 
-  const raw = randomBytes(16).toString('hex');
   const { db } = getDb();
-
-  await withOrg(db, session.user.organizationId, async (tx) => {
-    const [assessment] = await tx
-      .select({ id: assessments.id })
-      .from(assessments)
+  const signed = await withOrg(db, session.user.organizationId, async (tx) => {
+    await assertAssessmentInOrg(tx, assessmentId, session.user.organizationId);
+    // Si ya tiene invitación pendiente en esta evaluación, se reenvía la misma.
+    const [existing] = await tx
+      .select({ token: invitations.token })
+      .from(invitations)
       .where(
         and(
-          eq(assessments.id, assessmentId),
-          eq(assessments.organizationId, session.user.organizationId),
+          eq(invitations.assessmentId, assessmentId),
+          eq(invitations.organizationId, session.user.organizationId),
+          eq(invitations.email, email),
+          eq(invitations.status, 'pending'),
         ),
       )
       .limit(1);
-    if (!assessment) throw new Error('Evaluación no encontrada en tu organización');
-
-    const [inv] = await tx
-      .insert(invitations)
-      .values({
-        organizationId: session.user.organizationId,
-        assessmentId: assessment.id,
-        email,
-        respondentName,
-        functions: fns,
-        role: 'member',
-        status: 'pending',
-        token: raw,
-        expiresAt: new Date(createRespondentExpiry()),
-      })
-      .returning();
-
-    const signed = signRespondentToken({
-      invitationId: inv!.id,
-      assessmentId: assessment.id,
+    if (existing) return existing.token;
+    return createInvitation(tx, {
       organizationId: session.user.organizationId,
+      assessmentId,
       email,
-      exp: createRespondentExpiry(),
-    });
-
-    // Guardamos el token firmado (HMAC) como token de acceso.
-    await tx.update(invitations).set({ token: signed }).where(eq(invitations.id, inv!.id));
-    signedToken = signed;
-
-    await appendAudit(tx, {
-      organizationId: session.user.organizationId,
+      name: respondentName,
+      functions: fns,
       actorUserId: session.user.id,
-      action: 'invitation.create',
-      entityType: 'invitation',
-      entityId: inv!.id,
-      meta: { email },
     });
   });
 
+  let mail: 'enviado' | 'sin_config' | 'error' = 'sin_config';
+  try {
+    const r = await sendInvitationEmail({
+      to: email,
+      name: respondentName,
+      organizationName: session.user.organizationName ?? '',
+      token: signed,
+    });
+    mail = r === 'sent' ? 'enviado' : 'sin_config';
+  } catch (err) {
+    console.error('[invitacion] no se pudo enviar el correo', err);
+    mail = 'error';
+  }
+
   revalidatePath('/evaluacion');
+  redirect(`/evaluacion?tab=seguimiento&correo=${mail}`);
+}
+
+/** Abre el cuestionario para la persona con sesión (sin correo): reutiliza su invitación si existe. */
+export async function answerMyselfAction(formData: FormData) {
+  const session = await requireWriteAccess();
+  const assessmentId = String(formData.get('assessmentId') ?? '');
+  const email = (session.user.email ?? '').toLowerCase();
+  if (!email) throw new Error('Tu usuario no tiene correo');
+  const validFns = new Set(FUNCTIONS.map((f) => f.k as string));
+  const picked = formData.getAll('functions').map(String).filter((f) => validFns.has(f));
+  const fns = picked.length ? picked : FUNCTIONS.map((f) => f.k as string);
+
+  const { db } = getDb();
+  const token = await withOrg(db, session.user.organizationId, async (tx) => {
+    await assertAssessmentInOrg(tx, assessmentId, session.user.organizationId);
+    const [mine] = await tx
+      .select()
+      .from(invitations)
+      .where(
+        and(
+          eq(invitations.assessmentId, assessmentId),
+          eq(invitations.organizationId, session.user.organizationId),
+          eq(invitations.email, email),
+          eq(invitations.status, 'pending'),
+        ),
+      )
+      .limit(1);
+    if (mine) return mine.token;
+    return createInvitation(tx, {
+      organizationId: session.user.organizationId,
+      assessmentId,
+      email,
+      name: session.user.name ?? null,
+      functions: fns,
+      actorUserId: session.user.id,
+    });
+  });
+  redirect(`/r/${encodeURIComponent(token)}?desde=app`);
+}
+
+/** Cada cuántos meses toca reevaluar (recordatorio configurable). */
+export async function saveReevaluationMonthsAction(formData: FormData) {
+  const session = await requireWriteAccess();
+  const months = Math.round(Number(formData.get('months')));
+  if (!Number.isFinite(months) || months < 1 || months > 24) throw new Error('Elige entre 1 y 24 meses');
+  const { db } = getDb();
+  await withOrg(db, session.user.organizationId, async (tx) => {
+    await tx
+      .update(organizations)
+      .set({ reevaluationMonths: months, updatedAt: new Date() })
+      .where(eq(organizations.id, session.user.organizationId));
+    await appendAudit(tx, {
+      organizationId: session.user.organizationId,
+      actorUserId: session.user.id,
+      action: 'organization.reevaluation_months',
+      entityType: 'organization',
+      entityId: session.user.organizationId,
+      meta: { months },
+    });
+  });
+  revalidatePath('/evaluacion');
+  revalidatePath('/');
 }
 
 /** CU-04: publicar evaluación → compute oficial + proyección de brechas. */
@@ -155,6 +259,7 @@ export async function publishAssessmentAction(formData: FormData) {
   const session = await requireWriteAccess();
   const assessmentId = String(formData.get('assessmentId') ?? '');
   const { db } = getDb();
+  let redirectTo = '/evaluacion?tab=resultados';
 
   await withOrg(db, session.user.organizationId, async (tx) => {
     const [assessment] = await tx
@@ -168,6 +273,19 @@ export async function publishAssessmentAction(formData: FormData) {
       )
       .limit(1);
     if (!assessment) throw new Error('Evaluación no encontrada');
+
+    // Se publica cuando todos contestaron; con pendientes solo si se confirma.
+    const invs = await tx.select().from(invitations).where(eq(invitations.assessmentId, assessmentId));
+    const pending = invs.filter((i) => i.status === 'pending').length;
+    const done = invs.filter((i) => i.status === 'accepted').length;
+    if (done === 0) {
+      redirectTo = '/evaluacion?tab=seguimiento&publicar=sin_respuestas';
+      return;
+    }
+    if (pending > 0 && formData.get('force') !== '1') {
+      redirectTo = `/evaluacion?tab=seguimiento&publicar=faltan&n=${pending}`;
+      return;
+    }
 
     const route = (assessment.saasRoute ?? 38) as 15 | 27 | 38;
     const qs = await tx
@@ -209,6 +327,7 @@ export async function publishAssessmentAction(formData: FormData) {
       .update(assessments)
       .set({
         status: 'completed',
+        publishedAt: new Date(),
         globalScore: result.gs,
         globalLevel: result.gl,
         routeIndex: result.route,
@@ -265,12 +384,13 @@ export async function publishAssessmentAction(formData: FormData) {
       action: 'assessment.publish',
       entityType: 'assessment',
       entityId: assessmentId,
-      meta: { gs: result.gs, gl: result.gl, official: true },
+      meta: { gs: result.gs, gl: result.gl, official: true, pending },
     });
   });
 
   revalidatePath('/evaluacion');
   revalidatePath('/');
+  redirect(redirectTo);
 }
 
 /** Autosave respondente / "No sé". Requiere magic link HMAC válido. */

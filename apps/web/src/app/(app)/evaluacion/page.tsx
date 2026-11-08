@@ -7,7 +7,13 @@ import { CompareBars, Heatmap, MeterRow, RadarChart, SeriesKey, TechRadar } from
 import { CopyButton, WhatsAppButton } from '@/components/ui/CopyButton';
 import { Card, Empty, Kpi, PageHeader } from '@/components/ui/PageHeader';
 import { Tabs } from '@/components/ui/Tabs';
-import { inviteRespondentAction, launchAssessmentAction, publishAssessmentAction } from '@/lib/actions/assessments';
+import {
+  answerMyselfAction,
+  inviteRespondentAction,
+  launchAssessmentAction,
+  publishAssessmentAction,
+  saveReevaluationMonthsAction,
+} from '@/lib/actions/assessments';
 import { saveTechProfileAction } from '@/lib/actions/tech';
 import { respondentPath } from '@/lib/notify';
 import { loadOrgOverview } from '@/lib/server/insights';
@@ -23,7 +29,7 @@ const STATUS: Record<string, string> = {
 export default async function EvaluacionPage({
   searchParams,
 }: {
-  searchParams: Promise<{ tab?: string; dim?: string }>;
+  searchParams: Promise<{ tab?: string; dim?: string; correo?: string; publicar?: string; n?: string }>;
 }) {
   const session = await requireSession();
   const params = await searchParams;
@@ -33,6 +39,19 @@ export default async function EvaluacionPage({
   const focus = o.current ?? o.official;
   const inProgress = o.current && o.current.status !== 'completed' ? o.current : null;
   const dimName = (k: string) => DIMS.find((d) => d.k === k)?.n ?? k;
+
+  const done = o.respondents.filter((r) => r.status === 'accepted').length;
+  const pendingCount = o.respondents.filter((r) => r.status === 'pending').length;
+  const mailReady = Boolean(process.env.RESEND_API_KEY);
+  const fmtLong = (d: string) => new Date(`${d}T12:00:00`).toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
+  const nr = o.nextReevaluation;
+  const steps = [
+    { n: 'Lanzar', ok: Boolean(focus) },
+    { n: 'Invitar', ok: o.respondents.length > 0 },
+    { n: 'Contestar', ok: o.respondents.length > 0 && pendingCount === 0, sub: o.respondents.length ? `${done} de ${o.respondents.length}` : undefined },
+    { n: 'Publicar', ok: !inProgress && Boolean(o.official) },
+    { n: 'Reevaluar', ok: false, sub: nr ? fmtLong(nr.date) : undefined },
+  ];
 
   return (
     <div>
@@ -45,18 +64,30 @@ export default async function EvaluacionPage({
             <>
               {!inProgress ? (
                 <form action={launchAssessmentAction} className="flex items-center gap-2">
-                  <select name="route" defaultValue="38" className="onix-input w-auto py-1.5 text-[13px]" aria-label="Ruta">
-                    <option value="15">Rápida · 15</option>
-                    <option value="27">Estándar · 27</option>
-                    <option value="38">Completa · 38</option>
-                  </select>
+                  {o.official ? (
+                    <input type="hidden" name="route" value={String(o.official.saasRoute ?? 38)} />
+                  ) : (
+                    <select name="route" defaultValue="38" className="onix-input w-auto py-1.5 text-[13px]" aria-label="Ruta">
+                      <option value="15">Rápida · 15</option>
+                      <option value="27">Estándar · 27</option>
+                      <option value="38">Completa · 38</option>
+                    </select>
+                  )}
                   <button className="onix-btn-primary">{o.official ? 'Lanzar reevaluación' : 'Lanzar evaluación'}</button>
                 </form>
               ) : (
-                <form action={publishAssessmentAction}>
-                  <input type="hidden" name="assessmentId" value={inProgress.id} />
-                  <button className="onix-btn-primary">Publicar resultados</button>
-                </form>
+                <div className="flex flex-wrap items-center gap-2">
+                  <form action={answerMyselfAction}>
+                    <input type="hidden" name="assessmentId" value={inProgress.id} />
+                    <button className="onix-btn-ghost">Contestar ahora</button>
+                  </form>
+                  <form action={publishAssessmentAction}>
+                    <input type="hidden" name="assessmentId" value={inProgress.id} />
+                    <button className="onix-btn-primary" title={pendingCount ? `Faltan ${pendingCount} por contestar` : undefined}>
+                      Guardar y publicar resultados
+                    </button>
+                  </form>
+                </div>
               )}
             </>
           ) : null
@@ -78,14 +109,55 @@ export default async function EvaluacionPage({
         {/* ------------------------------------------------ Seguimiento */}
         {tab === 'seguimiento' ? (
           <>
+            {params.correo ? (
+              <div className="rounded-lg border border-border bg-surface px-4 py-3 text-[13px] text-ink-muted">
+                {params.correo === 'enviado'
+                  ? 'Invitación creada y enviada por correo.'
+                  : params.correo === 'error'
+                    ? 'Invitación creada, pero el correo no salió. Copia el enlace o mándalo por WhatsApp; revisa la configuración de Resend.'
+                    : 'Invitación creada. El correo aún no está configurado: copia el enlace o mándalo por WhatsApp desde la tabla.'}
+              </div>
+            ) : null}
+            {params.publicar === 'faltan' && inProgress ? (
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-surface px-4 py-3 text-[13px] text-ink-muted">
+                <span>
+                  Faltan {params.n ?? pendingCount} personas por contestar. El resultado general es más confiable cuando contestan todas.
+                </span>
+                <form action={publishAssessmentAction}>
+                  <input type="hidden" name="assessmentId" value={inProgress.id} />
+                  <input type="hidden" name="force" value="1" />
+                  <button className="onix-btn-ghost py-1.5">Publicar de todos modos</button>
+                </form>
+              </div>
+            ) : null}
+            {params.publicar === 'sin_respuestas' ? (
+              <div className="rounded-lg border border-border bg-surface px-4 py-3 text-[13px] text-ink-muted">
+                Nadie ha enviado respuestas todavía. Usa &quot;Contestar ahora&quot; o comparte los enlaces.
+              </div>
+            ) : null}
+
+            <ol className="onix-panel grid grid-cols-2 gap-y-4 px-5 py-4 sm:grid-cols-5">
+              {steps.map((st, i) => (
+                <li key={st.n} className="flex items-start gap-2.5">
+                  <span
+                    className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[11px] tabular-nums ${
+                      st.ok ? 'bg-ink text-canvas' : 'border border-border text-ink-subtle'
+                    }`}
+                  >
+                    {i + 1}
+                  </span>
+                  <span>
+                    <span className={`block text-[13px] ${st.ok ? 'text-ink' : 'text-ink-muted'}`}>{st.n}</span>
+                    {st.sub ? <span className="block text-[11px] text-ink-subtle">{st.sub}</span> : null}
+                  </span>
+                </li>
+              ))}
+            </ol>
+
             {focus ? (
               <div className="grid gap-4 sm:grid-cols-3">
                 <Kpi label={focus.kind === 'reevaluacion' ? 'Reevaluación' : 'Revisión inicial'} value={STATUS[focus.status] ?? focus.status} sub={`${focus.title} · ruta de ${focus.saasRoute ?? 38} preguntas`} />
-                <Kpi
-                  label="Respondentes"
-                  value={`${o.respondents.filter((r) => r.status === 'accepted').length} de ${o.respondents.length}`}
-                  sub="terminaron su cuestionario"
-                />
+                <Kpi label="Respondentes" value={`${done} de ${o.respondents.length}`} sub={inProgress ? (o.respondents.length === 0 ? 'nadie invitado todavía' : pendingCount ? `faltan ${pendingCount} para publicar` : 'todos contestaron: ya puedes publicar') : 'terminaron su cuestionario'} />
                 <Kpi label="Funciones sin responsable" value={o.uncovered.length} sub={o.uncovered.join(', ') || 'Todas cubiertas'} />
               </div>
             ) : (
@@ -93,7 +165,7 @@ export default async function EvaluacionPage({
             )}
 
             {focus ? (
-              <Card title="Respondentes">
+              <Card title="Respondentes" aside={!mailReady && inProgress ? <span className="onix-chip">correo sin configurar</span> : undefined}>
                 <table className="onix-table">
                   <thead>
                     <tr>
@@ -111,7 +183,7 @@ export default async function EvaluacionPage({
                           <p>{r.name}</p>
                           <p className="text-[11px] text-ink-subtle">{r.email}</p>
                         </td>
-                        <td className="text-ink-muted">{r.functions.join(', ') || 'Todas'}</td>
+                        <td className="text-ink-muted">{r.functions.length === 0 || r.functions.length >= FUNCTIONS.length ? 'Todas' : r.functions.join(', ')}</td>
                         <td>
                           <span className="inline-flex items-center gap-1.5 text-[12px] text-ink-muted">
                             <span className={`h-1.5 w-1.5 rounded-full ${r.status === 'accepted' ? 'bg-ink' : 'bg-border-strong'}`} />
@@ -122,6 +194,9 @@ export default async function EvaluacionPage({
                         <td className="text-right">
                           {r.status === 'pending' && canWrite ? (
                             <span className="inline-flex gap-3">
+                              <a href={respondentPath(r.token)} target="_blank" rel="noopener" className="text-[12px] text-accent hover:underline">
+                                Abrir
+                              </a>
                               <CopyButton text={respondentPath(r.token)} label="Copiar" />
                               <WhatsAppButton path={respondentPath(r.token)} name={r.name} org={session.user.organizationName} />
                             </span>
@@ -134,7 +209,7 @@ export default async function EvaluacionPage({
                     {o.respondents.length === 0 ? (
                       <tr>
                         <td colSpan={5} className="py-6 text-center text-ink-subtle">
-                          Sin respondentes todavía.
+                          Sin respondentes todavía. Invita abajo o usa &quot;Contestar ahora&quot;.
                         </td>
                       </tr>
                     ) : null}
@@ -143,38 +218,75 @@ export default async function EvaluacionPage({
               </Card>
             ) : null}
 
-            {inProgress && canWrite ? (
-              <Card title="Invitar a un responsable">
-                <form action={inviteRespondentAction} className="space-y-4">
-                  <input type="hidden" name="assessmentId" value={inProgress.id} />
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <label className="text-[12px] text-ink-muted">
-                      Nombre
-                      <input name="name" className="onix-input mt-1" placeholder="Nombre y apellido" />
-                    </label>
-                    <label className="text-[12px] text-ink-muted">
-                      Correo
-                      <input name="email" type="email" required className="onix-input mt-1" placeholder="correo@empresa.com" />
-                    </label>
-                  </div>
-                  <fieldset>
-                    <legend className="text-[12px] text-ink-muted">Funciones que cubre (solo verá las preguntas de esas áreas)</legend>
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {FUNCTIONS.map((f) => (
-                        <label key={f.k} className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-border px-2.5 py-1 text-[12px] text-ink-muted has-[:checked]:border-ink has-[:checked]:text-ink">
-                          <input type="checkbox" name="functions" value={f.k} className="sr-only" />
-                          {f.n}
-                        </label>
-                      ))}
+            <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
+              {inProgress && canWrite ? (
+                <Card title="Invitar a un responsable">
+                  <form action={inviteRespondentAction} className="space-y-4">
+                    <input type="hidden" name="assessmentId" value={inProgress.id} />
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <label className="text-[12px] text-ink-muted">
+                        Nombre
+                        <input name="name" className="onix-input mt-1" placeholder="Nombre y apellido" />
+                      </label>
+                      <label className="text-[12px] text-ink-muted">
+                        Correo
+                        <input name="email" type="email" required className="onix-input mt-1" placeholder="correo@empresa.com" />
+                      </label>
                     </div>
-                  </fieldset>
-                  <div className="flex flex-wrap items-center gap-3">
-                    <button className="onix-btn-primary">Generar invitación</button>
-                    <p className="text-[12px] text-ink-subtle">Se envía por correo si está configurado; también puedes copiar el enlace o mandarlo por WhatsApp.</p>
-                  </div>
-                </form>
+                    <fieldset>
+                      <legend className="text-[12px] text-ink-muted">Funciones que cubre (solo verá las preguntas de esas áreas)</legend>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {FUNCTIONS.map((f) => (
+                          <label key={f.k} className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-border px-2.5 py-1 text-[12px] text-ink-muted has-[:checked]:border-ink has-[:checked]:text-ink">
+                            <input type="checkbox" name="functions" value={f.k} className="sr-only" />
+                            {f.n}
+                          </label>
+                        ))}
+                      </div>
+                    </fieldset>
+                    <div className="flex flex-wrap items-center gap-3">
+                      <button className="onix-btn-primary">Enviar invitación</button>
+                      <p className="text-[12px] text-ink-subtle">
+                        {mailReady ? 'Se envía por correo; también puedes copiar el enlace o mandarlo por WhatsApp.' : 'El correo aún no está configurado: después de crearla, copia el enlace o mándalo por WhatsApp.'}
+                      </p>
+                    </div>
+                  </form>
+                </Card>
+              ) : null}
+              <Card title="Próxima reevaluación">
+                {nr ? (
+                  <>
+                    <p className="text-[22px] font-semibold tracking-tight text-ink">{fmtLong(nr.date)}</p>
+                    <p className="mt-1 text-[13px] text-ink-muted">
+                      {nr.daysLeft >= 0 ? `Faltan ${nr.daysLeft} días` : `Venció hace ${-nr.daysLeft} días`} · {nr.months} meses después de publicar ({fmtLong(nr.publishedAt)})
+                    </p>
+                  </>
+                ) : (
+                  <p className="text-[13px] text-ink-muted">Se calcula al publicar la primera evaluación.</p>
+                )}
+                {canWrite ? (
+                  <form action={saveReevaluationMonthsAction} className="mt-4 flex items-end gap-2">
+                    <label className="text-[12px] text-ink-muted">
+                      Reevaluar cada
+                      <select name="months" defaultValue={String(o.org?.reevaluationMonths ?? 6)} className="onix-input mt-1 w-auto py-1.5">
+                        {[3, 4, 6, 9, 12, 18, 24].map((m) => (
+                          <option key={m} value={m}>
+                            {m} meses
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <button className="onix-btn-ghost py-1.5">Guardar</button>
+                  </form>
+                ) : null}
+                {nr ? (
+                  <a href="/api/recordatorio.ics" className="mt-3 inline-block text-[12px] text-accent hover:underline">
+                    Agregar a mi calendario
+                  </a>
+                ) : null}
+                <p className="mt-3 text-[11px] text-ink-subtle">Un mes antes aparece en tus pendientes y en Inicio.</p>
               </Card>
-            ) : null}
+            </div>
           </>
         ) : null}
 

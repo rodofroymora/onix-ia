@@ -1,5 +1,7 @@
 'use server';
 
+import { AI_TYPES, DATA_CLASSES, DEPLOYMENTS, USER_SCOPES, VALUE_TYPES, inCatalog, type CatalogOption } from '@onix/templates';
+
 import { and, eq } from 'drizzle-orm';
 import { aiUseCases, assessments, triageValidations } from '@onix/db';
 import { triage } from '@onix/engine';
@@ -81,6 +83,11 @@ export async function saveUseCaseAction(formData: FormData) {
     integration: scale(formData.get('integration')),
     infrastructure: scale(formData.get('infrastructure')),
     skills: scale(formData.get('skills')),
+    aiType: inCatalog(AI_TYPES, formData.get('aiType')),
+    valueType: inCatalog(VALUE_TYPES, formData.get('valueType')),
+    dataClassification: inCatalog(DATA_CLASSES, formData.get('dataClassification')),
+    deployment: inCatalog(DEPLOYMENTS, formData.get('deployment')),
+    userScope: inCatalog(USER_SCOPES, formData.get('userScope')),
   };
 
   const { db } = getDb();
@@ -250,9 +257,17 @@ export interface ImportRow {
   valueScore?: number | null;
   strategicObjective?: string;
   effort?: number | null;
+  aiType?: string;
+  valueType?: string;
 }
 
 /** CU-05: importación desde Excel. Todo entra como Propuesto y origen import; duplicados por nombre se omiten. */
+const byName = (list: CatalogOption[], v: unknown): string | null => {
+  const t = String(v ?? '').trim().toLowerCase();
+  if (!t) return null;
+  return list.find((o) => o.k === t || o.n.toLowerCase() === t)?.k ?? null;
+};
+
 export async function importUseCasesFromRows(rows: ImportRow[]): Promise<{ created: number; skipped: number }> {
   const session = await requireWriteAccess();
   const { db } = getDb();
@@ -292,6 +307,8 @@ export async function importUseCasesFromRows(rows: ImportRow[]): Promise<{ creat
         valueScore: clampScale(row.valueScore),
         strategicObjective: row.strategicObjective ? String(row.strategicObjective).slice(0, 200) : null,
         effort: clampScale(row.effort),
+        aiType: byName(AI_TYPES, row.aiType),
+        valueType: byName(VALUE_TYPES, row.valueType),
       });
       created++;
     }

@@ -7,7 +7,8 @@ import { Card, Empty, Kpi, PageHeader } from '@/components/ui/PageHeader';
 import { Tabs } from '@/components/ui/Tabs';
 import { seedPlanFromLibraryAction } from '@/lib/actions/plan';
 import { saveTargetsAction } from '@/lib/actions/tech';
-import { actionProgress, loadOrgOverview, type ActionRow } from '@/lib/server/insights';
+import { actionProgress, loadOrgOverview } from '@/lib/server/insights';
+import { PlanLineage } from '@/components/plan/PlanLineage';
 import { requireSession } from '@/lib/session';
 
 const fmtDate = (d: string | null) =>
@@ -16,7 +17,7 @@ const fmtDate = (d: string | null) =>
 export default async function PlanPage({
   searchParams,
 }: {
-  searchParams: Promise<{ tab?: string; accion?: string; dim?: string }>;
+  searchParams: Promise<{ tab?: string; accion?: string; dim?: string; dep?: string }>;
 }) {
   const session = await requireSession();
   const p = await searchParams;
@@ -43,29 +44,6 @@ export default async function PlanPage({
   const stageName = (id: string) => o.stages.find((s) => s.id === id)?.name ?? '';
   const critical = o.actions.filter((a) => a.critical && actionProgress(a) < 100);
   const closed = o.actions.filter((a) => actionProgress(a) === 100);
-
-  const ActionCard = ({ a }: { a: ActionRow }) => {
-    const ev = evState(a.id);
-    const late = a.dueDate && a.dueDate < today && actionProgress(a) < 100;
-    return (
-      <Link href={href({ accion: a.id })} className="block rounded-lg border border-border bg-surface px-3.5 py-3 transition hover:border-border-strong">
-        <div className="flex items-start justify-between gap-2">
-          <p className="text-[13px] leading-snug text-ink">{a.title}</p>
-          {a.critical ? <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-ink" title="Crítica" /> : null}
-        </div>
-        <div className="mt-2.5 h-1 overflow-hidden rounded-full bg-canvas-subtle">
-          <div className="h-full bg-accent" style={{ width: `${actionProgress(a)}%` }} />
-        </div>
-        <div className="mt-2 flex items-center justify-between text-[11px] text-ink-subtle">
-          <span>{dimName(a.dimension)}</span>
-          <span className={late ? 'text-danger' : ''}>
-            {actionProgress(a)}% · {fmtDate(a.dueDate)}
-            {ev ? ` · ${ev}` : ''}
-          </span>
-        </div>
-      </Link>
-    );
-  };
 
   return (
     <div>
@@ -113,28 +91,33 @@ export default async function PlanPage({
           </div>
 
           {tab === 'etapas' ? (
-            <div className="mt-6 grid gap-4 lg:grid-cols-3">
-              {o.stages.map((s, i) => {
-                const acts = o.actions.filter((a) => a.stageId === s.id);
-                const pct = acts.length ? Math.round(acts.reduce((t, a) => t + actionProgress(a), 0) / acts.length) : 0;
-                return (
-                  <section key={s.id} className="rounded-xl bg-canvas-subtle/70 p-3">
-                    <div className="mb-3 flex items-baseline justify-between px-1">
-                      <p className="text-[13px] font-medium text-ink">
-                        {s.name} <span className="text-ink-subtle">· {['0 a 3', '3 a 6', '6 a 12'][i]} meses</span>
-                      </p>
-                      <span className="text-[12px] tabular-nums text-ink-muted">{pct}%</span>
-                    </div>
-                    <div className="space-y-2">
-                      {acts
-                        .sort((x, y) => Number(y.critical) - Number(x.critical) || (x.dueDate ?? '').localeCompare(y.dueDate ?? ''))
-                        .map((a) => (
-                          <ActionCard key={a.id} a={a} />
-                        ))}
-                    </div>
-                  </section>
-                );
-              })}
+            <div className="mt-6">
+              <PlanLineage
+                stages={o.stages.map((s, i) => {
+                  const acts = o.actions.filter((a) => a.stageId === s.id);
+                  return {
+                    id: s.id,
+                    name: s.name,
+                    window: `${['0 a 3', '3 a 6', '6 a 12'][i] ?? ''} meses`,
+                    pct: acts.length ? Math.round(acts.reduce((t, a) => t + actionProgress(a), 0) / acts.length) : 0,
+                  };
+                })}
+                actions={[...o.actions]
+                  .sort((x, y) => Number(y.critical) - Number(x.critical) || (x.dueDate ?? '').localeCompare(y.dueDate ?? ''))
+                  .map((a) => ({
+                    id: a.id,
+                    title: a.title,
+                    stageId: a.stageId,
+                    dimension: dimName(a.dimension),
+                    progress: actionProgress(a),
+                    dueLabel: fmtDate(a.dueDate),
+                    late: Boolean(a.dueDate && a.dueDate < today && actionProgress(a) < 100),
+                    critical: a.critical,
+                    evidence: evState(a.id),
+                    href: href({ accion: a.id }),
+                  }))}
+                deps={o.deps.map((d) => ({ id: d.id, from: d.fromActionId, to: d.toActionId, weight: d.weight }))}
+              />
             </div>
           ) : null}
 
@@ -252,6 +235,9 @@ export default async function PlanPage({
           a={selected}
           stageName={stageName(selected.stageId)}
           evidence={evOf(selected.id)}
+          allActions={o.actions.map((a) => ({ id: a.id, title: a.title }))}
+          deps={o.deps.filter((d) => d.toActionId === selected.id || d.fromActionId === selected.id)}
+          depError={p.dep === 'ciclo' ? 'Esa dependencia haría un círculo (A depende de B y B de A). No se guardó.' : null}
           canWrite={canWrite}
           isConsultant={isConsultant}
           closeHref={href({ accion: undefined })}

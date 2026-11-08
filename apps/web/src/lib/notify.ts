@@ -43,13 +43,15 @@ export async function sendInvitationEmail(input: {
   if (!key || !input.token) return 'skipped';
   const from = process.env.EMAIL_FROM?.trim() || 'ÓNIX <onboarding@resend.dev>';
   const link = `${await appBaseUrl()}${respondentPath(input.token)}`;
-  const saludo = input.name ? `Hola, ${input.name.split(' ')[0]}:` : 'Hola:';
+  const esc = (v: string) => v.replace(/[&<>"']/g, (ch) => `&#${ch.charCodeAt(0)};`);
+  const saludo = input.name ? `Hola, ${esc(input.name.split(' ')[0] ?? '')}:` : 'Hola:';
+  const org = esc(input.organizationName);
   const html = `
     <div style="font-family:-apple-system,Segoe UI,sans-serif;font-size:15px;color:#1d1d1f;line-height:1.5;max-width:520px">
       <p>${saludo}</p>
-      <p>${input.organizationName} está haciendo su Revisión inicial de IA con ÓNIX y te invitamos a contestar las preguntas de tu área.</p>
-      <p>Te toma unos 15 minutos, no necesitas crear cuenta y puedes pausar y seguir después.</p>
-      <p><a href="${link}" style="display:inline-block;background:#1d1d1f;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none">Contestar el cuestionario</a></p>
+      <p>${org} está haciendo su Revisión inicial de IA con ÓNIX y te invitamos a contestar las preguntas de tu área.</p>
+      <p>Las preguntas están agrupadas en seis temas; te toma unos 15 minutos, no necesitas crear cuenta y puedes pausar y seguir después.</p>
+      <p><a href="${esc(link)}" style="display:inline-block;background:#1d1d1f;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none">Contestar el cuestionario</a></p>
       <p style="color:#6e6e73;font-size:13px">El enlace es personal y vence en 14 días.</p>
     </div>`;
   const res = await fetch('https://api.resend.com/emails', {

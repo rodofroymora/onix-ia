@@ -19,3 +19,22 @@ export {
   TECH_RINGS,
 } from './functions.js';
 export type { FunctionKey, FunctionDef, TechEcosystem, TechRing, TechItem } from './functions.js';
+export {
+  AI_TYPES,
+  VALUE_TYPES,
+  STRATEGIC_OBJECTIVES,
+  DATA_CLASSES,
+  DEPLOYMENTS,
+  USER_SCOPES,
+  BUSINESS_AREAS,
+  AGENT_PLATFORMS,
+  AGENT_CHANNELS,
+  AGENT_PUBLISHERS,
+  AGENT_STATUSES,
+  TOOL_SUGGESTIONS,
+  VENDOR_SUGGESTIONS,
+  DIMENSION_INTROS,
+  catalogName,
+  inCatalog,
+} from './catalogs.js';
+export type { CatalogOption } from './catalogs.js';

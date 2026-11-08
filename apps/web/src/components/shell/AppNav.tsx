@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
+  Activity,
+  Bot,
   Building2,
   ClipboardList,
   FileText,
@@ -22,6 +24,8 @@ const NAV: { href: string; label: string; icon: typeof Home; roles?: AppRole[]; 
   { href: '/priorizacion', label: 'Priorización', icon: LayoutGrid },
   { href: '/plan', label: 'Plan', icon: ListChecks },
   { href: '/reportes', label: 'Reportes', icon: FileText },
+  { href: '/agentes', label: 'Agent Discovery', icon: Bot, section: 'Operación' },
+  { href: '/telemetria', label: 'Telemetría', icon: Activity },
   { href: '/organizacion', label: 'Organización', icon: Users, section: 'Configuración' },
   { href: '/organizaciones', label: 'Organizaciones', icon: Building2, roles: ['consultant'] },
   { href: '/administracion', label: 'Administración', icon: Settings2, roles: ['consultant'] },

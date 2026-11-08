@@ -1,6 +1,9 @@
 import { and, desc, eq, inArray } from 'drizzle-orm';
 import {
+  actionDependencies,
   actions,
+  aiAgents,
+  aiUsageMetrics,
   aiUseCases,
   answers,
   assessments,
@@ -230,8 +233,35 @@ export async function loadOrgOverview(organizationId: string) {
       return { capa, score: s, level: lvl(s) ?? 1 };
     });
 
+    const deps = await tx.select().from(actionDependencies).where(eq(actionDependencies.organizationId, organizationId));
+    const usage = await tx
+      .select()
+      .from(aiUsageMetrics)
+      .where(eq(aiUsageMetrics.organizationId, organizationId))
+      .orderBy(aiUsageMetrics.period);
+    const agentRows = await tx
+      .select({ id: aiAgents.id, risk: aiAgents.risk, managed: aiAgents.managed, ownerName: aiAgents.ownerName, platform: aiAgents.platform, status: aiAgents.status })
+      .from(aiAgents)
+      .where(eq(aiAgents.organizationId, organizationId));
+
+    // Recordatorio de reevaluación: fecha de publicación + N meses (configurable por organización).
+    const months = org?.reevaluationMonths ?? 6;
+    const pubAt = official ? (official.publishedAt ?? official.updatedAt) : null;
+    const nextReevaluation = pubAt
+      ? (() => {
+          const d = new Date(pubAt);
+          d.setMonth(d.getMonth() + months);
+          const daysLeft = Math.ceil((d.getTime() - Date.now()) / 86_400_000);
+          return { date: d.toISOString().slice(0, 10), months, daysLeft, publishedAt: new Date(pubAt).toISOString().slice(0, 10) };
+        })()
+      : null;
+
     return {
       org: org ?? null,
+      deps,
+      usage,
+      agents: agentRows,
+      nextReevaluation,
       current,
       official,
       previous,
@@ -311,11 +341,12 @@ export function suggestRisk(c: CaseRow, sector?: string | null) {
   return { level: level as CaseRow['risk'], why, validators };
 }
 
-/** Atributos llenos de la ficha (de 13 clave). */
+/** Atributos llenos de la ficha (de 17 clave). */
 export function completeness(c: CaseRow): { filled: number; total: number } {
   const keys: (keyof CaseRow)[] = [
     'description', 'area', 'ownerName', 'technology', 'vendor', 'valueScore', 'strategicObjective',
     'strategicFit', 'dataQuality', 'effort', 'techMaturity', 'integration', 'infrastructure',
+    'aiType', 'valueType', 'dataClassification', 'deployment',
   ];
   const filled = keys.filter((k) => c[k] !== null && c[k] !== undefined && c[k] !== '').length;
   return { filled, total: keys.length };
