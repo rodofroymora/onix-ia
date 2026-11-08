@@ -1,18 +1,13 @@
 import { readFileSync, existsSync } from 'node:fs';
-import { randomBytes } from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { PGlite } from '@electric-sql/pglite';
 import type { Pool } from 'pg';
 import { and, eq, sql } from 'drizzle-orm';
-import { compute, findGaps } from '@onix/engine';
-import {
-  CASE_QUESTIONS_V1,
-  MATURITY_QUESTIONS_V1,
-  maturityForRoute,
-} from '@onix/templates';
+import { CASE_QUESTIONS_V1, MATURITY_QUESTIONS_V1 } from '@onix/templates';
 import type { GovernDb, GovernTx } from './client.js';
 import * as schema from './schema/index.js';
+import { DEMO_SEED_VERSION, seedDemoV2 } from './demo-seed.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 /** sql/ vive junto al paquete (packages/db/sql o vendor/db/sql). */
@@ -27,15 +22,58 @@ export function defaultSqlDir(): string {
   return candidates[0]!;
 }
 
+/** Orden de migraciones. Las tres primeras son la línea base de las bases ya existentes. */
+export const MIGRATION_FILES = [
+  '0001_init.sql',
+  '0002_inventory_origin_status.sql',
+  'rls.sql',
+  '0003_v1_completo.sql',
+] as const;
+const BASELINE = ['0001_init.sql', '0002_inventory_origin_status.sql', 'rls.sql'];
+
+function readMigration(sqlDirectory: string, f: string): string {
+  const full = path.join(sqlDirectory, f);
+  if (!existsSync(full)) throw new Error(`No existe ${full}`);
+  return readFileSync(full, 'utf8');
+}
+
 export async function applySqlFiles(
   run: (sqlText: string) => Promise<void>,
   sqlDirectory = defaultSqlDir(),
 ) {
-  const files = ['0001_init.sql', '0002_inventory_origin_status.sql', 'rls.sql'];
-  for (const f of files) {
-    const full = path.join(sqlDirectory, f);
-    if (!existsSync(full)) throw new Error(`No existe ${full}`);
-    await run(readFileSync(full, 'utf8'));
+  for (const f of MIGRATION_FILES) {
+    await run(readMigration(sqlDirectory, f));
+  }
+}
+
+/**
+ * Aplica solo las migraciones pendientes y las registra en govern_migrations.
+ * Si la base ya tenía el esquema (antes del registro), marca la línea base como aplicada.
+ */
+async function applyPending(
+  query: (text: string, params?: unknown[]) => Promise<{ rows: Record<string, unknown>[] }>,
+  exec: (text: string) => Promise<void>,
+  sqlDirectory: string,
+) {
+  await exec(
+    'CREATE TABLE IF NOT EXISTS govern_migrations (name text PRIMARY KEY, applied_at timestamptz NOT NULL DEFAULT now())',
+  );
+  const applied = new Set(
+    (await query('SELECT name FROM govern_migrations')).rows.map((r) => String(r.name)),
+  );
+  if (applied.size === 0) {
+    const existing = await query("SELECT to_regclass('public.organizations') AS t");
+    if (existing.rows[0]?.t) {
+      for (const f of BASELINE) {
+        await query('INSERT INTO govern_migrations (name) VALUES ($1) ON CONFLICT DO NOTHING', [f]);
+        applied.add(f);
+      }
+    }
+  }
+  for (const f of MIGRATION_FILES) {
+    if (applied.has(f)) continue;
+    await exec(readMigration(sqlDirectory, f));
+    await query('INSERT INTO govern_migrations (name) VALUES ($1) ON CONFLICT DO NOTHING', [f]);
   }
 }
 
@@ -49,18 +87,19 @@ export async function applyMigrations(client: PGlite, sqlDirectory = defaultSqlD
 export async function applyMigrationsFor(govern: GovernDb, sqlDirectory = defaultSqlDir()) {
   if (govern.kind === 'postgres') {
     // Varias instancias serverless pueden arrancar a la vez: migrar en UNA transacción
-    // con advisory lock y volver a revisar adentro, para que solo una cree el esquema.
+    // con advisory lock, para que solo una aplique cada migración pendiente.
     const pool = govern.client as Pool;
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
       await client.query('SELECT pg_advisory_xact_lock(7342000)');
-      const exists = await client.query("SELECT to_regclass('public.organizations') AS t");
-      if (!exists.rows[0]?.t) {
-        await applySqlFiles(async (sqlText) => {
-          await client.query(sqlText);
-        }, sqlDirectory);
-      }
+      await applyPending(
+        async (text, params) => client.query(text, params as unknown[] | undefined),
+        async (text) => {
+          await client.query(text);
+        },
+        sqlDirectory,
+      );
       await client.query('COMMIT');
     } catch (err) {
       await client.query('ROLLBACK').catch(() => {});
@@ -71,9 +110,16 @@ export async function applyMigrationsFor(govern: GovernDb, sqlDirectory = defaul
     return;
   }
   const pglite = govern.client as PGlite;
-  await applySqlFiles(async (sqlText) => {
-    await pglite.exec(sqlText);
-  }, sqlDirectory);
+  await applyPending(
+    async (text, params) => {
+      const r = await pglite.query(text, params as unknown[] | undefined);
+      return { rows: r.rows as Record<string, unknown>[] };
+    },
+    async (text) => {
+      await pglite.exec(text);
+    },
+    sqlDirectory,
+  );
 }
 
 type Tx = GovernTx;
@@ -117,15 +163,6 @@ async function ensureDemoUsers(tx: Tx, orgId: string) {
   }
 }
 
-async function tablesExist(govern: GovernDb): Promise<boolean> {
-  try {
-    await govern.db.select({ id: schema.organizations.id }).from(schema.organizations).limit(1);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
 /**
  * Migra (si hace falta) y siembra Grupo Altamar en UNA transacción con el tenant fijado,
  * para que funcione bajo FORCE ROW LEVEL SECURITY con un rol que no es superusuario.
@@ -135,9 +172,7 @@ export async function ensureDemoSeed(
   govern: GovernDb,
   opts: { sqlDirectory?: string; snapshotPath?: string } = {},
 ) {
-  if (!(await tablesExist(govern))) {
-    await applyMigrationsFor(govern, opts.sqlDirectory ?? defaultSqlDir());
-  }
+  await applyMigrationsFor(govern, opts.sqlDirectory ?? defaultSqlDir());
 
   await govern.db.transaction(async (tx) => {
     await tx.execute(sql`SELECT pg_advisory_xact_lock(${SEED_LOCK_KEY})`);
@@ -149,6 +184,18 @@ export async function ensureDemoSeed(
       .limit(1);
 
     let org = existing[0];
+
+    // Si la demo existente es de una versión anterior, se borra (en cascada) y se vuelve a sembrar.
+    const [meta] = await tx
+      .select()
+      .from(schema.governMeta)
+      .where(eq(schema.governMeta.key, 'demo_seed_version'))
+      .limit(1);
+    if (org && meta?.value !== DEMO_SEED_VERSION) {
+      await tx.delete(schema.organizations).where(eq(schema.organizations.id, org.id));
+      org = undefined;
+    }
+
     if (!org) {
       const [created] = await tx
         .insert(schema.organizations)
@@ -170,9 +217,13 @@ export async function ensureDemoSeed(
       .from(schema.assessments)
       .where(eq(schema.assessments.organizationId, org.id))
       .limit(1);
-    if (seeded.length > 0) return;
-
-    await seedDemoContent(tx as Tx, { id: org.id, name: DEMO_NAME });
+    if (seeded.length === 0) {
+      await seedDemoContent(tx as Tx, { id: org.id, name: DEMO_NAME });
+    }
+    await tx
+      .insert(schema.governMeta)
+      .values({ key: 'demo_seed_version', value: DEMO_SEED_VERSION })
+      .onConflictDoUpdate({ target: schema.governMeta.key, set: { value: DEMO_SEED_VERSION, updatedAt: new Date() } });
   });
 }
 
@@ -197,7 +248,7 @@ async function seedDemoContent(tx: Tx, org: { id: string; name: string }) {
     .where(eq(schema.questionnaireVersions.version, 'v1'))
     .limit(1);
   if (existingQv[0]) {
-    await seedOrgContent(tx, org, owner, consultant, existingQv[0]);
+    await seedDemoV2(tx, org, owner, consultant, existingQv[0]);
     return;
   }
 
@@ -234,207 +285,5 @@ async function seedDemoContent(tx: Tx, org: { id: string; name: string }) {
     });
   }
 
-  await seedOrgContent(tx, org, owner, consultant, qv!);
-}
-
-type UserRow = typeof schema.users.$inferSelect;
-type QvRow = typeof schema.questionnaireVersions.$inferSelect;
-
-async function seedOrgContent(
-  tx: Tx,
-  org: { id: string; name: string },
-  owner: UserRow,
-  consultant: UserRow,
-  qv: QvRow,
-) {
-  await tx.insert(schema.responsibilityMaps).values({
-    organizationId: org.id,
-    title: 'Mapa de responsabilidades IA — Grupo Altamar',
-    roles: [
-      { role: 'Sponsor ejecutivo', person: 'Ana Ruiz' },
-      { role: 'Dueño de datos', person: 'Pendiente' },
-      { role: 'Responsable de riesgos', person: 'Pendiente' },
-    ],
-  });
-
-  await tx.insert(schema.prioritizationWeights).values({
-    organizationId: org.id,
-    name: 'default',
-    impactoNegocio: '0.2500',
-    urgenciaRegulatoria: '0.2000',
-    facilidadImplementacion: '0.1500',
-    dependenciaOtros: '0.1000',
-    riesgoResidual: '0.2000',
-    valorAprendizaje: '0.1000',
-  });
-
-  await tx.insert(schema.techProfiles).values({
-    organizationId: org.id,
-    name: 'Stack hotelero demo',
-    stack: ['PMS', 'CRM', 'WhatsApp Business', 'ChatGPT Enterprise'],
-    notes: 'Perfil demo para Revisión inicial. No constituye certificación.',
-  });
-
-  const routeQuestions = maturityForRoute(38);
-  const maturityAnswers = routeQuestions.map((_, i) => ((i % 4) + 1) as number);
-  const result = compute({
-    m: maturityAnswers,
-    proc: 2,
-    aut: 2,
-    pres: 2,
-    datos: 2,
-    afect: 3,
-    area: 0,
-    name: 'Asistente de reservaciones',
-    org: 'Grupo Altamar (demo)',
-  });
-  if (!result) throw new Error('compute falló en seed');
-
-  const [assessment] = await tx
-    .insert(schema.assessments)
-    .values({
-      organizationId: org.id,
-      questionnaireVersionId: qv!.id,
-      title: 'Revisión inicial — Grupo Altamar',
-      status: 'completed',
-      saasRoute: 38,
-      globalScore: result.gs,
-      globalLevel: result.gl,
-      routeIndex: result.route,
-      createdBy: owner.id,
-    })
-    .returning();
-
-  for (const d of result.dims) {
-    await tx.insert(schema.dimensionResults).values({
-      organizationId: org.id,
-      assessmentId: assessment!.id,
-      dimension: d.k,
-      score: d.s,
-      level: d.l,
-    });
-  }
-
-  for (const g of findGaps(result.dims)) {
-    await tx.insert(schema.gaps).values({
-      organizationId: org.id,
-      assessmentId: assessment!.id,
-      fromDimension: g.from,
-      toDimension: g.to,
-      fromLevel: g.fromLevel,
-      toLevel: g.toLevel,
-      delta: g.delta,
-    });
-  }
-
-  const dbQuestions = await tx
-    .select()
-    .from(schema.questions)
-    .where(eq(schema.questions.questionnaireVersionId, qv!.id));
-
-  for (let i = 0; i < routeQuestions.length; i++) {
-    const code = routeQuestions[i]!.code;
-    const qRow = dbQuestions.find((q) => q.code === code);
-    if (!qRow) continue;
-    await tx.insert(schema.answers).values({
-      organizationId: org.id,
-      assessmentId: assessment!.id,
-      questionId: qRow.id,
-      userId: owner.id,
-      valueInt: maturityAnswers[i]!,
-    });
-  }
-
-  const respondentToken = randomBytes(24).toString('hex');
-  await tx.insert(schema.invitations).values({
-    organizationId: org.id,
-    assessmentId: assessment!.id,
-    email: 'respondente@altamar.demo',
-    role: 'member',
-    status: 'pending',
-    token: respondentToken,
-    expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 14),
-  });
-
-  await tx.insert(schema.aiUseCases).values({
-    organizationId: org.id,
-    assessmentId: assessment!.id,
-    name: 'Asistente de reservaciones por WhatsApp',
-    description: 'Caso demo; riesgo medio orientativo.',
-    risk: 'Medio',
-    recommended: true,
-    inProduction: false,
-    area: 'Atención a clientes',
-    origin: 'manual',
-    status: 'En revisión',
-  });
-
-  await tx.insert(schema.triageValidations).values({
-    organizationId: org.id,
-    assessmentId: assessment!.id,
-    subject: 'Nivel de autonomía del asistente',
-    opinions: [2, 2, 3],
-    agreed: false,
-    resolvedValue: 3,
-  });
-
-  const [plan] = await tx
-    .insert(schema.plans)
-    .values({
-      organizationId: org.id,
-      assessmentId: assessment!.id,
-      title: 'Plan de gobierno IA — Altamar',
-    })
-    .returning();
-
-  const stageNames = ['Bases', 'Controles', 'Mejora continua'] as const;
-  const stageIds: string[] = [];
-  for (let i = 0; i < stageNames.length; i++) {
-    const [st] = await tx
-      .insert(schema.stages)
-      .values({
-        organizationId: org.id,
-        planId: plan!.id,
-        name: stageNames[i]!,
-        orderIndex: i,
-      })
-      .returning();
-    stageIds.push(st!.id);
-  }
-
-  await tx.insert(schema.actions).values({
-    organizationId: org.id,
-    planId: plan!.id,
-    stageId: stageIds[0]!,
-    title: 'Inventario de herramientas y agentes autorizados',
-    dimension: 'rol',
-    progress: '25',
-    critical: true,
-    deletable: false,
-    ownerUserId: owner.id,
-  });
-
-  await tx.insert(schema.reports).values({
-    organizationId: org.id,
-    assessmentId: assessment!.id,
-    title: 'Informe de Revisión inicial — Altamar',
-    kind: 'revision_inicial',
-    payload: {
-      note: 'Borrador demo. No constituye certificación.',
-      globalScore: result.gs,
-      globalLevel: result.gl,
-    },
-  });
-
-  await tx.insert(schema.auditLogs).values({
-    organizationId: org.id,
-    actorUserId: consultant.id,
-    action: 'seed',
-    entityType: 'organization',
-    entityId: org.id,
-    meta: {
-      demo: true,
-      note: 'Grupo Altamar (demo) — datos de demostración',
-    },
-  });
+  await seedDemoV2(tx, org, owner, consultant, qv!);
 }

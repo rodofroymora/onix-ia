@@ -1,77 +1,95 @@
+import { FUNCTIONS } from '@onix/templates';
+import { Card, PageHeader } from '@/components/ui/PageHeader';
 import { updateResponsibilityMapAction } from '@/lib/actions/organizations';
 import { loadOrganizationPage } from '@/lib/server/org-data';
 import { requireSession } from '@/lib/session';
-import { PageHeader } from '@/components/ui/PageHeader';
+
+const ROLE_LABEL: Record<string, string> = {
+  owner: 'Propietario',
+  admin: 'Administración',
+  viewer: 'Solo lectura',
+  consultant: 'Consultor',
+};
+
+type Role = { fn?: string; role: string; person: string; email?: string };
 
 export default async function OrganizacionPage() {
   const session = await requireSession();
   const data = await loadOrganizationPage(session.user.organizationId);
   const canWrite = session.user.role !== 'client_reader';
-  const map = data.maps[0];
-  const roles = (map?.roles as { role: string; person: string }[]) ?? [];
-
-  async function saveMap(formData: FormData) {
-    'use server';
-    if (!map) return;
-    const next = roles.map((r, i) => ({
-      role: String(formData.get(`role-${i}`) ?? r.role),
-      person: String(formData.get(`person-${i}`) ?? r.person),
-    }));
-    const fd = new FormData();
-    fd.set('mapId', map.id);
-    fd.set('roles', JSON.stringify(next));
-    await updateResponsibilityMapAction(fd);
-  }
+  const roles = ((data.maps[0]?.roles as Role[] | undefined) ?? []).filter(Boolean);
+  const find = (k: string, n: string) => roles.find((r) => r.fn === k || r.role === n);
+  const covered = FUNCTIONS.filter((f) => {
+    const p = find(f.k, f.n)?.person;
+    return p && !/pendiente/i.test(p);
+  }).length;
 
   return (
     <div>
       <PageHeader
+        eyebrow="Configuración"
         title="Organización"
-        description={`${data.org?.name ?? ''} · Usuarios y mapa de responsabilidades.`}
+        description={`${data.org?.name ?? ''}. Quién usa la plataforma y quién responde por cada función frente a la IA.`}
       />
-      <div className="grid gap-4 lg:grid-cols-2">
-        <section className="onix-panel p-5">
-          <h2 className="text-sm font-medium text-ink">Usuarios</h2>
-          <ul className="mt-3 divide-y divide-border">
+      <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
+        <Card title="Mapa de responsabilidades" aside={<span className="onix-chip">{covered} de {FUNCTIONS.length} funciones cubiertas</span>}>
+          <form action={updateResponsibilityMapAction}>
+            <fieldset disabled={!canWrite}>
+              <table className="onix-table">
+                <thead>
+                  <tr>
+                    <th>Función</th>
+                    <th>Responsable</th>
+                    <th className="hidden sm:table-cell">Correo</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {FUNCTIONS.map((f) => {
+                    const r = find(f.k, f.n);
+                    const person = r?.person && !/pendiente/i.test(r.person) ? r.person : '';
+                    return (
+                      <tr key={f.k}>
+                        <td className="whitespace-nowrap">
+                          {f.n}
+                          {!person ? <span className="ml-2 text-[11px] text-ink-subtle">sin responsable</span> : null}
+                        </td>
+                        <td>
+                          <input name={`person:${f.k}`} defaultValue={person} placeholder="Nombre" className="onix-input py-1.5" />
+                        </td>
+                        <td className="hidden sm:table-cell">
+                          <input name={`email:${f.k}`} type="email" defaultValue={r?.email ?? ''} placeholder="correo@empresa.com" className="onix-input py-1.5" />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </fieldset>
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+              <p className="text-[12px] text-ink-subtle">Cada función contesta las preguntas de sus dimensiones en la evaluación.</p>
+              {canWrite ? <button className="onix-btn-primary">Guardar mapa</button> : null}
+            </div>
+          </form>
+        </Card>
+
+        <Card title="Personas con acceso">
+          <ul className="-my-1 divide-y divide-border">
             {data.members.map((m) => (
-              <li key={m.id} className="flex items-center justify-between py-2 text-sm">
-                <div>
-                  <p className="text-ink">{m.name}</p>
-                  <p className="text-xs text-ink-subtle">{m.email}</p>
+              <li key={m.id} className="flex items-center justify-between gap-3 py-2.5">
+                <div className="flex min-w-0 items-center gap-3">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-canvas-subtle text-[12px] font-medium text-ink-muted">
+                    {(m.name ?? m.email).slice(0, 1).toUpperCase()}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="truncate text-[14px] text-ink">{m.name}</p>
+                    <p className="truncate text-[12px] text-ink-subtle">{m.email}</p>
+                  </div>
                 </div>
-                <span className="text-xs text-ink-muted">{m.role}</span>
+                <span className="onix-chip shrink-0">{ROLE_LABEL[m.role] ?? m.role}</span>
               </li>
             ))}
           </ul>
-        </section>
-
-        <section className="onix-panel p-5">
-          <h2 className="text-sm font-medium text-ink">Mapa de responsabilidades</h2>
-          {map && canWrite ? (
-            <form action={saveMap} className="mt-3 space-y-3">
-              <ul className="space-y-2">
-                {roles.map((r, idx) => (
-                  <li key={`${r.role}-${idx}`} className="grid grid-cols-2 gap-2">
-                    <input className="onix-input" defaultValue={r.role} name={`role-${idx}`} />
-                    <input className="onix-input" defaultValue={r.person} name={`person-${idx}`} />
-                  </li>
-                ))}
-              </ul>
-              <button type="submit" className="onix-btn-primary">
-                Guardar mapa
-              </button>
-            </form>
-          ) : (
-            <ul className="mt-3 space-y-2 text-sm">
-              {roles.map((r, i) => (
-                <li key={i} className="flex justify-between gap-2 text-ink-muted">
-                  <span>{r.role}</span>
-                  <span className="text-ink">{r.person}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
+        </Card>
       </div>
     </div>
   );

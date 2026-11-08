@@ -11,3 +11,11 @@ export {
   maturityForRoute,
 } from './questionnaire/v1.js';
 export type { MaturityQuestion, CaseQuestion, DimKey } from './questionnaire/v1.js';
+export {
+  FUNCTIONS,
+  functionName,
+  dimsForFunctions,
+  TECH_ECOSYSTEMS,
+  TECH_RINGS,
+} from './functions.js';
+export type { FunctionKey, FunctionDef, TechEcosystem, TechRing, TechItem } from './functions.js';

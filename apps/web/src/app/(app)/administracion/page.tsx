@@ -25,7 +25,8 @@ export default async function AdministracionPage({
     <div>
       <PageHeader
         title="Administración"
-        description="Catálogos de sistema y bitácora append-only. Solo consultores."
+        eyebrow="Solo consultores"
+        description="Plantillas por sector, biblioteca de acciones, catálogo de herramientas de IA y bitácora de cambios (no se puede editar ni borrar)."
       />
       <div className="flex flex-wrap gap-1 border-b border-border pb-2">
         {tabs.map((t) => (
@@ -57,7 +58,7 @@ export default async function AdministracionPage({
               <li key={a.id} className="px-4 py-3 text-sm">
                 <p className="text-ink">{a.title}</p>
                 <p className="text-xs text-ink-muted">
-                  {a.stage} · {a.dimension} — {a.summary}
+                  {a.stage} · {a.dimension} · {a.summary}
                 </p>
               </li>
             ))}

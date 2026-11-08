@@ -14,7 +14,7 @@ export function Tabs({
   const current = search.get('tab') ?? items.find((i) => !i.hidden)?.id;
 
   return (
-    <div className="flex flex-wrap gap-1 border-b border-border pb-2">
+    <div className="flex flex-wrap gap-5 border-b border-border pb-2">
       {items
         .filter((i) => !i.hidden)
         .map((item) => {

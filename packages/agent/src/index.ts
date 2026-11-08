@@ -6,6 +6,7 @@ import {
   type LLMProvider,
 } from './types.js';
 import { StubLLMProvider } from './stub-provider.js';
+import { AnthropicProvider } from './anthropic-provider.js';
 
 export type {
   LLMMessage,
@@ -16,6 +17,14 @@ export type {
 } from './types.js';
 export { DEFAULT_FEATURE_FLAGS } from './types.js';
 export { StubLLMProvider } from './stub-provider.js';
+export { AnthropicProvider } from './anthropic-provider.js';
+
+/** Proveedor según entorno: Anthropic si hay ANTHROPIC_API_KEY, si no, null (el llamador usa su modo sin LLM). */
+export function providerFromEnv(env: Record<string, string | undefined> = process.env): LLMProvider | null {
+  const key = env.ANTHROPIC_API_KEY?.trim();
+  if (!key) return null;
+  return new AnthropicProvider(key, env.ONIX_LLM_MODEL?.trim() || undefined);
+}
 
 export function createProvider(flags: AgentFeatureFlags = DEFAULT_FEATURE_FLAGS): LLMProvider {
   // Feature-flagged: cuando llmEnabled sea true se cableará un proveedor real.

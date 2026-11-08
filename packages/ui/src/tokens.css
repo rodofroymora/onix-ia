@@ -1,69 +1,102 @@
 /**
- * Ónix Govern — tokens de diseño
- * Acento: #6E5BD8 · neutros cálidos · claro / oscuro
+ * Ónix Govern: tokens de diseño
+ * Neutros sobrios, un solo acento, claro y oscuro (automático según el sistema o forzado con data-theme).
  */
 
 :root {
   color-scheme: light;
 
-  --onix-accent: #6e5bd8;
-  --onix-accent-hover: #5a48c4;
-  --onix-accent-muted: color-mix(in srgb, var(--onix-accent) 14%, transparent);
+  --onix-accent: #5b4bd0;
+  --onix-accent-hover: #4a3bbd;
+  --onix-accent-muted: color-mix(in srgb, var(--onix-accent) 10%, transparent);
   --onix-accent-contrast: #ffffff;
 
-  --onix-bg: #f7f4ef;
-  --onix-bg-elevated: #fffcf7;
-  --onix-bg-subtle: #efe9e0;
+  --onix-bg: #f5f5f7;
+  --onix-bg-elevated: #fbfbfd;
+  --onix-bg-subtle: #efeff2;
   --onix-surface: #ffffff;
-  --onix-border: #e2d9cc;
-  --onix-border-strong: #cbbfaf;
+  --onix-border: #e5e5ea;
+  --onix-border-strong: #d2d2d7;
 
-  --onix-text: #1c1915;
-  --onix-text-muted: #5c564c;
-  --onix-text-subtle: #8a8276;
+  --onix-text: #1d1d1f;
+  --onix-text-muted: #6e6e73;
+  --onix-text-subtle: #8e8e93;
 
-  --onix-success: #2f6b4f;
-  --onix-warning: #9a6b1f;
-  --onix-danger: #a33b3b;
-  --onix-info: #3a5f8a;
+  /* Estados apagados: se leen, no gritan */
+  --onix-success: #2e7d5b;
+  --onix-warning: #b0761f;
+  --onix-danger: #b8423a;
+  --onix-info: #3a6ea5;
+
+  /* Escala del acento para gráficas (de tenue a intenso) */
+  --onix-chart-1: color-mix(in srgb, var(--onix-accent) 14%, var(--onix-surface));
+  --onix-chart-2: color-mix(in srgb, var(--onix-accent) 32%, var(--onix-surface));
+  --onix-chart-3: color-mix(in srgb, var(--onix-accent) 58%, var(--onix-surface));
+  --onix-chart-4: var(--onix-accent);
+  --onix-chart-grid: #e8e8ed;
+  --onix-chart-neutral: #aeaeb2;
 
   --onix-radius-sm: 6px;
   --onix-radius-md: 10px;
-  --onix-radius-lg: 16px;
+  --onix-radius-lg: 14px;
 
-  --onix-font-sans: "Söhne", "IBM Plex Sans", "Segoe UI", sans-serif;
-  --onix-font-display: "Söhne", "IBM Plex Sans", sans-serif;
-  --onix-font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --onix-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", Roboto, sans-serif;
+  --onix-font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Segoe UI", Roboto, sans-serif;
+  --onix-font-mono: "SF Mono", ui-monospace, Menlo, monospace;
 
-  --onix-shadow-sm: 0 1px 2px rgb(28 25 21 / 6%);
-  --onix-shadow-md: 0 8px 24px rgb(28 25 21 / 8%);
+  --onix-shadow-sm: 0 1px 2px rgb(0 0 0 / 4%);
+  --onix-shadow-md: 0 8px 28px rgb(0 0 0 / 8%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --onix-accent: #8e80f0;
+    --onix-accent-hover: #a297f4;
+    --onix-accent-muted: color-mix(in srgb, var(--onix-accent) 16%, transparent);
+    --onix-accent-contrast: #121016;
+    --onix-bg: #0f0f11;
+    --onix-bg-elevated: #161618;
+    --onix-bg-subtle: #1f1f22;
+    --onix-surface: #18181b;
+    --onix-border: #2a2a2f;
+    --onix-border-strong: #3a3a40;
+    --onix-text: #f5f5f7;
+    --onix-text-muted: #a1a1a6;
+    --onix-text-subtle: #7c7c82;
+    --onix-success: #5fb58c;
+    --onix-warning: #d3a24c;
+    --onix-danger: #de7b72;
+    --onix-info: #7aa3d4;
+    --onix-chart-grid: #2c2c31;
+    --onix-chart-neutral: #636366;
+    --onix-shadow-sm: 0 1px 2px rgb(0 0 0 / 40%);
+    --onix-shadow-md: 0 10px 30px rgb(0 0 0 / 45%);
+  }
 }
 
 [data-theme="dark"],
 .dark {
   color-scheme: dark;
-
-  --onix-accent: #8b7aef;
-  --onix-accent-hover: #a094f5;
-  --onix-accent-muted: color-mix(in srgb, var(--onix-accent) 22%, transparent);
-  --onix-accent-contrast: #120f1c;
-
-  --onix-bg: #16141a;
-  --onix-bg-elevated: #1e1b24;
-  --onix-bg-subtle: #24202c;
-  --onix-surface: #1a1720;
-  --onix-border: #342f3d;
-  --onix-border-strong: #4a4358;
-
-  --onix-text: #f3efe8;
-  --onix-text-muted: #b5aea3;
-  --onix-text-subtle: #8a8378;
-
-  --onix-success: #6fbf96;
-  --onix-warning: #d4a84b;
-  --onix-danger: #e07a7a;
+  --onix-accent: #8e80f0;
+  --onix-accent-hover: #a297f4;
+  --onix-accent-muted: color-mix(in srgb, var(--onix-accent) 16%, transparent);
+  --onix-accent-contrast: #121016;
+  --onix-bg: #0f0f11;
+  --onix-bg-elevated: #161618;
+  --onix-bg-subtle: #1f1f22;
+  --onix-surface: #18181b;
+  --onix-border: #2a2a2f;
+  --onix-border-strong: #3a3a40;
+  --onix-text: #f5f5f7;
+  --onix-text-muted: #a1a1a6;
+  --onix-text-subtle: #7c7c82;
+  --onix-success: #5fb58c;
+  --onix-warning: #d3a24c;
+  --onix-danger: #de7b72;
   --onix-info: #7aa3d4;
-
-  --onix-shadow-sm: 0 1px 2px rgb(0 0 0 / 35%);
-  --onix-shadow-md: 0 10px 28px rgb(0 0 0 / 40%);
+  --onix-chart-grid: #2c2c31;
+  --onix-chart-neutral: #636366;
+  --onix-shadow-sm: 0 1px 2px rgb(0 0 0 / 40%);
+  --onix-shadow-md: 0 10px 30px rgb(0 0 0 / 45%);
 }

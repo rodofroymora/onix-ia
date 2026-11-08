@@ -1,150 +1,239 @@
 import { Suspense } from 'react';
-import {
-  createUseCaseAction,
-  deleteUseCaseAction,
-  runTriageAction,
-} from '@/lib/actions/inventory';
-import { loadAssessmentBundle, loadInventory } from '@/lib/server/org-data';
-import { requireSession } from '@/lib/session';
-import { PageHeader } from '@/components/ui/PageHeader';
+import Link from 'next/link';
+import { Plus } from 'lucide-react';
+import { StackBar } from '@/components/charts';
+import { CaseDrawer } from '@/components/panels/CaseDrawer';
+import { InventoryImportExport } from '@/components/panels/InventoryImportExport';
+import { Card, Kpi, PageHeader } from '@/components/ui/PageHeader';
 import { RiskDot } from '@/components/ui/RiskDot';
 import { Tabs } from '@/components/ui/Tabs';
-import { InventoryImportExport } from '@/components/panels/InventoryImportExport';
-import { CaseDetailPanel } from '@/components/panels/CaseDetailPanel';
+import { validateCaseAction } from '@/lib/actions/inventory';
+import { completeness, loadOrgOverview, missingForPriority, suggestRisk } from '@/lib/server/insights';
+import { requireSession } from '@/lib/session';
+
+const RISKS = ['Bajo', 'Medio', 'Alto', 'Inaceptable'];
+const STATUSES = ['Propuesto', 'En revisión', 'Aprobado', 'Descartado'];
 
 export default async function InventarioPage({
   searchParams,
 }: {
-  searchParams: Promise<{ tab?: string; caseId?: string }>;
+  searchParams: Promise<{ tab?: string; caso?: string; riesgo?: string; estatus?: string }>;
 }) {
   const session = await requireSession();
-  const params = await searchParams;
-  const tab = params.tab ?? 'casos';
-  const { cases, validations } = await loadInventory(session.user.organizationId);
-  const { assessment } = await loadAssessmentBundle(session.user.organizationId);
+  const p = await searchParams;
+  const tab = p.tab ?? 'casos';
+  const o = await loadOrgOverview(session.user.organizationId);
   const canWrite = session.user.role !== 'client_reader';
-  const selected = cases.find((c) => c.id === params.caseId) ?? null;
+  const sector = o.org?.sector ?? null;
+
+  const filtered = o.cases.filter((c) => (!p.riesgo || c.risk === p.riesgo) && (!p.estatus || c.status === p.estatus));
+  const qs = (patch: Record<string, string | undefined>) => {
+    const next = { tab: p.tab, riesgo: p.riesgo, estatus: p.estatus, ...patch };
+    const s = new URLSearchParams(Object.entries(next).filter(([, v]) => v) as [string, string][]).toString();
+    return `/inventario${s ? `?${s}` : ''}`;
+  };
+  const selected = p.caso && p.caso !== 'nuevo' ? o.cases.find((c) => c.id === p.caso) ?? null : null;
+  const drawerOpen = p.caso === 'nuevo' || Boolean(selected);
+  const areas = [...new Set(o.cases.map((c) => c.area || 'Sin área'))]
+    .map((a) => ({ a, n: o.cases.filter((c) => (c.area || 'Sin área') === a).length }))
+    .sort((x, y) => y.n - x.n);
+  const toValidate = o.cases.filter((c) => c.status === 'Propuesto' || c.status === 'En revisión');
+  const unprioritized = o.cases.filter((c) => c.status !== 'Descartado' && missingForPriority(c).length > 0);
 
   return (
     <div>
       <PageHeader
-        title="Inventario"
-        description="Casos de uso de IA y validaciones de triage. Discovery solo entra como Propuesto."
-        actions={canWrite ? <InventoryImportExport cases={cases} /> : null}
+        eyebrow="Ruta IA · paso 2"
+        title="Inventario de IA"
+        description="Todo lo que la empresa usa o planea usar con IA, con su dueño, su riesgo y lo necesario para priorizarlo."
+        actions={
+          canWrite ? (
+            <div className="flex flex-col items-end gap-2 sm:flex-row sm:items-start">
+              <InventoryImportExport cases={o.cases} />
+              <Link href={qs({ caso: 'nuevo' })} className="onix-btn-primary">
+                <Plus className="h-4 w-4" /> Nuevo caso
+              </Link>
+            </div>
+          ) : null
+        }
       />
-      <Suspense fallback={null}>
-        <Tabs
-          basePath="/inventario"
-          items={[
-            { id: 'casos', label: 'Casos' },
-            { id: 'validaciones', label: 'Validaciones' },
-          ]}
-        />
-      </Suspense>
 
-      <div className="mt-6 grid gap-4 lg:grid-cols-[1fr_320px]">
-        <div>
-          {tab === 'casos' ? (
-            <div className="space-y-4">
-              {canWrite ? (
-                <form action={createUseCaseAction} className="onix-panel grid gap-3 p-4 sm:grid-cols-2">
-                  <input className="onix-input sm:col-span-2" name="name" required placeholder="Nombre del caso" />
-                  <input className="onix-input" name="area" placeholder="Área" />
-                  <select className="onix-input" name="risk" defaultValue="Medio">
-                    <option>Bajo</option>
-                    <option>Medio</option>
-                    <option>Alto</option>
-                    <option>Inaceptable</option>
-                  </select>
-                  <select className="onix-input" name="origin" defaultValue="manual">
-                    <option value="manual">manual</option>
-                    <option value="discovery">discovery</option>
-                    <option value="import">import</option>
-                  </select>
-                  <select className="onix-input" name="status" defaultValue="Propuesto">
-                    <option>Propuesto</option>
-                    <option>En revisión</option>
-                    <option>Aprobado</option>
-                    <option>Descartado</option>
-                  </select>
-                  <textarea
-                    className="onix-input sm:col-span-2"
-                    name="description"
-                    rows={2}
-                    placeholder="Descripción"
-                  />
-                  <button type="submit" className="onix-btn-primary sm:col-span-2 sm:w-fit">
-                    Agregar caso
-                  </button>
-                </form>
-              ) : null}
-
-              <ul className="divide-y divide-border onix-panel">
-                {cases.map((c) => (
-                  <li key={c.id} className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
-                    <a href={`/inventario?tab=casos&caseId=${c.id}`} className="min-w-0">
-                      <p className="truncate text-sm text-ink">{c.name}</p>
-                      <p className="text-xs text-ink-subtle">
-                        {c.origin} · {c.status}
-                      </p>
-                    </a>
-                    <div className="flex items-center gap-3">
-                      <RiskDot risk={c.risk} />
-                      {canWrite ? (
-                        <form action={deleteUseCaseAction}>
-                          <input type="hidden" name="id" value={c.id} />
-                          <button type="submit" className="text-xs text-danger">
-                            Eliminar
-                          </button>
-                        </form>
-                      ) : null}
-                    </div>
-                  </li>
-                ))}
-                {cases.length === 0 ? (
-                  <li className="px-4 py-6 text-sm text-ink-muted">Sin casos en el inventario.</li>
-                ) : null}
-              </ul>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {canWrite && assessment ? (
-                <form action={runTriageAction} className="onix-panel space-y-3 p-4">
-                  <input type="hidden" name="assessmentId" value={assessment.id} />
-                  <input className="onix-input" name="subject" required placeholder="Asunto a validar" />
-                  <input
-                    className="onix-input"
-                    name="opinions"
-                    required
-                    placeholder="Opiniones separadas por coma (ej. 2,3,3)"
-                  />
-                  <p className="text-xs text-ink-subtle">
-                    Si hay discrepancia, el motor toma el máximo (más conservador).
-                  </p>
-                  <button type="submit" className="onix-btn-primary">
-                    Resolver triage
-                  </button>
-                </form>
-              ) : null}
-              <ul className="divide-y divide-border onix-panel">
-                {validations.map((v) => (
-                  <li key={v.id} className="px-4 py-3 text-sm">
-                    <p className="text-ink">{v.subject}</p>
-                    <p className="text-xs text-ink-muted">
-                      Opiniones: {(v.opinions as number[]).join(', ')} ·{' '}
-                      {v.agreed ? 'Acuerdo' : 'Discrepancia → máx'} = {v.resolvedValue}
-                    </p>
-                  </li>
-                ))}
-                {validations.length === 0 ? (
-                  <li className="px-4 py-6 text-sm text-ink-muted">Sin validaciones.</li>
-                ) : null}
-              </ul>
-            </div>
-          )}
-        </div>
-        <CaseDetailPanel caseRow={selected} canWrite={canWrite} />
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Kpi label="Casos registrados" value={o.cases.length} sub={`${o.cases.filter((c) => c.origin === 'import').length} importados de Excel`} />
+        <Kpi label="En producción" value={o.cases.filter((c) => c.inProduction).length} sub="ya operan con usuarios" />
+        <Kpi label="Riesgo alto o inaceptable" value={o.cases.filter((c) => c.risk === 'Alto' || c.risk === 'Inaceptable').length} sub={`${toValidate.length} por validar`} />
+        <Kpi label="Sin priorizar" value={unprioritized.length} sub="les faltan atributos" />
       </div>
+
+      <div className="mt-6">
+        <Suspense fallback={null}>
+          <Tabs
+            basePath="/inventario"
+            items={[
+              { id: 'casos', label: 'Casos' },
+              { id: 'validaciones', label: `Validaciones${toValidate.length ? ` · ${toValidate.length}` : ''}` },
+            ]}
+          />
+        </Suspense>
+      </div>
+
+      {tab === 'casos' ? (
+        <div className="mt-6 grid gap-4 lg:grid-cols-[1fr_280px]">
+          <section className="onix-panel overflow-hidden">
+            <div className="flex flex-wrap items-center gap-1.5 border-b border-border px-4 py-3">
+              <span className="mr-1 text-[12px] text-ink-subtle">Riesgo</span>
+              {RISKS.map((r) => (
+                <Link key={r} href={qs({ riesgo: p.riesgo === r ? undefined : r })} className={`rounded-full px-2 py-0.5 text-[12px] ${p.riesgo === r ? 'bg-ink text-canvas' : 'text-ink-muted hover:text-ink'}`}>
+                  {r}
+                </Link>
+              ))}
+              <span className="ml-3 mr-1 text-[12px] text-ink-subtle">Estatus</span>
+              {STATUSES.map((s) => (
+                <Link key={s} href={qs({ estatus: p.estatus === s ? undefined : s })} className={`rounded-full px-2 py-0.5 text-[12px] ${p.estatus === s ? 'bg-ink text-canvas' : 'text-ink-muted hover:text-ink'}`}>
+                  {s}
+                </Link>
+              ))}
+            </div>
+            <div className="overflow-x-auto">
+              <table className="onix-table">
+                <thead>
+                  <tr>
+                    <th>Caso</th>
+                    <th>Dueño</th>
+                    <th>Tecnología</th>
+                    <th>Riesgo</th>
+                    <th>Estatus</th>
+                    <th className="text-right">Ficha</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtered.map((c) => {
+                    const comp = completeness(c);
+                    return (
+                      <tr key={c.id} className="hover:bg-canvas-subtle/60">
+                        <td>
+                          <Link href={qs({ caso: c.id })} className="block">
+                            <span className="text-ink hover:underline">{c.name}</span>
+                            <span className="block text-[11px] text-ink-subtle">
+                              {c.area || 'Sin área'}
+                              {c.inProduction ? ' · en producción' : ''}
+                              {c.origin === 'import' ? ' · importado' : ''}
+                            </span>
+                          </Link>
+                        </td>
+                        <td className="text-ink-muted">{c.ownerName ?? '·'}</td>
+                        <td className="max-w-[180px] truncate text-ink-muted">{c.technology ?? '·'}</td>
+                        <td>
+                          <RiskDot risk={c.risk} />
+                        </td>
+                        <td className="text-ink-muted">{c.status}</td>
+                        <td className="text-right">
+                          <span className="inline-flex items-center gap-2">
+                            <span className="h-1 w-10 overflow-hidden rounded-full bg-canvas-subtle">
+                              <span className="block h-full bg-accent" style={{ width: `${(comp.filled / comp.total) * 100}%` }} />
+                            </span>
+                            <span className="text-[11px] tabular-nums text-ink-subtle">
+                              {comp.filled}/{comp.total}
+                            </span>
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                  {filtered.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="py-8 text-center text-ink-subtle">
+                        No hay casos con estos filtros.
+                      </td>
+                    </tr>
+                  ) : null}
+                </tbody>
+              </table>
+            </div>
+          </section>
+          <div className="space-y-4">
+            <Card title="Por riesgo">
+              <StackBar parts={RISKS.map((r, i) => ({ label: r, value: o.cases.filter((c) => c.risk === r).length, tone: (i + 1) as 1 | 2 | 3 | 4 }))} />
+            </Card>
+            <Card title="Por área">
+              <div className="space-y-2.5">
+                {areas.map(({ a, n }) => (
+                  <div key={a}>
+                    <div className="flex justify-between text-[12px]">
+                      <span className="truncate text-ink">{a}</span>
+                      <span className="tabular-nums text-ink-muted">{n}</span>
+                    </div>
+                    <div className="onix-bar mt-1">
+                      <div className="h-full bg-accent" style={{ width: `${(n / Math.max(1, areas[0]!.n)) * 100}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+            {unprioritized.length ? (
+              <Card title="Alertas">
+                <ul className="space-y-2 text-[12px]">
+                  {unprioritized.slice(0, 5).map((c) => (
+                    <li key={c.id}>
+                      <Link href={qs({ caso: c.id })} className="text-ink hover:underline">
+                        {c.name}
+                      </Link>
+                      <span className="block text-ink-subtle">Falta: {missingForPriority(c).join(', ')}</span>
+                    </li>
+                  ))}
+                </ul>
+              </Card>
+            ) : null}
+          </div>
+        </div>
+      ) : (
+        <div className="mt-6 space-y-4">
+          <p className="text-[13px] text-ink-muted">
+            El triaje propone el nivel de riesgo y quién lo valida. Si los validadores no coinciden, gana el nivel más alto; un caso inaceptable nunca pasa a producción.
+          </p>
+          {toValidate.map((c) => {
+            const s = suggestRisk(c, sector);
+            return (
+              <section key={c.id} className="onix-panel p-5">
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <Link href={qs({ caso: c.id, tab: 'casos' })} className="text-[14px] font-medium text-ink hover:underline">
+                      {c.name}
+                    </Link>
+                    <p className="mt-1 text-[12px] text-ink-muted">
+                      Registrado como <span className="text-ink">{c.risk}</span> · triaje sugiere <span className="text-ink">{s.level}</span>
+                      {s.why.length ? ` (${s.why.join(', ')})` : ''}
+                    </p>
+                    <p className="mt-0.5 text-[12px] text-ink-subtle">Validan: {s.validators.join(', ')}</p>
+                  </div>
+                  {canWrite ? (
+                    <form action={validateCaseAction} className="flex flex-wrap items-center gap-2">
+                      <input type="hidden" name="id" value={c.id} />
+                      <select name="risk" defaultValue={s.level} className="onix-input w-auto py-1.5 text-[12px]" aria-label="Nivel validado">
+                        {RISKS.map((r) => (
+                          <option key={r}>{r}</option>
+                        ))}
+                      </select>
+                      <button name="decision" value="aprobar" className="onix-btn-primary py-1.5">
+                        Aprobar
+                      </button>
+                      <button name="decision" value="condicionar" className="onix-btn-ghost py-1.5">
+                        Con condiciones
+                      </button>
+                      <button name="decision" value="rechazar" className="onix-btn-ghost py-1.5">
+                        Rechazar
+                      </button>
+                    </form>
+                  ) : null}
+                </div>
+              </section>
+            );
+          })}
+          {toValidate.length === 0 ? <p className="text-[13px] text-ink-subtle">No hay casos pendientes de validar.</p> : null}
+        </div>
+      )}
+
+      {drawerOpen ? <CaseDrawer c={selected} canWrite={canWrite} sector={sector} closeHref={qs({ caso: undefined })} /> : null}
     </div>
   );
 }

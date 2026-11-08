@@ -34,8 +34,13 @@ export function RespondentWizard({
   return (
     <div className="mx-auto flex min-h-screen max-w-lg flex-col px-4 py-8">
       <div className="mb-6">
-        <p className="font-display text-xl text-ink">Ónix Govern</p>
-        <p className="text-xs text-ink-subtle">Portal de respuesta · una pregunta por pantalla</p>
+        <div className="flex items-center gap-3">
+          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-ink text-[13px] font-semibold text-canvas">Ó</span>
+          <div>
+            <p className="text-[14px] font-medium text-ink">Ónix Govern</p>
+            <p className="text-[12px] text-ink-subtle">Revisión de gobierno de IA · tus respuestas se guardan en cada paso</p>
+          </div>
+        </div>
         <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-canvas-subtle">
           <div className="h-full bg-accent transition-all" style={{ width: `${progress}%` }} />
         </div>
@@ -52,7 +57,7 @@ export function RespondentWizard({
         <input type="hidden" name="questionId" value={question.id} />
         <input type="hidden" name="qIndex" value={qIndex} />
 
-        <h1 className="text-lg text-ink">{question.prompt}</h1>
+        <h1 className="text-[19px] font-medium leading-snug tracking-tight text-ink">{question.prompt}</h1>
 
         <fieldset className="mt-5 space-y-2">
           {options.map((opt, i) => {
@@ -82,7 +87,7 @@ export function RespondentWizard({
               defaultChecked={currentValue === 'no_se'}
               className="mt-1"
             />
-            <span className="text-ink-muted">No sé — se registra como hallazgo</span>
+            <span className="text-ink-muted">No sé (se registra como hallazgo)</span>
           </label>
         </fieldset>
 

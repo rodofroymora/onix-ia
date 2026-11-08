@@ -4,6 +4,7 @@ import { and, eq } from 'drizzle-orm';
 import { aiUseCases, assessments, triageValidations } from '@onix/db';
 import { triage } from '@onix/engine';
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 import { appendAudit } from '@/lib/audit';
 import { getDb, withOrg } from '@/lib/db';
 import { requireWriteAccess } from '@/lib/session';
@@ -30,75 +31,141 @@ function enforceOriginStatus(origin: string, status: string): string {
   return status;
 }
 
-export async function createUseCaseAction(formData: FormData) {
+function scale(v: FormDataEntryValue | null): number | null {
+  const n = Number(v);
+  return Number.isInteger(n) && n >= 1 && n <= 5 ? n : null;
+}
+
+function text(v: FormDataEntryValue | null, max = 500): string | null {
+  const s = String(v ?? '').trim();
+  return s ? s.slice(0, max) : null;
+}
+
+const AUTONOMY = ['sugiere', 'aprueba_humano', 'autonomo'];
+
+/** Ficha completa del caso (CU-05): crea si no hay id, si no actualiza. */
+export async function saveUseCaseAction(formData: FormData) {
   const session = await requireWriteAccess();
+  const id = String(formData.get('id') ?? '');
   const name = String(formData.get('name') ?? '').trim();
+  if (!name) throw new Error('Nombre requerido');
   const origin = parseOrigin(formData.get('origin'));
   const status = enforceOriginStatus(origin, String(formData.get('status') ?? 'Propuesto'));
   const risk = parseRisk(formData.get('risk'));
-  const description = String(formData.get('description') ?? '');
-  const area = String(formData.get('area') ?? '');
-
-  if (!name) throw new Error('Nombre requerido');
+  // Un caso inaceptable nunca puede quedar aprobado ni en producción.
+  const finalStatus = risk === 'Inaceptable' && status === 'Aprobado' ? 'En revisión' : status;
+  const autonomyRaw = String(formData.get('autonomy') ?? 'sugiere');
+  const annual = Number(String(formData.get('annualValue') ?? '').replace(/[^0-9]/g, ''));
+  const values = {
+    name: name.slice(0, 160),
+    description: text(formData.get('description'), 1000) ?? '',
+    area: text(formData.get('area'), 120) ?? '',
+    risk,
+    origin,
+    status: finalStatus,
+    inProduction: formData.get('inProduction') === 'on' && risk !== 'Inaceptable',
+    ownerName: text(formData.get('ownerName'), 120),
+    technology: text(formData.get('technology'), 160),
+    vendor: text(formData.get('vendor'), 120),
+    usesPersonalData: formData.get('usesPersonalData') === 'on',
+    decidesOnPeople: formData.get('decidesOnPeople') === 'on',
+    customerFacing: formData.get('customerFacing') === 'on',
+    autonomy: AUTONOMY.includes(autonomyRaw) ? autonomyRaw : 'sugiere',
+    valueScore: scale(formData.get('valueScore')),
+    annualValue: Number.isFinite(annual) && annual > 0 ? Math.min(annual, 2_000_000_000) : null,
+    strategicObjective: text(formData.get('strategicObjective'), 200),
+    strategicFit: scale(formData.get('strategicFit')),
+    dataQuality: scale(formData.get('dataQuality')),
+    effort: scale(formData.get('effort')),
+    techMaturity: scale(formData.get('techMaturity')),
+    integration: scale(formData.get('integration')),
+    infrastructure: scale(formData.get('infrastructure')),
+    skills: scale(formData.get('skills')),
+  };
 
   const { db } = getDb();
+  let savedId = id;
   await withOrg(db, session.user.organizationId, async (tx) => {
-    const [row] = await tx
-      .insert(aiUseCases)
-      .values({
-        organizationId: session.user.organizationId,
-        name,
-        description,
-        risk,
-        area,
-        origin,
-        status,
-      })
-      .returning();
-
+    if (id) {
+      await tx
+        .update(aiUseCases)
+        .set({ ...values, updatedAt: new Date() })
+        .where(and(eq(aiUseCases.id, id), eq(aiUseCases.organizationId, session.user.organizationId)));
+    } else {
+      const [row] = await tx
+        .insert(aiUseCases)
+        .values({ ...values, organizationId: session.user.organizationId })
+        .returning();
+      savedId = row!.id;
+    }
     await appendAudit(tx, {
       organizationId: session.user.organizationId,
       actorUserId: session.user.id,
-      action: 'use_case.create',
+      action: id ? 'use_case.update' : 'use_case.create',
       entityType: 'ai_use_case',
-      entityId: row!.id,
-      meta: { origin, status },
+      entityId: savedId,
+      meta: { risk, status: finalStatus, origin },
     });
   });
-
   revalidatePath('/inventario');
+  revalidatePath('/priorizacion');
+  revalidatePath('/');
+  redirect(`/inventario?caso=${savedId}`);
 }
 
-export async function updateUseCaseAction(formData: FormData) {
+/** CU-07: validación humana del nivel de riesgo. Si no coinciden, gana el nivel más alto. */
+export async function validateCaseAction(formData: FormData) {
   const session = await requireWriteAccess();
   const id = String(formData.get('id') ?? '');
-  const origin = parseOrigin(formData.get('origin'));
-  const status = enforceOriginStatus(origin, String(formData.get('status') ?? 'Propuesto'));
-
+  const decision = String(formData.get('decision') ?? '');
+  const proposed = parseRisk(formData.get('risk'));
+  const note = text(formData.get('note'), 400);
   const { db } = getDb();
   await withOrg(db, session.user.organizationId, async (tx) => {
+    const [c] = await tx
+      .select()
+      .from(aiUseCases)
+      .where(and(eq(aiUseCases.id, id), eq(aiUseCases.organizationId, session.user.organizationId)))
+      .limit(1);
+    if (!c) throw new Error('Caso no encontrado');
+    const order = ['Bajo', 'Medio', 'Alto', 'Inaceptable'];
+    const finalRisk = order[Math.max(order.indexOf(c.risk), order.indexOf(proposed))] as typeof c.risk;
+    const status =
+      decision === 'rechazar' || finalRisk === 'Inaceptable'
+        ? 'Descartado'
+        : decision === 'condicionar'
+          ? 'En revisión'
+          : 'Aprobado';
     await tx
       .update(aiUseCases)
-      .set({
-        name: String(formData.get('name') ?? ''),
-        description: String(formData.get('description') ?? ''),
-        risk: parseRisk(formData.get('risk')),
-        area: String(formData.get('area') ?? ''),
-        origin,
-        status,
-        updatedAt: new Date(),
-      })
-      .where(and(eq(aiUseCases.id, id), eq(aiUseCases.organizationId, session.user.organizationId)));
-
+      .set({ risk: finalRisk, status, inProduction: status === 'Aprobado' ? c.inProduction : false, updatedAt: new Date() })
+      .where(eq(aiUseCases.id, c.id));
+    const [assessment] = await tx
+      .select({ id: assessments.id })
+      .from(assessments)
+      .where(eq(assessments.organizationId, session.user.organizationId))
+      .limit(1);
+    if (assessment) {
+      await tx.insert(triageValidations).values({
+        organizationId: session.user.organizationId,
+        assessmentId: assessment.id,
+        subject: c.name,
+        opinions: [order.indexOf(c.risk) + 1, order.indexOf(proposed) + 1],
+        agreed: c.risk === proposed,
+        resolvedValue: order.indexOf(finalRisk) + 1,
+      });
+    }
     await appendAudit(tx, {
       organizationId: session.user.organizationId,
       actorUserId: session.user.id,
-      action: 'use_case.update',
+      action: 'use_case.validate',
       entityType: 'ai_use_case',
-      entityId: id,
+      entityId: c.id,
+      meta: { decision, proposed, finalRisk, status, note },
     });
   });
   revalidatePath('/inventario');
+  revalidatePath('/');
 }
 
 export async function deleteUseCaseAction(formData: FormData) {
@@ -168,40 +235,74 @@ export async function runTriageAction(formData: FormData) {
   revalidatePath('/inventario');
 }
 
-export async function importUseCasesFromRows(
-  rows: {
-    name: string;
-    description?: string;
-    risk?: string;
-    area?: string;
-    origin?: string;
-    status?: string;
-  }[],
-) {
+export interface ImportRow {
+  name: string;
+  description?: string;
+  risk?: string;
+  area?: string;
+  status?: string;
+  ownerName?: string;
+  technology?: string;
+  vendor?: string;
+  usesPersonalData?: boolean;
+  decidesOnPeople?: boolean;
+  customerFacing?: boolean;
+  valueScore?: number | null;
+  strategicObjective?: string;
+  effort?: number | null;
+}
+
+/** CU-05: importación desde Excel. Todo entra como Propuesto y origen import; duplicados por nombre se omiten. */
+export async function importUseCasesFromRows(rows: ImportRow[]): Promise<{ created: number; skipped: number }> {
   const session = await requireWriteAccess();
   const { db } = getDb();
+  const clampScale = (v: unknown) => {
+    const n = Number(v);
+    return Number.isInteger(n) && n >= 1 && n <= 5 ? n : null;
+  };
+  let created = 0;
+  let skipped = 0;
   await withOrg(db, session.user.organizationId, async (tx) => {
-    for (const row of rows) {
-      if (!row.name?.trim()) continue;
-      const origin = parseOrigin(row.origin, 'import');
-      const status = enforceOriginStatus(origin, row.status ?? 'Propuesto');
+    const existing = await tx
+      .select({ name: aiUseCases.name })
+      .from(aiUseCases)
+      .where(eq(aiUseCases.organizationId, session.user.organizationId));
+    const seen = new Set(existing.map((e) => e.name.trim().toLowerCase()));
+    for (const row of rows.slice(0, 500)) {
+      const name = String(row.name ?? '').trim().slice(0, 160);
+      if (!name || seen.has(name.toLowerCase())) {
+        skipped++;
+        continue;
+      }
+      seen.add(name.toLowerCase());
       await tx.insert(aiUseCases).values({
         organizationId: session.user.organizationId,
-        name: row.name.trim(),
-        description: row.description ?? '',
+        name,
+        description: String(row.description ?? '').slice(0, 1000),
         risk: parseRisk(row.risk),
-        area: row.area ?? '',
-        origin,
-        status,
+        area: String(row.area ?? '').slice(0, 120),
+        origin: 'import',
+        status: 'Propuesto',
+        ownerName: row.ownerName ? String(row.ownerName).slice(0, 120) : null,
+        technology: row.technology ? String(row.technology).slice(0, 160) : null,
+        vendor: row.vendor ? String(row.vendor).slice(0, 120) : null,
+        usesPersonalData: Boolean(row.usesPersonalData),
+        decidesOnPeople: Boolean(row.decidesOnPeople),
+        customerFacing: Boolean(row.customerFacing),
+        valueScore: clampScale(row.valueScore),
+        strategicObjective: row.strategicObjective ? String(row.strategicObjective).slice(0, 200) : null,
+        effort: clampScale(row.effort),
       });
+      created++;
     }
     await appendAudit(tx, {
       organizationId: session.user.organizationId,
       actorUserId: session.user.id,
       action: 'use_case.import',
       entityType: 'ai_use_case',
-      meta: { count: rows.length },
+      meta: { created, skipped },
     });
   });
   revalidatePath('/inventario');
+  return { created, skipped };
 }

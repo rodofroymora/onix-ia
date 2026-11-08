@@ -7,7 +7,7 @@ import {
   prioritizationWeights,
   responsibilityMaps,
 } from '@onix/db';
-import { SECTOR_TEMPLATES } from '@onix/templates';
+import { FUNCTIONS, SECTOR_TEMPLATES } from '@onix/templates';
 import { revalidatePath } from 'next/cache';
 import { appendAudit } from '@/lib/audit';
 import { getDb, withOrg } from '@/lib/db';
@@ -52,16 +52,8 @@ export async function createOrganizationAction(formData: FormData) {
   await withOrg(db, org!.id, async (tx) => {
     await tx.insert(responsibilityMaps).values({
       organizationId: org!.id,
-      title: `Mapa de responsabilidades IA — ${name}`,
-      roles: [
-        { role: 'Sponsor ejecutivo', person: 'Pendiente' },
-        { role: 'Dueño de datos', person: 'Pendiente' },
-        { role: 'Responsable de riesgos', person: 'Pendiente' },
-        ...template.focusDimensions.map((d) => ({
-          role: `Enfoque ${d}`,
-          person: 'Pendiente',
-        })),
-      ],
+      title: `Mapa de responsabilidades IA · ${name}`,
+      roles: FUNCTIONS.map((f) => ({ fn: f.k, role: f.n, person: '', email: '' })),
     });
 
     await tx.insert(prioritizationWeights).values({
@@ -88,25 +80,35 @@ export async function createOrganizationAction(formData: FormData) {
   revalidatePath('/organizaciones');
 }
 
+/** CU-01: mapa de responsabilidades por función (una persona por función). */
 export async function updateResponsibilityMapAction(formData: FormData) {
   const session = await requireWriteAccess();
-  const mapId = String(formData.get('mapId') ?? '');
-  const rolesRaw = String(formData.get('roles') ?? '[]');
-  const roles = JSON.parse(rolesRaw) as { role: string; person: string }[];
+  const orgId = session.user.organizationId;
+  const roles = FUNCTIONS.map((f) => ({
+    fn: f.k,
+    role: f.n,
+    person: String(formData.get(`person:${f.k}`) ?? '').trim().slice(0, 120),
+    email: String(formData.get(`email:${f.k}`) ?? '').trim().slice(0, 160),
+  }));
 
   const { db } = getDb();
-  await withOrg(db, session.user.organizationId, async (tx) => {
-    await tx
-      .update(responsibilityMaps)
-      .set({ roles, updatedAt: new Date() })
-      .where(
-        and(
-          eq(responsibilityMaps.id, mapId),
-          eq(responsibilityMaps.organizationId, session.user.organizationId),
-        ),
-      );
+  await withOrg(db, orgId, async (tx) => {
+    const [existing] = await tx.select().from(responsibilityMaps).where(eq(responsibilityMaps.organizationId, orgId)).limit(1);
+    let mapId = existing?.id;
+    if (existing) {
+      await tx
+        .update(responsibilityMaps)
+        .set({ roles, updatedAt: new Date() })
+        .where(and(eq(responsibilityMaps.id, existing.id), eq(responsibilityMaps.organizationId, orgId)));
+    } else {
+      const [row] = await tx
+        .insert(responsibilityMaps)
+        .values({ organizationId: orgId, title: 'Mapa de responsabilidades IA', roles })
+        .returning();
+      mapId = row!.id;
+    }
     await appendAudit(tx, {
-      organizationId: session.user.organizationId,
+      organizationId: orgId,
       actorUserId: session.user.id,
       action: 'responsibility_map.update',
       entityType: 'responsibility_map',
@@ -114,4 +116,5 @@ export async function updateResponsibilityMapAction(formData: FormData) {
     });
   });
   revalidatePath('/organizacion');
+  revalidatePath('/');
 }

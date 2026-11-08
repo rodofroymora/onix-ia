@@ -26,3 +26,11 @@ export { triage } from './triage.js';
 export { scorePrioritization, normalizeWeights } from './prioritization.js';
 export { projectMaturity } from './projected.js';
 export { resolveActionProgress, isValidProgress } from './progress.js';
+export {
+  aggregateRespondentAnswers,
+  findRespondentDisagreements,
+  countUnknownByDimension,
+  projectDimensions,
+  MAX_DIMENSION_GAIN_PER_CYCLE,
+} from './respondents.js';
+export type { RespondentAnswer, RespondentDisagreement, DimensionProjection } from './respondents.js';

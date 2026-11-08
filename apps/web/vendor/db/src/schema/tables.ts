@@ -1,5 +1,6 @@
 import {
   boolean,
+  date,
   integer,
   jsonb,
   numeric,
@@ -32,6 +33,8 @@ export const organizations = pgTable('organizations', {
   slug: text('slug').notNull().unique(),
   sector: text('sector'),
   country: text('country').notNull().default('MX'),
+  /** Metas de madurez por dimensión (0 a 100). */
+  maturityTargets: jsonb('maturity_targets').notNull().default({}),
   ...timestamps,
 });
 
@@ -128,6 +131,9 @@ export const assessments = pgTable(
     globalScore: integer('global_score'),
     globalLevel: integer('global_level'),
     routeIndex: integer('route_index'),
+    /** inicial | reevaluacion */
+    kind: text('kind').notNull().default('inicial'),
+    previousAssessmentId: uuid('previous_assessment_id'),
     createdBy: uuid('created_by').references(() => users.id),
     ...timestamps,
   },
@@ -149,6 +155,10 @@ export const invitations = pgTable(
     status: invitationStatusEnum('status').notNull().default('pending'),
     token: text('token').notNull().unique(),
     expiresAt: timestamp('expires_at', { withTimezone: true }),
+    respondentName: text('respondent_name'),
+    /** Funciones del mapa de responsables que cubre (dirección, ti, seguridad, ...). */
+    functions: jsonb('functions').notNull().default([]),
+    completedAt: timestamp('completed_at', { withTimezone: true }),
     ...timestamps,
   },
   (t) => [index('invitations_org_idx').on(t.organizationId)],
@@ -168,12 +178,13 @@ export const answers = pgTable(
       .notNull()
       .references(() => questions.id, { onDelete: 'cascade' }),
     userId: uuid('user_id').references(() => users.id),
+    invitationId: uuid('invitation_id').references(() => invitations.id, { onDelete: 'cascade' }),
     valueInt: integer('value_int'),
     valueText: text('value_text'),
     ...timestamps,
   },
   (t) => [
-    uniqueIndex('answers_assessment_question_uidx').on(t.assessmentId, t.questionId),
+    uniqueIndex('answers_assessment_question_invitation_uidx').on(t.assessmentId, t.questionId, t.invitationId),
     index('answers_org_idx').on(t.organizationId),
   ],
 );
@@ -243,6 +254,25 @@ export const aiUseCases = pgTable('ai_use_cases', {
   origin: text('origin').notNull().default('manual'),
   /** Propuesto | En revisión | Aprobado | Descartado */
   status: text('status').notNull().default('Propuesto'),
+  ownerName: text('owner_name'),
+  technology: text('technology'),
+  vendor: text('vendor'),
+  usesPersonalData: boolean('uses_personal_data').notNull().default(false),
+  decidesOnPeople: boolean('decides_on_people').notNull().default(false),
+  customerFacing: boolean('customer_facing').notNull().default(false),
+  /** sugiere | aprueba_humano | autonomo */
+  autonomy: text('autonomy').notNull().default('sugiere'),
+  /** Escalas 1 a 5 para priorización y factibilidad. */
+  valueScore: integer('value_score'),
+  annualValue: integer('annual_value'),
+  strategicObjective: text('strategic_objective'),
+  strategicFit: integer('strategic_fit'),
+  dataQuality: integer('data_quality'),
+  effort: integer('effort'),
+  techMaturity: integer('tech_maturity'),
+  integration: integer('integration'),
+  infrastructure: integer('infrastructure'),
+  skills: integer('skills'),
   ...timestamps,
 });
 
@@ -339,6 +369,10 @@ export const actions = pgTable('actions', {
   deletable: boolean('deletable').notNull().default(true),
   fromRisk: extendedRiskEnum('from_risk'),
   ownerUserId: uuid('owner_user_id').references(() => users.id),
+  dueDate: date('due_date'),
+  /** Puntos (escala 0 a 100) que suma a su dimensión al llegar a 100%. */
+  liftPoints: integer('lift_points').notNull().default(6),
+  summary: text('summary'),
   ...timestamps,
 });
 
@@ -388,3 +422,9 @@ export const auditLogs = pgTable(
   },
   (t) => [index('audit_logs_org_idx').on(t.organizationId)],
 );
+
+export const governMeta = pgTable('govern_meta', {
+  key: text('key').primaryKey(),
+  value: text('value').notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});

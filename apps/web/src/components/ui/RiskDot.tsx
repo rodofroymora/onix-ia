@@ -1,17 +1,22 @@
 import type { ExtendedRisk } from '@onix/engine';
 
 const TONE: Record<string, string> = {
-  Bajo: 'bg-success',
-  Medio: 'bg-warning',
-  Alto: 'bg-danger',
-  Inaceptable: 'bg-danger',
+  Bajo: 'var(--onix-chart-neutral)',
+  Medio: 'var(--onix-warning)',
+  Alto: 'var(--onix-danger)',
+  Inaceptable: 'var(--onix-text)',
 };
 
-export function RiskDot({ risk }: { risk: ExtendedRisk | string }) {
+/** Punto pequeño más texto: el riesgo se lee, no grita. */
+export function RiskDot({ risk, compact = false }: { risk: ExtendedRisk | string; compact?: boolean }) {
   return (
-    <span className="inline-flex items-center gap-2 text-sm text-ink-muted">
-      <span className={`h-2 w-2 rounded-full ${TONE[risk] ?? 'bg-ink-subtle'}`} aria-hidden />
-      {risk}
+    <span className="inline-flex items-center gap-1.5 whitespace-nowrap text-[12px] text-ink-muted">
+      <span
+        className="h-1.5 w-1.5 rounded-full"
+        style={{ background: TONE[risk] ?? 'var(--onix-text-subtle)', outline: risk === 'Inaceptable' ? '1px solid var(--onix-text)' : undefined, outlineOffset: 1 }}
+        aria-hidden
+      />
+      {compact ? null : risk}
     </span>
   );
 }

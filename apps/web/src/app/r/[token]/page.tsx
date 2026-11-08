@@ -1,5 +1,6 @@
 import { and, eq } from 'drizzle-orm';
 import { answers, invitations, questions, assessments } from '@onix/db';
+import { dimsForFunctions, maturityForRoute } from '@onix/templates';
 import { notFound, redirect } from 'next/navigation';
 import {
   consumeInvitationAction,
@@ -37,9 +38,9 @@ export default async function RespondentPortalPage({
     return (
       <div className="mx-auto flex min-h-screen max-w-lg flex-col justify-center px-4">
         <div className="onix-panel p-6 text-center">
-          <p className="font-display text-xl text-ink">Respuestas enviadas</p>
+          <p className="text-[20px] font-semibold text-ink">Gracias, ya quedó</p>
           <p className="mt-2 text-sm text-ink-muted">
-            Gracias. El enlace de acceso era de un solo uso.
+            Tus respuestas se enviaron. El consultor las revisará junto con las de tu equipo; este enlace ya no se puede usar.
           </p>
         </div>
       </div>
@@ -59,9 +60,9 @@ export default async function RespondentPortalPage({
     return (
       <div className="mx-auto flex min-h-screen max-w-lg flex-col justify-center px-4">
         <div className="onix-panel p-6 text-center">
-          <p className="font-display text-xl text-ink">Enlace no disponible</p>
+          <p className="text-[20px] font-semibold text-ink">Enlace no disponible</p>
           <p className="mt-2 text-sm text-ink-muted">
-            Este enlace ya se usó o expiró. Pide una nueva invitación.
+            Este enlace ya se usó o expiró. Si te falta contestar, pide una nueva invitación a quien te la envió.
           </p>
         </div>
       </div>
@@ -98,11 +99,22 @@ export default async function RespondentPortalPage({
     .filter((q) => q.kind === 'maturity')
     .sort((a, b) => a.orderIndex - b.orderIndex);
 
-  const routeCount = assessment.saasRoute ?? 38;
-  const routeQs = maturityQs.slice(0, routeCount);
+  // Solo las preguntas de la ruta y de las dimensiones de las funciones que cubre (CU-02/03).
+  const routeCount = (assessment.saasRoute ?? 38) as 15 | 27 | 38;
+  const routeCodes = new Set(maturityForRoute(routeCount).map((q) => q.code));
+  const fns = Array.isArray(invitation.functions) ? (invitation.functions as string[]) : [];
+  const myDims = fns.length ? new Set(dimsForFunctions(fns)) : null;
+  const routeQs = maturityQs.filter(
+    (q) => routeCodes.has(q.code) && (!myDims || (q.dimension && myDims.has(q.dimension))),
+  );
 
   const existingAnswers = await withOrg(db, payload.organizationId, async (tx) => {
-    return tx.select().from(answers).where(eq(answers.assessmentId, payload!.assessmentId));
+    return tx
+      .select()
+      .from(answers)
+      .where(
+        and(eq(answers.assessmentId, payload!.assessmentId), eq(answers.invitationId, payload!.invitationId)),
+      );
   });
 
   const idx = Math.min(Math.max(Number(sp.q ?? 0), 0), Math.max(routeQs.length - 1, 0));

@@ -1,6 +1,6 @@
 'use server';
 
-import { and, eq } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 import {
   answers,
   assessments,
@@ -10,8 +10,9 @@ import {
   questions,
   questionnaireVersions,
 } from '@onix/db';
-import { compute, findGaps } from '@onix/engine';
-import { maturityForRoute } from '@onix/templates';
+import { aggregateRespondentAnswers, compute, findGaps, type RespondentAnswer } from '@onix/engine';
+import { FUNCTIONS, maturityForRoute } from '@onix/templates';
+import { sendInvitationEmail } from '@/lib/notify';
 import { revalidatePath } from 'next/cache';
 import { appendAudit } from '@/lib/audit';
 import { getDb, withOrg } from '@/lib/db';
@@ -37,15 +38,30 @@ export async function launchAssessmentAction(formData: FormData) {
     .limit(1);
   if (!qv) throw new Error('Cuestionario v1 no encontrado. Ejecuta db:seed.');
 
-  const id = await withOrg(db, session.user.organizationId, async (tx) => {
+  await withOrg(db, session.user.organizationId, async (tx) => {
+    // Si ya hay una evaluación publicada, la nueva es una reevaluación con la misma versión (CU-13).
+    const [previous] = await tx
+      .select()
+      .from(assessments)
+      .where(
+        and(
+          eq(assessments.organizationId, session.user.organizationId),
+          eq(assessments.status, 'completed'),
+        ),
+      )
+      .orderBy(desc(assessments.createdAt))
+      .limit(1);
+    const isReeval = Boolean(previous);
     const [row] = await tx
       .insert(assessments)
       .values({
         organizationId: session.user.organizationId,
-        questionnaireVersionId: qv.id,
-        title: `Revisión inicial — ruta ${route}`,
+        questionnaireVersionId: previous?.questionnaireVersionId ?? qv.id,
+        title: isReeval ? 'Reevaluación' : 'Revisión inicial',
         status: 'in_progress',
-        saasRoute: route,
+        saasRoute: isReeval ? (previous!.saasRoute ?? route) : route,
+        kind: isReeval ? 'reevaluacion' : 'inicial',
+        previousAssessmentId: previous?.id ?? null,
         createdBy: session.user.id,
       })
       .returning();
@@ -56,9 +72,8 @@ export async function launchAssessmentAction(formData: FormData) {
       action: 'assessment.launch',
       entityType: 'assessment',
       entityId: row!.id,
-      meta: { route },
+      meta: { route, kind: row!.kind },
     });
-    return row!.id;
   });
 
   revalidatePath('/evaluacion');
@@ -69,7 +84,15 @@ export async function inviteRespondentAction(formData: FormData) {
   const session = await requireWriteAccess();
   const email = String(formData.get('email') ?? '').trim().toLowerCase();
   const assessmentId = String(formData.get('assessmentId') ?? '');
+  const respondentName = String(formData.get('name') ?? '').trim().slice(0, 120) || null;
+  const validFns = new Set(FUNCTIONS.map((f) => f.k as string));
+  const fns = formData
+    .getAll('functions')
+    .map(String)
+    .filter((f) => validFns.has(f));
   if (!email || !assessmentId) throw new Error('Datos incompletos');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error('Correo inválido');
+  let signedToken = '';
 
   const raw = randomBytes(16).toString('hex');
   const { db } = getDb();
@@ -93,6 +116,8 @@ export async function inviteRespondentAction(formData: FormData) {
         organizationId: session.user.organizationId,
         assessmentId: assessment.id,
         email,
+        respondentName,
+        functions: fns,
         role: 'member',
         status: 'pending',
         token: raw,
@@ -110,6 +135,7 @@ export async function inviteRespondentAction(formData: FormData) {
 
     // Guardamos el token firmado (HMAC) como token de acceso.
     await tx.update(invitations).set({ token: signed }).where(eq(invitations.id, inv!.id));
+    signedToken = signed;
 
     await appendAudit(tx, {
       organizationId: session.user.organizationId,
@@ -151,17 +177,22 @@ export async function publishAssessmentAction(formData: FormData) {
     const ans = await tx.select().from(answers).where(eq(answers.assessmentId, assessmentId));
 
     const routeQs = maturityForRoute(route);
-    const m: number[] = [];
-    for (const rq of routeQs) {
-      const q = qs.find((x) => x.code === rq.code);
-      const a = q ? ans.find((x) => x.questionId === q.id) : undefined;
-      // "No sé" u omitido → 1 (Inicial) y se registra como hallazgo vía valueText
-      if (!a || a.valueInt == null) {
-        m.push(1);
-      } else {
-        m.push(a.valueInt);
-      }
+    // Varios respondentes: promedio por pregunta; "No sé" no suma nivel (CU-04).
+    const flat: RespondentAnswer[] = [];
+    for (const a of ans) {
+      const q = qs.find((x) => x.id === a.questionId);
+      if (!q || q.kind !== 'maturity' || !q.dimension) continue;
+      flat.push({
+        respondentId: a.invitationId ?? a.userId ?? 'consultor',
+        questionCode: q.code,
+        dimension: q.dimension,
+        value: a.valueText === 'no_se' ? null : a.valueInt,
+      });
     }
+    const m = aggregateRespondentAnswers(
+      routeQs.map((rq) => rq.code),
+      flat,
+    );
 
     const result = compute({
       m,
@@ -315,6 +346,7 @@ export async function saveRespondentAnswerAction(input: {
           eq(answers.assessmentId, payload.assessmentId),
           eq(answers.organizationId, payload.organizationId),
           eq(answers.questionId, input.questionId),
+          eq(answers.invitationId, payload.invitationId),
         ),
       )
       .limit(1);
@@ -338,6 +370,7 @@ export async function saveRespondentAnswerAction(input: {
         organizationId: payload.organizationId,
         assessmentId: payload.assessmentId,
         questionId: input.questionId,
+        invitationId: payload.invitationId,
         valueInt: input.valueInt,
         valueText: input.valueText ?? null,
       });
@@ -376,7 +409,7 @@ export async function consumeInvitationAction(token: string) {
 
     await tx
       .update(invitations)
-      .set({ status: 'accepted', updatedAt: new Date() })
+      .set({ status: 'accepted', completedAt: new Date(), updatedAt: new Date() })
       .where(
         and(
           eq(invitations.id, payload.invitationId),

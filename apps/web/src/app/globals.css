@@ -26,18 +26,49 @@
 
 @layer components {
   .onix-shell {
-    background:
-      radial-gradient(1200px 500px at 10% -10%, color-mix(in srgb, var(--onix-accent) 8%, transparent), transparent 60%),
-      radial-gradient(900px 400px at 100% 0%, color-mix(in srgb, var(--onix-warning) 6%, transparent), transparent 55%),
-      var(--onix-bg);
+    background: var(--onix-bg);
+    font-feature-settings: "cv11", "ss01";
   }
 
   .onix-panel {
     @apply rounded-lg border border-border bg-surface shadow-sm;
   }
 
+  .onix-card-title {
+    @apply text-[13px] font-medium text-ink-muted;
+  }
+
+  .onix-kpi {
+    @apply font-display text-[28px] font-semibold leading-none tracking-tight text-ink tabular-nums;
+  }
+
+  .onix-label {
+    @apply text-[11px] font-medium uppercase tracking-[0.06em] text-ink-subtle;
+  }
+
+  .onix-chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-border px-2 py-0.5 text-[11px] text-ink-muted;
+  }
+
+  .onix-table {
+    @apply w-full text-left text-sm;
+  }
+  .onix-table th {
+    @apply border-b border-border px-3 py-2 text-[11px] font-medium uppercase tracking-[0.05em] text-ink-subtle;
+  }
+  .onix-table td {
+    @apply border-b border-border px-3 py-2.5 align-top text-ink;
+  }
+  .onix-table tr:last-child td {
+    @apply border-b-0;
+  }
+
+  .onix-bar {
+    @apply h-1.5 w-full overflow-hidden rounded-full bg-canvas-subtle;
+  }
+
   .onix-btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-md px-3.5 py-2 text-sm font-medium transition;
+    @apply inline-flex items-center justify-center gap-2 rounded-md px-3.5 py-2 text-[13px] font-medium transition disabled:opacity-50;
   }
 
   .onix-btn-primary {
@@ -53,10 +84,17 @@
   }
 
   .onix-tab {
-    @apply rounded-md px-3 py-1.5 text-sm text-ink-muted transition hover:text-ink;
+    @apply -mb-[9px] border-b-2 border-transparent px-1 pb-2 text-[13px] text-ink-muted transition hover:text-ink;
   }
 
   .onix-tab-active {
-    @apply bg-accent-muted text-ink;
+    @apply border-ink font-medium text-ink;
   }
+}
+
+/* Informes: numeración de secciones según las que se muestran */
+.onix-report { counter-reset: sec; }
+.onix-report-num::before { counter-increment: sec; content: counter(sec, decimal-leading-zero); }
+@media print {
+  .onix-report section { break-inside: avoid; }
 }

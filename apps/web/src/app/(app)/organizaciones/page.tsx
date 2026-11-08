@@ -12,7 +12,8 @@ export default async function OrganizacionesPage() {
     <div>
       <PageHeader
         title="Organizaciones"
-        description="Solo consultores. Alta con plantilla sectorial y mapa de responsabilidades (CU-01)."
+        eyebrow="Solo consultores"
+        description="Tus clientes. Al dar de alta una empresa se crea con su plantilla sectorial y el mapa de responsabilidades listo para llenar."
       />
 
       <form action={createOrganizationAction} className="onix-panel mb-6 grid gap-3 p-4 sm:grid-cols-[1fr_220px_auto]">

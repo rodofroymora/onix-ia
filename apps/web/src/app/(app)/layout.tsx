@@ -1,12 +1,13 @@
 import { organizations } from '@onix/db';
 import { AppNav } from '@/components/shell/AppNav';
-import { CommandPaletteStub } from '@/components/shell/CommandPaletteStub';
+import { CommandPalette } from '@/components/shell/CommandPalette';
 import { OrgSwitcher } from '@/components/shell/OrgSwitcher';
-import { PendingTrayStub } from '@/components/shell/PendingTrayStub';
+import { PendingTray } from '@/components/shell/PendingTray';
 import { Providers } from '@/components/shell/Providers';
 import { RutaIaStrip } from '@/components/shell/RutaIaStrip';
 import { SignOutButton } from '@/components/shell/SignOutButton';
 import { getDb } from '@/lib/db';
+import { loadShellData } from '@/lib/server/shell';
 import { requireSession } from '@/lib/session';
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
@@ -16,35 +17,41 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     session.user.role === 'consultant'
       ? await db.select({ id: organizations.id, name: organizations.name }).from(organizations)
       : [{ id: session.user.organizationId, name: session.user.organizationName }];
+  const shell = await loadShellData(session.user.organizationId);
 
   return (
     <Providers>
-      <div className="mx-auto flex min-h-screen max-w-[1400px]">
-        <aside className="sticky top-0 hidden h-screen w-56 shrink-0 border-r border-border bg-surface/70 md:flex md:flex-col">
-          <div className="border-b border-border px-4 py-5">
-            <p className="font-display text-lg tracking-tight text-ink">Ónix</p>
-            <p className="text-xs text-ink-subtle">Govern</p>
+      <div className="flex min-h-screen">
+        <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r border-border bg-canvas-elevated md:flex">
+          <div className="flex items-center gap-2.5 px-5 pb-2 pt-5">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-ink font-display text-[13px] font-semibold text-canvas">
+              Ó
+            </span>
+            <div className="leading-tight">
+              <p className="text-[14px] font-semibold tracking-tight text-ink">Ónix Govern</p>
+              <p className="truncate text-[11px] text-ink-subtle">{session.user.organizationName}</p>
+            </div>
           </div>
           <AppNav role={session.user.role} />
-          <div className="mt-auto space-y-2 border-t border-border p-3">
-            <p className="truncate text-xs text-ink-muted">{session.user.name}</p>
+          <div className="mt-auto border-t border-border px-4 py-3">
+            <p className="truncate text-[12px] font-medium text-ink">{session.user.name}</p>
             <p className="truncate text-[11px] text-ink-subtle">{session.user.email}</p>
-            <SignOutButton />
+            <div className="mt-2">
+              <SignOutButton />
+            </div>
           </div>
         </aside>
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className="sticky top-0 z-30 flex flex-wrap items-center gap-3 border-b border-border bg-canvas-elevated/90 px-4 py-3 backdrop-blur">
-            <div className="md:hidden">
-              <p className="font-display text-base text-ink">Ónix Govern</p>
-            </div>
+          <header className="sticky top-0 z-30 flex items-center gap-3 border-b border-border bg-canvas/80 px-4 py-2.5 backdrop-blur-xl sm:px-8">
+            <p className="text-[14px] font-semibold text-ink md:hidden">Ónix</p>
             <div className="min-w-0 flex-1">
-              <RutaIaStrip />
+              <RutaIaStrip done={shell.done} />
             </div>
-            <OrgSwitcher orgs={orgs} />
-            <CommandPaletteStub />
-            <PendingTrayStub />
+            {orgs.length > 1 ? <OrgSwitcher orgs={orgs} /> : null}
+            <CommandPalette items={shell.palette} />
+            <PendingTray items={shell.pending} />
           </header>
-          <main className="flex-1 px-4 py-6 sm:px-6">{children}</main>
+          <main className="mx-auto w-full max-w-[1240px] flex-1 px-4 py-8 sm:px-8">{children}</main>
         </div>
       </div>
     </Providers>

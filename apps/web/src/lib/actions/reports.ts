@@ -1,62 +1,72 @@
 'use server';
 
 import { and, eq } from 'drizzle-orm';
-import { assessments, dimensionResults, reports } from '@onix/db';
-import { DEFAULT_FEATURE_FLAGS, assistPlanDraft } from '@onix/agent';
+import { reports } from '@onix/db';
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 import { appendAudit } from '@/lib/audit';
-import { FEATURES } from '@/lib/features';
 import { getDb, withOrg } from '@/lib/db';
+import { loadOrgOverview } from '@/lib/server/insights';
+import { writeWithAssistant } from '@/lib/server/narrative';
+import { REPORT_KINDS, type ReportKind } from '@/lib/report-kinds';
 import { requireWriteAccess } from '@/lib/session';
 
+const NOTE = 'Revisión orientativa con base en buenas prácticas de marcos como ISO/IEC 42001, ISO/IEC 27001 y OWASP. ÓNIX no es organismo certificador.';
+
+/** CU-11: crea un informe con su resumen redactado; las secciones se arman con los datos vigentes. */
 export async function createReportAction(formData: FormData) {
   const session = await requireWriteAccess();
-  const title = String(formData.get('title') ?? 'Informe de Revisión inicial');
+  const raw = String(formData.get('kind') ?? 'evaluacion');
+  const kind: ReportKind = raw in REPORT_KINDS ? (raw as ReportKind) : 'evaluacion';
+  const orgId = session.user.organizationId;
+  const o = await loadOrgOverview(orgId);
+  const task = kind === 'avance' ? 'siguientes_pasos' : 'resumen_ejecutivo';
+  const draft = await writeWithAssistant(task, o, session.user.organizationName ?? '');
+  const evalTitle = o.official?.title ?? 'Revisión inicial';
+  const date = new Date().toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
+  const title =
+    kind === 'evaluacion' ? `Informe de ${evalTitle}` : kind === 'direccion' ? `Resumen para dirección · ${date}` : `Avance del plan · ${date}`;
+
   const { db } = getDb();
-
-  await withOrg(db, session.user.organizationId, async (tx) => {
-    const [assessment] = await tx
-      .select()
-      .from(assessments)
-      .where(eq(assessments.organizationId, session.user.organizationId))
-      .limit(1);
-    const dims = assessment
-      ? await tx.select().from(dimensionResults).where(eq(dimensionResults.assessmentId, assessment.id))
-      : [];
-
+  const id = await withOrg(db, orgId, async (tx) => {
     const [row] = await tx
       .insert(reports)
       .values({
-        organizationId: session.user.organizationId,
-        assessmentId: assessment?.id ?? null,
+        organizationId: orgId,
+        assessmentId: o.official?.id ?? null,
         title,
-        kind: 'revision_inicial',
+        kind,
         payload: {
-          note: 'Revisión inicial orientativa. No constituye certificación ni dictamen legal.',
-          globalScore: assessment?.globalScore ?? null,
-          globalLevel: assessment?.globalLevel ?? null,
-          dimensions: dims.map((d) => ({ k: d.dimension, score: d.score, level: d.level })),
-          body: 'Borrador generado automáticamente a partir de la evaluación publicada.',
+          note: NOTE,
+          body: draft.text,
+          bodySource: draft.source,
+          globalScore: o.official?.globalScore ?? null,
+          globalLevel: o.official?.globalLevel ?? null,
+          dimensions: o.officialDims.map((d) => ({ k: d.dimension, score: d.score, level: d.level })),
+          planPct: o.planPct,
         },
       })
       .returning();
-
     await appendAudit(tx, {
-      organizationId: session.user.organizationId,
+      organizationId: orgId,
       actorUserId: session.user.id,
       action: 'report.create',
       entityType: 'report',
       entityId: row!.id,
+      meta: { kind, source: draft.source },
     });
+    return row!.id;
   });
 
   revalidatePath('/reportes');
+  redirect(`/reportes/${id}`);
 }
 
 export async function updateReportDraftAction(formData: FormData) {
   const session = await requireWriteAccess();
   const reportId = String(formData.get('reportId') ?? '');
-  const body = String(formData.get('body') ?? '');
+  const body = String(formData.get('body') ?? '').slice(0, 8000);
+  const title = String(formData.get('title') ?? '').trim().slice(0, 160);
   const { db } = getDb();
 
   await withOrg(db, session.user.organizationId, async (tx) => {
@@ -66,8 +76,11 @@ export async function updateReportDraftAction(formData: FormData) {
       .where(and(eq(reports.id, reportId), eq(reports.organizationId, session.user.organizationId)))
       .limit(1);
     if (!row) throw new Error('Informe no encontrado');
-    const payload = { ...(row.payload as Record<string, unknown>), body };
-    await tx.update(reports).set({ payload, updatedAt: new Date() }).where(eq(reports.id, reportId));
+    const payload = { ...(row.payload as Record<string, unknown>), body, bodySource: 'editado' };
+    await tx
+      .update(reports)
+      .set({ payload, title: title || row.title, updatedAt: new Date() })
+      .where(and(eq(reports.id, reportId), eq(reports.organizationId, session.user.organizationId)));
     await appendAudit(tx, {
       organizationId: session.user.organizationId,
       actorUserId: session.user.id,
@@ -78,46 +91,32 @@ export async function updateReportDraftAction(formData: FormData) {
   });
 
   revalidatePath(`/reportes/${reportId}`);
+  revalidatePath('/reportes');
 }
 
-/** Stub asistente: solo resumen de comentarios / borrador (feature-flagged). */
-export async function draftReportWithAssistantAction(formData: FormData) {
-  if (!FEATURES.assistant) return;
+/** Vuelve a redactar el resumen con el asistente (sugerencia; el texto anterior se reemplaza). */
+export async function redraftReportAction(formData: FormData) {
   const session = await requireWriteAccess();
   const reportId = String(formData.get('reportId') ?? '');
-  const flags = { ...DEFAULT_FEATURE_FLAGS, planAssist: true, llmEnabled: false };
-  const res = await assistPlanDraft(flags, {
-    messages: [
-      {
-        role: 'user',
-        content: 'Redacta un resumen ejecutivo breve de la Revisión inicial (sin afirmar certificación).',
-      },
-    ],
-  });
-
-  if (res?.content) {
-    const { db } = getDb();
-    await withOrg(db, session.user.organizationId, async (tx) => {
-      const [row] = await tx
-        .select()
-        .from(reports)
-        .where(
-          and(eq(reports.id, reportId), eq(reports.organizationId, session.user.organizationId)),
-        )
-        .limit(1);
-      if (!row) return;
-      const payload = {
-        ...(row.payload as Record<string, unknown>),
-        body: res.content,
-        assistantStub: true,
-      };
-      await tx
-        .update(reports)
-        .set({ payload, updatedAt: new Date() })
-        .where(
-          and(eq(reports.id, reportId), eq(reports.organizationId, session.user.organizationId)),
-        );
+  const orgId = session.user.organizationId;
+  const { db } = getDb();
+  const [row] = await withOrg(db, orgId, (tx) =>
+    tx.select().from(reports).where(and(eq(reports.id, reportId), eq(reports.organizationId, orgId))).limit(1),
+  );
+  if (!row) throw new Error('Informe no encontrado');
+  const o = await loadOrgOverview(orgId);
+  const draft = await writeWithAssistant(row.kind === 'avance' ? 'siguientes_pasos' : 'resumen_ejecutivo', o, session.user.organizationName ?? '');
+  await withOrg(db, orgId, async (tx) => {
+    const payload = { ...(row.payload as Record<string, unknown>), body: draft.text, bodySource: draft.source };
+    await tx.update(reports).set({ payload, updatedAt: new Date() }).where(and(eq(reports.id, reportId), eq(reports.organizationId, orgId)));
+    await appendAudit(tx, {
+      organizationId: orgId,
+      actorUserId: session.user.id,
+      action: 'report.redraft',
+      entityType: 'report',
+      entityId: reportId,
+      meta: { source: draft.source },
     });
-    revalidatePath(`/reportes/${reportId}`);
-  }
+  });
+  revalidatePath(`/reportes/${reportId}`);
 }
