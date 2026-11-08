@@ -98,3 +98,32 @@
 @media print {
   .onix-report section { break-inside: avoid; }
 }
+
+/* Asistente Ónix: superficies moradas translúcidas */
+.onix-glass {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--onix-accent) 15%, var(--onix-surface)) 0%,
+    color-mix(in srgb, var(--onix-accent) 5%, var(--onix-surface)) 100%
+  );
+  border: 1px solid color-mix(in srgb, var(--onix-accent) 22%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 45%, transparent);
+  backdrop-filter: blur(10px);
+}
+.onix-pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 1px 9px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--onix-accent);
+  background: color-mix(in srgb, var(--onix-accent) 13%, transparent);
+  border: 1px solid color-mix(in srgb, var(--onix-accent) 25%, transparent);
+}
+.onix-assistant-panel {
+  background:
+    radial-gradient(120% 60% at 100% 0%, color-mix(in srgb, var(--onix-accent) 14%, transparent), transparent 60%),
+    color-mix(in srgb, var(--onix-surface) 92%, transparent);
+  backdrop-filter: blur(18px);
+}

@@ -8,7 +8,7 @@ export const SYSTEM = [
   'Escribe en español de México, tratando de tú, con frases cortas y concretas.',
   'Solo usa los datos que te doy; si algo falta, dilo. No inventes cifras.',
   'No digas "diagnóstico" (di "Revisión inicial") ni "certificado". ÓNIX no es organismo certificador.',
-  'No uses guiones largos como puntuación. Máximo 170 palabras. Sin encabezados ni tablas: párrafos breves o una lista corta.',
+  'No uses guiones largos como puntuación. Máximo 170 palabras. Formato: una frase inicial corta y después de 3 a 4 puntos, cada uno en su línea como "- **Título corto:** explicación en una o dos frases". Sin encabezados ni tablas.',
 ].join(' ');
 
 export function dimName(k: string) {

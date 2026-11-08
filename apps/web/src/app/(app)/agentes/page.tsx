@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Search, Sparkles, X } from 'lucide-react';
 import { AGENT_CHANNELS, AGENT_PLATFORMS, AGENT_PUBLISHERS, AGENT_STATUSES } from '@onix/templates';
 import { AgentMap } from '@/components/agents/AgentMap';
+import { AiText } from '@/components/assistant/AiText';
 import { Card, Kpi, PageHeader } from '@/components/ui/PageHeader';
 import { RiskDot } from '@/components/ui/RiskDot';
 import { Tabs } from '@/components/ui/Tabs';
@@ -272,10 +273,10 @@ export default async function AgentesPage({ searchParams }: { searchParams: Prom
       </form>
 
       {ai ? (
-        <div className="mt-4 flex gap-3 rounded-xl border border-border bg-surface px-4 py-3.5">
+        <div className="onix-glass mt-4 flex gap-3 rounded-xl px-4 py-3.5">
           <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-accent" strokeWidth={1.6} />
           <div className="min-w-0">
-            <p className="text-[14px] leading-relaxed text-ink">{ai.answer}</p>
+            <AiText text={ai.answer} compact />
             <p className="mt-1 text-[11px] text-ink-subtle">
               {ai.source === 'llm' ? 'Respuesta del Asistente Ónix con el catálogo de agentes' : 'Búsqueda por contexto (sin modelo)'} · {hits!.length}{' '}
               {hits!.length === 1 ? 'agente' : 'agentes'} relacionados

@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import { DIMS, levelName } from '@onix/engine';
-import { AssistantCard } from '@/components/assistant/AssistantCard';
 import { TrendChart } from '@/components/charts/TrendChart';
 import { mxn, summarizeUsage } from '@/lib/server/telemetry';
 import { MeterRow, RadarChart, Ring, SeriesKey, StackBar } from '@/components/charts';
@@ -300,17 +299,25 @@ export default async function HomePage() {
         </Card>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-5">
-        <Card title="Inventario de IA" className="lg:col-span-2">
-          <p className="onix-label mb-2">Por riesgo</p>
-          <StackBar parts={risks} />
-          <p className="onix-label mb-2 mt-5">Por estatus</p>
-          <StackBar parts={statuses} />
-        </Card>
-        <div className="lg:col-span-3">
-          <AssistantCard />
+      <Card
+        title="Inventario de IA"
+        aside={
+          <Link href="/inventario" className="inline-flex items-center gap-1 text-[12px] text-ink-muted hover:text-ink">
+            Inventario <ArrowUpRight className="h-3.5 w-3.5" />
+          </Link>
+        }
+      >
+        <div className="grid gap-6 md:grid-cols-2">
+          <div>
+            <p className="onix-label mb-2">Por riesgo</p>
+            <StackBar parts={risks} />
+          </div>
+          <div>
+            <p className="onix-label mb-2">Por estatus</p>
+            <StackBar parts={statuses} />
+          </div>
         </div>
-      </div>
+      </Card>
 
       <p className="text-[11px] text-ink-subtle">
         Revisión orientativa con base en buenas prácticas de marcos como ISO/IEC 42001, ISO/IEC 27001 y OWASP. ÓNIX no es organismo certificador.

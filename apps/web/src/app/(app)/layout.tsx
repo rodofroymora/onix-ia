@@ -4,6 +4,7 @@ import { CommandPalette } from '@/components/shell/CommandPalette';
 import { OrgSwitcher } from '@/components/shell/OrgSwitcher';
 import { PendingTray } from '@/components/shell/PendingTray';
 import { ThemeToggle } from '@/components/shell/ThemeToggle';
+import { AssistantPanel } from '@/components/assistant/AssistantPanel';
 import { Providers } from '@/components/shell/Providers';
 import { RutaIaStrip } from '@/components/shell/RutaIaStrip';
 import { SignOutButton } from '@/components/shell/SignOutButton';
@@ -49,6 +50,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
               <RutaIaStrip done={shell.done} />
             </div>
             {orgs.length > 1 ? <OrgSwitcher orgs={orgs} /> : null}
+            <AssistantPanel />
             <CommandPalette items={shell.palette} />
             <ThemeToggle />
             <PendingTray items={shell.pending} />

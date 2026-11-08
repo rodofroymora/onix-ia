@@ -2,7 +2,6 @@ import { Suspense } from 'react';
 import Link from 'next/link';
 import { DIMS, levelName } from '@onix/engine';
 import { FUNCTIONS, TECH_ECOSYSTEMS, TECH_RINGS, type TechItem } from '@onix/templates';
-import { AssistantCard } from '@/components/assistant/AssistantCard';
 import { CompareBars, Heatmap, MeterRow, RadarChart, SeriesKey, TechRadar } from '@/components/charts';
 import { CopyButton, WhatsAppButton } from '@/components/ui/CopyButton';
 import { Card, Empty, Kpi, PageHeader } from '@/components/ui/PageHeader';
@@ -417,7 +416,6 @@ export default async function EvaluacionPage({
                   </div>
                 </Card>
               </div>
-              <AssistantCard defaultTask="hallazgos" />
             </>
           ) : (
             <Empty title="Sin resultados publicados">Cuando contesten los respondentes, publica la evaluación para calcular el nivel oficial.</Empty>

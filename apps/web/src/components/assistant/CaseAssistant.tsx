@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Sparkles } from 'lucide-react';
+import { AiText } from './AiText';
 import { assistCaseAction, type CaseAssistState, type CaseSuggestion } from '@/lib/actions/case-assistant';
 
 /** Llena la ficha del caso a partir de lo que la persona cuenta con sus palabras. */
@@ -55,7 +56,7 @@ export function CaseAssistant({ formId }: { formId: string }) {
 
   const s = state?.suggestion;
   return (
-    <div className="rounded-lg border border-border bg-canvas-subtle/60 px-4 py-3.5">
+    <div className="onix-glass rounded-xl px-4 py-3.5">
       <p className="flex items-center gap-2 text-[13px] font-medium text-ink">
         <Sparkles className="h-4 w-4 text-accent" strokeWidth={1.6} /> Asistente Ónix
       </p>
@@ -89,7 +90,7 @@ export function CaseAssistant({ formId }: { formId: string }) {
       {state?.error ? <p className="mt-2 text-[12px] text-danger">{state.error}</p> : null}
       {s ? (
         <div className="mt-3 border-t border-border pt-3">
-          <p className="text-[13px] leading-relaxed text-ink">{s.description}</p>
+          <AiText text={s.description} compact />
           {s.questions.length ? (
             <ul className="mt-2 space-y-0.5 text-[12px] text-ink-muted">
               {s.questions.map((q) => (
