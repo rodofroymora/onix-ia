@@ -18,6 +18,7 @@ import { getDb, withOrg } from '@/lib/db';
 import {
   createRespondentExpiry,
   signRespondentToken,
+  verifyRespondentToken,
 } from '@/lib/respondent-token';
 import { requireWriteAccess } from '@/lib/session';
 import { randomBytes } from 'node:crypto';
@@ -210,22 +211,43 @@ export async function publishAssessmentAction(formData: FormData) {
   revalidatePath('/');
 }
 
-/** Autosave respondente / "No sé". */
+/** Autosave respondente / "No sé". Requiere magic link HMAC válido. */
 export async function saveRespondentAnswerAction(input: {
-  organizationId: string;
-  assessmentId: string;
+  token: string;
   questionId: string;
   valueInt: number | null;
   valueText?: string | null;
-  invitationId: string;
 }) {
+  const payload = verifyRespondentToken(input.token);
+  if (!payload) throw new Error('Token de respondente inválido');
+  if (!input.questionId) throw new Error('Pregunta requerida');
+
   const { db } = getDb();
-  await withOrg(db, input.organizationId, async (tx) => {
+  await withOrg(db, payload.organizationId, async (tx) => {
+    const [inv] = await tx
+      .select()
+      .from(invitations)
+      .where(
+        and(
+          eq(invitations.id, payload.invitationId),
+          eq(invitations.organizationId, payload.organizationId),
+          eq(invitations.assessmentId, payload.assessmentId),
+        ),
+      )
+      .limit(1);
+    if (!inv || inv.status !== 'pending') throw new Error('Invitación no válida');
+    if (inv.expiresAt && inv.expiresAt.getTime() < Date.now()) {
+      throw new Error('Invitación expirada');
+    }
+
     const existing = await tx
       .select()
       .from(answers)
       .where(
-        and(eq(answers.assessmentId, input.assessmentId), eq(answers.questionId, input.questionId)),
+        and(
+          eq(answers.assessmentId, payload.assessmentId),
+          eq(answers.questionId, input.questionId),
+        ),
       )
       .limit(1);
 
@@ -240,8 +262,8 @@ export async function saveRespondentAnswerAction(input: {
         .where(eq(answers.id, existing[0].id));
     } else {
       await tx.insert(answers).values({
-        organizationId: input.organizationId,
-        assessmentId: input.assessmentId,
+        organizationId: payload.organizationId,
+        assessmentId: payload.assessmentId,
         questionId: input.questionId,
         valueInt: input.valueInt,
         valueText: input.valueText ?? null,
@@ -250,22 +272,38 @@ export async function saveRespondentAnswerAction(input: {
 
     if (input.valueText === 'no_se') {
       await appendAudit(tx, {
-        organizationId: input.organizationId,
+        organizationId: payload.organizationId,
         action: 'answer.no_se',
         entityType: 'answer',
         entityId: input.questionId,
-        meta: { assessmentId: input.assessmentId, invitationId: input.invitationId },
+        meta: { assessmentId: payload.assessmentId, invitationId: payload.invitationId },
       });
     }
   });
 }
 
-export async function consumeInvitationAction(invitationId: string, organizationId: string) {
+export async function consumeInvitationAction(token: string) {
+  const payload = verifyRespondentToken(token);
+  if (!payload) throw new Error('Token de respondente inválido');
+
   const { db } = getDb();
-  await withOrg(db, organizationId, async (tx) => {
+  await withOrg(db, payload.organizationId, async (tx) => {
+    const [inv] = await tx
+      .select()
+      .from(invitations)
+      .where(
+        and(
+          eq(invitations.id, payload.invitationId),
+          eq(invitations.organizationId, payload.organizationId),
+          eq(invitations.assessmentId, payload.assessmentId),
+        ),
+      )
+      .limit(1);
+    if (!inv || inv.status !== 'pending') throw new Error('Invitación no válida');
+
     await tx
       .update(invitations)
       .set({ status: 'accepted', updatedAt: new Date() })
-      .where(eq(invitations.id, invitationId));
+      .where(eq(invitations.id, payload.invitationId));
   });
 }

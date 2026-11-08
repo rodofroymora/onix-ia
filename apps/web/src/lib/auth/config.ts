@@ -1,7 +1,10 @@
 import type { NextAuthConfig } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
+import { eq } from 'drizzle-orm';
+import { organizations } from '@onix/db';
 import type { AppRole } from '../demo-users';
 import { loadDemoAuthUser } from '../demo-auth-store';
+import { getDb } from '../db';
 
 declare module 'next-auth' {
   interface Session {
@@ -61,9 +64,23 @@ export const authConfig: NextAuthConfig = {
         token.sub = user.id;
       }
       if (trigger === 'update' && session?.organizationId) {
-        token.organizationId = session.organizationId as string;
-        if (session.organizationName) {
-          token.organizationName = session.organizationName as string;
+        // Solo consultores pueden cambiar de org; el nombre sale de BD, no del cliente.
+        if (token.role !== 'consultant') {
+          return token;
+        }
+        const requestedId = String(session.organizationId);
+        try {
+          const { db } = getDb();
+          const [org] = await db
+            .select({ id: organizations.id, name: organizations.name })
+            .from(organizations)
+            .where(eq(organizations.id, requestedId))
+            .limit(1);
+          if (!org) return token;
+          token.organizationId = org.id;
+          token.organizationName = org.name;
+        } catch {
+          return token;
         }
       }
       return token;

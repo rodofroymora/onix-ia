@@ -10,9 +10,16 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
+  const authSecret = process.env.AUTH_SECRET;
+  if (!authSecret) {
+    const url = req.nextUrl.clone();
+    url.pathname = '/login';
+    return NextResponse.redirect(url);
+  }
+
   const token = await getToken({
     req,
-    secret: process.env.AUTH_SECRET ?? 'onix-govern-demo-auth-secret-change-me',
+    secret: authSecret,
   });
 
   if (!token) {

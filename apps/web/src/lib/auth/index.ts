@@ -3,5 +3,5 @@ import { authConfig } from './config';
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
-  secret: process.env.AUTH_SECRET ?? 'onix-govern-demo-auth-secret-change-me',
+  secret: process.env.AUTH_SECRET,
 });

@@ -4,8 +4,11 @@ test('login → inicio → resultados de evaluación Altamar', async ({ page }) 
   await page.goto('/login');
   await expect(page.getByText('Ónix')).toBeVisible();
 
+  const demoPassword = process.env.DEMO_PASSWORD;
+  if (!demoPassword) throw new Error('DEMO_PASSWORD requerido para e2e');
+
   await page.getByLabel('Correo').fill('admin@altamar.demo');
-  await page.getByLabel('Contraseña').fill('Altamar2026!');
+  await page.getByLabel('Contraseña').fill(demoPassword);
   await page.getByRole('button', { name: 'Entrar' }).click();
 
   await expect(page).toHaveURL('/');

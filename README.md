@@ -26,13 +26,7 @@ pnpm --filter @onix/web dev
 
 También: `pnpm dev` (alias a la app web).
 
-Abre http://localhost:3000 e inicia sesión con:
-
-| Correo | Rol | Contraseña |
-|--------|-----|------------|
-| `consultant@onix-ia.com` | consultant | `Altamar2026!` |
-| `admin@altamar.demo` | client_admin | `Altamar2026!` |
-| `lector@altamar.demo` | client_reader | `Altamar2026!` |
+Abre http://localhost:3000 e inicia sesión con un usuario demo (`consultant@onix-ia.com`, `admin@altamar.demo` o `lector@altamar.demo`) y la contraseña definida en `DEMO_PASSWORD` (ver `apps/web/.env.local`).
 
 Seed crea **Grupo Altamar (demo)** con evaluación publicada, inventario, plan e informe.
 

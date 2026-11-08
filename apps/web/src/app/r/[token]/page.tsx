@@ -39,27 +39,18 @@ export default async function RespondentPortalPage({
     );
   }
 
-  let payload = verifyRespondentToken(token);
+  const payload = verifyRespondentToken(token);
+  if (!payload) notFound();
+
   const { db } = getDb();
-
-  let invitation = null as Awaited<ReturnType<typeof findInvitation>>;
-  if (payload) {
-    invitation = await findInvitation(payload.invitationId);
-  } else {
-    const [inv] = await db.select().from(invitations).where(eq(invitations.token, token)).limit(1);
-    invitation = inv ?? null;
-    if (invitation?.assessmentId && invitation.organizationId) {
-      payload = {
-        invitationId: invitation.id,
-        assessmentId: invitation.assessmentId,
-        organizationId: invitation.organizationId,
-        email: invitation.email,
-        exp: invitation.expiresAt?.getTime() ?? Date.now() + 86400000,
-      };
-    }
+  const invitation = await findInvitation(payload.invitationId);
+  if (!invitation) notFound();
+  if (
+    invitation.organizationId !== payload.organizationId ||
+    invitation.assessmentId !== payload.assessmentId
+  ) {
+    notFound();
   }
-
-  if (!payload || !invitation) notFound();
   if (invitation.status === 'accepted' || invitation.status === 'revoked' || invitation.status === 'expired') {
     return (
       <div className="mx-auto flex min-h-screen max-w-lg flex-col justify-center px-4">
@@ -131,26 +122,22 @@ export default async function RespondentPortalPage({
 
     if (choice === 'no_se') {
       await saveRespondentAnswerAction({
-        organizationId: orgId,
-        assessmentId,
+        token: tokenValue,
         questionId,
         valueInt: null,
         valueText: 'no_se',
-        invitationId,
       });
     } else if (choice) {
       await saveRespondentAnswerAction({
-        organizationId: orgId,
-        assessmentId,
+        token: tokenValue,
         questionId,
         valueInt: Number(choice),
         valueText: null,
-        invitationId,
       });
     }
 
     if (next === 'finish') {
-      await consumeInvitationAction(invitationId, orgId);
+      await consumeInvitationAction(tokenValue);
       redirect(`/r/${encodeURIComponent(tokenValue)}?done=1`);
     }
 

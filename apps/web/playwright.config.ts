@@ -24,8 +24,9 @@ export default defineConfig({
     timeout: 120_000,
     env: {
       ...process.env,
-      AUTH_SECRET: process.env.AUTH_SECRET ?? 'onix-govern-demo-auth-secret-change-me',
-      RESPONDENT_TOKEN_SECRET: process.env.RESPONDENT_TOKEN_SECRET ?? 'onix-demo-respondent-secret',
+      AUTH_SECRET: process.env.AUTH_SECRET,
+      RESPONDENT_TOKEN_SECRET: process.env.RESPONDENT_TOKEN_SECRET,
+      DEMO_PASSWORD: process.env.DEMO_PASSWORD,
       PGLITE_DATA_DIR: process.env.PGLITE_DATA_DIR ?? path.join(repoRoot, '.data/govern.pg'),
     },
   },

@@ -1,9 +1,13 @@
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import {
   createRespondentExpiry,
   signRespondentToken,
   verifyRespondentToken,
 } from '../src/lib/respondent-token';
+
+beforeAll(() => {
+  process.env.RESPONDENT_TOKEN_SECRET ??= 'test-respondent-token-secret';
+});
 
 describe('respondent token HMAC', () => {
   it('firma y verifica un token válido', () => {

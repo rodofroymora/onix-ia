@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import { auth, signIn } from '@/lib/auth';
-import { DEMO_PASSWORD, DEMO_USERS } from '@/lib/demo-users';
+import { DEMO_USERS } from '@/lib/demo-users';
 
 export default async function LoginPage({
   searchParams,
@@ -33,7 +33,14 @@ export default async function LoginPage({
           <input type="hidden" name="callbackUrl" value={params.callbackUrl || '/'} />
           <label className="block text-sm">
             <span className="mb-1 block text-ink-muted">Correo</span>
-            <input className="onix-input" name="email" type="email" required defaultValue={DEMO_USERS[0]!.email} />
+            <input
+              className="onix-input"
+              name="email"
+              type="email"
+              required
+              autoComplete="username"
+              defaultValue={DEMO_USERS[1]?.email}
+            />
           </label>
           <label className="block text-sm">
             <span className="mb-1 block text-ink-muted">Contraseña</span>
@@ -42,7 +49,7 @@ export default async function LoginPage({
               name="password"
               type="password"
               required
-              defaultValue={DEMO_PASSWORD}
+              autoComplete="current-password"
             />
           </label>
           {params.error ? (
@@ -61,7 +68,7 @@ export default async function LoginPage({
               </li>
             ))}
           </ul>
-          <p className="mt-2">Contraseña: {DEMO_PASSWORD}</p>
+          <p className="mt-2">La contraseña la defines en el secreto DEMO_PASSWORD.</p>
         </div>
       </div>
     </div>

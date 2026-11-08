@@ -9,7 +9,11 @@ export interface RespondentPayload {
 }
 
 function secret(): string {
-  return process.env.RESPONDENT_TOKEN_SECRET || process.env.AUTH_SECRET || 'onix-demo-respondent-secret';
+  const value = process.env.RESPONDENT_TOKEN_SECRET || process.env.AUTH_SECRET;
+  if (!value) {
+    throw new Error('Falta RESPONDENT_TOKEN_SECRET o AUTH_SECRET');
+  }
+  return value;
 }
 
 function b64url(input: Buffer | string): string {
@@ -31,7 +35,12 @@ export function verifyRespondentToken(token: string): RespondentPayload | null {
   const parts = token.split('.');
   if (parts.length !== 2) return null;
   const [body, sig] = parts as [string, string];
-  const expected = createHmac('sha256', secret()).update(body).digest();
+  let expected: Buffer;
+  try {
+    expected = createHmac('sha256', secret()).update(body).digest();
+  } catch {
+    return null;
+  }
   const given = fromB64url(sig);
   if (given.length !== expected.length || !timingSafeEqual(given, expected)) return null;
 
