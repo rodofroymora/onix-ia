@@ -2,11 +2,13 @@
 (function () {
   var d = document;
   var trigger = d.getElementById('svc-trigger'), mega = d.getElementById('svc-mega');
-  var item = trigger && trigger.closest('.nav__item');
+  var item = trigger && (trigger.closest('.nav__item') || trigger.closest('header'));
   function setMega(open, focusTrigger) {
     if (!trigger) return;
     mega.hidden = !open;
     trigger.setAttribute('aria-expanded', String(open));
+    var chev = trigger.querySelector('.nav-chev, .chev');
+    if (chev) chev.classList.toggle('up', open);
     if (!open && focusTrigger) trigger.focus();
   }
   function megaLinks() { return [].slice.call(mega.querySelectorAll('a[href]')); }
@@ -72,5 +74,9 @@
       var target = e.key === 'ArrowDown' ? list[0] : list[list.length - 1];
       if (target) target.focus();
     });
+  }
+  if (location.hash) {
+    var target = document.getElementById(location.hash.slice(1));
+    if (target) window.addEventListener('load', function () { target.scrollIntoView(); });
   }
 })();
