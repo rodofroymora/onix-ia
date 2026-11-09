@@ -28,7 +28,7 @@ export default async function TelemetriaPage() {
         <Empty title="Aún no hay datos de uso">Captura el primer mes abajo o conecta tus sistemas con la clave de telemetría.</Empty>
       ) : (
         <>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
             <Kpi label={`Solicitudes · ${t.last.label}`} value={t.last.requests.toLocaleString('es-MX')} sub={pct(t.change.requests)} />
             <Kpi label="Usuarios activos" value={t.last.users.toLocaleString('es-MX')} sub={pct(t.change.users)} />
             <Kpi label="Costo del mes" value={mxn(t.last.cost)} sub={`MXN · ${pct(t.change.cost)}`} />

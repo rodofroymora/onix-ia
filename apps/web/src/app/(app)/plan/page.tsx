@@ -65,7 +65,7 @@ export default async function PlanPage({
         <Empty title="El plan está vacío">Sugiere acciones desde la biblioteca para empezar; luego ajusta dueños y fechas.</Empty>
       ) : (
         <>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
             <div className="onix-panel flex items-center justify-between px-5 py-4">
               <div>
                 <p className="onix-card-title">Avance</p>

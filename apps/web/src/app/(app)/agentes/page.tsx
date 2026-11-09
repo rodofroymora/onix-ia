@@ -223,14 +223,14 @@ export default async function AgentesPage({ searchParams }: { searchParams: Prom
         }
       />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         <Kpi label="En producción" value={inProd.length} sub={`de ${agents.length} en ${new Set(agents.map((a) => a.platform)).size} plataformas`} />
         <Kpi label="En riesgo" value={atRisk.length} sub={mismatch.length ? `riesgo alto o inaceptable · ${mismatch.length} distinto a su caso` : 'riesgo alto o inaceptable'} />
         <Kpi label="Sin caso en el inventario" value={noCase.length} sub={`${unmanaged.length} no gestionados · ${noOwner.length} sin dueño`} />
         <Kpi label="Inactivos" value={idle.length} sub="candidatos a retirar" />
       </div>
 
-      <div className="mt-6 flex items-center gap-1 text-[13px]">
+      <div className="mt-6 flex flex-wrap items-center gap-1 text-[13px]">
         {(
           [
             ['produccion', `En producción · ${inProd.length}`],
@@ -240,12 +240,12 @@ export default async function AgentesPage({ searchParams }: { searchParams: Prom
           <Link
             key={k}
             href={href({ ambito: k === 'produccion' ? undefined : k })}
-            className={`rounded-full px-3 py-1 ${scope === k ? 'onix-seg-active' : 'text-ink-muted hover:text-ink'}`}
+            className={`whitespace-nowrap rounded-full px-3 py-1 ${scope === k ? 'onix-seg-active' : 'text-ink-muted hover:text-ink'}`}
           >
             {l}
           </Link>
         ))}
-        <span className="ml-2 text-[12px] text-ink-subtle">Incluye los casos del inventario en producción, aunque no tengan agente registrado.</span>
+        <span className="mt-1 w-full text-[12px] text-ink-subtle sm:ml-2 sm:mt-0 sm:w-auto">Incluye los casos del inventario en producción, aunque no tengan agente registrado.</span>
       </div>
 
       <form action="/agentes" className="mt-3 flex flex-wrap items-center gap-2">

@@ -8,6 +8,8 @@ import { AssistantPanel } from '@/components/assistant/AssistantPanel';
 import { Providers } from '@/components/shell/Providers';
 import { RutaIaStrip } from '@/components/shell/RutaIaStrip';
 import { SignOutButton } from '@/components/shell/SignOutButton';
+import { MobileNav } from '@/components/shell/MobileNav';
+import { TableLabels } from '@/components/shell/TableLabels';
 import { getDb } from '@/lib/db';
 import { loadShellData } from '@/lib/server/shell';
 import { requireSession } from '@/lib/session';
@@ -44,18 +46,32 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           </div>
         </aside>
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className="sticky top-0 z-30 flex items-center gap-3 border-b border-border bg-canvas/80 px-4 py-2.5 backdrop-blur-xl sm:px-8">
-            <p className="text-[14px] font-semibold text-ink md:hidden">Ónix</p>
-            <div className="min-w-0 flex-1">
+          <header className="sticky top-0 z-30 border-b border-border bg-canvas/80 backdrop-blur-xl">
+            <div className="flex items-center gap-2 px-4 py-2.5 sm:gap-3 sm:px-8">
+              <MobileNav
+                role={session.user.role}
+                orgName={session.user.organizationName ?? ''}
+                userName={session.user.name ?? ''}
+                email={session.user.email ?? ''}
+              />
+              <p className="flex-1 text-[15px] font-semibold tracking-tight text-ink md:hidden">Ónix</p>
+              <div className="hidden min-w-0 flex-1 md:block">
+                <RutaIaStrip done={shell.done} />
+              </div>
+              {orgs.length > 1 ? <OrgSwitcher orgs={orgs} /> : null}
+              <AssistantPanel />
+              <CommandPalette items={shell.palette} />
+              <div className="hidden md:block">
+                <ThemeToggle />
+              </div>
+              <PendingTray items={shell.pending} />
+            </div>
+            <div className="border-t border-border/60 px-3 py-1.5 md:hidden">
               <RutaIaStrip done={shell.done} />
             </div>
-            {orgs.length > 1 ? <OrgSwitcher orgs={orgs} /> : null}
-            <AssistantPanel />
-            <CommandPalette items={shell.palette} />
-            <ThemeToggle />
-            <PendingTray items={shell.pending} />
           </header>
-          <main className="mx-auto w-full max-w-[1240px] flex-1 px-4 py-8 sm:px-8">{children}</main>
+          <main className="mx-auto w-full max-w-[1240px] flex-1 px-4 py-6 sm:px-8 sm:py-8">{children}</main>
+          <TableLabels />
         </div>
       </div>
     </Providers>

@@ -10,10 +10,10 @@ export function PageHeader({
   eyebrow?: string;
 }) {
   return (
-    <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
       <div>
         {eyebrow ? <p className="onix-label mb-1.5">{eyebrow}</p> : null}
-        <h1 className="font-display text-[28px] font-semibold tracking-tight text-ink">{title}</h1>
+        <h1 className="font-display text-[24px] font-semibold tracking-tight text-ink sm:text-[28px]">{title}</h1>
         {description ? <p className="mt-1.5 max-w-2xl text-[14px] text-ink-muted">{description}</p> : null}
       </div>
       {actions ? <div className="flex flex-wrap gap-2">{actions}</div> : null}
@@ -47,7 +47,7 @@ export function Card({
 
 export function Kpi({ label, value, sub }: { label: string; value: React.ReactNode; sub?: React.ReactNode }) {
   return (
-    <div className="onix-panel px-5 py-4">
+    <div className="onix-panel min-w-0 px-4 py-3.5 sm:px-5 sm:py-4">
       <p className="onix-card-title">{label}</p>
       <p className="onix-kpi mt-2">{value}</p>
       {sub ? <p className="mt-1.5 text-[12px] text-ink-subtle">{sub}</p> : null}

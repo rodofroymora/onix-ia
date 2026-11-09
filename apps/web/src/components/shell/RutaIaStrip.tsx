@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Check } from 'lucide-react';
@@ -14,17 +15,24 @@ const STEPS = [
 /** Barra de avance de la Ruta IA. `done` marca los pasos completos según los datos. */
 export function RutaIaStrip({ done = [] }: { done?: string[] }) {
   const pathname = usePathname();
+  const ref = useRef<HTMLOListElement>(null);
+  useEffect(() => {
+    const ol = ref.current;
+    const active = ol?.querySelector<HTMLElement>('[data-active="1"]');
+    if (ol && active) ol.scrollLeft = active.offsetLeft - (ol.clientWidth - active.offsetWidth) / 2;
+  }, [pathname]);
   return (
-    <ol className="flex items-center gap-1 overflow-x-auto text-[12px]">
+    <ol ref={ref} className="onix-scroll-x relative flex items-center gap-1 text-[12px]">
       {STEPS.map((step, i) => {
         const active = pathname.startsWith(step.href);
         const isDone = done.includes(step.href);
         return (
-          <li key={step.href} className="flex items-center gap-1">
-            {i > 0 ? <span className="mx-1 h-px w-4 bg-border-strong" aria-hidden /> : null}
+          <li key={step.href} className="flex shrink-0 items-center gap-1">
+            {i > 0 ? <span className="mx-0.5 h-px w-3 bg-border-strong sm:mx-1 sm:w-4" aria-hidden /> : null}
             <Link
               href={step.href}
-              className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 transition ${
+              data-active={active ? '1' : undefined}
+              className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 transition ${
                 active ? 'onix-seg-active' : isDone ? 'text-ink' : 'text-ink-subtle hover:text-ink'
               }`}
             >

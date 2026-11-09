@@ -59,6 +59,14 @@ export function CommandPalette({ items }: { items: PaletteItem[] }) {
     <>
       <button
         type="button"
+        className="flex h-9 w-9 items-center justify-center rounded-lg text-ink-muted transition hover:bg-canvas-subtle hover:text-ink sm:hidden"
+        onClick={() => setOpen(true)}
+        aria-label="Buscar"
+      >
+        <Search className="h-[18px] w-[18px]" strokeWidth={1.8} />
+      </button>
+      <button
+        type="button"
         className="hidden items-center gap-2 rounded-md border border-border bg-surface px-2.5 py-1.5 text-[12px] text-ink-subtle transition hover:text-ink sm:inline-flex"
         onClick={() => setOpen(true)}
         aria-label="Buscar"
@@ -69,7 +77,7 @@ export function CommandPalette({ items }: { items: PaletteItem[] }) {
       </button>
       {open ? (
         <div
-          className="fixed inset-0 z-50 flex items-start justify-center bg-black/25 p-4 pt-[14vh] backdrop-blur-[2px]"
+          className="fixed inset-0 z-50 flex items-start justify-center bg-black/25 p-3 pt-[10vh] backdrop-blur sm:p-4 sm:pt-[14vh]-[2px]"
           onMouseDown={(e) => {
             if (e.target === e.currentTarget) setOpen(false);
           }}

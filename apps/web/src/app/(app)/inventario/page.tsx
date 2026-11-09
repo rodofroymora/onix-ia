@@ -71,7 +71,7 @@ export default async function InventarioPage({
         }
       />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         <Kpi label="Casos registrados" value={o.cases.length} sub={`${o.cases.filter((c) => c.origin === 'import').length} importados de Excel`} />
         <Kpi label="En producción" value={o.cases.filter((c) => c.inProduction).length} sub="ya operan con usuarios" />
         <Kpi label="Riesgo alto o inaceptable" value={o.cases.filter((c) => c.risk === 'Alto' || c.risk === 'Inaceptable').length} sub={`${toValidate.length} por validar`} />

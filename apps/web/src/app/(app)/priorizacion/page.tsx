@@ -120,11 +120,11 @@ export default async function PriorizacionPage() {
 
       <Card title="Ranking y mapa de calor de criterios" className="mt-4">
         <div className="overflow-x-auto">
-          <table className="onix-table">
+          <table className="onix-table onix-table-scroll">
             <thead>
               <tr>
                 <th className="w-8">#</th>
-                <th>Caso</th>
+                <th className="min-w-[180px]">Caso</th>
                 <th>Riesgo</th>
                 {CRITERIA.map((c) => (
                   <th key={c.k} className="text-center" title={c.hint}>
@@ -180,11 +180,11 @@ export default async function PriorizacionPage() {
             <Card title="Sin priorizar">
               <ul className="space-y-2 text-[13px]">
                 {pending.map((p) => (
-                  <li key={p.c.id} className="flex justify-between gap-3">
+                  <li key={p.c.id} className="flex flex-col gap-0.5 sm:flex-row sm:justify-between sm:gap-3">
                     <Link href={`/inventario?caso=${p.c.id}`} className="text-ink hover:underline">
                       {p.c.name}
                     </Link>
-                    <span className="shrink-0 text-[12px] text-ink-subtle">falta {p.missing.join(', ')}</span>
+                    <span className="text-[12px] text-ink-subtle sm:shrink-0">falta {p.missing.join(', ')}</span>
                   </li>
                 ))}
               </ul>

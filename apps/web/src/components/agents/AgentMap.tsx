@@ -280,7 +280,7 @@ export function AgentMap({ agents, highlight }: { agents: MapAgent[]; highlight:
       <svg
         ref={svgRef}
         viewBox={`${-VB_W / 2} ${-VB_H / 2} ${VB_W} ${VB_H}`}
-        className="h-[540px] w-full cursor-grab touch-none select-none rounded-xl bg-canvas-subtle/50 active:cursor-grabbing"
+        className="aspect-[9/7] h-auto w-full cursor-grab sm:aspect-auto sm:h-[540px] touch-none select-none rounded-xl bg-canvas-subtle/50 active:cursor-grabbing"
         role="img"
         aria-label={`Mapa de ${agents.length} agentes en ${new Set(agents.map((a) => a.platform)).size} plataformas`}
         onWheel={(e) => {

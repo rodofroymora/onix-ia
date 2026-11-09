@@ -293,7 +293,7 @@ export default async function EvaluacionPage({
         {tab === 'resultados' ? (
           o.official ? (
             <>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
                 <Kpi label="Madurez global" value={o.official.globalScore} sub={levelName(o.official.globalLevel ?? 1)} />
                 {o.capas.map((c) => (
                   <Kpi key={c.capa} label={`Capa ${c.capa}`} value={c.score} sub={levelName(c.level)} />
@@ -469,8 +469,8 @@ export default async function EvaluacionPage({
                               {eco.tools.map((tool) => {
                                 const cur = structured.find((s) => s.tool === tool && s.eco === eco.k);
                                 return (
-                                  <div key={tool} className="flex items-center justify-between gap-2 text-[13px]">
-                                    <span className="truncate text-ink">{tool}</span>
+                                  <div key={tool} className="flex flex-col gap-1 text-[13px] sm:flex-row sm:items-center sm:justify-between sm:gap-2">
+                                    <span className="text-ink sm:truncate">{tool}</span>
                                     <span className="flex shrink-0 gap-1.5">
                                       <select name={`ring:${eco.k}:${tool}`} defaultValue={cur?.ring ?? ''} className="onix-input w-28 py-1 text-[12px]" aria-label={`Estado de ${tool}`}>
                                         <option value="">No se usa</option>
