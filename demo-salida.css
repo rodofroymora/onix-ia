@@ -1,0 +1,5 @@
+.dbar{background:#26262C;color:#F2F0EA;font-size:14px}
+.dbar-in{display:flex;justify-content:space-between;gap:1rem;align-items:center;flex-wrap:wrap;min-height:52px;padding:8px 22px;max-width:1200px;margin:0 auto}
+.dbar a{color:#F2F0EA}
+.demo-foot{border-top:1px solid #E4E0D5;padding:1.25rem 22px 2rem;display:flex;flex-wrap:wrap;gap:.5rem 1.25rem}
+.demo-foot a{color:#6D28D9}

@@ -29,8 +29,9 @@
   <link rel="stylesheet" href="/sistema.css" />
   <link rel="stylesheet" href="/home.css" />
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"ÓNIX","url":"https://www.onix-ia.com"}</script>
+  <link rel="stylesheet" href="/editorial.css" />
 </head>
-<body class="home">
+<body class="home ed">
 <a class="skip" href="#main">Saltar al contenido</a>
 <header class="nav">
   <div class="wrap nav__inner">
@@ -184,6 +185,21 @@
     <p class="kicker">Especialidad de gobierno y seguridad de agentes</p>
     <h2 id="agentes-title" class="display h2">Un agente no solo necesita saber qué hacer. También hasta dónde puede llegar.</h2>
     <p class="lead">Al diseñar o revisar un agente, definimos sus límites y los controles que necesita según el caso. La autonomía no sustituye la responsabilidad de tu equipo.</p>
+    <div class="home-close" style="margin-top:2rem">
+      <div>
+        <p class="legend">Ejemplo ilustrativo. No es un producto ni una pantalla real. No se envía nada.</p>
+        <ol class="seq" id="seq" aria-label="El agente propone, una persona aprueba y queda registro">
+          <li class="sq" data-step="1"><span class="sq-n">1</span><div><button class="sq-b" type="button">El agente propone una acción</button><p>Prepara una respuesta a la solicitud de un cliente con información del catálogo. No la envía.</p><p class="q" hidden>«Gracias por tu solicitud. Te comparto la información del producto que pediste.»</p></div></li>
+          <li class="sq" data-step="2"><span class="sq-n">2</span><div><button class="sq-b" type="button">Solicita aprobación humana</button><p>Una persona del equipo revisa el borrador antes del envío. Sin aprobación, el agente no continúa.</p><div class="seq-acts" hidden><button class="ab" type="button" data-approve>Aprobar envío</button><button class="tbtn" type="button" data-changes>Pedir cambios</button></div></div></li>
+          <li class="sq" data-step="3"><span class="sq-n">3</span><div><button class="sq-b" type="button">Deja registro</button><p>Queda constancia de lo que propuso el agente, de quién aprobó y de lo que se envió. No hay envío real, cobro ni operación externa.</p><p class="q" hidden data-log></p></div></li>
+        </ol>
+        <div class="seq-bar">
+          <button class="btn btn--secondary" type="button" id="seq-play">Ver la secuencia</button>
+          <p class="stt" id="seq-status" aria-live="polite"></p>
+          <button class="tbtn" type="button" id="seq-reset">Reiniciar</button>
+        </div>
+      </div>
+    </div>
     <ul class="home-points">
       <li><h3>Qué puede consultar y cambiar</h3><p>Permisos sobre datos, herramientas y acciones, acotados a su tarea.</p></li>
       <li><h3>Cuándo debe detenerse</h3><p>Puntos de aprobación humana y manejo de excepciones antes de acciones sensibles.</p></li>
@@ -260,15 +276,18 @@
       <input type="checkbox" name="botcheck" class="sr-only" tabindex="-1" autocomplete="off" aria-hidden="true" />
       <div class="field">
         <label for="f-nombre">Nombre</label>
-        <input id="f-nombre" name="nombre" type="text" autocomplete="name" placeholder="Tu nombre" required />
+        <input id="f-nombre" name="nombre" type="text" autocomplete="name" placeholder="Tu nombre" required aria-describedby="e-nombre" />
+        <p class="err" id="e-nombre" hidden>Escribe tu nombre.</p>
       </div>
       <div class="field">
         <label for="f-contacto">Email o WhatsApp</label>
-        <input id="f-contacto" name="contacto" type="text" autocomplete="off" spellcheck="false" placeholder="Para responderte" required />
+        <input id="f-contacto" name="contacto" type="text" autocomplete="off" spellcheck="false" placeholder="Para responderte" required aria-describedby="e-contacto" />
+        <p class="err" id="e-contacto" hidden>Escribe un correo válido o un número de WhatsApp con diez dígitos o más.</p>
       </div>
       <div class="field">
         <label for="f-msg">¿Qué necesitas?</label>
-        <textarea id="f-msg" name="mensaje" rows="4" placeholder="Tu empresa y qué quieres resolver…" required></textarea>
+        <textarea id="f-msg" name="mensaje" rows="4" placeholder="Tu empresa y qué quieres resolver…" required aria-describedby="e-msg"></textarea>
+        <p class="err" id="e-msg" hidden>Cuéntanos qué necesitas.</p>
       </div>
       <p class="form__notice" id="form-privacy">ÓNIX (Rodolfo Mora, Av. Haras 517, Col. Encinos, C.P. 72300, Puebla, Puebla) usará tu nombre, tus datos de contacto y tu mensaje para responder tu solicitud y darte seguimiento. Si lo autorizas con la casilla de abajo, también para enviarte información de nuestros servicios. Puedes negarte a esto último sin que afecte tu solicitud. Conoce el <a href="/aviso-de-privacidad">Aviso de privacidad integral</a>, incluidos tus derechos de acceso, rectificación, cancelación y oposición.</p>
       <label class="form__check"><input type="checkbox" name="consentimiento_comercial" value="1" /> <span>Quiero recibir información de servicios y novedades de ÓNIX.</span></label>
@@ -322,8 +341,13 @@
     if (!f.nombre.value) { bad = f.nombre; msg = 'Escribe tu nombre.'; }
     else if (!mailOk && !phoneOk) { bad = f.contacto; msg = 'Escribe un correo válido o un número de WhatsApp con diez dígitos o más.'; }
     else if (!f.mensaje.value) { bad = f.mensaje; msg = 'Cuéntanos qué necesitas.'; }
+    ['e-nombre','e-contacto','e-msg'].forEach(function(id){ var n = document.getElementById(id); if (n) n.hidden = true; });
     if (bad) {
-      bad.setAttribute('aria-invalid', 'true'); bad.setAttribute('aria-describedby', 'form-error');
+      bad.setAttribute('aria-invalid', 'true');
+      var eid = bad === f.nombre ? 'e-nombre' : bad === f.contacto ? 'e-contacto' : 'e-msg';
+      bad.setAttribute('aria-describedby', eid);
+      var note = document.getElementById(eid);
+      if (note) { note.hidden = false; note.textContent = msg; }
       if (s) s.textContent = '';
       if (er) { er.hidden = false; er.textContent = msg; }
       bad.focus();
@@ -348,5 +372,6 @@
 <script src="/nav.js" defer></script>
 <script src="/motion.js" defer></script>
 <script src="/home.js" defer></script>
+<script src="/secuencia.js" defer></script>
 </body>
 </html>

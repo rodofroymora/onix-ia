@@ -32,8 +32,9 @@
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"Service","name":"Ruta IA","description":"Ruta IA: revisión inicial de tu operación, casos de uso priorizados, hoja de ruta por fases y política de uso responsable de IA para tu PYME.","serviceType":"Ruta IA","provider":{"@type":"Organization","name":"ÓNIX","url":"https://www.onix-ia.com"},"url":"https://www.onix-ia.com/servicios/estrategia-de-ia"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"¿Necesito saber de tecnología?","acceptedAnswer":{"@type":"Answer","text":"No. Hablamos en términos de tu operación; la parte técnica la traducimos nosotros."}},{"@type":"Question","name":"¿Al final me obligan a contratar más servicios?","acceptedAnswer":{"@type":"Answer","text":"No. Te quedas con un plan propio que puedes ejecutar con quien quieras."}},{"@type":"Question","name":"¿Y si la conclusión es que no necesito IA?","acceptedAnswer":{"@type":"Answer","text":"También es un buen resultado. Te diremos qué conviene automatizar y qué no."}},{"@type":"Question","name":"¿Qué incluye la política de uso de IA?","acceptedAnswer":{"@type":"Answer","text":"Qué herramientas se pueden usar, qué información no se comparte, quién aprueba nuevos usos y cómo se revisan."}}]}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"https://www.onix-ia.com/"},{"@type":"ListItem","position":2,"name":"Servicios","item":"https://www.onix-ia.com/servicios"},{"@type":"ListItem","position":3,"name":"Ruta IA","item":"https://www.onix-ia.com/servicios/estrategia-de-ia"}]}</script>
+  <link rel="stylesheet" href="/editorial.css" />
 </head>
-<body>
+<body class="ed">
 <a class="skip" href="#main">Saltar al contenido</a>
 <header class="nav">
   <div class="wrap nav__inner">
@@ -109,7 +110,7 @@
     <nav class="crumbs" aria-label="Migas de pan"><ol><li><a href="/">Inicio</a></li><li><a href="/servicios">Servicios</a></li><li><span aria-current="page">Ruta IA</span></li></ol></nav>
     <div class="sv-hero__grid">
       <div>
-        <p class="sv-eyebrow rise" style="--i:0">Estrategia y gobierno</p>
+        <p class="sv-eyebrow rise" style="--i:0">Estrategia y gobernanza de IA</p>
         <h1 id="sv-h1" class="sv-title rise" style="--i:1">Mucha IA suelta. Una sola ruta.</h1>
         <p class="sv-lead rise" style="--i:2">Ruta IA te dice qué hacer con inteligencia artificial, en qué orden y con qué reglas, a partir de una revisión inicial de cómo trabaja tu PYME hoy.</p>
         <div class="sv-hero__actions rise" style="--i:3">
@@ -135,6 +136,47 @@
     </div>
   </div>
 </section>
+
+<section class="sec" id="govern" aria-labelledby="gv-h">
+  <div class="wrap">
+    <p class="kicker">Plataforma de apoyo</p>
+    <h2 id="gv-h" class="display h2">ÓNIX Govern</h2>
+    <p class="lead">La aplicación con la que acompañamos el trabajo de estrategia y gobierno de IA: evaluación, inventario, priorización y plan por etapas.</p>
+    <p><a class="link" href="https://onix-govern.vercel.app" target="_blank" rel="noopener noreferrer">ÓNIX Govern (requiere cuenta)<span class="sr-only"> (abre la aplicación)</span></a></p>
+    <div class="tabs" role="tablist" aria-label="Vistas de ÓNIX Govern">
+      <button class="tab" type="button" role="tab" id="tab-evaluacion" aria-selected="true" aria-controls="tp-evaluacion" tabindex="0"><b>Evaluación</b><span>Dónde estás</span></button>
+      <button class="tab" type="button" role="tab" id="tab-inventario" aria-selected="false" aria-controls="tp-inventario" tabindex="-1"><b>Inventario</b><span>Qué IA usas</span></button>
+      <button class="tab" type="button" role="tab" id="tab-priorizacion" aria-selected="false" aria-controls="tp-priorizacion" tabindex="-1"><b>Priorización</b><span>Qué priorizar</span></button>
+      <button class="tab" type="button" role="tab" id="tab-plan" aria-selected="false" aria-controls="tp-plan" tabindex="-1"><b>Plan por etapas</b><span>Cómo avanzar</span></button>
+    </div>
+    <div class="tp" role="tabpanel" id="tp-evaluacion" aria-labelledby="tab-evaluacion">
+      <h3>Entiende dónde está tu empresa y qué necesita atender.</h3>
+      <p>Resultados por dimensión, brechas entre las respuestas de cada persona y puntos ciegos.</p>
+      <div class="win"><div class="win-bar"><i></i><i></i><i></i><span>onix-govern.vercel.app · Evaluación</span></div><div class="shot"><img src="/imagenes/govern/evaluacion.png" alt="Captura de la vista Evaluación de ÓNIX Govern con datos de demostración de Grupo Altamar: madurez por capa, radar y barras por dimensión, mapa de respuestas por persona, brechas para la entrevista y puntos ciegos." width="1905" height="1432"></div></div>
+      <p class="cap"><span>Capturas de la aplicación con datos de demostración. Grupo Altamar no es un cliente.</span></p>
+    </div>
+    <div class="tp" role="tabpanel" id="tp-inventario" aria-labelledby="tab-inventario" hidden>
+      <h3>Ten a la vista dónde usas IA y quién responde por ella.</h3>
+      <p>Cada caso con su dueño, tipo y tecnología, nivel de riesgo y estatus.</p>
+      <div class="win"><div class="win-bar"><i></i><i></i><i></i><span>onix-govern.vercel.app · Inventario</span></div><div class="shot"><img src="/imagenes/govern/inventario.png" alt="Captura de la vista Inventario de IA de ÓNIX Govern con datos de demostración de Grupo Altamar: tabla de casos con dueño, tipo y tecnología, riesgo y estatus." width="1905" height="1432"></div></div>
+      <p class="cap"><span>Capturas de la aplicación con datos de demostración. Grupo Altamar no es un cliente.</span></p>
+    </div>
+    <div class="tp" role="tabpanel" id="tp-priorizacion" aria-labelledby="tab-priorizacion" hidden>
+      <h3>Decide qué iniciativas conviene abordar primero.</h3>
+      <p>El orden de las iniciativas, con criterios ponderados que se pueden revisar.</p>
+      <div class="win"><div class="win-bar"><i></i><i></i><i></i><span>onix-govern.vercel.app · Priorización</span></div><div class="shot"><img src="/imagenes/govern/priorizacion.png" alt="Captura de la vista Priorización de ÓNIX Govern con datos de demostración de Grupo Altamar: grupos de casos y ranking con criterios ponderados." width="1905" height="1432"></div></div>
+      <p class="cap"><span>Capturas de la aplicación con datos de demostración. Grupo Altamar no es un cliente.</span></p>
+    </div>
+    <div class="tp" role="tabpanel" id="tp-plan" aria-labelledby="tab-plan" hidden>
+      <h3>Convierte prioridades en un plan por etapas y da seguimiento al avance.</h3>
+      <p>Acciones en Bases, Controles y Mejora continua, con sus relaciones y su avance.</p>
+      <div class="win"><div class="win-bar"><i></i><i></i><i></i><span>onix-govern.vercel.app · Plan por etapas</span></div><div class="shot"><img src="/imagenes/govern/plan.png" alt="Captura de la vista Plan por etapas de ÓNIX Govern con datos de demostración de Grupo Altamar: acciones agrupadas en Bases, Controles y Mejora continua." width="1905" height="1432"></div></div>
+      <p class="cap"><span>Capturas de la aplicación con datos de demostración. Grupo Altamar no es un cliente.</span></p>
+    </div>
+    <p class="home-note"><a href="/autoevaluacion">Autoevaluación gratuita</a>. Prototipo · no publicado. Las respuestas no pasan a ÓNIX Govern.</p>
+  </div>
+</section>
+<script src="/govern-tabs.js" defer></script>
 
 <!-- 2 · El problema -->
 <section class="sv-sec band sv-problem" aria-labelledby="prob-t">
@@ -447,7 +489,7 @@
         </ul>
       </nav>
     </div>
-    <div class="footer__map"><h2 class="sr-only">Servicios por capa</h2><div class="footer__layers footer__layers--duo"><div><h3>Líneas de trabajo</h3><ul><li><a href="/servicios/estrategia-de-ia">Estrategia y gobernanza de IA</a></li><li><a href="/servicios/auditoria-de-ia">Revisión de riesgos de la IA</a></li><li><a href="/servicios">Desarrollo de agentes y soluciones de IA</a></li><li><a href="/#agentes">Especialidad de gobierno y seguridad de agentes</a></li><li><a href="/como-trabajamos">Acompañamiento de la operación de IA</a></li></ul></div><div><h3>Soluciones y demos</h3><ul><li><a href="/servicios">Catálogo de soluciones</a></li><li><a href="/servicios/agentes-de-operacion">Agentes de operación</a></li><li><a href="/servicios/asistentes-whatsapp-y-voz">Asistentes de WhatsApp y voz</a></li><li><a href="/servicios/documentos-vivos">Conocimiento documental</a></li><li><a href="/servicios/radar-de-leads">Radar de Leads</a></li><li><a href="/servicios/contabilidad-asistida">Contabilidad asistida</a></li></ul></div></div></div>
+    <div class="footer__map"><h2 class="sr-only">Servicios</h2><div class="footer__layers footer__layers--duo"><div><h3>Líneas de trabajo</h3><ul><li><a href="/servicios/estrategia-de-ia">Estrategia y gobernanza de IA</a></li><li><a href="/servicios/auditoria-de-ia">Revisión de riesgos de la IA</a></li><li><a href="/servicios">Desarrollo de agentes y soluciones de IA</a></li><li><a href="/#agentes">Especialidad de gobierno y seguridad de agentes</a></li><li><a href="/como-trabajamos">Acompañamiento de la operación de IA</a></li></ul></div><div><h3>Soluciones y demos</h3><ul><li><a href="/servicios">Catálogo de soluciones</a></li><li><a href="/servicios/agentes-de-operacion">Agentes de operación</a></li><li><a href="/servicios/asistentes-whatsapp-y-voz">Asistentes de WhatsApp y voz</a></li><li><a href="/servicios/documentos-vivos">Conocimiento documental</a></li><li><a href="/servicios/radar-de-leads">Radar de Leads</a></li><li><a href="/servicios/contabilidad-asistida">Contabilidad asistida</a></li></ul></div></div></div>
     <div class="footer__bottom">
       <p>© 2026 ÓNIX. Todos los derechos reservados.</p>
       <p class="footer__wa">WhatsApp: 222 709 7945</p>
