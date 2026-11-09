@@ -3,3 +3,15 @@
 .dbar a{color:#F2F0EA}
 .demo-foot{border-top:1px solid #E4E0D5;padding:1.25rem 22px 2rem;display:flex;flex-wrap:wrap;gap:.5rem 1.25rem}
 .demo-foot a{color:#6D28D9}
+.footer{border-top:1px solid #E4E0D5;padding:3rem 0 2rem;background:#FFFDF7;color:#26262C;font-family:'Geist',system-ui,sans-serif}
+.footer .wrap{max-width:1200px;margin:0 auto;padding:0 22px}
+.footer__top{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:1.5rem}
+.footer__brand{font-weight:600;letter-spacing:.2em;margin:0}
+.footer__brand span{display:block;margin-top:.35rem;letter-spacing:0;font-weight:400;color:#4A4A52}
+.footer ul{list-style:none;padding:0;margin:.4rem 0 0}
+.footer li{margin:.15rem 0}
+.footer a{color:#6D28D9}
+.footer__layers{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1.5rem}
+.footer__bottom{display:flex;flex-wrap:wrap;gap:.35rem 1.2rem;margin-top:1.5rem;padding-top:1rem;border-top:1px solid #E4E0D5;color:#4A4A52;font-size:14px}
+.footer__bottom a{color:#4A4A52}
+@media(max-width:700px){.footer__top,.footer__layers{grid-template-columns:1fr}}

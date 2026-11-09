@@ -25,6 +25,10 @@ const NO_PUBLICOS_SIEMPRE = ['.github', 'scripts', 'release-rules.json', 'README
 // `demos/` (prefijo exacto, con barra) solo se publica en DEV, siempre con noindex; en PROD se elimina.
 const DIR_DEMOS = 'demos';
 const NO_PUBLICOS_PROD = NO_PUBLICOS_SIEMPRE.concat([DIR_DEMOS]);
+/* La autoevaluación es un prototipo solo de DEV. En el fuente no lleva noindex
+   (el check de release solo permite noindex en /salud y en demos/). PROD la quita. */
+const QUIZ_ARCHIVOS = ['autoevaluacion.html', 'autoevaluacion.js', 'autoevaluacion-logica.js'];
+const QUIZ_HREF_RE = /\/autoevaluacion\b/;
 const NO_PUBLICOS = NO_PUBLICOS_PROD;   // lista de PROD (compatibilidad)
 const LINEA_DEMOS_RE = /^\/?demos\/?\s*$/;
 const META_NOINDEX = '<meta name="robots" content="noindex, nofollow" />';
@@ -142,6 +146,35 @@ function rutasDemos(root) {
   return acc;
 }
 
+/** Quita del paquete la autoevaluación y cualquier enlace interno hacia ella. */
+function retirarQuizProd(root) {
+  const quitados = [];
+  for (const n of QUIZ_ARCHIVOS) {
+    const p = path.join(root, n);
+    if (fs.existsSync(p)) { fs.rmSync(p, { force: true }); quitados.push(n); }
+  }
+  for (const f of listarHtml(root)) {
+    const html = fs.readFileSync(f, 'utf8');
+    const next = html.replace(/<p\b[^>]*\bdata-solo-dev="autoevaluacion"[^>]*>[\s\S]*?<\/p>\s*/g, '');
+    if (next !== html) fs.writeFileSync(f, next);
+  }
+  return quitados;
+}
+
+/** PROD: no puede quedar el HTML, el JS ni un enlace a /autoevaluacion. */
+function verificarQuizProd(root) {
+  const errs = [];
+  for (const n of QUIZ_ARCHIVOS) {
+    if (fs.existsSync(path.join(root, n))) errs.push(`${n}: la autoevaluación no puede estar en el paquete de PRODUCCIÓN.`);
+  }
+  for (const f of listarHtml(root)) {
+    if (QUIZ_HREF_RE.test(fs.readFileSync(f, 'utf8'))) errs.push(`${path.relative(root, f)}: enlace a /autoevaluacion en producción.`);
+  }
+  const sm = path.join(root, 'sitemap.xml');
+  if (fs.existsSync(sm) && QUIZ_HREF_RE.test(fs.readFileSync(sm, 'utf8'))) errs.push('sitemap.xml: no debe listar /autoevaluacion en producción.');
+  return errs;
+}
+
 /** PROD: el paquete no debe contener demos/ y .vercelignore debe seguir excluyéndolo. Devuelve errores[]. */
 function verificarDemosProd(root) {
   const errs = [];
@@ -154,7 +187,7 @@ function verificarDemosProd(root) {
 /** PROD: verifica que el paquete sea indexable. `rutasNoindex`: rutas con noindex permitido (solo /salud); `sitemapUrl`: la URL exacta
  *  que robots.txt debe referenciar (release-rules.json → robots.sitemapUrl; si es null, cualquier «Sitemap:»). Devuelve errores[]. */
 function verificarProd(root, rutasNoindex = [], sitemapUrl = null, marcadores = []) {
-  const errs = verificarDemosProd(root);
+  const errs = verificarDemosProd(root).concat(verificarQuizProd(root));
   const permitida = (url) => rutasNoindex.some((r) => enRuta(url, r));
   for (const f of listarHtml(root)) {
     const m = fs.readFileSync(f, 'utf8').match(META_ROBOTS_RE);
@@ -215,12 +248,14 @@ function construirPaquete(root, env) {
   if (env === 'dev') {
     const resumen = inyectarNoindexDev(root);
     resumen.enlazadas = vincularDemosDev(root).length;
+    resumen.quiz = fs.existsSync(path.join(root, 'autoevaluacion.html'));
     return { removidos, resumen, errores: [] };
   }
-  return { removidos, resumen: null, errores: verificarProd(root, robotsCfg.rutasNoindex || [], robotsCfg.sitemapUrl || null, marcadores) };
+  const quizFuera = retirarQuizProd(root);
+  return { removidos: removidos.concat(quizFuera), resumen: null, errores: verificarProd(root, robotsCfg.rutasNoindex || [], robotsCfg.sitemapUrl || null, marcadores) };
 }
 
-module.exports = { vincularDemosDev, NO_PUBLICOS, NO_PUBLICOS_SIEMPRE, NO_PUBLICOS_PROD, inyectarNoindexDev, verificarProd, verificarDemosProd, rutasDemos, construirPaquete, listarHtml, urlDe };
+module.exports = { vincularDemosDev, retirarQuizProd, verificarQuizProd, QUIZ_ARCHIVOS, NO_PUBLICOS, NO_PUBLICOS_SIEMPRE, NO_PUBLICOS_PROD, inyectarNoindexDev, verificarProd, verificarDemosProd, rutasDemos, construirPaquete, listarHtml, urlDe };
 
 if (require.main === module) {
   const root = path.resolve(__dirname, '..');

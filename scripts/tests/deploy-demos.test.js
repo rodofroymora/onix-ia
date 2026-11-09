@@ -137,5 +137,30 @@ for (const [etiqueta, env] of [['DEPLOY_ENV=prod', { DEPLOY_ENV: 'prod' }], ['si
   prueba('promote-prod.yml no menciona DEPLOY_ENV: dev', /DEPLOY_ENV:\s*dev/.test(prod), false);
 }
 
+// ── Autoevaluación: entra en DEV y sale de PROD, sin enlace muerto
+{
+  const dev = copiaDelRepo();
+  const rd = cli(dev, { DEPLOY_ENV: 'dev' });
+  prueba('DEV: el paquete incluye autoevaluacion.html', fs.existsSync(path.join(dev, 'autoevaluacion.html')), true);
+  prueba('DEV: el paquete incluye la lógica del cuestionario', fs.existsSync(path.join(dev, 'autoevaluacion-logica.js')), true);
+  const quiz = fs.readFileSync(path.join(dev, 'autoevaluacion.html'), 'utf8');
+  prueba('DEV: el cuestionario sale con noindex inyectado', /noindex/.test(quiz), true);
+  const estDev = fs.readFileSync(path.join(dev, 'servicios', 'estrategia-de-ia.html'), 'utf8');
+  prueba('DEV: Estrategia enlaza la autoevaluación', /href="\/autoevaluacion"/.test(estDev), true);
+  prueba('DEV: Estrategia conserva la sección Govern', /id="govern"/.test(estDev), true);
+
+  const prod = copiaDelRepo();
+  const rp = cli(prod, { DEPLOY_ENV: 'prod' });
+  prueba('PROD: el script termina bien con el cuestionario en el fuente', rp.status, 0);
+  prueba('PROD: no queda autoevaluacion.html', fs.existsSync(path.join(prod, 'autoevaluacion.html')), false);
+  prueba('PROD: no queda autoevaluacion.js', fs.existsSync(path.join(prod, 'autoevaluacion.js')), false);
+  prueba('PROD: no queda autoevaluacion-logica.js', fs.existsSync(path.join(prod, 'autoevaluacion-logica.js')), false);
+  const htmlProd = P.listarHtml(prod).filter((f) => /\/autoevaluacion\b/.test(fs.readFileSync(f, 'utf8')));
+  prueba('PROD: ninguna página enlaza /autoevaluacion', htmlProd.map((f) => path.relative(prod, f)), []);
+  const estProd = fs.readFileSync(path.join(prod, 'servicios', 'estrategia-de-ia.html'), 'utf8');
+  prueba('PROD: Estrategia sigue teniendo Govern y sus capturas', /id="govern"/.test(estProd) && /imagenes\/govern\/evaluacion\.png/.test(estProd), true);
+  prueba('PROD: el fuente del repo sigue enlazando la autoevaluación', /href="\/autoevaluacion"/.test(fs.readFileSync(path.join(raiz, 'servicios', 'estrategia-de-ia.html'), 'utf8')), true);
+}
+
 if (fallos) { console.error(`\n✖ ${fallos} prueba(s) fallaron.`); process.exit(1); }
 console.log('\n✔ Todas las pruebas del paquete de deploy pasaron.');
