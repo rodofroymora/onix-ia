@@ -1,5 +1,7 @@
 (function () {
-  var tabs = [].slice.call(document.querySelectorAll('[role="tab"]'));
+  var tabs = [].slice.call(document.querySelectorAll('[role="tab"]')).filter(function (t) {
+    return !t.closest('[data-v-car]');
+  });
   var panels = [].slice.call(document.querySelectorAll('[role="tabpanel"]'));
   if (!tabs.length) return;
   function select(i, focus) {

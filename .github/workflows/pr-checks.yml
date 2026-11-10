@@ -36,8 +36,8 @@ jobs:
             echo "::error::A main solo se llega con un PR desde dev (dev → main). Rama origen: '$HEAD'. Ver CONTRIBUTING.md"
             exit 1
           fi
-          if [ "$BASE" = "dev" ] && ! echo "$HEAD" | grep -Eq '^cambio/[a-z0-9][a-z0-9._-]*$'; then
-            echo "::error::Los PRs hacia dev deben venir de una rama 'cambio/<corto>' (minúsculas, números, guiones). Rama origen: '$HEAD'. Ver CONTRIBUTING.md"
+          if [ "$BASE" = "dev" ] && ! echo "$HEAD" | grep -Eq '^(cambio|cursor)/[a-z0-9][a-z0-9._-]*$'; then
+            echo "::error::Los PRs hacia dev deben venir de una rama 'cambio/<corto>' o 'cursor/<corto>' (minúsculas, números, guiones). Rama origen: '$HEAD'. Ver CONTRIBUTING.md"
             exit 1
           fi
           echo "✔ Flujo de ramas correcto: $HEAD → $BASE"
