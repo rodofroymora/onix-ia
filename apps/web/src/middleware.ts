@@ -33,9 +33,11 @@ export async function middleware(req: NextRequest) {
 
   if (!token) {
     const url = req.nextUrl.clone();
+    const back = `${pathname}${req.nextUrl.search}`;
     url.pathname = '/login';
     url.search = '';
-    url.searchParams.set('callbackUrl', pathname);
+    // Conserva la pestaña o filtro del enlace (?tab=...) para volver ahí después de entrar.
+    url.searchParams.set('callbackUrl', back.length <= 512 ? back : pathname);
     return NextResponse.redirect(url);
   }
 
