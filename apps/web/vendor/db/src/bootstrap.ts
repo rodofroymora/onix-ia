@@ -230,7 +230,12 @@ export async function ensureDemoSeed(
     if (seeded.length === 0) {
       await seedDemoContent(tx as Tx, { id: org.id, name: DEMO_NAME });
     }
-    await ensureDemoDiscovery(tx as Tx, org.id);
+    // Datos de ejemplo de conectores: si fallan, no deben tumbar la demo ni el inicio de sesión.
+    try {
+      await tx.transaction(async (sp) => ensureDemoDiscovery(sp as Tx, org!.id));
+    } catch (err) {
+      console.error('[seed] no se pudieron sembrar los conectores de ejemplo', err);
+    }
     await tx
       .insert(schema.governMeta)
       .values({ key: 'demo_seed_version', value: DEMO_SEED_VERSION })

@@ -4,6 +4,18 @@ import { awsConfigured, onixAwsAccountId } from '@/lib/connectors/aws';
 import { encryptionReady } from '@/lib/connectors/crypto';
 import { microsoftConfigured } from '@/lib/connectors/microsoft';
 import { getDb, withOrg } from '@/lib/db';
+import { tryEnsureDemoReady } from '@/lib/ensure-demo';
+
+/** Si las tablas de conectores aún no existen (migración en curso) o algo falla, la página sigue sin ellos. */
+async function safely<T>(what: string, fn: () => Promise<T>, fallback: T): Promise<T> {
+  await tryEnsureDemoReady();
+  try {
+    return await fn();
+  } catch (err) {
+    console.error(`[conectores] no se pudo cargar ${what}`, err);
+    return fallback;
+  }
+}
 
 export interface ConnectorView {
   id: string;
@@ -19,7 +31,7 @@ export interface ConnectorView {
 
 export async function loadConnectors(orgId: string) {
   const { db } = getDb();
-  const rows = await withOrg(db, orgId, (tx) => tx.select().from(connectors).where(eq(connectors.organizationId, orgId)));
+  const rows = await safely('conexiones', () => withOrg(db, orgId, (tx) => tx.select().from(connectors).where(eq(connectors.organizationId, orgId))), []);
   const list: ConnectorView[] = rows.map((r) => {
     const c = r.config as ConnectorView['config'];
     return {
@@ -48,5 +60,9 @@ export type DiscoveredRow = typeof discoveredItems.$inferSelect;
 
 export async function loadDiscovered(orgId: string): Promise<DiscoveredRow[]> {
   const { db } = getDb();
-  return withOrg(db, orgId, (tx) => tx.select().from(discoveredItems).where(eq(discoveredItems.organizationId, orgId)).orderBy(desc(discoveredItems.firstSeenAt)));
+  return safely(
+    'detecciones',
+    () => withOrg(db, orgId, (tx) => tx.select().from(discoveredItems).where(eq(discoveredItems.organizationId, orgId)).orderBy(desc(discoveredItems.firstSeenAt))),
+    [] as DiscoveredRow[],
+  );
 }
