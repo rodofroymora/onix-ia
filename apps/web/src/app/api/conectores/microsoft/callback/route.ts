@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
   const session = await requireWriteAccess();
   const base = await appBaseUrl();
   const back = (q: string) => {
-    const res = NextResponse.redirect(`${base}/organizacion?conector=microsoft&${q}#conectores`);
+    const res = NextResponse.redirect(`${base}/agentes?tab=conexiones&integracion=microsoft&${q}`);
     res.cookies.delete({ name: 'onix_ms_nonce', path: '/api/conectores' });
     return res;
   };
@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
       const values = {
         status: 'conectado',
         displayName: link.account || link.tenantId,
-        config: { tenantId: link.tenantId, account: link.account, accountName: link.accountName },
+        config: { tenantId: link.tenantId, account: link.account, accountName: link.accountName, sources: st.sources?.length ? st.sources : ['entra', 'powerplatform'] },
         secretEnc: encryptSecret(link.refreshToken),
         lastError: null,
         updatedAt: new Date(),

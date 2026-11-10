@@ -111,7 +111,8 @@ describe('cifrado y estado OAuth', () => {
 
 describe('conector de Microsoft', () => {
   it('arma la URL de autorización con el estado y el permiso de Graph', () => {
-    const u = new URL(authorizeUrl('https://app/cb', 'estado123'));
+    const u = new URL(authorizeUrl('https://app/cb', 'estado123', 'altamar.mx'));
+    expect(u.searchParams.get('domain_hint')).toBe('altamar.mx');
     expect(u.pathname).toContain('/organizations/oauth2/v2.0/authorize');
     expect(u.searchParams.get('state')).toBe('estado123');
     expect(u.searchParams.get('scope')).toContain('https://graph.microsoft.com/.default');
@@ -145,6 +146,13 @@ describe('conector de Microsoft', () => {
     expect(items[0]!.ownerName).toBe('Laura Méndez');
     expect(items[1]!.ownerName).toBe('jorge@altamar.mx');
     expect(calls.filter((c) => c.includes('resourcequery'))).toHaveLength(2);
+  });
+
+  it('respeta las fuentes elegidas: solo Entra no consulta Power Platform', async () => {
+    const { http, calls } = fakeMicrosoft();
+    const r = await syncMicrosoft(http, { tenantId: TENANT, refreshToken: 'r0' }, ['entra']);
+    expect(r.okSources).toEqual(['entra']);
+    expect(calls.some((c) => c.includes('resourcequery'))).toBe(false);
   });
 
   it('si Power Platform niega acceso, Entra sigue y queda el aviso', async () => {

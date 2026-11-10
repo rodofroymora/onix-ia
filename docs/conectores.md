@@ -1,8 +1,8 @@
 # Conectores de descubrimiento (Ónix Govern)
 
 Ónix lee, con permisos de solo lectura, qué apps de IA y agentes existen en la nube del cliente.
-Lo detectado aparece en **Agent Discovery, pestaña Detectados**, donde el equipo decide si lo registra, lo vincula con un agente que ya existe o lo ignora.
-Los conectores se revisan cada día con la tarea programada (`/api/cron/recordatorios`) y también con el botón "Revisar ahora" en Organización.
+Las conexiones se administran en **Agent Discovery, pestaña Conexiones**: un catálogo de integraciones donde cada una muestra qué descubre, qué permisos pide y sus parámetros. Lo detectado aparece en **Agent Discovery, pestaña Detectados**, donde el equipo decide si lo registra, lo vincula con un agente que ya existe o lo ignora.
+Los conectores se revisan cada día con la tarea programada (`/api/cron/recordatorios`) y también con el botón "Revisar ahora" en el panel de cada integración.
 
 ## Variables de entorno (Vercel)
 
@@ -31,7 +31,7 @@ Qué descubre:
    - Power Platform API (app id `8578e004-a5c6-46e7-913e-12f58912df43`): `ResourceQuery.Resources.Read`. Si no aparece, crear su service principal con `New-MgServicePrincipal -AppId 8578e004-a5c6-46e7-913e-12f58912df43`.
 
 ### Lo que hace el cliente
-1. En Organización, Conectores, "Conectar Microsoft 365".
+1. En Agent Discovery, Conexiones, Microsoft 365: elige qué revisar (apps de Entra, agentes de Copilot Studio), su dominio (opcional) e "Iniciar sesión con Microsoft".
 2. Entra con una cuenta que tenga **Global Reader** o **Cloud Application Administrator**, más **AI Reader** o **Power Platform Administrator** para ver los agentes.
 3. Acepta los permisos marcando "Consentir en nombre de la organización".
 
@@ -45,13 +45,13 @@ Notas:
 Qué descubre: agentes de Amazon Bedrock (`ListAgents`) y de Bedrock AgentCore (`ListAgentRuntimes`) en las regiones elegidas.
 
 ### Lo que hace el cliente
-1. En Organización, Conectores, "Conectar AWS". Ónix genera un ExternalId único.
+1. En Agent Discovery, Conexiones, Amazon Bedrock, "Empezar conexión con AWS". Ónix genera un ExternalId único.
 2. En IAM crea un rol para "Otra cuenta de AWS" con la política de confianza que muestra Ónix (cuenta de Ónix y ExternalId).
 3. Le agrega la política de solo lectura que muestra Ónix.
 4. Pega el ARN del rol y elige regiones.
 
-## Google Workspace y Gemini Enterprise
-Pendiente. La tarjeta dice "Disponible pronto".
+## Próximamente
+Gemini Enterprise, ChatGPT Enterprise, Claude Enterprise, Agentforce y ServiceNow aparecen en el catálogo con los parámetros que pedirán. El catálogo vive en `apps/web/src/lib/connectors/integrations.ts`.
 
 ## Pruebas
 `apps/web/tests/connectors.test.ts` simula Graph y Power Platform (paginación, permisos, falla parcial) y valida cifrado, estado OAuth y la política de AWS.

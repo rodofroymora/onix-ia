@@ -39,6 +39,8 @@ export interface OAuthState {
   userId: string;
   nonce: string;
   exp: number;
+  /** Fuentes elegidas antes de iniciar sesión (Microsoft). */
+  sources?: string[];
 }
 
 function stateKey(): string {

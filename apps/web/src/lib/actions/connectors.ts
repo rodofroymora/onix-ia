@@ -8,6 +8,7 @@ import { redirect } from 'next/navigation';
 import { appendAudit } from '@/lib/audit';
 import { AWS_REGIONS, ROLE_ARN, newExternalId } from '@/lib/connectors/aws';
 import { runConnector } from '@/lib/connectors/sync';
+import { MS_SOURCES } from '@/lib/connectors/integrations';
 import { getDb, withOrg } from '@/lib/db';
 import { requireWriteAccess } from '@/lib/session';
 
@@ -36,7 +37,7 @@ export async function prepareAwsAction() {
     });
   });
   refresh();
-  redirect('/organizacion?conector=aws#conectores');
+  redirect('/agentes?tab=conexiones&integracion=aws');
 }
 
 export async function saveAwsAction(_prev: { ok: boolean; message: string } | null, fd: FormData): Promise<{ ok: boolean; message: string }> {
@@ -77,7 +78,7 @@ export async function syncConnectorAction(fd: FormData) {
   if (!row) return;
   const r = await runConnector(orgId, row, session.user.id);
   refresh();
-  redirect(`/organizacion?conector=${row.provider}&${r.ok ? `ok=1&nuevos=${r.added}` : 'error=sync'}#conectores`);
+  redirect(`/agentes?tab=conexiones&integracion=${row.provider}&${r.ok ? `ok=1&nuevos=${r.added}` : 'error=sync'}`);
 }
 
 /** Quita la conexión y sus credenciales. Los agentes ya registrados se quedan. */
@@ -94,7 +95,25 @@ export async function disconnectConnectorAction(fd: FormData) {
     await appendAudit(tx, { organizationId: orgId, actorUserId: session.user.id, action: 'connector.disconnect', entityType: 'connector', entityId: id, meta: { provider: row.provider } });
   });
   refresh();
-  redirect('/organizacion#conectores');
+  redirect('/agentes?tab=conexiones');
+}
+
+/** Cambia qué revisa el conector de Microsoft sin volver a iniciar sesión. */
+export async function saveMicrosoftSourcesAction(fd: FormData) {
+  const session = await requireWriteAccess();
+  const orgId = session.user.organizationId;
+  const valid = MS_SOURCES.map((x) => x.k);
+  const sources = fd.getAll('sources').map(String).filter((x) => valid.includes(x));
+  if (!sources.length) redirect('/agentes?tab=conexiones&integracion=microsoft&error=fuentes');
+  const { db } = getDb();
+  await withOrg(db, orgId, async (tx) => {
+    const [row] = await tx.select().from(connectors).where(and(eq(connectors.organizationId, orgId), eq(connectors.provider, 'microsoft'))).limit(1);
+    if (!row) return;
+    await tx.update(connectors).set({ config: { ...(row.config as object), sources }, updatedAt: new Date() }).where(eq(connectors.id, row.id));
+    await appendAudit(tx, { organizationId: orgId, actorUserId: session.user.id, action: 'connector.update', entityType: 'connector', entityId: row.id, meta: { sources } });
+  });
+  refresh();
+  redirect('/agentes?tab=conexiones&integracion=microsoft&guardado=1');
 }
 
 const DATA_FROM_SCOPE: [RegExp, string][] = [

@@ -28,7 +28,7 @@ function creds() {
   return { id, secret };
 }
 
-export function authorizeUrl(redirectUri: string, state: string): string {
+export function authorizeUrl(redirectUri: string, state: string, domainHint?: string): string {
   const { id } = creds();
   const q = new URLSearchParams({
     client_id: id,
@@ -39,6 +39,7 @@ export function authorizeUrl(redirectUri: string, state: string): string {
     state,
     prompt: 'select_account',
   });
+  if (domainHint) q.set('domain_hint', domainHint);
   return `${LOGIN}/organizations/oauth2/v2.0/authorize?${q}`;
 }
 
@@ -254,7 +255,11 @@ export async function discoverPowerPlatform(http: Http, token: string): Promise<
 }
 
 /** Corre ambas fuentes; si una falla, la otra sigue y se reporta el aviso. */
-export async function syncMicrosoft(http: Http, link: { tenantId: string; refreshToken: string }): Promise<SyncResult & { refreshToken: string }> {
+export async function syncMicrosoft(
+  http: Http,
+  link: { tenantId: string; refreshToken: string },
+  sources: string[] = ['entra', 'powerplatform'],
+): Promise<SyncResult & { refreshToken: string }> {
   const items: DiscoveredInput[] = [];
   const okSources: SyncResult['okSources'] = [];
   const warnings: string[] = [];
@@ -262,20 +267,24 @@ export async function syncMicrosoft(http: Http, link: { tenantId: string; refres
 
   const graph = await accessToken(http, { tenantId: link.tenantId, refreshToken }, GRAPH_SCOPE);
   refreshToken = graph.refreshToken;
-  try {
-    items.push(...(await discoverEntra(http, graph.token, link.tenantId)));
-    okSources.push('entra');
-  } catch (e) {
-    warnings.push(e instanceof ConnectorError ? `${e.message} ${e.hint ?? ''}`.trim() : 'No se pudo leer Entra ID.');
+  if (sources.includes('entra')) {
+    try {
+      items.push(...(await discoverEntra(http, graph.token, link.tenantId)));
+      okSources.push('entra');
+    } catch (e) {
+      warnings.push(e instanceof ConnectorError ? `${e.message} ${e.hint ?? ''}`.trim() : 'No se pudo leer Entra ID.');
+    }
   }
 
-  try {
-    const pp = await accessToken(http, { tenantId: link.tenantId, refreshToken }, PP_SCOPE);
-    refreshToken = pp.refreshToken;
-    items.push(...(await discoverPowerPlatform(http, pp.token)));
-    okSources.push('powerplatform');
-  } catch (e) {
-    warnings.push(e instanceof ConnectorError ? `${e.message} ${e.hint ?? ''}`.trim() : 'No se pudo leer Power Platform.');
+  if (sources.includes('powerplatform')) {
+    try {
+      const pp = await accessToken(http, { tenantId: link.tenantId, refreshToken }, PP_SCOPE);
+      refreshToken = pp.refreshToken;
+      items.push(...(await discoverPowerPlatform(http, pp.token)));
+      okSources.push('powerplatform');
+    } catch (e) {
+      warnings.push(e instanceof ConnectorError ? `${e.message} ${e.hint ?? ''}`.trim() : 'No se pudo leer Power Platform.');
+    }
   }
   return { items, okSources, warnings, refreshToken };
 }

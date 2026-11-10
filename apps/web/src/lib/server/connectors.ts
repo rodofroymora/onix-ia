@@ -14,7 +14,7 @@ export interface ConnectorView {
   lastError: string | null;
   summary: { found?: number; added?: number; gone?: number };
   /** Solo datos no sensibles: nunca el token. */
-  config: { externalId?: string; roleArn?: string; regions?: string[]; tenantId?: string; account?: string };
+  config: { externalId?: string; roleArn?: string; regions?: string[]; tenantId?: string; account?: string; sources?: string[] };
 }
 
 export async function loadConnectors(orgId: string) {
@@ -30,7 +30,7 @@ export async function loadConnectors(orgId: string) {
       lastSyncAt: r.lastSyncAt,
       lastError: r.lastError,
       summary: r.lastSyncSummary as ConnectorView['summary'],
-      config: { externalId: c.externalId, roleArn: c.roleArn, regions: c.regions, tenantId: c.tenantId, account: c.account },
+      config: { externalId: c.externalId, roleArn: c.roleArn, regions: c.regions, tenantId: c.tenantId, account: c.account, sources: c.sources },
     };
   });
   return {

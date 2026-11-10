@@ -52,7 +52,7 @@ export function DetectedPanel({
             ? 'La próxima revisión diaria traerá lo que encuentre en tu nube.'
             : 'Conecta Microsoft 365 o AWS y Ónix encontrará las apps de IA y los agentes que ya usa tu organización.'}
         </p>
-        <Link href="/organizacion#conectores" className="onix-btn-primary mt-4">
+        <Link href="/agentes?tab=conexiones" className="onix-btn-primary mt-4">
           {hasConnectors ? 'Ver conectores' : 'Conectar mi nube'}
         </Link>
       </div>

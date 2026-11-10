@@ -11,9 +11,10 @@ import { createCaseFromAgentAction, saveAgentAction } from '@/lib/actions/agents
 import { askAboutAgents, loadAgents, type AgentRow } from '@/lib/server/agents';
 import { requireSession } from '@/lib/session';
 import { DetectedPanel } from '@/components/connectors/DetectedPanel';
+import { IntegrationDrawer, IntegrationsCatalog } from '@/components/connectors/Integrations';
 import { loadConnectors, loadDiscovered } from '@/lib/server/connectors';
 
-type SP = { tab?: string; q?: string; agente?: string; estado?: string; publicador?: string; plataforma?: string; canal?: string; ambito?: string; vista?: string };
+type SP = { tab?: string; q?: string; agente?: string; estado?: string; publicador?: string; plataforma?: string; canal?: string; ambito?: string; vista?: string; integracion?: string; cat?: string; ok?: string; nuevos?: string; error?: string; guardado?: string };
 
 function Select({ name, label, value, options }: { name: string; label: string; value?: string; options: { k: string; n: string }[] }) {
   return (
@@ -237,7 +238,7 @@ export default async function AgentesPage({ searchParams }: { searchParams: Prom
         <Kpi label="Inactivos" value={idle.length} sub="candidatos a retirar" />
       </div>
 
-      {tab !== 'detectados' ? (
+      {tab !== 'detectados' && tab !== 'conexiones' ? (
       <>
       <div className="mt-6 flex flex-wrap items-center gap-1 text-[13px]">
         {(
@@ -305,12 +306,13 @@ export default async function AgentesPage({ searchParams }: { searchParams: Prom
               { id: 'mapa', label: 'Mapa' },
               { id: 'registro', label: `Registro · ${list.length}` },
               { id: 'detectados', label: newDetections ? `Detectados · ${newDetections} por revisar` : 'Detectados' },
+              { id: 'conexiones', label: conn.list.length ? `Conexiones · ${conn.list.length}` : 'Conexiones' },
             ]}
           />
         </Suspense>
       </div>
 
-      {tab !== 'detectados' && newDetections ? (
+      {tab !== 'detectados' && tab !== 'conexiones' && newDetections ? (
         <Link href="/agentes?tab=detectados" className="onix-glass mt-4 flex items-center justify-between gap-3 rounded-xl px-4 py-3 text-[13px]">
           <span className="text-ink">
             Los conectores encontraron <strong className="font-semibold">{newDetections}</strong> {newDetections === 1 ? 'app o agente' : 'apps o agentes'} que no están en el registro.
@@ -319,7 +321,9 @@ export default async function AgentesPage({ searchParams }: { searchParams: Prom
         </Link>
       ) : null}
 
-      {tab === 'detectados' ? (
+      {tab === 'conexiones' ? (
+        <IntegrationsCatalog list={conn.list} ready={conn.ready} flash={p} base="/agentes" />
+      ) : tab === 'detectados' ? (
         <DetectedPanel
           items={discovered}
           view={p.vista ?? 'nuevo'}
@@ -433,6 +437,16 @@ export default async function AgentesPage({ searchParams }: { searchParams: Prom
         Los agentes se registran a mano, llegan de los conectores con Microsoft 365 y AWS, o se descubren en la telemetría. Los casos en producción del inventario aparecen aquí aunque no tengan agente registrado.
       </p>
 
+      {tab === 'conexiones' && p.integracion ? (
+        <IntegrationDrawer
+          integrationKey={p.integracion}
+          list={conn.list}
+          ready={conn.ready}
+          canWrite={canWrite}
+          flash={p}
+          closeHref={`/agentes?tab=conexiones${p.cat ? `&cat=${encodeURIComponent(p.cat)}` : ''}`}
+        />
+      ) : null}
       {selected !== undefined ? <AgentDrawer a={selected} cases={cases} canWrite={canWrite} closeHref={href({ agente: undefined })} /> : null}
     </div>
   );

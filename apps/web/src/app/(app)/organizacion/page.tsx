@@ -5,7 +5,7 @@ import { revokeInviteAction } from '@/lib/actions/users';
 import { InviteUserForm } from '@/components/panels/InviteUserForm';
 import { loadOrganizationPage } from '@/lib/server/org-data';
 import { requireSession } from '@/lib/session';
-import { ConnectorsSection } from '@/components/connectors/ConnectorsSection';
+import Link from 'next/link';
 import { loadConnectors } from '@/lib/server/connectors';
 
 const ROLE_LABEL: Record<string, string> = {
@@ -18,9 +18,8 @@ const ROLE_LABEL: Record<string, string> = {
 
 type Role = { fn?: string; role: string; person: string; email?: string };
 
-export default async function OrganizacionPage({ searchParams }: { searchParams: Promise<{ conector?: string; ok?: string; nuevos?: string; error?: string }> }) {
+export default async function OrganizacionPage() {
   const session = await requireSession();
-  const flash = await searchParams;
   const [data, conn] = await Promise.all([loadOrganizationPage(session.user.organizationId), loadConnectors(session.user.organizationId)]);
   const canWrite = session.user.role !== 'client_reader';
   const roles = ((data.maps[0]?.roles as Role[] | undefined) ?? []).filter(Boolean);
@@ -120,7 +119,20 @@ export default async function OrganizacionPage({ searchParams }: { searchParams:
           ) : null}
         </Card>
       </div>
-      <ConnectorsSection list={conn.list} ready={conn.ready} canWrite={canWrite} flash={flash} />
+      <Link
+        href="/agentes?tab=conexiones"
+        className="onix-panel mt-4 flex items-center justify-between gap-4 px-5 py-4 transition hover:shadow-sm"
+      >
+        <span>
+          <span className="block text-[14px] font-medium text-ink">Conexiones de descubrimiento</span>
+          <span className="block text-[12px] text-ink-muted">
+            {conn.list.length
+              ? `${conn.list.length} ${conn.list.length === 1 ? 'conexión' : 'conexiones'}. Se administran en Agent Discovery.`
+              : 'Conecta Microsoft 365, AWS y más desde Agent Discovery.'}
+          </span>
+        </span>
+        <span className="shrink-0 text-[13px] text-accent">Abrir</span>
+      </Link>
     </div>
   );
 }

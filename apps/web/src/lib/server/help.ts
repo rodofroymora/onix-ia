@@ -84,9 +84,9 @@ export const HELP: HelpEntry[] = [
     k: 'agentes',
     title: 'Agent Discovery',
     href: '/agentes',
-    keywords: ['agente', 'agentes', 'discovery', 'mapa', 'copilot', 'shadow', 'sin dueño', 'registrar agente'],
+    keywords: ['agente', 'agentes', 'discovery', 'mapa', 'copilot', 'shadow', 'sin dueño', 'registrar agente', 'conexiones', 'conectar', 'integracion', 'microsoft', 'aws', 'detectados'],
     answer:
-      'Agent Discovery muestra los agentes en producción, incluidos los casos del inventario que aún no tienen agente.\n- **Pregúntale:** el buscador responde en lenguaje natural.\n- **Mapa:** burbujas por tecnología o red de agentes y datos.\n- **Sin caso:** desde la ficha del agente usa "Crear caso desde este agente".',
+      'Agent Discovery muestra los agentes en producción, incluidos los casos del inventario que aún no tienen agente.\n- **Pregúntale:** el buscador responde en lenguaje natural.\n- **Mapa:** burbujas por tecnología o red de agentes y datos.\n- **Conexiones:** escoge una integración (Microsoft 365, AWS y más), llena sus parámetros y Ónix revisa cada día con permisos de solo lectura.\n- **Detectados:** lo que encuentran las conexiones; regístralo, vincúlalo o ignóralo.\n- **Sin caso:** desde la ficha del agente usa "Crear caso desde este agente".',
   },
   {
     k: 'telemetria',

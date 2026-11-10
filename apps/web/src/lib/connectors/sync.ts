@@ -113,9 +113,9 @@ export async function runConnector(orgId: string, connector: ConnectorRow, actor
   try {
     if (connector.status === 'demo') return { ok: true, found: 0, added: 0, gone: 0, message: 'Conector de demostración: los datos son de ejemplo.' };
     if (connector.provider === 'microsoft') {
-      const cfg = connector.config as { tenantId?: string };
+      const cfg = connector.config as { tenantId?: string; sources?: string[] };
       if (!connector.secretEnc || !cfg.tenantId) throw new ConnectorError('Falta volver a conectar Microsoft 365.');
-      const r = await syncMicrosoft(fetch, { tenantId: cfg.tenantId, refreshToken: decryptSecret(connector.secretEnc) });
+      const r = await syncMicrosoft(fetch, { tenantId: cfg.tenantId, refreshToken: decryptSecret(connector.secretEnc) }, cfg.sources?.length ? cfg.sources : undefined);
       const { db } = getDb();
       await withOrg(db, orgId, (tx) => tx.update(connectors).set({ secretEnc: encryptSecret(r.refreshToken) }).where(eq(connectors.id, connector.id)));
       return await persistDiscovery(orgId, connector, r, actorUserId);
