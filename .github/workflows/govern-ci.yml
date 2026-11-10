@@ -3,6 +3,7 @@ name: Govern CI
 # Pruebas, tipos y compilación de Ónix Govern (apps/web) en cada cambio.
 # Vercel solo promueve a Producción si este flujo pasa (Deployment Checks).
 on:
+  workflow_dispatch:
   push:
     branches: [main, develop, 'cursor/govern-**']
     paths: ['apps/web/**', '.github/workflows/govern-ci.yml']
