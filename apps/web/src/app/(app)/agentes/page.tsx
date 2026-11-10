@@ -10,8 +10,10 @@ import { Tabs } from '@/components/ui/Tabs';
 import { createCaseFromAgentAction, saveAgentAction } from '@/lib/actions/agents';
 import { askAboutAgents, loadAgents, type AgentRow } from '@/lib/server/agents';
 import { requireSession } from '@/lib/session';
+import { DetectedPanel } from '@/components/connectors/DetectedPanel';
+import { loadConnectors, loadDiscovered } from '@/lib/server/connectors';
 
-type SP = { tab?: string; q?: string; agente?: string; estado?: string; publicador?: string; plataforma?: string; canal?: string; ambito?: string };
+type SP = { tab?: string; q?: string; agente?: string; estado?: string; publicador?: string; plataforma?: string; canal?: string; ambito?: string; vista?: string };
 
 function Select({ name, label, value, options }: { name: string; label: string; value?: string; options: { k: string; n: string }[] }) {
   return (
@@ -173,7 +175,12 @@ export default async function AgentesPage({ searchParams }: { searchParams: Prom
   const p = await searchParams;
   const tab = p.tab ?? 'mapa';
   const canWrite = session.user.role !== 'client_reader';
-  const { agents, cases } = await loadAgents(session.user.organizationId);
+  const [{ agents, cases }, discovered, conn] = await Promise.all([
+    loadAgents(session.user.organizationId),
+    loadDiscovered(session.user.organizationId),
+    loadConnectors(session.user.organizationId),
+  ]);
+  const newDetections = discovered.filter((d) => d.status === 'nuevo').length;
 
   const scope = p.ambito === 'todos' ? 'todos' : 'produccion';
   const filtered = agents.filter(
@@ -230,6 +237,8 @@ export default async function AgentesPage({ searchParams }: { searchParams: Prom
         <Kpi label="Inactivos" value={idle.length} sub="candidatos a retirar" />
       </div>
 
+      {tab !== 'detectados' ? (
+      <>
       <div className="mt-6 flex flex-wrap items-center gap-1 text-[13px]">
         {(
           [
@@ -285,6 +294,8 @@ export default async function AgentesPage({ searchParams }: { searchParams: Prom
           </div>
         </div>
       ) : null}
+      </>
+      ) : null}
 
       <div className="mt-5">
         <Suspense fallback={null}>
@@ -293,12 +304,31 @@ export default async function AgentesPage({ searchParams }: { searchParams: Prom
             items={[
               { id: 'mapa', label: 'Mapa' },
               { id: 'registro', label: `Registro · ${list.length}` },
+              { id: 'detectados', label: newDetections ? `Detectados · ${newDetections} por revisar` : 'Detectados' },
             ]}
           />
         </Suspense>
       </div>
 
-      {tab === 'mapa' ? (
+      {tab !== 'detectados' && newDetections ? (
+        <Link href="/agentes?tab=detectados" className="onix-glass mt-4 flex items-center justify-between gap-3 rounded-xl px-4 py-3 text-[13px]">
+          <span className="text-ink">
+            Los conectores encontraron <strong className="font-semibold">{newDetections}</strong> {newDetections === 1 ? 'app o agente' : 'apps o agentes'} que no están en el registro.
+          </span>
+          <span className="shrink-0 text-accent">Revisar</span>
+        </Link>
+      ) : null}
+
+      {tab === 'detectados' ? (
+        <DetectedPanel
+          items={discovered}
+          view={p.vista ?? 'nuevo'}
+          canWrite={canWrite}
+          agents={agents.filter((a) => !a.fromInventory).map((a) => ({ id: a.id, name: a.name }))}
+          hrefFor={(v) => `/agentes?tab=detectados${v === 'nuevo' ? '' : `&vista=${v}`}`}
+          hasConnectors={conn.list.length > 0}
+        />
+      ) : tab === 'mapa' ? (
         <div className="mt-5 grid gap-4 lg:grid-cols-[1fr_300px]">
           <div className="onix-panel p-3">
             <Suspense fallback={null}>
@@ -400,7 +430,7 @@ export default async function AgentesPage({ searchParams }: { searchParams: Prom
       )}
 
       <p className="mt-4 text-[11px] text-ink-subtle">
-        Los agentes se registran a mano o se descubren en la telemetría, y los casos en producción del inventario aparecen aquí aunque no tengan agente registrado. La conexión directa con Microsoft 365, Google y AWS para descubrirlos solos está en el roadmap.
+        Los agentes se registran a mano, llegan de los conectores con Microsoft 365 y AWS, o se descubren en la telemetría. Los casos en producción del inventario aparecen aquí aunque no tengan agente registrado.
       </p>
 
       {selected !== undefined ? <AgentDrawer a={selected} cases={cases} canWrite={canWrite} closeHref={href({ agente: undefined })} /> : null}

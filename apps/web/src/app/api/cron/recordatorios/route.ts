@@ -4,13 +4,16 @@ import { and, desc, eq, inArray } from 'drizzle-orm';
 import { assessments, invitations, memberships, organizations, users } from '@onix/db';
 import { getDb, withOrg } from '@/lib/db';
 import { appBaseUrl, respondentPath, sendEmail } from '@/lib/notify';
+import { syncAllConnectors } from '@/lib/connectors/sync';
+
+export const maxDuration = 300;
 
 const EVERY_DAYS = 3;
 const MAX_REMINDERS = 3;
 
 /**
  * Tarea diaria (Vercel Cron): recuerda a quien no ha contestado su cuestionario y avisa
- * a los administradores cuando falta un mes o menos para la reevaluación.
+ * a los administradores cuando falta un mes o menos para la reevaluación. También revisa los conectores.
  */
 export async function GET(req: Request) {
   const secret = process.env.CRON_SECRET?.trim();
@@ -103,5 +106,13 @@ export async function GET(req: Request) {
       }
     });
   }
-  return NextResponse.json({ ok: true, respondents, reevaluations: reevals });
+  // 3) Conectores de descubrimiento (Microsoft, AWS): revisión diaria.
+  let connectorsRun = { runs: 0, errors: 0 };
+  try {
+    connectorsRun = await syncAllConnectors(orgs.map((o) => o.id));
+  } catch (err) {
+    console.error('[cron] conectores fallaron', err);
+  }
+
+  return NextResponse.json({ ok: true, respondents, reevaluations: reevals, connectors: connectorsRun });
 }

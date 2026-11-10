@@ -196,3 +196,10 @@
     color: var(--onix-text-subtle);
   }
 }
+
+/* Insignias de estado con fondo tenue del color del estado. */
+.onix-tint-success { color: var(--onix-success); background: color-mix(in srgb, var(--onix-success) 12%, transparent); }
+.onix-tint-warning { color: var(--onix-warning); background: color-mix(in srgb, var(--onix-warning) 14%, transparent); }
+.onix-tint-danger { color: var(--onix-danger); background: color-mix(in srgb, var(--onix-danger) 12%, transparent); }
+.onix-tint-accent { color: var(--onix-accent); background: color-mix(in srgb, var(--onix-accent) 12%, transparent); }
+.onix-tint-muted { color: var(--onix-text-muted); background: var(--onix-bg-subtle); }

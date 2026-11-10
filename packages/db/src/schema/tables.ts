@@ -565,3 +565,52 @@ export const evidenceFiles = pgTable('evidence_files', {
   data: bytea('data').notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 });
+
+export const connectors = pgTable('connectors', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  organizationId: uuid('organization_id')
+    .notNull()
+    .references(() => organizations.id, { onDelete: 'cascade' }),
+  /** microsoft | aws | google */
+  provider: text('provider').notNull(),
+  /** pendiente | conectado | error | demo */
+  status: text('status').notNull().default('pendiente'),
+  displayName: text('display_name'),
+  config: jsonb('config').notNull().default({}),
+  /** Credencial cifrada (AES-256-GCM con CONNECTOR_ENC_KEY). Nunca se manda al navegador. */
+  secretEnc: text('secret_enc'),
+  lastSyncAt: timestamp('last_sync_at', { withTimezone: true }),
+  lastSyncSummary: jsonb('last_sync_summary').notNull().default({}),
+  lastError: text('last_error'),
+  createdBy: uuid('created_by').references(() => users.id, { onDelete: 'set null' }),
+  ...timestamps,
+});
+
+export const discoveredItems = pgTable('discovered_items', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  organizationId: uuid('organization_id')
+    .notNull()
+    .references(() => organizations.id, { onDelete: 'cascade' }),
+  connectorId: uuid('connector_id')
+    .notNull()
+    .references(() => connectors.id, { onDelete: 'cascade' }),
+  provider: text('provider').notNull(),
+  /** entra | powerplatform | bedrock | agentcore */
+  source: text('source').notNull(),
+  externalId: text('external_id').notNull(),
+  /** app | agente */
+  kind: text('kind').notNull().default('agente'),
+  name: text('name').notNull(),
+  vendor: text('vendor'),
+  platform: text('platform'),
+  ownerName: text('owner_name'),
+  usersCount: integer('users_count'),
+  suggestedRisk: text('suggested_risk'),
+  details: jsonb('details').notNull().default({}),
+  /** nuevo | registrado | ignorado | desaparecido */
+  status: text('status').notNull().default('nuevo'),
+  agentId: uuid('agent_id').references(() => aiAgents.id, { onDelete: 'set null' }),
+  firstSeenAt: timestamp('first_seen_at', { withTimezone: true }).notNull().defaultNow(),
+  lastSeenAt: timestamp('last_seen_at', { withTimezone: true }).notNull().defaultNow(),
+  ...timestamps,
+});

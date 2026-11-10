@@ -100,6 +100,7 @@ export const AGENT_PLATFORMS: CatalogOption[] = [
   { k: 'servicenow', n: 'ServiceNow AI Agents', d: 'ServiceNow' },
   { k: 'n8n', n: 'n8n', d: 'Automatización' },
   { k: 'make', n: 'Make y Zapier', d: 'Automatización' },
+  { k: 'saas_ia', n: 'App de IA de terceros', d: 'SaaS' },
   { k: 'custom', n: 'Desarrollo propio', d: 'Código' },
 ];
 

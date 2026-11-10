@@ -8,6 +8,7 @@ import { CASE_QUESTIONS_V1, MATURITY_QUESTIONS_V1 } from '@onix/templates';
 import type { GovernDb, GovernTx } from './client.js';
 import * as schema from './schema/index.js';
 import { DEMO_SEED_VERSION, seedDemoV2 } from './demo-seed.js';
+import { ensureDemoDiscovery } from './demo-discovery.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 /** sql/ vive junto al paquete (packages/db/sql o vendor/db/sql). */
@@ -31,6 +32,7 @@ export const MIGRATION_FILES = [
   '0004_catalogos_telemetria_agentes.sql',
   '0005_agentes_produccion.sql',
   '0006_acceso_real.sql',
+  '0007_conectores.sql',
 ] as const;
 const BASELINE = ['0001_init.sql', '0002_inventory_origin_status.sql', 'rls.sql'];
 
@@ -228,6 +230,7 @@ export async function ensureDemoSeed(
     if (seeded.length === 0) {
       await seedDemoContent(tx as Tx, { id: org.id, name: DEMO_NAME });
     }
+    await ensureDemoDiscovery(tx as Tx, org.id);
     await tx
       .insert(schema.governMeta)
       .values({ key: 'demo_seed_version', value: DEMO_SEED_VERSION })

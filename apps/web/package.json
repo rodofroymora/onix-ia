@@ -1,6 +1,6 @@
 {
   "name": "@onix/web",
-  "version": "0.2.5",
+  "version": "0.2.4",
   "private": true,
   "scripts": {
     "dev": "next dev --port 3000",
@@ -13,6 +13,9 @@
     "test:e2e": "playwright install chromium && playwright test"
   },
   "dependencies": {
+    "@aws-sdk/client-bedrock-agent": "^3.1165.0",
+    "@aws-sdk/client-bedrock-agentcore-control": "^3.1165.0",
+    "@aws-sdk/client-sts": "^3.1165.0",
     "@onix/agent": "file:./vendor/agent",
     "@onix/db": "file:./vendor/db",
     "@onix/engine": "file:./vendor/engine",

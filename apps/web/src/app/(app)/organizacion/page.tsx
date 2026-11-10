@@ -5,6 +5,8 @@ import { revokeInviteAction } from '@/lib/actions/users';
 import { InviteUserForm } from '@/components/panels/InviteUserForm';
 import { loadOrganizationPage } from '@/lib/server/org-data';
 import { requireSession } from '@/lib/session';
+import { ConnectorsSection } from '@/components/connectors/ConnectorsSection';
+import { loadConnectors } from '@/lib/server/connectors';
 
 const ROLE_LABEL: Record<string, string> = {
   owner: 'Propietario',
@@ -16,9 +18,10 @@ const ROLE_LABEL: Record<string, string> = {
 
 type Role = { fn?: string; role: string; person: string; email?: string };
 
-export default async function OrganizacionPage() {
+export default async function OrganizacionPage({ searchParams }: { searchParams: Promise<{ conector?: string; ok?: string; nuevos?: string; error?: string }> }) {
   const session = await requireSession();
-  const data = await loadOrganizationPage(session.user.organizationId);
+  const flash = await searchParams;
+  const [data, conn] = await Promise.all([loadOrganizationPage(session.user.organizationId), loadConnectors(session.user.organizationId)]);
   const canWrite = session.user.role !== 'client_reader';
   const roles = ((data.maps[0]?.roles as Role[] | undefined) ?? []).filter(Boolean);
   const find = (k: string, n: string) => roles.find((r) => r.fn === k || r.role === n);
@@ -117,6 +120,7 @@ export default async function OrganizacionPage() {
           ) : null}
         </Card>
       </div>
+      <ConnectorsSection list={conn.list} ready={conn.ready} canWrite={canWrite} flash={flash} />
     </div>
   );
 }
