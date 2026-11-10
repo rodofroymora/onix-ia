@@ -1,0 +1,46 @@
+name: Govern CI
+
+# Pruebas, tipos y compilación de Ónix Govern (apps/web) en cada cambio.
+# Vercel solo promueve a Producción si este flujo pasa (Deployment Checks).
+on:
+  push:
+    branches: [main, develop, 'cursor/govern-**']
+    paths: ['apps/web/**', '.github/workflows/govern-ci.yml']
+  pull_request:
+    branches: [main, develop]
+    paths: ['apps/web/**', '.github/workflows/govern-ci.yml']
+
+concurrency:
+  group: govern-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verificar:
+    name: Pruebas y compilación
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - name: Instalar dependencias
+        run: npm ci
+      - name: Compilar paquetes internos
+        run: node scripts/build-vendor.mjs
+      - name: Revisar tipos
+        run: npm run typecheck
+      - name: Pruebas
+        run: npm test
+      - name: Compilar la app
+        run: npx next build
+        env:
+          # Valores de prueba: el build no se conecta a ninguna base ni servicio real.
+          AUTH_SECRET: ci-auth-secret-solo-para-compilar-0123456789
+          RESPONDENT_TOKEN_SECRET: ci-respondent-secret-solo-para-compilar
+          NEXT_TELEMETRY_DISABLED: '1'

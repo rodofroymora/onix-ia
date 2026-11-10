@@ -1,3 +1,4 @@
+import { environmentLabel } from '@/lib/environment';
 import { AuthError } from 'next-auth';
 import { redirect } from 'next/navigation';
 import { auth, signIn } from '@/lib/auth';
@@ -42,6 +43,9 @@ export default async function LoginPage({
         <div className="flex flex-col items-center text-center">
           <span className="flex h-12 w-12 items-center justify-center rounded-full bg-ink text-[20px] font-semibold text-canvas">Ó</span>
           <h1 className="mt-5 text-[24px] font-semibold tracking-tight text-ink">Ónix Govern</h1>
+          {environmentLabel() ? (
+            <p className="onix-tint-warning mx-auto mt-2 w-fit rounded-full px-2.5 py-0.5 text-[11px] font-medium">Ambiente de {environmentLabel()!.toLowerCase()}</p>
+          ) : null}
           <p className="mt-1 text-[14px] text-ink-muted">Gobierno de IA, paso a paso.</p>
         </div>
         <form action={loginAction} className="onix-panel mt-8 space-y-4 px-6 py-6">

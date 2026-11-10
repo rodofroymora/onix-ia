@@ -1,3 +1,4 @@
+import { environmentLabel } from '@/lib/environment';
 import { headers } from 'next/headers';
 
 /** URL pública de la app: APP_URL, o la del request, o la de Vercel. */
@@ -60,7 +61,7 @@ export async function sendInvitationEmail(input: {
     body: JSON.stringify({
       from,
       to: [input.to],
-      subject: `Revisión inicial de IA de ${input.organizationName}`,
+      subject: `${environmentLabel() ? `[${environmentLabel()}] ` : ''}Revisión inicial de IA de ${input.organizationName}`,
       html,
     }),
   });
@@ -85,7 +86,7 @@ export async function sendEmail(input: { to: string; subject: string; paragraphs
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ from, to: [input.to], subject: input.subject, html }),
+    body: JSON.stringify({ from, to: [input.to], subject: environmentLabel() ? `[${environmentLabel()}] ${input.subject}` : input.subject, html }),
   });
   if (!res.ok) throw new Error(`Resend respondió ${res.status}`);
   return 'sent';

@@ -11,6 +11,7 @@ import { SignOutButton } from '@/components/shell/SignOutButton';
 import { MobileNav } from '@/components/shell/MobileNav';
 import { TableLabels } from '@/components/shell/TableLabels';
 import { getDb } from '@/lib/db';
+import { environmentLabel } from '@/lib/environment';
 import { loadShellData } from '@/lib/server/shell';
 import { requireSession } from '@/lib/session';
 
@@ -55,6 +56,11 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                 email={session.user.email ?? ''}
               />
               <p className="flex-1 text-[15px] font-semibold tracking-tight text-ink md:hidden">Ónix</p>
+              {environmentLabel() ? (
+                <span className="onix-tint-warning shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-medium" title="Los cambios aquí no afectan Producción">
+                  Ambiente de {environmentLabel()!.toLowerCase()}
+                </span>
+              ) : null}
               <div className="hidden min-w-0 flex-1 md:block">
                 <RutaIaStrip done={shell.done} />
               </div>

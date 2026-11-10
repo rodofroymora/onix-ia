@@ -12,7 +12,9 @@ const sqlDir = [path.resolve(repoRoot, 'packages/db/sql'), path.resolve(__dirnam
 
 describe('RLS org isolation', () => {
   it('govern_set_org fija el tenant y withOrg aísla en capa de app', async () => {
-    const { client, db } = await createMemoryDb();
+    const { client: rawClient, db } = await createMemoryDb();
+    // La base en memoria es PGlite: expone exec() y close().
+    const client = rawClient as unknown as { exec(sql: string): Promise<unknown>; close(): Promise<void> };
     for (const f of ['0001_init.sql', '0002_inventory_origin_status.sql', 'rls.sql', '0003_v1_completo.sql', '0004_catalogos_telemetria_agentes.sql', '0005_agentes_produccion.sql', '0006_acceso_real.sql', '0007_conectores.sql']) {
       const full = path.join(sqlDir, f);
       expect(existsSync(full)).toBe(true);
