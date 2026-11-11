@@ -187,7 +187,81 @@
             <p class="ruta__prom">Sabes dónde rinde la IA, qué riesgo trae y por dónde empezar.</p>
             <div class="fig">
               <div class="figgrid">
-                  <svg class="fig-pie" viewBox="0 0 300 300" fill="none" aria-hidden="true"><ellipse cx="150" cy="28" rx="132" ry="16" fill="#F5F3FF"/><path class="banda" fill="#EDE9FE" d="M18 28H282L210 118H90Z"/><ellipse cx="150" cy="118" rx="60" ry="9" fill="#DDD6FE"/><path class="banda banda--2" fill="#C4B5FD" d="M90 118H210L178 196H122Z"/><ellipse cx="150" cy="196" rx="28" ry="7" fill="#A78BFA"/><path class="banda banda--3" fill="#6D28D9" d="M122 196H178L162 240H138Z"/><ellipse cx="150" cy="240" rx="12" ry="5" fill="#5B21B6"/><g fill="#6D28D9"><circle class="punto" cx="70" cy="58" r="4"/><circle class="punto" cx="108" cy="48" r="3.5"/><circle class="punto" cx="146" cy="64" r="4"/><circle class="punto" cx="186" cy="46" r="3.5"/><circle class="punto" cx="222" cy="60" r="4"/><circle class="punto" cx="92" cy="78" r="3.2"/><circle class="punto" cx="132" cy="86" r="3.5"/><circle class="punto" cx="172" cy="76" r="3.2"/><circle class="punto" cx="208" cy="88" r="3.5"/></g><g fill="#6D28D9"><circle class="punto" cx="138" cy="250" r="6"/><circle class="punto" cx="150" cy="254" r="6"/><circle class="punto" cx="162" cy="250" r="6"/></g><g stroke="#6D28D9" stroke-width="1.6" fill="none"><path d="M138 256C138 274 50 274 50 300"/><path d="M150 260V300"/><path d="M162 256C162 274 250 274 250 300"/></g></svg>
+                  <svg class="fig-pie fig-pie--solo" viewBox="0 0 400 374" fill="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="fa-top" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F5F3FF"/>
+      <stop offset="1" stop-color="#EFEAFC"/>
+    </linearGradient>
+    <linearGradient id="fa-mid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#D5CAF4"/>
+      <stop offset="0.5" stop-color="#E4DCFB"/>
+      <stop offset="1" stop-color="#EDE7FC"/>
+    </linearGradient>
+    <linearGradient id="fa-bot" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6D28D9"/>
+      <stop offset="1" stop-color="#5B21B6"/>
+    </linearGradient>
+    <linearGradient id="fa-vol" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#4C1D95" stop-opacity="0.14"/>
+      <stop offset="0.28" stop-color="#4C1D95" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#ffffff" stop-opacity="0.24"/>
+      <stop offset="0.72" stop-color="#4C1D95" stop-opacity="0"/>
+      <stop offset="1" stop-color="#4C1D95" stop-opacity="0.16"/>
+    </linearGradient>
+    <linearGradient id="fa-edge" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#A78BFA" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#DDD6FE" stop-opacity="0.9"/>
+    </linearGradient>
+    <clipPath id="fa-clip"><path d="M 18.0 40 L 136.0 276 A 64 24 0 0 0 264.0 276 L 382.0 40 A 182 14 0 0 0 18.0 40 Z"/></clipPath>
+  </defs>
+  <g class="cono">
+    <path d="M 18.0 40 L 136.0 276 A 64 24 0 0 0 264.0 276 L 382.0 40 A 182 14 0 0 0 18.0 40 Z" fill="url(#fa-top)"/>
+    <path d="M 74.0 152 Q 200 170 326.0 152 L 290.0 224 Q 200 238 110.0 224 Z" fill="url(#fa-mid)"/>
+    <path d="M 110.0 224 Q 200 238 290.0 224 L 264.0 276 A 64 24 0 0 1 136.0 276 Z" fill="url(#fa-bot)"/>
+    <path d="M 18.0 40 L 110.0 224 Q 200 238 290.0 224 L 382.0 40 A 182 14 0 0 0 18.0 40 Z" fill="url(#fa-vol)"/>
+  </g>
+  <g class="cono cono-trazo" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 37.0 58.0 L 75.0 132.0" stroke="#ffffff" stroke-width="1.4" opacity="0"/>
+    <path class="nivel" d="M 74.0 152 Q 200 170 326.0 152" stroke="#B7A4EE" stroke-width="1.15"/>
+    <path class="nivel" d="M 110.0 224 Q 200 238 290.0 224" stroke="#E4DCFB" stroke-width="1.15"/>
+    <path d="M 18.0 40 A 182 14 0 0 0 382.0 40 A 182 14 0 0 0 18.0 40" stroke="#DDD6FE" stroke-width="1.15"/>
+    <path d="M 382.0 40 A 182 14 0 0 1 18.0 40" stroke="#ffffff" stroke-width="1.4" opacity="0.85"/>
+    <path d="M 264.0 276 A 64 24 0 0 1 136.0 276" stroke="url(#fa-edge)" stroke-width="1.6"/>
+    <g fill="#5B21B6">
+    <circle class="punto" cx="70" cy="62" r="4.6"/>
+    <circle class="punto" cx="118" cy="70" r="5.0"/>
+    <circle class="punto" cx="168" cy="58" r="4.5"/>
+    <circle class="punto" cx="220" cy="74" r="5.2"/>
+    <circle class="punto" cx="272" cy="64" r="4.7"/>
+    <circle class="punto" cx="322" cy="78" r="4.8"/>
+    <circle class="punto" cx="92" cy="94" r="4.4"/>
+    <circle class="punto" cx="146" cy="102" r="5.0"/>
+    <circle class="punto" cx="198" cy="88" r="4.5"/>
+    <circle class="punto" cx="252" cy="106" r="5.1"/>
+    <circle class="punto" cx="304" cy="96" r="4.6"/>
+    <circle class="punto" cx="112" cy="122" r="4.2"/>
+    <circle class="punto" cx="164" cy="130" r="4.8"/>
+    <circle class="punto" cx="214" cy="116" r="4.4"/>
+    <circle class="punto" cx="266" cy="126" r="4.9"/>
+    <circle class="punto" cx="314" cy="114" r="4.4"/>
+    <circle class="punto" cx="318.0" cy="152" r="3.4"/>
+    </g>
+    <circle class="punto punto--claro" cx="232" cy="246" r="3.5" fill="#F5F3FF"/>
+    <g class="salida" stroke="#5B21B6" stroke-width="1.15">
+      <path d="M 168.0 296.8 V 346 Q 168.0 354 160.0 354 H 74 Q 67 354 67 362 V 368"/>
+      <path d="M 200 300.0 V 368"/>
+      <path d="M 232.0 296.8 V 346 Q 232.0 354 240.0 354 H 326 Q 333 354 333 362 V 368"/>
+    </g>
+    <g fill="#5B21B6">
+      <circle cx="168.0" cy="326" r="4"/>
+      <circle cx="200" cy="326" r="4"/>
+      <circle cx="232.0" cy="326" r="4"/>
+    </g>
+  </g>
+</svg>
+
+
                 <div class="olas"><div><b>Ola 1</b><span>Bases</span></div><div><b>Ola 2</b><span>Controles</span></div><div><b>Ola 3</b><span>Mejora continua</span></div></div>
               </div>
             </div>

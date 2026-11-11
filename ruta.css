@@ -165,10 +165,12 @@ body.ed .v-hero--plan .btn.btn--primary:hover { background: transparent; color: 
 .beneficia__item img { width: 28px; height: 28px; flex: none; }
 .beneficia__item p { margin: 0; font-size: 15px; line-height: 1.4; color: #26262C; }
 .fase .que { max-width: 40rem; }
-html.js .fig-pie { clip-path: inset(0 0 100% 0); }
-html.js .is-in .fig-pie { clip-path: inset(0 0 0 0); transition: clip-path 1s linear; }
-html.js .punto { opacity: 0; transform: translateY(-16px); }
-html.js .is-in .punto { opacity: 1; transform: none; transition: opacity .45s linear .45s, transform .7s linear .45s; }
+html.js .cono { clip-path: inset(0 0 100% 0); }
+html.js .is-in .cono { clip-path: inset(0 0 0 0); transition: clip-path 1.05s linear; }
+html.js .punto { opacity: 0; transform: translateY(-12px); transform-box: fill-box; transform-origin: center; }
+html.js .is-in .punto { opacity: 1; transform: none; transition: opacity .4s linear .5s, transform .65s linear .5s; }
+html.js .gline { stroke-dasharray: 360; stroke-dashoffset: 360; }
+html.js .is-in .gline { stroke-dashoffset: 0; transition: stroke-dashoffset .55s linear .8s; }
 html.js .guia { opacity: 0; }
 html.js .is-in .guia { opacity: 1; transition: opacity .4s linear .7s; }
 html.js .flujo__paso { transform: translateY(10px); opacity: 0; }
@@ -294,11 +296,45 @@ html.js .fases.is-in .fases__linea { transform: none; transition: transform .8s 
   .js .og-plan:not(.is-in) .og-bar i,
   .js .og-plan.is-in .og-bar i { transform: none; transition: none; }
   .line-art, .entrada__linea, .ruta-line, .fases__linea, .cierre__linea, .trazo,
-  .punto, .guia, .flujo__paso, .fig-pie { opacity: 1; transform: none; transition: none; clip-path: none; }
+  .punto, .guia, .flujo__paso, .fig-pie, .cono, .gline { opacity: 1; transform: none; transition: none; clip-path: none; stroke-dashoffset: 0; }
   .ruta-rail { scroll-behavior: auto; }
 }
 @media (max-width: 767px) {
   html.js .entrada__flow:not(.is-in) .entrada__linea { transform: scaleY(0); transform-origin: top center; }
   .ruta-track .ruta-line { top: 6px; bottom: auto; left: 8px; right: 8px; width: auto; height: 1.6px; }
   .ruta-card .ruta__dot { left: 0; top: -28px; }
+}
+
+#fase-01 .fig-pie--full { display: none; }
+.gline { stroke: #9CA3AF; stroke-width: 1; vector-effect: non-scaling-stroke; }
+.nivel, .salida path, .cono-trazo > path { vector-effect: non-scaling-stroke; }
+.etiqueta { margin: 0; font-family: inherit; }
+.etiqueta strong { display: block; font-size: 14px; font-weight: 700; line-height: 1.25; color: #26262C; letter-spacing: -.01em; }
+.etiqueta span { display: block; margin-top: 3px; font-size: 13px; line-height: 1.35; color: #6B7280; font-weight: 400; }
+#fase-01 .olas,
+.ruta-card[data-fase="01"] .olas {
+  background: #F6F4FB; border-radius: 18px; margin-top: -10px; padding: 18px 6px 14px;
+}
+#fase-01 .olas span,
+.ruta-card[data-fase="01"] .olas span { white-space: nowrap; }
+#fase-01 .olas b,
+.ruta-card[data-fase="01"] .olas b { color: #6D28D9; font-weight: 600; }
+#fase-01 .olas span,
+.ruta-card[data-fase="01"] .olas span { color: #6B7280; }
+#fase-01 .olas div + div,
+.ruta-card[data-fase="01"] .olas div + div { border-left-color: #E7E3F0; }
+#fase-01 .beneficia h3 { max-width: 7.4rem; }
+#fase-01 .beneficia__item img { width: 24px; height: 24px; }
+@media (min-width: 768px) {
+  #fase-01 .figgrid { grid-template-columns: 400fr 300fr; gap: 0; align-items: start; }
+  #fase-01 .fig__lead { grid-column: 1; grid-row: 1; max-width: none; width: 86%; margin: 0 auto 4px; text-align: center; }
+  #fase-01 .fig-pie--solo { display: none; }
+  #fase-01 .fig-pie--full { display: block; grid-column: 1 / -1; grid-row: 2; width: 100%; }
+  #fase-01 .guias { display: none; }
+  #fase-01 .olas { grid-column: 1; grid-row: 3; }
+}
+@media (max-width: 767px) {
+  #fase-01 .fig__lead { text-align: center; margin-inline: auto; }
+  #fase-01 .figgrid > .fig-pie--solo,
+  #fase-01 .figgrid > .olas { width: min(100%, 400px); }
 }
