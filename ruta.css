@@ -1,0 +1,143 @@
+/* Ruta IA: hero con plan real, línea plana y página /ruta-ia. Sin 3D ni brillo. */
+
+.v-hero--plan { background: #FFFDF7; color: #26262C; padding: 72px 0 96px; }
+.v-hero__grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(280px, .95fr); gap: 48px 56px; align-items: start; }
+.v-hero--plan h1 { max-width: 16ch; }
+.v-hero--plan .v-lead { color: #4A4A52; max-width: 36ch; }
+.v-hero__note { margin-top: 16px; font-size: 15px; color: #4A4A52; }
+.btn--ruta {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 50px; padding: 0 22px; border-radius: 999px;
+  background: #7C3AED; color: #FFFDF7; text-decoration: none; font-weight: 600;
+}
+.btn--ruta:hover { background: #6D28D9; color: #FFFDF7; }
+.v-hero__ctas { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin-top: 28px; }
+.v-hero__ctas .cta__act { max-width: 28rem; }
+
+.og-plan {
+  background: #fff; border: 1px solid #E4E0D5; border-radius: 20px; padding: 22px 22px 18px;
+}
+.og-plan h2, .og-plan .og-plan__h {
+  font-size: 22px; line-height: 1.2; letter-spacing: -.02em; font-weight: 600; margin: 0 0 14px;
+}
+.og-ola { font-size: 13px; font-weight: 600; color: #6D28D9; margin: 0 0 12px; }
+.og-plan ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.og-acc {
+  border: 1px solid #E4E0D5; border-radius: 12px; padding: 12px 14px; background: #FFFDF7;
+}
+.og-acc__top { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.og-acc strong { font-size: 15px; font-weight: 600; letter-spacing: -.01em; }
+.og-acc b { font-size: 14px; font-weight: 600; color: #26262C; }
+.og-acc p { margin: 4px 0 8px; font-size: 13px; color: #4A4A52; }
+.og-bar { height: 4px; background: #E4E0D5; border-radius: 999px; overflow: hidden; }
+.og-bar i { display: block; height: 100%; width: var(--w, 0%); background: #7C3AED; transform-origin: left center; }
+.js .og-plan:not(.is-in) .og-bar i { transform: scaleX(0); }
+.js .og-plan.is-in .og-bar i { transform: scaleX(1); transition: transform .6s linear; }
+.og-plan .link { display: inline-flex; min-height: 44px; align-items: center; margin-top: 12px; }
+.og-note { margin: 4px 0 0; font-size: 13px; color: #4A4A52; }
+
+.ruta-band { background: #26262C; color: #FFFDF7; padding: 96px 0; }
+.ruta-band h2 { color: #FFFDF7; max-width: 22ch; }
+.ruta { list-style: none; margin: 48px 0 0; padding: 28px 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; position: relative; }
+.ruta::before {
+  content: "";
+  position: absolute;
+  top: 4px; left: 4px; right: 16px;
+  height: 2px; background: #7C3AED;
+  transform-origin: left center;
+}
+.ruta::after {
+  content: "";
+  position: absolute;
+  top: -1px; right: 0;
+  border: 6px solid transparent;
+  border-left: 8px solid #7C3AED;
+}
+.js .ruta-anim:not(.is-in)::before { transform: scaleX(0); }
+.js .ruta-anim.is-in::before { transform: scaleX(1); transition: transform .6s linear; }
+.ruta__fase { position: relative; min-width: 0; }
+.ruta__dot {
+  position: absolute; left: 0; top: -28px; width: 10px; height: 10px; border-radius: 50%;
+  background: #7C3AED; transform: translateY(-3px);
+}
+.js .ruta-anim .ruta__fase { opacity: 0; }
+.js .ruta-anim.is-in .ruta__fase { animation: ruta-node .01s linear forwards; }
+.js .ruta-anim.is-in .ruta__fase:nth-child(1) { animation-delay: .15s; }
+.js .ruta-anim.is-in .ruta__fase:nth-child(2) { animation-delay: .32s; }
+.js .ruta-anim.is-in .ruta__fase:nth-child(3) { animation-delay: .5s; }
+@keyframes ruta-node { to { opacity: 1; } }
+.ruta__n { display: block; font-size: 40px; font-weight: 600; letter-spacing: -.04em; line-height: 1; color: #B79CF7; }
+.ruta__fase h3 { margin-top: 8px; font-size: 22px; letter-spacing: -.02em; line-height: 1.15; color: #FFFDF7; }
+.ruta__sub { display: block; margin-top: 2px; font-size: 15px; font-weight: 500; color: #A5A2A9; }
+.ruta__prom { margin-top: 10px; color: #FFFDF7; font-size: 16px; line-height: 1.4; }
+.ruta__cierra { margin-top: 10px; font-size: 14px; line-height: 1.45; color: #A5A2A9; }
+.ruta__cierra span { display: block; color: #B79CF7; font-weight: 600; margin-bottom: 2px; }
+.ruta__fase a { display: inline-flex; align-items: center; min-height: 44px; margin-top: 8px; color: #B79CF7; font-weight: 500; }
+.ruta__fase.is-start { outline: 1px solid #7C3AED; outline-offset: 12px; border-radius: 8px; }
+.ruta__tag {
+  display: inline-block; margin-bottom: 8px; font-size: 13px; font-weight: 600; color: #B79CF7;
+}
+.ruta__foot {
+  display: flex; justify-content: space-between; gap: 24px; align-items: center;
+  margin-top: 36px; padding-top: 20px; border-top: 1px solid #3A3A42;
+}
+.ruta__foot p { margin: 0; color: #A5A2A9; max-width: 46rem; }
+.ruta__foot a { color: #B79CF7; font-weight: 600; white-space: nowrap; }
+.ruta__personal { margin-top: 16px; color: #B79CF7; font-size: 15px; }
+.ruta__personal[hidden] { display: none; }
+.ruta__personal a { color: #FFFDF7; }
+
+.fase { padding: 88px 0; scroll-margin-top: 96px; }
+.fase__grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 40px 64px; }
+.fase__n { font-size: 15px; font-weight: 600; color: #6D28D9; }
+.fase h2 { margin-top: 8px; }
+.fase__q { margin-top: 12px; font-size: 20px; font-weight: 600; letter-spacing: -.02em; }
+.fase__side h3 { font-size: 15px; color: #6D28D9; margin-top: 0; }
+.fase__side ul { margin: 8px 0 20px; padding: 0; list-style: none; }
+.fase__side li { padding: 8px 0; border-top: 1px solid #E4E0D5; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.chips li { border: 1px solid #E4E0D5; border-radius: 999px; padding: 6px 12px; font-size: 14px; }
+.marco { background: #26262C; color: #FFFDF7; padding: 96px 0; }
+.marco h2, .cierre h2 { color: #FFFDF7; }
+.marco__norte, .marco__base { border: 1px solid #3A3A42; border-radius: 16px; padding: 16px 18px; }
+.marco__norte strong, .marco__base strong { display: block; color: #B79CF7; font-size: 13px; margin-bottom: 4px; }
+.marco__cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 16px 0; }
+.marco__cols div { border-top: 1px solid #3A3A42; padding-top: 12px; }
+.marco__cols h3 { color: #FFFDF7; font-size: 20px; }
+.marco p { color: #A5A2A9; }
+.precios { padding: 88px 0; }
+.precio-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 32px; }
+.precio {
+  border: 1px solid #E4E0D5; border-radius: 16px; padding: 22px; background: #fff; display: flex; flex-direction: column; gap: 8px;
+}
+.precio.is-start { border-color: #7C3AED; }
+.precio .ruta__tag { margin: 0; }
+.precio b { font-size: 18px; }
+.cierre { background: #26262C; padding: 96px 0; }
+.cierre p { color: #A5A2A9; }
+.cierre .v-hero__ctas { margin-top: 24px; }
+.reporte-mail { display: flex; flex-direction: column; gap: 8px; max-width: 28rem; margin-top: 16px; }
+.reporte-mail input { font: inherit; font-size: 16px; min-height: 48px; padding: 8px 12px; border-radius: 12px; border: 1px solid #4A4A52; background: #FFFDF7; }
+
+@media (max-width: 1023px) {
+  .v-hero__grid, .fase__grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 767px) {
+  .ruta { display: flex; flex-direction: column; gap: 28px; padding: 8px 0 8px 28px; margin-top: 32px; }
+  .ruta::before { top: 8px; bottom: 8px; left: 8px; right: auto; width: 2px; height: auto; transform-origin: top center; }
+  .ruta::after { display: none; }
+  .js .ruta-anim:not(.is-in)::before { transform: scaleY(0); }
+  .js .ruta-anim.is-in::before { transform: scaleY(1); }
+  .ruta__dot { left: -24px; top: 6px; }
+  .ruta__foot { flex-direction: column; align-items: flex-start; }
+  .marco__cols, .precio-grid { grid-template-columns: 1fr; }
+  .ruta__fase h3 { font-size: 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .js .og-plan:not(.is-in) .og-bar i,
+  .js .og-plan.is-in .og-bar i { transform: none; transition: none; }
+  .js .ruta-anim:not(.is-in)::before,
+  .js .ruta-anim.is-in::before { transform: none; transition: none; }
+  .js .ruta-anim .ruta__fase,
+  .js .ruta-anim.is-in .ruta__fase { opacity: 1; animation: none; }
+}
