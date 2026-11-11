@@ -112,31 +112,69 @@ body.ed .v-hero--plan .btn.btn--primary:hover { background: transparent; color: 
 .line-art path, .line-art circle { vector-effect: non-scaling-stroke; }
 .fase__labels { display: flex; justify-content: space-between; gap: 16px; margin-top: 8px; }
 .fase__labels p { margin: 0; max-width: 14rem; font-size: 13px; line-height: 1.4; }
-.embudo { max-width: 640px; margin-top: 8px; color: #7C3AED; }
-.embudo__nivel {
-  display: grid;
-  grid-template-columns: minmax(0, 1.45fr) minmax(8.5rem, 12.5rem);
-  gap: 4px 18px;
-  align-items: center;
-}
-.embudo__nivel > p { margin: 0; font-size: 13px; line-height: 1.35; color: #26262C; }
-.embudo svg { display: block; width: 100%; height: auto; overflow: visible; }
-.embudo path, .embudo circle { vector-effect: non-scaling-stroke; }
-.embudo circle { fill: none; stroke: currentColor; stroke-width: 1.6; }
-.embudo .punto--pasa circle { fill: currentColor; stroke: none; }
-.embudo__olas { list-style: none; margin: 0; padding: 2px 8px 0 18%; }
-.embudo__olas li { display: flex; align-items: center; gap: 10px; margin-top: 7px; font-size: 13px; line-height: 1.2; color: #26262C; }
-.embudo__olas i { flex: 1; height: 1.6px; background: #7C3AED; }
-.ruta-card .embudo { color: #7C3AED; }
-.ruta-card .embudo__nivel > p, .ruta-card .embudo__olas li { color: #FFFDF7; }
-html.js .embudo .punto { transform: translateY(-18px); }
-html.js .embudo .punto--filtra { opacity: .85; }
-html.js .embudo .punto--pasa { transform: translateY(-34px); }
-html.js .is-in .embudo .punto { transform: none; opacity: 1; transition: transform .95s linear, opacity .8s linear; }
-html.js .is-in .embudo .punto--filtra { opacity: 0; transform: translateY(26px); }
-html.js .is-in .embudo .punto--pasa { transition-delay: .28s; }
-html.js .embudo .trazo { stroke-dasharray: 320; stroke-dashoffset: 320; }
-html.js .is-in .embudo .trazo { stroke-dashoffset: 0; transition: stroke-dashoffset 1s linear; }
+.fase { padding: 72px 0; }
+.fase__top { display: grid; grid-template-columns: minmax(0, .88fr) minmax(280px, 1.15fr); gap: 36px 48px; align-items: start; }
+.fase__kicker { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; font-size: 13px; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; color: #6D28D9; }
+.fase__kicker::after { content: ""; width: 42px; height: 1.6px; background: #6D28D9; }
+.fase h2 { margin: 0; font-size: clamp(36px, 4vw, 52px); letter-spacing: -.04em; line-height: 1.05; }
+.fase__sub { margin: 6px 0 0; font-size: 18px; color: #5C5B64; }
+.fase__q { margin: 22px 0 0; font-size: 20px; font-weight: 600; letter-spacing: -.02em; color: #26262C; }
+.fase__top p { color: #5C5B64; font-size: 16px; line-height: 1.55; max-width: 38rem; }
+.fase__fit { margin-top: 14px; font-size: 14px; }
+.fase__fit strong { color: #26262C; }
+.fig__lead { margin: 0 0 8px; text-align: center; font-size: 14px; line-height: 1.45; color: #5C5B64; max-width: 34rem; margin-inline: auto; }
+.stage, .figgrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(148px, 210px); gap: 4px 10px; align-items: center; }
+.figgrid > .olas { grid-column: 1; }
+.stage svg { display: block; width: 100%; height: auto; }
+.calls { display: flex; flex-direction: column; justify-content: space-between; align-self: stretch; gap: 18px; padding: 6% 0 22%; }
+.call { position: relative; margin: 0; padding-left: 12px; }
+.call::before { content: ""; position: absolute; left: -36px; top: 9px; width: 36px; height: 1px; background: #A78BFA; }
+.call strong { display: block; font-size: 14px; line-height: 1.25; color: #26262C; }
+.call span { display: block; margin-top: 3px; font-size: 13px; line-height: 1.4; color: #5C5B64; }
+.olas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin-top: 4px; padding: 14px 8px; background: #F5F3FF; border-radius: 16px; }
+.olas div { padding: 4px 12px; text-align: center; }
+.olas div + div { border-left: 1px solid #DDD6FE; }
+.olas b { display: block; font-size: 15px; color: #26262C; }
+.olas span { display: block; margin-top: 2px; font-size: 13px; color: #5C5B64; }
+.flujo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.flujo__paso { border-radius: 16px; padding: 16px 14px; min-height: 118px; }
+.flujo__paso b { display: block; font-size: 15px; line-height: 1.25; }
+.flujo__paso span { display: block; margin-top: 6px; font-size: 13px; line-height: 1.4; }
+.flujo__paso--1 { background: #EDE9FE; color: #26262C; }
+.flujo__paso--2 { background: #A78BFA; color: #26262C; }
+.flujo__paso--3 { background: #6D28D9; color: #FFFDF7; }
+.flujo__paso--3 span { color: #EDE9FE; }
+.board { background: #FFFDF7; border: 1px solid #E4E0D5; border-radius: 18px; padding: 14px; }
+.board__note { margin: 0 0 8px; font-size: 12px; letter-spacing: .04em; text-transform: uppercase; color: #6D28D9; font-weight: 650; }
+.board__cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.board__cards article { background: #F5F3FF; border-radius: 12px; padding: 10px; min-height: 92px; }
+.board__cards h4 { margin: 0 0 8px; font-size: 13px; font-weight: 650; color: #26262C; }
+.board__bars { display: flex; align-items: flex-end; gap: 4px; height: 42px; }
+.board__bars i { display: block; flex: 1; border-radius: 3px 3px 0 0; background: #C4B5FD; }
+.board__bars i:nth-child(1) { height: 35%; background: #DDD6FE; }
+.board__bars i:nth-child(2) { height: 62%; background: #A78BFA; }
+.board__bars i:nth-child(3) { height: 48%; }
+.board__bars i:nth-child(4) { height: 78%; background: #7C3AED; }
+.board__chart { display: block; width: 100%; height: auto; margin-top: 10px; }
+.board__umbral { margin: 4px 0 0; font-size: 12px; color: #6D28D9; text-align: right; }
+.beneficia { display: grid; grid-template-columns: minmax(120px, 160px) 1fr 1fr 1fr; gap: 0; align-items: center; margin-top: 40px; padding-top: 22px; border-top: 1px solid #E4E0D5; }
+.beneficia h3 { margin: 0; font-size: 22px; letter-spacing: -.03em; line-height: 1.15; }
+.beneficia__item { display: flex; gap: 12px; align-items: flex-start; padding: 0 18px; border-left: 1px solid #E4E0D5; }
+.beneficia__item img { width: 28px; height: 28px; flex: none; }
+.beneficia__item p { margin: 0; font-size: 15px; line-height: 1.4; color: #26262C; }
+.fase .que { max-width: 40rem; }
+html.js .banda { transform-box: fill-box; transform-origin: center top; transform: scaleY(0); }
+html.js .is-in .banda { transform: none; transition: transform .65s linear; }
+html.js .is-in .banda--2 { transition-delay: .18s; }
+html.js .is-in .banda--3 { transition-delay: .36s; }
+html.js .punto { opacity: 0; transform: translateY(-14px); }
+html.js .is-in .punto { opacity: 1; transform: none; transition: opacity .5s linear .35s, transform .7s linear .35s; }
+html.js .call { opacity: 0; }
+html.js .is-in .call { opacity: 1; transition: opacity .45s linear .55s; }
+html.js .flujo__paso { transform: translateY(10px); opacity: 0; }
+html.js .is-in .flujo__paso { transform: none; opacity: 1; transition: .5s linear; }
+html.js .is-in .flujo__paso--2 { transition-delay: .15s; }
+html.js .is-in .flujo__paso--3 { transition-delay: .3s; }
 .fase__cap { margin: 14px 0 0; padding-top: 14px; border-top: 1px solid #E4E0D5; color: #4A4A52; font-size: 15px; max-width: 40rem; }
 .fase__draw > .fase__cap:first-child { margin: 0 0 12px; padding-top: 0; border-top: 0; }
 .umbral { position: absolute; top: 8px; right: 0; margin: 0; font-size: 13px; color: #4A4A52; }
@@ -197,7 +235,13 @@ html.js .is-in .embudo .trazo { stroke-dashoffset: 0; transition: stroke-dashoff
   .fase__dot { left: -28px; }
   .fase__dot::before { width: 10px; }
   .fase__labels { flex-direction: column; gap: 8px; }
-  .embudo__nivel { grid-template-columns: minmax(0, 1.2fr) minmax(0, .9fr); gap: 6px 10px; }
+  .fase__top, .beneficia, .board__cards, .flujo { grid-template-columns: 1fr; }
+  .beneficia__item { border-left: 0; border-top: 1px solid #E4E0D5; padding: 14px 0; }
+  .figgrid { display: flex; flex-direction: column; }
+  .figgrid > .calls { order: 3; padding-top: 8px; }
+  .call::before { left: 0; width: 16px; }
+  .call { padding-left: 24px; }
+  .fig__lead { text-align: left; }
   .fase__body { margin-top: 24px; }
   .umbral { top: 0; }
 }
@@ -218,7 +262,18 @@ html.js .is-in .embudo .trazo { stroke-dashoffset: 0; transition: stroke-dashoff
 .ruta-rail:focus-visible { outline: 2px solid #7C3AED; outline-offset: 4px; }
 .ruta-track { position: relative; display: flex; gap: 28px; width: max-content; padding: 28px 4px 12px; }
 .ruta-track .ruta-line { top: 6px; left: 8px; right: 8px; }
-.ruta-card { position: relative; flex: 0 0 min(640px, 78vw); scroll-snap-align: start; min-width: 0; }
+.ruta-card {
+  position: relative; flex: 0 0 min(680px, 82vw); scroll-snap-align: start; min-width: 0;
+  background: #FFFDF7; color: #26262C; border-radius: 22px; padding: 22px 22px 18px;
+}
+.ruta-band .ruta-card h3, .ruta-band .ruta-card .ruta__prom { color: #26262C; }
+.ruta-band .ruta-card .ruta__prom { color: #4A4A52; }
+.ruta-band .ruta-card .ruta__n { color: #6D28D9; font-size: 22px; }
+.ruta-band .ruta-card .ruta__sub { color: #5C5B64; }
+.ruta-band .ruta-card > a { color: #6D28D9; }
+.ruta-card .fig__lead, .ruta-card .call span, .ruta-card .board__note { display: none; }
+.ruta-card .stage { grid-template-columns: minmax(0, 1.15fr) minmax(108px, 150px); }
+.ruta-card .olas { margin-top: 8px; }
 .ruta-card .line-art { max-height: 180px; margin-top: 16px; color: #7C3AED; }
 .ruta-card .fase__labels p { color: #A5A2A9; }
 .ruta-card.is-start { outline: 1px solid #7C3AED; outline-offset: 12px; border-radius: 12px; }
@@ -235,7 +290,7 @@ html.js .fases.is-in .fases__linea { transform: none; transition: transform .8s 
   .js .og-plan:not(.is-in) .og-bar i,
   .js .og-plan.is-in .og-bar i { transform: none; transition: none; }
   .line-art, .entrada__linea, .ruta-line, .fases__linea, .cierre__linea, .trazo,
-  .embudo .punto, .embudo .punto--pasa, .embudo .punto--filtra { transition: none; animation: none; stroke-dashoffset: 0; transform: none; opacity: 1; }
+  .punto, .call, .flujo__paso, .banda { opacity: 1; transform: none; transition: none; }
   .ruta-rail { scroll-behavior: auto; }
 }
 @media (max-width: 767px) {
