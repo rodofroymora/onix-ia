@@ -11,6 +11,10 @@
   background: #7C3AED; color: #FFFDF7; text-decoration: none; font-weight: 600;
 }
 .btn--ruta:hover { background: #6D28D9; color: #FFFDF7; }
+body.ed .v-hero--plan .btn.btn--primary {
+  background: transparent; color: #26262C; border: 1px solid #26262C; box-shadow: none;
+}
+body.ed .v-hero--plan .btn.btn--primary:hover { background: transparent; color: #26262C; }
 .v-hero__ctas { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin-top: 28px; }
 .v-hero__ctas .cta__act { max-width: 28rem; }
 
@@ -90,7 +94,10 @@
 .fase { padding: 88px 0; scroll-margin-top: 96px; }
 .fase__grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 40px 64px; }
 .fase__n { font-size: 15px; font-weight: 600; color: #6D28D9; }
-.fase h2 { margin-top: 8px; }
+.fase h2 { margin-top: 8px; color: #26262C; }
+.fase .h2, .marco .h2, .cierre .h2, .ruta-band .h2 {
+  opacity: 1; filter: none; transform: none;
+}
 .fase__q { margin-top: 12px; font-size: 20px; font-weight: 600; letter-spacing: -.02em; }
 .fase__side h3 { font-size: 15px; color: #6D28D9; margin-top: 0; }
 .fase__side ul { margin: 8px 0 20px; padding: 0; list-style: none; }
@@ -105,14 +112,6 @@
 .marco__cols div { border-top: 1px solid #3A3A42; padding-top: 12px; }
 .marco__cols h3 { color: #FFFDF7; font-size: 20px; }
 .marco p { color: #A5A2A9; }
-.precios { padding: 88px 0; }
-.precio-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 32px; }
-.precio {
-  border: 1px solid #E4E0D5; border-radius: 16px; padding: 22px; background: #fff; display: flex; flex-direction: column; gap: 8px;
-}
-.precio.is-start { border-color: #7C3AED; }
-.precio .ruta__tag { margin: 0; }
-.precio b { font-size: 18px; }
 .cierre { background: #26262C; padding: 96px 0; }
 .cierre p { color: #A5A2A9; }
 .cierre .v-hero__ctas { margin-top: 24px; }
@@ -130,7 +129,7 @@
   .js .ruta-anim.is-in::before { transform: scaleY(1); }
   .ruta__dot { left: -24px; top: 6px; }
   .ruta__foot { flex-direction: column; align-items: flex-start; }
-  .marco__cols, .precio-grid { grid-template-columns: 1fr; }
+  .marco__cols { grid-template-columns: 1fr; }
   .ruta__fase h3 { font-size: 20px; }
 }
 @media (prefers-reduced-motion: reduce) {

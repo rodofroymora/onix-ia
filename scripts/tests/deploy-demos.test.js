@@ -153,10 +153,11 @@ for (const [etiqueta, env] of [['DEPLOY_ENV=prod', { DEPLOY_ENV: 'prod' }], ['si
   const rp = cli(prod, { DEPLOY_ENV: 'prod' });
   prueba('PROD: el script termina bien con el cuestionario en el fuente', rp.status, 0);
   prueba('PROD: no queda autoevaluacion.html', fs.existsSync(path.join(prod, 'autoevaluacion.html')), false);
-  prueba('PROD: no queda autoevaluacion.js', fs.existsSync(path.join(prod, 'autoevaluacion.js')), false);
-  prueba('PROD: no queda autoevaluacion-logica.js', fs.existsSync(path.join(prod, 'autoevaluacion-logica.js')), false);
-  const htmlProd = P.listarHtml(prod).filter((f) => /\/autoevaluacion\b/.test(fs.readFileSync(f, 'utf8')));
-  prueba('PROD: ninguna página enlaza /autoevaluacion', htmlProd.map((f) => path.relative(prod, f)), []);
+  prueba('PROD: el autodiagnóstico público conserva autoevaluacion.js', fs.existsSync(path.join(prod, 'autoevaluacion.js')), true);
+  prueba('PROD: el autodiagnóstico público conserva la lógica', fs.existsSync(path.join(prod, 'autoevaluacion-logica.js')), true);
+  const htmlProd = P.listarHtml(prod).filter((f) => /\/autoevaluacion(?!\.js\b)/.test(fs.readFileSync(f, 'utf8')));
+  prueba('PROD: ninguna página enlaza la ruta /autoevaluacion', htmlProd.map((f) => path.relative(prod, f)), []);
+  prueba('PROD: /autodiagnostico sigue cargando el instrumento', /src="\/autoevaluacion\.js"/.test(fs.readFileSync(path.join(prod, 'autodiagnostico.html'), 'utf8')), true);
   const estProd = fs.readFileSync(path.join(prod, 'servicios', 'estrategia-de-ia.html'), 'utf8');
   prueba('PROD: Estrategia sigue teniendo Govern y sus capturas', /id="govern"/.test(estProd) && /imagenes\/govern\/evaluacion\.png/.test(estProd), true);
   prueba('PROD: el fuente del repo sigue enlazando la autoevaluación', /href="\/autoevaluacion"/.test(fs.readFileSync(path.join(raiz, 'servicios', 'estrategia-de-ia.html'), 'utf8')), true);

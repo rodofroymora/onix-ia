@@ -25,10 +25,14 @@ const NO_PUBLICOS_SIEMPRE = ['.github', 'scripts', 'release-rules.json', 'README
 // `demos/` (prefijo exacto, con barra) solo se publica en DEV, siempre con noindex; en PROD se elimina.
 const DIR_DEMOS = 'demos';
 const NO_PUBLICOS_PROD = NO_PUBLICOS_SIEMPRE.concat([DIR_DEMOS]);
-/* La autoevaluación es un prototipo solo de DEV. En el fuente no lleva noindex
-   (el check de release solo permite noindex en /salud y en demos/). PROD la quita. */
-const QUIZ_ARCHIVOS = ['autoevaluacion.html', 'autoevaluacion.js', 'autoevaluacion-logica.js'];
-const QUIZ_HREF_RE = /\/autoevaluacion\b/;
+/* La página /autoevaluacion es un prototipo solo de DEV. En el fuente no lleva noindex
+   (el check de release solo permite noindex en /salud y en demos/). PROD quita esa página
+   y el enlace «solo dev». El instrumento público /autodiagnostico reutiliza el mismo JS,
+   así que autoevaluacion.js y autoevaluacion-logica.js sí se publican. */
+const QUIZ_PAGINA = 'autoevaluacion.html';
+const QUIZ_JS = ['autoevaluacion.js', 'autoevaluacion-logica.js'];
+const QUIZ_ARCHIVOS = [QUIZ_PAGINA];
+const QUIZ_PAGINA_RE = /\/autoevaluacion(?!\.js\b)/;
 const NO_PUBLICOS = NO_PUBLICOS_PROD;   // lista de PROD (compatibilidad)
 const LINEA_DEMOS_RE = /^\/?demos\/?\s*$/;
 const META_NOINDEX = '<meta name="robots" content="noindex, nofollow" />';
@@ -146,7 +150,7 @@ function rutasDemos(root) {
   return acc;
 }
 
-/** Quita del paquete la autoevaluación y cualquier enlace interno hacia ella. */
+/** Quita del paquete la página prototipo y el enlace interno hacia ella. El JS se queda. */
 function retirarQuizProd(root) {
   const quitados = [];
   for (const n of QUIZ_ARCHIVOS) {
@@ -161,17 +165,20 @@ function retirarQuizProd(root) {
   return quitados;
 }
 
-/** PROD: no puede quedar el HTML, el JS ni un enlace a /autoevaluacion. */
+/** PROD: no puede quedar la página prototipo ni un enlace a su ruta. El JS del instrumento público sí. */
 function verificarQuizProd(root) {
   const errs = [];
-  for (const n of QUIZ_ARCHIVOS) {
-    if (fs.existsSync(path.join(root, n))) errs.push(`${n}: la autoevaluación no puede estar en el paquete de PRODUCCIÓN.`);
+  if (fs.existsSync(path.join(root, QUIZ_PAGINA))) errs.push(`${QUIZ_PAGINA}: la página prototipo no puede estar en el paquete de PRODUCCIÓN.`);
+  if (fs.existsSync(path.join(root, 'autodiagnostico.html'))) {
+    for (const n of QUIZ_JS) {
+      if (!fs.existsSync(path.join(root, n))) errs.push(`${n}: el autodiagnóstico público lo necesita en PRODUCCIÓN.`);
+    }
   }
   for (const f of listarHtml(root)) {
-    if (QUIZ_HREF_RE.test(fs.readFileSync(f, 'utf8'))) errs.push(`${path.relative(root, f)}: enlace a /autoevaluacion en producción.`);
+    if (QUIZ_PAGINA_RE.test(fs.readFileSync(f, 'utf8'))) errs.push(`${path.relative(root, f)}: enlace a /autoevaluacion en producción.`);
   }
   const sm = path.join(root, 'sitemap.xml');
-  if (fs.existsSync(sm) && QUIZ_HREF_RE.test(fs.readFileSync(sm, 'utf8'))) errs.push('sitemap.xml: no debe listar /autoevaluacion en producción.');
+  if (fs.existsSync(sm) && QUIZ_PAGINA_RE.test(fs.readFileSync(sm, 'utf8'))) errs.push('sitemap.xml: no debe listar /autoevaluacion en producción.');
   return errs;
 }
 
