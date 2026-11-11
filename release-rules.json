@@ -11,7 +11,7 @@
   "plazosAprobados": [
     "__NINGUNA_APROBADA__"
   ],
-  "_plazosAprobados_NOTA": "Reglas vigentes: sin plazos ni duraciones. El centinela activa el check (incluye \"24/7\").",
+  "_plazosAprobados_NOTA": "Reglas vigentes: sin plazos ni duraciones. El centinela activa el check (incluye \"24/7\"). La única excepción es la frase exacta «Conoce en 15 minutos el nivel de preparación de tu práctica de IA y dónde trabajar.» (textosExactosAprobados, id autodiagnostico-quince): el check 01 la retira antes de buscar plazos y el check 05 la enmascara. «15 minutos» en cualquier otra frase sigue fallando.",
   "preciosAprobados": [
     "__NINGUNA_APROBADA__",
     "$4,900",
@@ -597,6 +597,10 @@
     {
       "id": "demo-plan-veinticinco",
       "texto": "25%"
+    },
+    {
+      "id": "autodiagnostico-quince",
+      "texto": "Conoce en 15 minutos el nivel de preparación de tu práctica de IA y dónde trabajar."
     }
   ],
   "rutasConSectorPermitido": [

@@ -16,8 +16,7 @@
     }, { threshold: 0.35 });
     list.forEach(function (el) { io.observe(el); });
   }
-  reveal([].slice.call(document.querySelectorAll('.og-plan')), 'is-in');
-  reveal([].slice.call(document.querySelectorAll('.ruta')), 'is-in');
+  reveal([].slice.call(document.querySelectorAll('.og-plan, .ruta-car, .fase__draw, .entrada__flow, .fases')), 'is-in');
 
   var raw = null;
   try { raw = sessionStorage.getItem('onix-autodiagnostico'); } catch (e) {}

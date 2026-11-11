@@ -2,8 +2,8 @@
 
 .v-hero--plan { background: #FFFDF7; color: #26262C; padding: 72px 0 96px; }
 .v-hero__grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(280px, .95fr); gap: 48px 56px; align-items: start; }
-.v-hero--plan h1 { max-width: 16ch; }
-.v-hero--plan .v-lead { color: #4A4A52; max-width: 36ch; }
+.v-hero--plan h1 { max-width: 18ch; }
+.v-hero--plan .v-lead { color: #4A4A52; max-width: 42ch; }
 .v-hero__note { margin-top: 16px; font-size: 15px; color: #4A4A52; }
 .btn--ruta {
   display: inline-flex; align-items: center; justify-content: center;
@@ -108,7 +108,7 @@ body.ed .v-hero--plan .btn.btn--primary:hover { background: transparent; color: 
 }
 .fase__dot::before { content: ""; position: absolute; left: 12px; top: 5px; width: 22px; height: 1.6px; background: #7C3AED; }
 .fase__draw { position: relative; min-width: 0; --paper: #FFFDF7; --rule: #C9C5CE; color: #7C3AED; }
-.line-art { display: block; width: 100%; height: auto; aspect-ratio: 600 / 220; overflow: visible; }
+.line-art { display: block; width: 100%; height: auto; aspect-ratio: 600 / 280; overflow: visible; }
 .line-art path, .line-art circle { vector-effect: non-scaling-stroke; }
 .fase__labels { display: flex; justify-content: space-between; gap: 16px; margin-top: 8px; }
 .fase__labels p { margin: 0; max-width: 14rem; font-size: 13px; line-height: 1.4; }
@@ -174,8 +174,44 @@ body.ed .v-hero--plan .btn.btn--primary:hover { background: transparent; color: 
   .fase__body { margin-top: 24px; }
   .umbral { top: 0; }
 }
+.ruta-car { margin-top: 36px; }
+.ruta-car__nav { display: flex; align-items: center; gap: 12px; }
+.ruta-car__nav button {
+  min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #686370;
+  background: transparent; color: #FFFDF7; font: inherit; font-size: 14px; cursor: pointer;
+}
+.ruta-car__nav button:disabled { opacity: .35; cursor: default; }
+.ruta-car__count { margin: 0; min-width: 3.5rem; text-align: center; color: #A5A2A9; font-size: 14px; }
+.ruta-rail {
+  overflow-x: auto; scroll-snap-type: x mandatory; margin-top: 20px;
+  scroll-padding-inline: 4px; scrollbar-width: none; overscroll-behavior-x: contain;
+  touch-action: pan-x;
+}
+.ruta-rail::-webkit-scrollbar { display: none; }
+.ruta-rail:focus-visible { outline: 2px solid #7C3AED; outline-offset: 4px; }
+.ruta-track { position: relative; display: flex; gap: 28px; width: max-content; padding: 28px 4px 12px; }
+.ruta-track .ruta-line { top: 6px; left: 8px; right: 8px; }
+.ruta-card { position: relative; flex: 0 0 min(640px, 78vw); scroll-snap-align: start; min-width: 0; }
+.ruta-card .line-art { max-height: 180px; margin-top: 16px; color: #7C3AED; }
+.ruta-card .fase__labels p { color: #A5A2A9; }
+.ruta-card.is-start { outline: 1px solid #7C3AED; outline-offset: 12px; border-radius: 12px; }
+html.js .trazo { stroke-dasharray: 1600; stroke-dashoffset: 1600; }
+html.js .is-in .trazo { stroke-dashoffset: 0; transition: stroke-dashoffset .9s linear; }
+html.js .entrada__flow:not(.is-in) .entrada__linea,
+html.js .ruta-car:not(.is-in) .ruta-line { transform: scaleX(0); transform-origin: left center; }
+html.js .entrada__flow.is-in .entrada__linea,
+html.js .ruta-car.is-in .ruta-line { transform: none; transition: transform .7s linear; }
+html.js .fases:not(.is-in) .fases__linea { transform: scaleY(0); transform-origin: top center; }
+html.js .fases.is-in .fases__linea { transform: none; transition: transform .8s linear; }
+
 @media (prefers-reduced-motion: reduce) {
   .js .og-plan:not(.is-in) .og-bar i,
   .js .og-plan.is-in .og-bar i { transform: none; transition: none; }
-  .line-art, .entrada__linea, .ruta-line, .fases__linea, .cierre__linea { transition: none; animation: none; }
+  .line-art, .entrada__linea, .ruta-line, .fases__linea, .cierre__linea, .trazo { transition: none; animation: none; stroke-dashoffset: 0; }
+  .ruta-rail { scroll-behavior: auto; }
+}
+@media (max-width: 767px) {
+  html.js .entrada__flow:not(.is-in) .entrada__linea { transform: scaleY(0); transform-origin: top center; }
+  .ruta-track .ruta-line { top: 6px; bottom: auto; left: 8px; right: 8px; width: auto; height: 1.6px; }
+  .ruta-card .ruta__dot { left: 0; top: -28px; }
 }

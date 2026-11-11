@@ -127,6 +127,10 @@ prueba('01: "222 709 7945" visible pasa', c01('Escríbenos al 222 709 7945.'), 0
 prueba('01: otro "+NN" sí falla (centinela)', c01('Más de +50 aliados.'), 1);
 prueba('01: porcentaje falla con centinela', c01('Mejora de 30%.'), 1);
 prueba('01: plazo falla con centinela', c01('Listo en 2 semanas.'), 1);
+prueba('01: la frase exacta de 15 minutos pasa', c01('Conoce en 15 minutos el nivel de preparación de tu práctica de IA y dónde trabajar.'), 0);
+prueba('01: «15 minutos» fuera de esa frase falla', c01('Listo en 15 minutos.'), 1);
+prueba('05: la frase exacta de 15 minutos no dispara plazo', c05('Conoce en 15 minutos el nivel de preparación de tu práctica de IA y dónde trabajar.'), 0);
+prueba('05: «15 minutos» suelto sigue bloqueado', c05('Listo en 15 minutos.'), 1);
 prueba('01: 24/7 falla con centinela', c01('Atención 24/7.'), 1);
 prueba('01: precio falla con centinela', c01('Desde $5,000 MXN.'), 1);
 prueba('01: sin centinela y lista vacía, no se valida', c01('Mejora de 30%.', (r) => { r.cifrasAprobadas = []; }), 0);

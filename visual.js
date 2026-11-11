@@ -8,6 +8,9 @@
     var cards = [].slice.call(rail.querySelectorAll('[data-v-card]'));
     var dots = [].slice.call(car.querySelectorAll('[data-v-dot]'));
     var tabs = [].slice.call(car.querySelectorAll('[role="tab"]'));
+    var prev = car.querySelector('[data-v-prev]');
+    var next = car.querySelector('[data-v-next]');
+    var count = car.querySelector('[data-v-count]');
     if (!cards.length) return;
     var cur = 0;
 
@@ -34,6 +37,9 @@
         t.setAttribute('aria-selected', on ? 'true' : 'false');
         t.tabIndex = on ? 0 : -1;
       });
+      if (count) count.textContent = (i + 1) + ' / ' + cards.length;
+      if (prev) prev.disabled = i <= 0;
+      if (next) next.disabled = i >= cards.length - 1;
     }
 
     function go(i) {
@@ -49,6 +55,8 @@
     dots.forEach(function (d, i) {
       d.addEventListener('click', function () { go(i); });
     });
+    if (prev) prev.addEventListener('click', function () { go(cur - 1); });
+    if (next) next.addEventListener('click', function () { go(cur + 1); });
     tabs.forEach(function (t, i) {
       t.addEventListener('click', function () { go(i); });
       t.addEventListener('keydown', function (e) {
