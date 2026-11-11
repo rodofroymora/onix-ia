@@ -112,7 +112,33 @@ body.ed .v-hero--plan .btn.btn--primary:hover { background: transparent; color: 
 .line-art path, .line-art circle { vector-effect: non-scaling-stroke; }
 .fase__labels { display: flex; justify-content: space-between; gap: 16px; margin-top: 8px; }
 .fase__labels p { margin: 0; max-width: 14rem; font-size: 13px; line-height: 1.4; }
+.embudo { max-width: 640px; margin-top: 8px; color: #7C3AED; }
+.embudo__nivel {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(8.5rem, 12.5rem);
+  gap: 4px 18px;
+  align-items: center;
+}
+.embudo__nivel > p { margin: 0; font-size: 13px; line-height: 1.35; color: #26262C; }
+.embudo svg { display: block; width: 100%; height: auto; overflow: visible; }
+.embudo path, .embudo circle { vector-effect: non-scaling-stroke; }
+.embudo circle { fill: none; stroke: currentColor; stroke-width: 1.6; }
+.embudo .punto--pasa circle { fill: currentColor; stroke: none; }
+.embudo__olas { list-style: none; margin: 0; padding: 2px 8px 0 18%; }
+.embudo__olas li { display: flex; align-items: center; gap: 10px; margin-top: 7px; font-size: 13px; line-height: 1.2; color: #26262C; }
+.embudo__olas i { flex: 1; height: 1.6px; background: #7C3AED; }
+.ruta-card .embudo { color: #7C3AED; }
+.ruta-card .embudo__nivel > p, .ruta-card .embudo__olas li { color: #FFFDF7; }
+html.js .embudo .punto { transform: translateY(-18px); }
+html.js .embudo .punto--filtra { opacity: .85; }
+html.js .embudo .punto--pasa { transform: translateY(-34px); }
+html.js .is-in .embudo .punto { transform: none; opacity: 1; transition: transform .95s linear, opacity .8s linear; }
+html.js .is-in .embudo .punto--filtra { opacity: 0; transform: translateY(26px); }
+html.js .is-in .embudo .punto--pasa { transition-delay: .28s; }
+html.js .embudo .trazo { stroke-dasharray: 320; stroke-dashoffset: 320; }
+html.js .is-in .embudo .trazo { stroke-dashoffset: 0; transition: stroke-dashoffset 1s linear; }
 .fase__cap { margin: 14px 0 0; padding-top: 14px; border-top: 1px solid #E4E0D5; color: #4A4A52; font-size: 15px; max-width: 40rem; }
+.fase__draw > .fase__cap:first-child { margin: 0 0 12px; padding-top: 0; border-top: 0; }
 .umbral { position: absolute; top: 8px; right: 0; margin: 0; font-size: 13px; color: #4A4A52; }
 .fase__body { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: 32px 64px; margin-top: 36px; }
 .fase h2 { margin-top: 8px; color: #26262C; }
@@ -171,6 +197,7 @@ body.ed .v-hero--plan .btn.btn--primary:hover { background: transparent; color: 
   .fase__dot { left: -28px; }
   .fase__dot::before { width: 10px; }
   .fase__labels { flex-direction: column; gap: 8px; }
+  .embudo__nivel { grid-template-columns: minmax(0, 1.2fr) minmax(0, .9fr); gap: 6px 10px; }
   .fase__body { margin-top: 24px; }
   .umbral { top: 0; }
 }
@@ -207,7 +234,8 @@ html.js .fases.is-in .fases__linea { transform: none; transition: transform .8s 
 @media (prefers-reduced-motion: reduce) {
   .js .og-plan:not(.is-in) .og-bar i,
   .js .og-plan.is-in .og-bar i { transform: none; transition: none; }
-  .line-art, .entrada__linea, .ruta-line, .fases__linea, .cierre__linea, .trazo { transition: none; animation: none; stroke-dashoffset: 0; }
+  .line-art, .entrada__linea, .ruta-line, .fases__linea, .cierre__linea, .trazo,
+  .embudo .punto, .embudo .punto--pasa, .embudo .punto--filtra { transition: none; animation: none; stroke-dashoffset: 0; transform: none; opacity: 1; }
   .ruta-rail { scroll-behavior: auto; }
 }
 @media (max-width: 767px) {

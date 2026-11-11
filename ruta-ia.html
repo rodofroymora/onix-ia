@@ -202,8 +202,20 @@
             <span class="ruta__n">01</span>
             <h3>Diagnóstico y prioridades</h3>
             <p class="ruta__prom">Sabes dónde rinde la IA, qué riesgo trae y por dónde empezar.</p>
-            <svg class="line-art" viewBox="0 0 600 290" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path class="trazo" d="M24 22h28M70 30h32M120 18h36M180 28h30M240 16h40M310 26h34M380 18h36M450 28h32M510 16h34M560 26h24"/><path class="trazo" d="M40 44L270 120M560 44L330 120M270 120H330"/><path class="trazo" d="M250 148h100M270 166h70M255 184h90M300 196V220"/><path class="trazo" d="M180 230h240M200 250h200M220 270h160"/></g></svg>
-            <div class="fase__labels"><p>Casos posibles</p><p>Priorizados por valor y riesgo</p><p>Plan de prioridades</p></div>
+            <div class="embudo">
+              <div class="embudo__nivel">
+                <svg viewBox="0 0 240 108" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path class="trazo" d="M12 8L72 108M228 8L168 108"/><g class="punto"><circle cx="36" cy="30" r="2.4"/></g><g class="punto"><circle cx="64" cy="22" r="2.2"/></g><g class="punto"><circle cx="96" cy="34" r="2.4"/></g><g class="punto"><circle cx="128" cy="20" r="2.2"/></g><g class="punto"><circle cx="160" cy="32" r="2.4"/></g><g class="punto"><circle cx="194" cy="24" r="2.2"/></g><g class="punto"><circle cx="48" cy="52" r="2.2"/></g><g class="punto"><circle cx="86" cy="46" r="2.4"/></g><g class="punto"><circle cx="118" cy="58" r="2.2"/></g><g class="punto"><circle cx="154" cy="44" r="2.4"/></g><g class="punto"><circle cx="184" cy="56" r="2.2"/></g><g class="punto"><circle cx="60" cy="74" r="2.2"/></g><g class="punto"><circle cx="108" cy="70" r="2.2"/></g><g class="punto"><circle cx="146" cy="78" r="2.2"/></g><g class="punto punto--filtra"><circle cx="78" cy="40" r="2.2"/></g><g class="punto punto--filtra"><circle cx="112" cy="36" r="2.2"/></g><g class="punto punto--filtra"><circle cx="148" cy="48" r="2.2"/></g><g class="punto punto--filtra"><circle cx="98" cy="62" r="2.2"/></g></g></svg>
+                <p>Casos posibles</p>
+              </div>
+              <div class="embudo__nivel">
+                <svg viewBox="0 0 240 96" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path class="trazo" d="M72 0L104 68M168 0L136 68M104 68H136M104 68V80M120 68V80M136 68V80"/><g class="punto punto--pasa"><circle cx="104" cy="86" r="4.5"/></g><g class="punto punto--pasa"><circle cx="120" cy="86" r="4.5"/></g><g class="punto punto--pasa"><circle cx="136" cy="86" r="4.5"/></g></g></svg>
+                <p>Priorizados por valor y riesgo</p>
+              </div>
+              <div class="embudo__nivel">
+                <ul class="embudo__olas"><li><span>Ola 1</span><i></i></li><li><span>Ola 2</span><i></i></li><li><span>Ola 3</span><i></i></li></ul>
+                <p>Plan de prioridades</p>
+              </div>
+            </div>
             <a href="#fase-01">Ver cómo diagnosticamos</a>
           </article>
           <article class="ruta-card ruta__fase" data-v-card data-fase="02">
@@ -245,9 +257,21 @@
       <p class="fase__num">01</p>
     </div>
     <div class="fase__draw">
-      <svg class="line-art" viewBox="0 0 600 290" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path class="trazo" d="M24 22h28M70 30h32M120 18h36M180 28h30M240 16h40M310 26h34M380 18h36M450 28h32M510 16h34M560 26h24"/><path class="trazo" d="M40 44L270 120M560 44L330 120M270 120H330"/><path class="trazo" d="M250 148h100M270 166h70M255 184h90M300 196V220"/><path class="trazo" d="M180 230h240M200 250h200M220 270h160"/></g></svg>
       <p class="fase__cap">Sabes dónde rinde la IA, qué riesgo trae y por dónde empezar.</p>
-      <div class="fase__labels"><p>Casos posibles</p><p>Priorizados por valor y riesgo</p><p>Plan de prioridades</p></div>
+      <div class="embudo">
+        <div class="embudo__nivel">
+          <svg viewBox="0 0 240 108" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path class="trazo" d="M12 8L72 108M228 8L168 108"/><g class="punto"><circle cx="36" cy="30" r="2.4"/></g><g class="punto"><circle cx="64" cy="22" r="2.2"/></g><g class="punto"><circle cx="96" cy="34" r="2.4"/></g><g class="punto"><circle cx="128" cy="20" r="2.2"/></g><g class="punto"><circle cx="160" cy="32" r="2.4"/></g><g class="punto"><circle cx="194" cy="24" r="2.2"/></g><g class="punto"><circle cx="48" cy="52" r="2.2"/></g><g class="punto"><circle cx="86" cy="46" r="2.4"/></g><g class="punto"><circle cx="118" cy="58" r="2.2"/></g><g class="punto"><circle cx="154" cy="44" r="2.4"/></g><g class="punto"><circle cx="184" cy="56" r="2.2"/></g><g class="punto"><circle cx="60" cy="74" r="2.2"/></g><g class="punto"><circle cx="108" cy="70" r="2.2"/></g><g class="punto"><circle cx="146" cy="78" r="2.2"/></g><g class="punto punto--filtra"><circle cx="78" cy="40" r="2.2"/></g><g class="punto punto--filtra"><circle cx="112" cy="36" r="2.2"/></g><g class="punto punto--filtra"><circle cx="148" cy="48" r="2.2"/></g><g class="punto punto--filtra"><circle cx="98" cy="62" r="2.2"/></g></g></svg>
+          <p>Casos posibles</p>
+        </div>
+        <div class="embudo__nivel">
+          <svg viewBox="0 0 240 96" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path class="trazo" d="M72 0L104 68M168 0L136 68M104 68H136M104 68V80M120 68V80M136 68V80"/><g class="punto punto--pasa"><circle cx="104" cy="86" r="4.5"/></g><g class="punto punto--pasa"><circle cx="120" cy="86" r="4.5"/></g><g class="punto punto--pasa"><circle cx="136" cy="86" r="4.5"/></g></g></svg>
+          <p>Priorizados por valor y riesgo</p>
+        </div>
+        <div class="embudo__nivel">
+          <ul class="embudo__olas"><li><span>Ola 1</span><i></i></li><li><span>Ola 2</span><i></i></li><li><span>Ola 3</span><i></i></li></ul>
+          <p>Plan de prioridades</p>
+        </div>
+      </div>
     </div>
   </div>
   <div class="fase__body">
