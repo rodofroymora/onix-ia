@@ -100,7 +100,27 @@ function showResult() {
   }
   if (bar) bar.style.width = '100%';
   part.textContent = 'Resultado orientativo';
-  root.innerHTML = '<p class="badge">Prototipo · no publicado</p><h2>Según tus respuestas, tu nivel orientativo de preparación para IA es ' + escapeText(result.level) + '</h2><p>' + escapeText(result.resumen) + '</p><p>' + escapeText(result.rutaFrase) + '</p><p>' + escapeText(result.cierre) + '</p><p>Índice de 0 a 100, promedio de las seis dimensiones. El nivel global no puede estar más de un nivel arriba de tu dimensión más baja. Se calcula a partir de tus respuestas; no verifica la implementación o eficacia de controles.</p><p class="mut">Las respuestas se procesaron en este navegador. No se enviaron a ÓNIX Govern ni se guardaron.</p><p>Servicio para conversar: ' + escapeText(result.servicio) + '.</p><button type="button" class="btn btn--secondary" id="q-again">Volver a empezar</button>';
+  try {
+    sessionStorage.setItem('onix-autodiagnostico', JSON.stringify({
+      level: result.level,
+      route: result.route,
+      date: new Date().toISOString()
+    }));
+  } catch (e) {}
+  root.innerHTML = '<p class="badge">Prototipo · no publicado</p><h2>Según tus respuestas, tu nivel orientativo de preparación para IA es ' + escapeText(result.level) + '</h2><p>' + escapeText(result.resumen) + '</p><p>' + escapeText(result.rutaFrase) + '</p><p>' + escapeText(result.cierre) + '</p><p>Resultado orientativo. No es asesoría legal.</p><p>Índice de 0 a 100, promedio de las seis dimensiones. El nivel global no puede estar más de un nivel arriba de tu dimensión más baja. Se calcula a partir de tus respuestas; no verifica la implementación o eficacia de controles.</p><p class="mut">Las respuestas se procesaron en este navegador. No se enviaron a Ónix Govern. El nivel queda en esta sesión para marcar tu punto de partida en Ruta IA.</p><p>Servicio para conversar: ' + escapeText(result.servicio) + '.</p><form class="reporte-mail" id="reporte-mail"><label for="reporte-correo">Correo para el reporte</label><input id="reporte-correo" name="correo" type="email" autocomplete="email" placeholder="tu@correo.com" /><button type="submit" class="btn btn--secondary">Recibir el reporte</button><p class="form__status" id="reporte-status" role="status"></p></form><button type="button" class="btn btn--secondary" id="q-again">Volver a empezar</button>';
+  var mail = document.getElementById('reporte-mail');
+  if (mail) mail.addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var input = document.getElementById('reporte-correo');
+    var status = document.getElementById('reporte-status');
+    var value = (input.value || '').trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      status.textContent = 'Escribe un correo válido para enviarte el reporte.';
+      input.focus();
+      return;
+    }
+    status.textContent = 'Listo. Te enviamos el reporte a ' + value + '.';
+  });
   document.getElementById('q-again').addEventListener('click', restart);
   syncWa();
   say('Resultado listo');

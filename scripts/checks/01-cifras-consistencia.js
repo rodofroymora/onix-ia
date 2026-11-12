@@ -61,12 +61,19 @@ for (const f of L.listarHtml()) {
   const texto = L.textoAuditable(html);
   // Sin los formatos visibles aprobados del WhatsApp (p. ej. "+52 222 709 7945") para no detectarlos como cifra
   const textoCifras = L.quitarFormatosWhatsapp(texto, (reglas.whatsapp && reglas.whatsapp.formatosVisiblesPermitidos) || []);
+  // «15 minutos» solo se admite dentro de la frase exacta del autodiagnóstico. Fuera de ella sigue fallando.
+  let textoPlazos = textoCifras;
+  for (const t of reglas.textosExactosAprobados || []) {
+    if (!t || t.id !== 'autodiagnostico-quince' || !t.texto) continue;
+    const esc = t.texto.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+');
+    textoPlazos = textoPlazos.replace(new RegExp(esc, 'gu'), (m) => ' '.repeat(m.length));
+  }
 
   const exentas = L.categoriasExentas(reglas, nombre);
   if (exentas.size) R.nota(`${nombre}: excepción por ruta activa para: ${[...exentas].join(', ')}.`);
   // --- Precios / plazos / cifras
   for (const [tipo, re] of [['precios', PRECIO], ['plazos', PLAZO], ['cifras', CIFRA]]) {
-    for (const v of extraer(re, textoCifras)) {
+    for (const v of extraer(re, tipo === 'plazos' ? textoPlazos : textoCifras)) {
       anotar(tipo, v, nombre);
       if (listas[tipo].activa && !exentas.has(tipo) && !aprobado[tipo].some((a) => L.normalizar(v) === a || L.normalizar(v).includes(a) && a.length >= L.normalizar(v).length)) {
         const campo = { precios: 'preciosAprobados', plazos: 'plazosAprobados', cifras: 'cifrasAprobadas' }[tipo];

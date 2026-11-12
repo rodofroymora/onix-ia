@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ruta IA | Ónix</title>
+  <meta name="description" content="Definimos la visión y construimos contigo la ruta de IA de tu empresa en tres fases: Diagnóstico y prioridades, pilotos con controles, y operación y observabilidad." />
+  <meta name="theme-color" content="#FFFDF7" />
+  <meta name="color-scheme" content="light" />
+  <link rel="canonical" href="https://www.onix-ia.com/ruta-ia" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.onix-ia.com/ruta-ia" />
+  <meta property="og:locale" content="es_MX" />
+  <meta property="og:title" content="Ruta IA | Ónix" />
+  <meta property="og:description" content="Definimos la visión y construimos contigo la ruta de IA de tu empresa en tres fases: Diagnóstico y prioridades, pilotos con controles, y operación y observabilidad." />
+  <meta property="og:image" content="https://www.onix-ia.com/og-onix.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Ónix" />
+  <meta name="twitter:image" content="https://www.onix-ia.com/og-onix.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Ruta IA | Ónix" />
+  <meta name="twitter:description" content="Definimos la visión y construimos contigo la ruta de IA de tu empresa en tres fases: Diagnóstico y prioridades, pilotos con controles, y operación y observabilidad." />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%2326262C'/><circle cx='16' cy='16' r='7' fill='none' stroke='%23FFFDF7' stroke-width='3'/><circle cx='23.5' cy='8.5' r='2.4' fill='%237C3AED'/></svg>" />
+  <script>/* motion gate: hidden initial states only exist when JS runs and motion is allowed */(function(d){if(window.matchMedia&&!matchMedia('(prefers-reduced-motion: reduce)').matches){d.classList.add('js');setTimeout(function(){if(!d.classList.contains('motion-ready'))d.classList.remove('js');},3000);}})(document.documentElement);</script>
+  <link rel="preload" href="/fonts/geist-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/site.css" />
+  <link rel="stylesheet" href="/servicios.css" />
+  <link rel="stylesheet" href="/sistema.css" />
+  <link rel="stylesheet" href="/home.css" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Ónix","url":"https://www.onix-ia.com"}</script>
+  <link rel="stylesheet" href="/editorial.css" />
+  <link rel="stylesheet" href="/visual.css" />
+  <link rel="stylesheet" href="/ruta.css" />
+</head>
+<body class="ed">
+<a class="skip" href="#main">Saltar al contenido</a>
+<header class="nav">
+  <div class="wrap nav__inner">
+    <a href="/" class="logo" aria-label="ÓNIX, inicio">ÓNIX</a>
+    <nav class="nav__links" aria-label="Principal">
+      <a href="/" >Inicio</a>
+      <div class="nav__item">
+        <button type="button" class="nav__trigger" id="svc-trigger" aria-expanded="false" aria-controls="svc-mega" aria-haspopup="true">Servicios <svg class="nav-chev" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6.2 8 10.8 13 6.2"/></svg></button>
+        <div class="mega" id="svc-mega" hidden>
+          <div class="mega__panel">
+            <div>
+              <p class="mega__title" id="mega-lineas">Líneas de trabajo</p>
+              <ul class="mega__list" aria-labelledby="mega-lineas">
+                <li><a href="/servicios/estrategia-de-ia">Estrategia y gobernanza de IA<small>Ruta de impacto organizacional de la IA</small></a></li>
+                <li><a href="/servicios/auditoria-de-ia">Revisión de riesgos de la IA</a></li>
+                <li><a href="/servicios">Desarrollo de agentes y soluciones de IA</a></li>
+                <li><a href="/#agentes">Especialidad de gobierno y seguridad de agentes</a></li>
+                <li><a href="/como-trabajamos">Acompañamiento de la operación de IA</a></li>
+              </ul>
+            </div>
+            <div>
+              <p class="mega__title" id="mega-demos">Soluciones y demos</p>
+              <ul class="mega__list" aria-labelledby="mega-demos">
+                <li><a href="/servicios">Catálogo de soluciones</a></li>
+                <li><a href="/servicios/agentes-de-operacion">Agentes de operación</a></li>
+                <li><a href="/servicios/asistentes-whatsapp-y-voz">Asistentes de WhatsApp y voz</a></li>
+                <li><a href="/servicios/documentos-vivos">Conocimiento documental</a></li>
+                <li><a href="/servicios/radar-de-leads">Radar de Leads</a></li>
+                <li><a href="/servicios/contabilidad-asistida">Contabilidad asistida</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <a href="/como-trabajamos">Cómo trabajamos</a>
+      <a href="/confianza-y-gobierno">Confianza y gobierno</a>
+      <a href="/#contacto">Contacto</a>
+    </nav>
+    <button class="burger" id="burger" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="mmenu"><span></span></button>
+  </div>
+</header>
+<nav class="mmenu" id="mmenu" aria-label="Menú móvil" hidden>
+  <a href="/" >Inicio</a>
+  <button type="button" class="mm-acc" id="mm-acc" aria-expanded="false" aria-controls="mm-svc" aria-haspopup="true">Servicios <svg class="nav-chev" width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 8.5 11 14.5 17.5 8.5"/></svg></button>
+  <div class="mm-sub" id="mm-svc" hidden>
+    <p class="mm-sub__title" id="mm-lineas">Líneas de trabajo</p>
+    <ul class="mm-list" aria-labelledby="mm-lineas">
+      <li><a href="/servicios/estrategia-de-ia">Estrategia y gobernanza de IA<small>Ruta de impacto organizacional de la IA</small></a></li>
+      <li><a href="/servicios/auditoria-de-ia">Revisión de riesgos de la IA</a></li>
+      <li><a href="/servicios">Desarrollo de agentes y soluciones de IA</a></li>
+      <li><a href="/#agentes">Especialidad de gobierno y seguridad de agentes</a></li>
+      <li><a href="/como-trabajamos">Acompañamiento de la operación de IA</a></li>
+    </ul>
+    <p class="mm-sub__title" id="mm-demos">Soluciones y demos</p>
+    <ul class="mm-list" aria-labelledby="mm-demos">
+      <li><a href="/servicios">Catálogo de soluciones</a></li>
+      <li><a href="/servicios/agentes-de-operacion">Agentes de operación</a></li>
+      <li><a href="/servicios/asistentes-whatsapp-y-voz">Asistentes de WhatsApp y voz</a></li>
+      <li><a href="/servicios/documentos-vivos">Conocimiento documental</a></li>
+      <li><a href="/servicios/radar-de-leads">Radar de Leads</a></li>
+      <li><a href="/servicios/contabilidad-asistida">Contabilidad asistida</a></li>
+    </ul>
+  </div>
+  <a href="/como-trabajamos">Cómo trabajamos</a>
+  <a href="/confianza-y-gobierno">Confianza y gobierno</a>
+  <a href="/#contacto">Contacto</a>
+</nav>
+<main id="main">
+<section class="v-hero v-hero--plan" id="inicio" aria-labelledby="ruta-h1">
+  <div class="wrap v-hero__grid">
+    <div>
+      <p class="v-k">Estrategia, gobernanza y seguridad de IA</p>
+      <h1 id="ruta-h1" class="v-title">Definimos la visión y construimos contigo la ruta de IA de tu empresa.</h1>
+      <p class="v-lead">Ya sea que tu empresa tenga agentes de IA sin control ni valor claro, o que apenas esté dando sus primeros pasos, te ayudamos a ordenar, priorizar y escalar con confianza.</p>
+      <div class="v-hero__ctas">
+        <a class="btn btn--ruta" href="/autodiagnostico">Haz tu autodiagnóstico gratis</a>
+        <div class="cta__act">
+          <a href="https://wa.me/522227097945?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20Ruta%20IA%20de%20%C3%93nix.%20Aviso%20de%20privacidad%3A%20https%3A%2F%2Fwww.onix-ia.com%2Faviso-de-privacidad" class="btn btn--primary" target="_blank" rel="noopener noreferrer">Escríbenos por WhatsApp<span class="sr-only"> (abre WhatsApp)</span></a>
+          <p class="priv-note">Al escribirnos por WhatsApp, Ónix (Rodolfo Mora) usará tu número y tu mensaje para responderte y darte seguimiento. WhatsApp (Meta) trata los datos de la conversación bajo sus propias condiciones. <a href="/aviso-de-privacidad">Aviso de privacidad de Ónix</a></p>
+        </div>
+      </div>
+      <p class="v-hero__note">Conoce en 15 minutos el nivel de preparación de tu práctica de IA y dónde trabajar.</p>
+      <p class="v-hero__note">El autodiagnóstico es gratis y lo haces por tu cuenta. Con ese resultado, trabajamos contigo uno a uno en la solución.</p>
+      <p class="v-hero__note">Tu consultoría inicial es gratis.</p>
+    </div>
+    <div>
+      <article class="og-plan">
+        <h2 class="og-plan__h">Convierte prioridades en un plan por etapas</h2>
+        <p class="og-ola">Ola 2 Controles</p>
+        <ol>
+          <li class="og-acc">
+            <div class="og-acc__top"><strong>Agente de cobranza que prioriza cuentas por vencer</strong><b>0%</b></div>
+            <p>Valor de negocio</p>
+            <div class="og-bar" style="--w:0%"><i></i></div>
+          </li>
+          <li class="og-acc">
+            <div class="og-acc__top"><strong>Agente de conciliación de facturas con aprobación humana</strong><b>25%</b></div>
+            <p>Riesgo y control</p>
+            <div class="og-bar" style="--w:25%"><i></i></div>
+          </li>
+          <li class="og-acc">
+            <div class="og-acc__top"><strong>Agente de atención a clientes con respuestas trazadas</strong><b>25%</b></div>
+            <p>Operación</p>
+            <div class="og-bar" style="--w:25%"><i></i></div>
+          </li>
+        </ol>
+        <p><a class="link" href="#fase-01">Ver un plan de ejemplo</a></p>
+        <p class="og-note">Ejemplo ilustrativo con datos de demostración de Ónix Govern. No corresponde a un cliente.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="ruta-intro" aria-labelledby="ruta-intro">
+  <div class="wrap">
+    <p class="v-k">Ruta IA</p>
+    <h2 id="ruta-intro" class="display h2">De ideas sueltas a resultados medidos</h2>
+    <p>El método de Ónix para usar IA con valor y control, en tres fases que terminan con evidencia.</p>
+    <details class="mas"><summary>Conocer Ruta IA<span class="sr-only">: la versión completa</span></summary><p>Ruta IA ordena la adopción de IA en tres fases: Diagnóstico y prioridades, Pilotos con controles de seguridad y gobernanza, y Operación y observabilidad. Cada fase cierra con un entregable que puedes revisar antes de pasar a la siguiente, y gobierno y seguridad acompañan todo el camino. Puedes contratar una fase o el recorrido completo.</p></details>
+  </div>
+</section>
+<div id="ruta-y-entrada">
+<section class="entrada" aria-labelledby="entrada-h">
+  <div class="wrap">
+    <p class="v-k">Autodiagnóstico de IA</p>
+    <div class="entrada__head">
+      <h2 id="entrada-h" class="display h2">Autodiagnóstico de IA</h2>
+      <p>Conoce en 15 minutos el nivel de preparación de tu práctica de IA y dónde trabajar.</p>
+    </div>
+    <div class="entrada__flow">
+      <div class="entrada__linea" aria-hidden="true"></div>
+      <article>
+        <span class="entrada__dot" aria-hidden="true"></span>
+        <p class="entrada__k">Por tu cuenta</p>
+        <h3>Autodiagnóstico de IA</h3>
+        <p>El autodiagnóstico es gratis y lo haces por tu cuenta.</p>
+        <p>Es gratis y no necesitas registrarte para empezar.</p>
+        <p class="entrada__note">Resultado orientativo. No es asesoría legal.</p>
+      </article>
+      <article id="ruta-govern">
+        <span class="entrada__dot" aria-hidden="true"></span>
+        <p class="entrada__k">Consultoría y plataforma</p>
+        <h3>Ruta IA + Ónix Govern</h3>
+        <p>Tu estrategia de IA se traza con consultoría y se lleva a resultados con nuestra plataforma Ónix Govern.</p>
+        <p>Ónix Govern y Ruta IA se contratan como consultoría personalizada, después del autodiagnóstico.</p>
+        <p>Con ese resultado, trabajamos contigo uno a uno en la solución.</p>
+        <p class="entrada__note">Tu consultoría inicial es gratis.</p>
+      </article>
+    </div>
+  </div>
+</section>
+<section class="ruta-band" aria-labelledby="ruta-titulo">
+  <div class="wrap">
+    <h2 id="ruta-titulo" class="display h2">Tres fases. Cada una termina con algo que puedes ver.</h2>
+    <div class="ruta-car" data-v-car>
+      <div class="ruta-car__nav">
+        <button type="button" data-v-prev>Anterior</button>
+        <p class="ruta-car__count" data-v-count aria-live="polite">1 / 3</p>
+        <button type="button" data-v-next>Siguiente</button>
+      </div>
+      <div class="ruta-rail" id="ruta-carrusel" data-v-rail tabindex="0" aria-roledescription="carrusel" aria-label="Las tres fases de Ruta IA">
+        <div class="ruta-track">
+          <div class="ruta-line" aria-hidden="true"></div>
+          <article class="ruta-card ruta__fase" data-v-card data-fase="01">
+            <span class="ruta__dot" aria-hidden="true"></span>
+            <span class="ruta__n">01</span>
+            <h3>Diagnóstico y prioridades</h3>
+            <p class="ruta__prom">Sabes dónde rinde la IA, qué riesgo trae y por dónde empezar.</p>
+            <div class="fig">
+              <div class="figgrid">
+                  <svg class="fig-pie fig-pie--solo" viewBox="0 0 400 374" fill="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="fb-top" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F5F3FF"/>
+      <stop offset="1" stop-color="#EFEAFC"/>
+    </linearGradient>
+    <linearGradient id="fb-mid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#D5CAF4"/>
+      <stop offset="0.5" stop-color="#E4DCFB"/>
+      <stop offset="1" stop-color="#EDE7FC"/>
+    </linearGradient>
+    <linearGradient id="fb-bot" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6D28D9"/>
+      <stop offset="1" stop-color="#5B21B6"/>
+    </linearGradient>
+    <linearGradient id="fb-vol" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#4C1D95" stop-opacity="0.14"/>
+      <stop offset="0.28" stop-color="#4C1D95" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#ffffff" stop-opacity="0.24"/>
+      <stop offset="0.72" stop-color="#4C1D95" stop-opacity="0"/>
+      <stop offset="1" stop-color="#4C1D95" stop-opacity="0.16"/>
+    </linearGradient>
+    <linearGradient id="fb-edge" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#A78BFA" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#DDD6FE" stop-opacity="0.9"/>
+    </linearGradient>
+    <clipPath id="fb-clip"><path d="M 18.0 40 L 136.0 276 A 64 24 0 0 0 264.0 276 L 382.0 40 A 182 14 0 0 0 18.0 40 Z"/></clipPath>
+  </defs>
+  <g class="cono">
+    <path d="M 18.0 40 L 136.0 276 A 64 24 0 0 0 264.0 276 L 382.0 40 A 182 14 0 0 0 18.0 40 Z" fill="url(#fb-top)"/>
+    <path d="M 74.0 152 Q 200 170 326.0 152 L 290.0 224 Q 200 238 110.0 224 Z" fill="url(#fb-mid)"/>
+    <path d="M 110.0 224 Q 200 238 290.0 224 L 264.0 276 A 64 24 0 0 1 136.0 276 Z" fill="url(#fb-bot)"/>
+    <path d="M 18.0 40 L 110.0 224 Q 200 238 290.0 224 L 382.0 40 A 182 14 0 0 0 18.0 40 Z" fill="url(#fb-vol)"/>
+  </g>
+  <g class="cono cono-trazo" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 37.0 58.0 L 75.0 132.0" stroke="#ffffff" stroke-width="1.4" opacity="0"/>
+    <path class="nivel" d="M 74.0 152 Q 200 170 326.0 152" stroke="#B7A4EE" stroke-width="1.15"/>
+    <path class="nivel" d="M 110.0 224 Q 200 238 290.0 224" stroke="#E4DCFB" stroke-width="1.15"/>
+    <path d="M 18.0 40 A 182 14 0 0 0 382.0 40 A 182 14 0 0 0 18.0 40" stroke="#DDD6FE" stroke-width="1.15"/>
+    <path d="M 382.0 40 A 182 14 0 0 1 18.0 40" stroke="#ffffff" stroke-width="1.4" opacity="0.85"/>
+    <path d="M 264.0 276 A 64 24 0 0 1 136.0 276" stroke="url(#fb-edge)" stroke-width="1.6"/>
+    <g fill="#5B21B6">
+    <circle class="punto" cx="70" cy="62" r="4.6"/>
+    <circle class="punto" cx="118" cy="70" r="5.0"/>
+    <circle class="punto" cx="168" cy="58" r="4.5"/>
+    <circle class="punto" cx="220" cy="74" r="5.2"/>
+    <circle class="punto" cx="272" cy="64" r="4.7"/>
+    <circle class="punto" cx="322" cy="78" r="4.8"/>
+    <circle class="punto" cx="92" cy="94" r="4.4"/>
+    <circle class="punto" cx="146" cy="102" r="5.0"/>
+    <circle class="punto" cx="198" cy="88" r="4.5"/>
+    <circle class="punto" cx="252" cy="106" r="5.1"/>
+    <circle class="punto" cx="304" cy="96" r="4.6"/>
+    <circle class="punto" cx="112" cy="122" r="4.2"/>
+    <circle class="punto" cx="164" cy="130" r="4.8"/>
+    <circle class="punto" cx="214" cy="116" r="4.4"/>
+    <circle class="punto" cx="266" cy="126" r="4.9"/>
+    <circle class="punto" cx="314" cy="114" r="4.4"/>
+    <circle class="punto" cx="318.0" cy="152" r="3.4"/>
+    </g>
+    <circle class="punto punto--claro" cx="232" cy="246" r="3.5" fill="#F5F3FF"/>
+    <g class="salida" stroke="#5B21B6" stroke-width="1.15">
+      <path d="M 168.0 296.8 V 346 Q 168.0 354 160.0 354 H 74 Q 67 354 67 362 V 368"/>
+      <path d="M 200 300.0 V 368"/>
+      <path d="M 232.0 296.8 V 346 Q 232.0 354 240.0 354 H 326 Q 333 354 333 362 V 368"/>
+    </g>
+    <g fill="#5B21B6">
+      <circle cx="168.0" cy="326" r="4"/>
+      <circle cx="200" cy="326" r="4"/>
+      <circle cx="232.0" cy="326" r="4"/>
+    </g>
+  </g>
+</svg>
+
+
+
+                <div class="olas"><div><b>Ola 1</b><span>Bases</span></div><div><b>Ola 2</b><span>Controles</span></div><div><b>Ola 3</b><span>Mejora continua</span></div></div>
+              </div>
+            </div>
+            <a href="#fase-01">Ver cómo diagnosticamos</a>
+          </article>
+          <article class="ruta-card ruta__fase" data-v-card data-fase="02">
+            <span class="ruta__dot" aria-hidden="true"></span>
+            <span class="ruta__n">02</span>
+            <h3>Pilotos con controles</h3>
+            <span class="ruta__sub">de seguridad y gobernanza</span>
+            <p class="ruta__prom">Un caso real funcionando, probado y aprobado antes de lanzar.</p>
+            <div class="flujo"><div class="flujo__paso flujo__paso--1"><b>Conexión</b><span>Conectada a tus sistemas</span></div><div class="flujo__paso flujo__paso--2"><b>Pruebas</b><span>Calidad, fuga de datos y ataques</span></div><div class="flujo__paso flujo__paso--3"><b>Aprobación humana</b><span>Decisiones clave en manos de una persona</span></div></div>
+            <a href="#fase-02">Ver cómo probamos</a>
+          </article>
+          <article class="ruta-card ruta__fase" data-v-card data-fase="03">
+            <span class="ruta__dot" aria-hidden="true"></span>
+            <span class="ruta__n">03</span>
+            <h3>Operación y observabilidad</h3>
+            <p class="ruta__prom">Ves en todo momento qué hace tu IA, cuánto cuesta y cuánto rinde.</p>
+            <div class="board"><p class="board__note">Datos de demostración</p><div class="board__cards"><article><h4>Acceso de agentes</h4><div class="board__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></div></article><article><h4>Costos</h4><div class="board__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></div></article><article><h4>Consultas</h4><div class="board__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></div></article><article><h4>Calidad de respuestas</h4><div class="board__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></div></article><article><h4>Vulnerabilidades</h4><div class="board__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></div></article><article><h4>Umbral</h4><svg class="board__chart" viewBox="0 0 160 64" aria-hidden="true"><path d="M4 44C24 42 36 24 54 28C74 32 86 14 108 18C126 22 140 36 156 16" fill="none" stroke="#7C3AED" stroke-width="1.6"/><path d="M4 26H156" stroke="#C4B5FD" stroke-dasharray="4 5"/></svg></article></div></div>
+            <a href="#fase-03">Ver cómo observamos</a>
+          </article>
+        </div>
+      </div>
+    </div>
+    <div class="ruta__foot">
+      <p>Gobierno y seguridad acompañan las tres fases. Puedes contratar una fase o el proyecto completo.</p>
+      <a href="/ruta-ia">Conocer Ruta IA</a>
+    </div>
+    <p class="ruta__personal" data-ruta-personal hidden></p>
+  </div>
+</section>
+</div>
+
+<div class="fases" id="fases">
+<div class="wrap">
+<section class="fase" id="fase-01" aria-labelledby="f1-h">
+  <div class="fase__top">
+    <div>
+      <p class="fase__kicker">Ruta IA · 01</p>
+      <h2 id="f1-h" class="display h2">Diagnóstico y prioridades</h2>
+      <p class="fase__q">¿Dónde conviene usar IA en mi empresa?</p>
+      <p>Medimos la madurez de tu empresa en seis dimensiones y perfilamos cada caso de uso por profundidad y riesgo. Con eso decidimos qué va primero, qué rigor necesita cada caso y qué no conviene hacer.</p>
+      <p class="fase__fit"><strong>Es para ti si:</strong> ya usas IA sin reglas claras, o quieres invertir y no sabes por dónde.</p>
+    </div>
+    <div class="fig">
+      <div class="figgrid">
+      <p class="fig__lead">De todas las ideas de IA, identificamos y priorizamos las que generan mayor valor y son viables para tu empresa.</p>
+          <svg class="fig-pie fig-pie--solo" viewBox="0 0 400 374" fill="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="fc-top" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F5F3FF"/>
+      <stop offset="1" stop-color="#EFEAFC"/>
+    </linearGradient>
+    <linearGradient id="fc-mid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#D5CAF4"/>
+      <stop offset="0.5" stop-color="#E4DCFB"/>
+      <stop offset="1" stop-color="#EDE7FC"/>
+    </linearGradient>
+    <linearGradient id="fc-bot" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6D28D9"/>
+      <stop offset="1" stop-color="#5B21B6"/>
+    </linearGradient>
+    <linearGradient id="fc-vol" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#4C1D95" stop-opacity="0.14"/>
+      <stop offset="0.28" stop-color="#4C1D95" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#ffffff" stop-opacity="0.24"/>
+      <stop offset="0.72" stop-color="#4C1D95" stop-opacity="0"/>
+      <stop offset="1" stop-color="#4C1D95" stop-opacity="0.16"/>
+    </linearGradient>
+    <linearGradient id="fc-edge" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#A78BFA" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#DDD6FE" stop-opacity="0.9"/>
+    </linearGradient>
+    <clipPath id="fc-clip"><path d="M 18.0 40 L 136.0 276 A 64 24 0 0 0 264.0 276 L 382.0 40 A 182 14 0 0 0 18.0 40 Z"/></clipPath>
+  </defs>
+  <g class="cono">
+    <path d="M 18.0 40 L 136.0 276 A 64 24 0 0 0 264.0 276 L 382.0 40 A 182 14 0 0 0 18.0 40 Z" fill="url(#fc-top)"/>
+    <path d="M 74.0 152 Q 200 170 326.0 152 L 290.0 224 Q 200 238 110.0 224 Z" fill="url(#fc-mid)"/>
+    <path d="M 110.0 224 Q 200 238 290.0 224 L 264.0 276 A 64 24 0 0 1 136.0 276 Z" fill="url(#fc-bot)"/>
+    <path d="M 18.0 40 L 110.0 224 Q 200 238 290.0 224 L 382.0 40 A 182 14 0 0 0 18.0 40 Z" fill="url(#fc-vol)"/>
+  </g>
+  <g class="cono cono-trazo" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 37.0 58.0 L 75.0 132.0" stroke="#ffffff" stroke-width="1.4" opacity="0"/>
+    <path class="nivel" d="M 74.0 152 Q 200 170 326.0 152" stroke="#B7A4EE" stroke-width="1.15"/>
+    <path class="nivel" d="M 110.0 224 Q 200 238 290.0 224" stroke="#E4DCFB" stroke-width="1.15"/>
+    <path d="M 18.0 40 A 182 14 0 0 0 382.0 40 A 182 14 0 0 0 18.0 40" stroke="#DDD6FE" stroke-width="1.15"/>
+    <path d="M 382.0 40 A 182 14 0 0 1 18.0 40" stroke="#ffffff" stroke-width="1.4" opacity="0.85"/>
+    <path d="M 264.0 276 A 64 24 0 0 1 136.0 276" stroke="url(#fc-edge)" stroke-width="1.6"/>
+    <g fill="#5B21B6">
+    <circle class="punto" cx="70" cy="62" r="4.6"/>
+    <circle class="punto" cx="118" cy="70" r="5.0"/>
+    <circle class="punto" cx="168" cy="58" r="4.5"/>
+    <circle class="punto" cx="220" cy="74" r="5.2"/>
+    <circle class="punto" cx="272" cy="64" r="4.7"/>
+    <circle class="punto" cx="322" cy="78" r="4.8"/>
+    <circle class="punto" cx="92" cy="94" r="4.4"/>
+    <circle class="punto" cx="146" cy="102" r="5.0"/>
+    <circle class="punto" cx="198" cy="88" r="4.5"/>
+    <circle class="punto" cx="252" cy="106" r="5.1"/>
+    <circle class="punto" cx="304" cy="96" r="4.6"/>
+    <circle class="punto" cx="112" cy="122" r="4.2"/>
+    <circle class="punto" cx="164" cy="130" r="4.8"/>
+    <circle class="punto" cx="214" cy="116" r="4.4"/>
+    <circle class="punto" cx="266" cy="126" r="4.9"/>
+    <circle class="punto" cx="314" cy="114" r="4.4"/>
+    <circle class="punto" cx="318.0" cy="152" r="3.4"/>
+    </g>
+    <circle class="punto punto--claro" cx="232" cy="246" r="3.5" fill="#F5F3FF"/>
+    <g class="salida" stroke="#5B21B6" stroke-width="1.15">
+      <path d="M 168.0 296.8 V 346 Q 168.0 354 160.0 354 H 74 Q 67 354 67 362 V 368"/>
+      <path d="M 200 300.0 V 368"/>
+      <path d="M 232.0 296.8 V 346 Q 232.0 354 240.0 354 H 326 Q 333 354 333 362 V 368"/>
+    </g>
+    <g fill="#5B21B6">
+      <circle cx="168.0" cy="326" r="4"/>
+      <circle cx="200" cy="326" r="4"/>
+      <circle cx="232.0" cy="326" r="4"/>
+    </g>
+  </g>
+</svg>
+
+<svg class="fig-pie fig-pie--full" viewBox="0 0 700 374" fill="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="fd-top" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F5F3FF"/>
+      <stop offset="1" stop-color="#EFEAFC"/>
+    </linearGradient>
+    <linearGradient id="fd-mid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#D5CAF4"/>
+      <stop offset="0.5" stop-color="#E4DCFB"/>
+      <stop offset="1" stop-color="#EDE7FC"/>
+    </linearGradient>
+    <linearGradient id="fd-bot" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6D28D9"/>
+      <stop offset="1" stop-color="#5B21B6"/>
+    </linearGradient>
+    <linearGradient id="fd-vol" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#4C1D95" stop-opacity="0.14"/>
+      <stop offset="0.28" stop-color="#4C1D95" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#ffffff" stop-opacity="0.24"/>
+      <stop offset="0.72" stop-color="#4C1D95" stop-opacity="0"/>
+      <stop offset="1" stop-color="#4C1D95" stop-opacity="0.16"/>
+    </linearGradient>
+    <linearGradient id="fd-edge" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#A78BFA" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#DDD6FE" stop-opacity="0.9"/>
+    </linearGradient>
+    <clipPath id="fd-clip"><path d="M 18.0 40 L 136.0 276 A 64 24 0 0 0 264.0 276 L 382.0 40 A 182 14 0 0 0 18.0 40 Z"/></clipPath>
+  </defs>
+  <g class="cono">
+    <path d="M 18.0 40 L 136.0 276 A 64 24 0 0 0 264.0 276 L 382.0 40 A 182 14 0 0 0 18.0 40 Z" fill="url(#fd-top)"/>
+    <path d="M 74.0 152 Q 200 170 326.0 152 L 290.0 224 Q 200 238 110.0 224 Z" fill="url(#fd-mid)"/>
+    <path d="M 110.0 224 Q 200 238 290.0 224 L 264.0 276 A 64 24 0 0 1 136.0 276 Z" fill="url(#fd-bot)"/>
+    <path d="M 18.0 40 L 110.0 224 Q 200 238 290.0 224 L 382.0 40 A 182 14 0 0 0 18.0 40 Z" fill="url(#fd-vol)"/>
+  </g>
+  <g class="cono cono-trazo" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 37.0 58.0 L 75.0 132.0" stroke="#ffffff" stroke-width="1.4" opacity="0"/>
+    <path class="nivel" d="M 74.0 152 Q 200 170 326.0 152" stroke="#B7A4EE" stroke-width="1.15"/>
+    <path class="nivel" d="M 110.0 224 Q 200 238 290.0 224" stroke="#E4DCFB" stroke-width="1.15"/>
+    <path d="M 18.0 40 A 182 14 0 0 0 382.0 40 A 182 14 0 0 0 18.0 40" stroke="#DDD6FE" stroke-width="1.15"/>
+    <path d="M 382.0 40 A 182 14 0 0 1 18.0 40" stroke="#ffffff" stroke-width="1.4" opacity="0.85"/>
+    <path d="M 264.0 276 A 64 24 0 0 1 136.0 276" stroke="url(#fd-edge)" stroke-width="1.6"/>
+    <g fill="#5B21B6">
+    <circle class="punto" cx="70" cy="62" r="4.6"/>
+    <circle class="punto" cx="118" cy="70" r="5.0"/>
+    <circle class="punto" cx="168" cy="58" r="4.5"/>
+    <circle class="punto" cx="220" cy="74" r="5.2"/>
+    <circle class="punto" cx="272" cy="64" r="4.7"/>
+    <circle class="punto" cx="322" cy="78" r="4.8"/>
+    <circle class="punto" cx="92" cy="94" r="4.4"/>
+    <circle class="punto" cx="146" cy="102" r="5.0"/>
+    <circle class="punto" cx="198" cy="88" r="4.5"/>
+    <circle class="punto" cx="252" cy="106" r="5.1"/>
+    <circle class="punto" cx="304" cy="96" r="4.6"/>
+    <circle class="punto" cx="112" cy="122" r="4.2"/>
+    <circle class="punto" cx="164" cy="130" r="4.8"/>
+    <circle class="punto" cx="214" cy="116" r="4.4"/>
+    <circle class="punto" cx="266" cy="126" r="4.9"/>
+    <circle class="punto" cx="314" cy="114" r="4.4"/>
+    <circle class="punto" cx="318.0" cy="152" r="3.4"/>
+    </g>
+    <circle class="punto punto--claro" cx="232" cy="246" r="3.5" fill="#F5F3FF"/>
+    <g class="salida" stroke="#5B21B6" stroke-width="1.15">
+      <path d="M 168.0 296.8 V 346 Q 168.0 354 160.0 354 H 74 Q 67 354 67 362 V 368"/>
+      <path d="M 200 300.0 V 368"/>
+      <path d="M 232.0 296.8 V 346 Q 232.0 354 240.0 354 H 326 Q 333 354 333 362 V 368"/>
+    </g>
+    <g fill="#5B21B6">
+      <circle cx="168.0" cy="326" r="4"/>
+      <circle cx="200" cy="326" r="4"/>
+      <circle cx="232.0" cy="326" r="4"/>
+    </g>
+  </g>
+  <g class="glines">
+    <line class="gline" x1="322" y1="78" x2="448" y2="78"/>
+    <line class="gline" x1="318.0" y1="152" x2="448" y2="152"/>
+    <line class="gline" x1="232" y1="246" x2="448" y2="246"/>
+  </g>
+  <foreignObject class="etiquetas" x="456" y="64" width="214" height="68"><div xmlns="http://www.w3.org/1999/xhtml" class="etiqueta"><strong>Casos posibles</strong><span>Todas las ideas y oportunidades de IA en tu organización.</span></div></foreignObject>
+  <foreignObject class="etiquetas" x="456" y="138" width="214" height="76"><div xmlns="http://www.w3.org/1999/xhtml" class="etiqueta"><strong>Evaluación por valor y riesgo</strong><span>Analizamos impacto de negocio, viabilidad y nivel de riesgo.</span></div></foreignObject>
+  <foreignObject class="etiquetas" x="456" y="232" width="214" height="76"><div xmlns="http://www.w3.org/1999/xhtml" class="etiqueta"><strong>Plan de prioridades</strong><span>Seleccionamos los casos a ejecutar y los organizamos por olas.</span></div></foreignObject>
+</svg>
+
+
+        <div class="guias">
+          <p class="guia"><strong>Casos posibles</strong><span>Todas las ideas y oportunidades de IA en tu organización.</span></p>
+          <p class="guia"><strong>Evaluación por valor y riesgo</strong><span>Analizamos impacto de negocio, viabilidad y nivel de riesgo.</span></p>
+          <p class="guia"><strong>Plan de prioridades</strong><span>Seleccionamos los casos a ejecutar y los organizamos por olas.</span></p>
+        </div>
+        <div class="olas"><div><b>Ola 1</b><span>Bases</span></div><div><b>Ola 2</b><span>Controles</span></div><div><b>Ola 3</b><span>Mejora continua</span></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="beneficia">
+    <h3>Cómo te beneficia</h3>
+    <div class="beneficia__item"><img src="/imagenes/icons/evaluacion-ink.svg" alt="" width="28" height="28"><p>Sabes tu nivel de madurez en seis dimensiones</p></div>
+    <div class="beneficia__item"><img src="/imagenes/icons/priorizacion-ink.svg" alt="" width="28" height="28"><p>Ves tus casos ordenados por valor y riesgo</p></div>
+    <div class="beneficia__item"><img src="/imagenes/icons/plan-ink.svg" alt="" width="28" height="28"><p>Tienes tu plan por olas vivo en Ónix Govern</p></div>
+  </div>
+  <details class="que"><summary>Qué hacemos</summary><ul><li>Autodiagnóstico ampliado con tus documentos como evidencia.</li><li>Entrevistas con los dueños de cada proceso.</li><li>Clasificación de cada caso de uso: tipo, nivel de riesgo y ruta de gobierno.</li></ul></details>
+</section>
+<section class="fase" id="fase-02" aria-labelledby="f2-h">
+  <div class="fase__top">
+    <div>
+      <p class="fase__kicker">Ruta IA · 02</p>
+      <h2 id="f2-h" class="display h2">Pilotos con controles</h2>
+      <p class="fase__sub">de seguridad y gobernanza</p>
+      <p class="fase__q">¿Funciona y es seguro?</p>
+      <p>Construimos el caso prioritario conectado a tus sistemas. Antes de que llegue a tus clientes, lo probamos en calidad, fuga de datos y resistencia a ataques, y definimos qué decisiones siguen en manos de una persona.</p>
+      <p class="fase__fit"><strong>Es para ti si:</strong> ya sabes qué caso quieres y necesitas llevarlo a producción sin riesgos innecesarios.</p>
+    </div>
+    <div class="fig">
+      <p class="fig__lead">Un caso real funcionando, probado y aprobado antes de lanzar.</p>
+      <div class="flujo">
+        <div class="flujo__paso flujo__paso--1"><b>Conexión</b><span>Conectada a tus sistemas</span></div>
+        <div class="flujo__paso flujo__paso--2"><b>Pruebas</b><span>Calidad, fuga de datos y ataques</span></div>
+        <div class="flujo__paso flujo__paso--3"><b>Aprobación humana</b><span>Las decisiones clave siguen en manos de una persona</span></div>
+      </div>
+      <div class="olas"><div><b>Sistemas</b><span>Tu caso funciona conectado a tus sistemas</span></div><div><b>Pruebas</b><span>Pasó calidad, fuga de datos y ataques</span></div><div><b>Aprobación</b><span>Sabes quién aprueba cada decisión</span></div></div>
+    </div>
+  </div>
+  <div class="beneficia">
+    <h3>Cómo te beneficia</h3>
+    <div class="beneficia__item"><img src="/imagenes/icons/agente-ink.svg" alt="" width="28" height="28"><p>Tu caso funciona conectado a tus sistemas</p></div>
+    <div class="beneficia__item"><img src="/imagenes/icons/inventario-ink.svg" alt="" width="28" height="28"><p>Sabes que pasó pruebas de calidad, fuga de datos y ataques</p></div>
+    <div class="beneficia__item"><img src="/imagenes/icons/aprobacion-ink.svg" alt="" width="28" height="28"><p>Sabes quién aprueba cada decisión</p></div>
+  </div>
+  <details class="que"><summary>Qué hacemos</summary><ul><li>Desarrollo del agente o la automatización con permisos mínimos.</li><li>Pruebas automatizadas con umbrales según el riesgo del caso.</li><li>Aprobación humana en decisiones clave y aviso de uso de IA.</li></ul></details>
+</section>
+<section class="fase" id="fase-03" aria-labelledby="f3-h">
+  <div class="fase__top">
+    <div>
+      <p class="fase__kicker">Ruta IA · 03</p>
+      <h2 id="f3-h" class="display h2">Operación y observabilidad</h2>
+      <p class="fase__q">¿Sigue rindiendo?</p>
+      <p>Una vez en producción, cada respuesta queda trazada y cada métrica tiene un umbral. Si cambia el modelo, los datos o la forma de uso, el caso se reevalúa antes de que el problema llegue al cliente.</p>
+      <p>Tablero de control: evalúa a qué acceden tus agentes y quién los usa, monitorea costos, consultas y la calidad de sus respuestas, y entiende sus vulnerabilidades para retomar el control.</p>
+      <p class="fase__fit"><strong>Es para ti si:</strong> ya tienes IA en producción y no tienes visibilidad de lo que hace.</p>
+    </div>
+    <div class="fig">
+      <p class="fig__lead">Ves en todo momento qué hace tu IA, cuánto cuesta y cuánto rinde.</p>
+      <div class="board">
+          <p class="board__note">Datos de demostración</p>
+          <div class="board__cards">
+            <article><h4>Acceso de agentes</h4><div class="board__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></div></article>
+            <article><h4>Costos</h4><div class="board__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></div></article>
+            <article><h4>Consultas</h4><div class="board__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></div></article>
+            <article><h4>Calidad de respuestas</h4><div class="board__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></div></article>
+            <article><h4>Vulnerabilidades</h4><div class="board__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></div></article>
+            <article><h4>Umbral</h4><svg class="board__chart" viewBox="0 0 160 64" aria-hidden="true"><path d="M4 44C24 42 36 24 54 28C74 32 86 14 108 18C126 22 140 36 156 16" fill="none" stroke="#7C3AED" stroke-width="1.6" stroke-linecap="round"/><path d="M4 26H156" stroke="#C4B5FD" stroke-dasharray="4 5"/></svg></article>
+          </div>
+      </div>
+    </div>
+  </div>
+  <div class="beneficia">
+    <h3>Cómo te beneficia</h3>
+    <div class="beneficia__item"><img src="/imagenes/icons/agente-ink.svg" alt="" width="28" height="28"><p>Ves valor, costo y riesgo en un solo tablero</p></div>
+    <div class="beneficia__item"><img src="/imagenes/icons/priorizacion-ink.svg" alt="" width="28" height="28"><p>Recibes alertas y reevaluación cuando algo cambia</p></div>
+    <div class="beneficia__item"><img src="/imagenes/icons/registro-ink.svg" alt="" width="28" height="28"><p>Tienes un reporte de valor y riesgo</p></div>
+  </div>
+  <details class="que"><summary>Qué hacemos</summary><ul><li>Trazabilidad de respuestas y acciones de cada agente.</li><li>Monitoreo de calidad, costo y uso contra la línea base.</li><li>Revisión de valor, riesgo y política.</li></ul></details>
+</section>
+</div>
+</div>
+
+<section class="marco" aria-labelledby="marco-h">
+  <div class="wrap">
+    <h2 id="marco-h" class="display h2">Las reglas detrás de cada decisión.</h2>
+    <p>El Marco Ónix de IA Responsable define cómo decidimos. Ocho principios dan el criterio. Tres capas, gobierno, riesgo y seguridad, organizan los controles. Dos lentes, la madurez de la empresa y el perfil de cada caso, deciden cuánto rigor aplica.</p>
+    <div class="marco__norte"><strong>Norte</strong> Usar IA con valor, confianza y control. Ocho principios: [OCHO PRINCIPIOS]</div>
+    <div class="marco__cols">
+      <div><h3>Gobierno</h3><p>Quién decide, qué se aprueba y qué queda registrado.</p></div>
+      <div><h3>Riesgo</h3><p>Qué puede salir mal en cada caso y qué rigor le toca.</p></div>
+      <div><h3>Seguridad</h3><p>Qué datos se tocan, qué permisos hay y qué se prueba.</p></div>
+    </div>
+    <div class="marco__base"><strong>Referencias</strong> NIST AI RMF, ISO/IEC 42001, ISO/IEC 27001 y OWASP. No es una certificación.</div>
+    <p>Ónix no es organismo certificador; trabajamos con referencia a estándares reconocidos.</p>
+  </div>
+</section>
+
+<section class="cierre" aria-labelledby="cierre-h">
+  <div class="wrap">
+    <div class="cierre__linea" aria-hidden="true"><i></i><i></i><i></i></div>
+    <h2 id="cierre-h" class="display h2">¿Por dónde empieza tu empresa?</h2>
+    <p>Haz el autodiagnóstico y te decimos en qué fase empezar.</p>
+    <p>El autodiagnóstico es gratis y lo haces por tu cuenta. Con ese resultado, trabajamos contigo uno a uno en la solución.</p>
+    <p>Ónix Govern y Ruta IA se contratan como consultoría personalizada, después del autodiagnóstico.</p>
+    <div class="v-hero__ctas">
+      <a class="btn btn--ruta" href="/autodiagnostico">Haz tu autodiagnóstico gratis</a>
+      <div class="cta__act">
+        <a class="link" href="https://wa.me/522227097945?text=Hola%2C%20quiero%20agendar%20la%20consultor%C3%ADa%20inicial%20de%20Ruta%20IA.%20Aviso%20de%20privacidad%3A%20https%3A%2F%2Fwww.onix-ia.com%2Faviso-de-privacidad" target="_blank" rel="noopener noreferrer">Agenda tu consultoría inicial</a>
+        <p class="priv-note">Al escribirnos por WhatsApp, Ónix (Rodolfo Mora) usará tu número y tu mensaje para responderte y darte seguimiento. WhatsApp (Meta) trata los datos de la conversación bajo sus propias condiciones. <a href="/aviso-de-privacidad">Aviso de privacidad de Ónix</a></p>
+      </div>
+    </div>
+    <p class="ruta__personal" data-ruta-personal hidden></p>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__top">
+      <p class="footer__brand">ÓNIX<span>Estrategia, gobernanza y seguridad de IA</span></p>
+      <nav aria-label="Pie de página">
+        <ul>
+          <li><a href="/">Inicio</a>
+      <a href="/ruta-ia">Ruta IA</a></li>
+          <li><a href="/servicios">Servicios</a></li>
+          <li><a href="/como-trabajamos">Cómo trabajamos</a></li>
+          <li><a href="/confianza-y-gobierno">Confianza y gobierno</a></li>
+          <li><a href="/#contacto">Contacto</a></li>
+          <li><a href="/aviso-de-privacidad">Aviso de privacidad de Ónix</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="footer__map"><h2 class="sr-only">Servicios</h2><div class="footer__layers footer__layers--duo"><div><h3>Líneas de trabajo</h3><ul><li><a href="/servicios/estrategia-de-ia">Estrategia y gobernanza de IA</a></li><li><a href="/servicios/auditoria-de-ia">Revisión de riesgos de la IA</a></li><li><a href="/servicios">Desarrollo de agentes y soluciones de IA</a></li><li><a href="/#agentes">Especialidad de gobierno y seguridad de agentes</a></li><li><a href="/como-trabajamos">Acompañamiento de la operación de IA</a></li></ul></div><div><h3>Soluciones y demos</h3><ul><li><a href="/servicios">Catálogo de soluciones</a></li><li><a href="/servicios/agentes-de-operacion">Agentes de operación</a></li><li><a href="/servicios/asistentes-whatsapp-y-voz">Asistentes de WhatsApp y voz</a></li><li><a href="/servicios/documentos-vivos">Conocimiento documental</a></li><li><a href="/servicios/radar-de-leads">Radar de Leads</a></li><li><a href="/servicios/contabilidad-asistida">Contabilidad asistida</a></li></ul></div></div></div>
+    <div class="footer__bottom">
+      <p>© 2026 Ónix. Todos los derechos reservados.</p>
+      <p class="footer__wa">WhatsApp: 222 709 7945</p>
+      <p class="footer__wa">Escríbenos: <a href="mailto:info@onix-ia.com">info@onix-ia.com</a></p>
+      <p class="footer__wa"><a href="https://www.instagram.com/onixia.mx/" target="_blank" rel="noopener noreferrer">Instagram @onixia.mx<span class="sr-only"> (abre Instagram)</span></a></p>
+    </div>
+  </div>
+</footer>
+<script>
+(function(){
+  var f = document.getElementById('contacto-form');
+  if (f) { var b0 = f.querySelector('button[type="submit"]'); if (b0) b0.disabled = false; }
+  if (f) f.addEventListener('submit', function(e){
+    e.preventDefault();
+    var s = document.getElementById('form-status'), btn = f.querySelector('button[type="submit"]'), er = document.getElementById('form-error');
+    function say(t){ if (s) { s.hidden = false; s.textContent = t; } }
+    if (f.botcheck && f.botcheck.checked) return;
+    var fields = ['nombre', 'contacto', 'mensaje'];
+    fields.forEach(function(n){ var el = f.elements[n]; if (el) { el.value = el.value.trim(); el.removeAttribute('aria-invalid'); el.removeAttribute('aria-describedby'); } });
+    if (er) { er.hidden = true; er.textContent = ''; }
+    var cv = f.contacto.value, digits = cv.replace(/\D/g, ''), mailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cv), phoneOk = digits.length > 9 && /^[+()\d\s.\-]+$/.test(cv);
+    var bad = null, msg = '';
+    if (!f.nombre.value) { bad = f.nombre; msg = 'Escribe tu nombre.'; }
+    else if (!mailOk && !phoneOk) { bad = f.contacto; msg = 'Escribe un correo válido o un número de WhatsApp con diez dígitos o más.'; }
+    else if (!f.mensaje.value) { bad = f.mensaje; msg = 'Cuéntanos qué necesitas.'; }
+    ['e-nombre','e-contacto','e-msg'].forEach(function(id){ var n = document.getElementById(id); if (n) n.hidden = true; });
+    if (bad) {
+      bad.setAttribute('aria-invalid', 'true');
+      var eid = bad === f.nombre ? 'e-nombre' : bad === f.contacto ? 'e-contacto' : 'e-msg';
+      bad.setAttribute('aria-describedby', eid);
+      var note = document.getElementById(eid);
+      if (note) { note.hidden = false; note.textContent = msg; }
+      if (s) s.textContent = '';
+      if (er) { er.hidden = false; er.textContent = msg; }
+      bad.focus();
+      return;
+    }
+    var d = new FormData(f), c = String(d.get('contacto') || '').trim();
+    if (mailOk) d.append('replyto', c);
+    d.set('consentimiento_comercial_valor', f.consentimiento_comercial && f.consentimiento_comercial.checked ? 'Sí' : 'No');
+    d.set('consentimiento_fecha_hora', new Date().toISOString());
+    btn.disabled = true; say('Enviando…');
+    fetch(f.action, { method: 'POST', body: d, headers: { 'Accept': 'application/json' } })
+      .then(function(r){ return r.json().catch(function(){ return {}; }).then(function(j){ return r.ok && j.success; }); })
+      .then(function(ok){
+        if (ok) { f.reset(); say('Gracias, recibimos tu mensaje. Te contactaremos por el medio que nos dejaste.'); }
+        else { say('No se pudo enviar. Escríbenos a info@onix-ia.com o por WhatsApp al 222 709 7945.'); }
+      })
+      .catch(function(){ say('No se pudo enviar. Escríbenos a info@onix-ia.com o por WhatsApp al 222 709 7945.'); })
+      .then(function(){ btn.disabled = false; });
+  });
+})();
+</script>
+<script src="/visual.js" defer></script>
+<script src="/ruta.js" defer></script>
+<script src="/nav.js" defer></script>
+<script src="/motion.js" defer></script>
+<script src="/home.js" defer></script>
+<script src="/secuencia.js" defer></script>
+</body>
+</html>
