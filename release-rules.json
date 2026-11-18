@@ -11,7 +11,7 @@
   "plazosAprobados": [
     "__NINGUNA_APROBADA__"
   ],
-  "_plazosAprobados_NOTA": "Reglas vigentes: sin plazos ni duraciones. El centinela activa el check (incluye \"24/7\"). La única excepción es la frase exacta «Conoce en 15 minutos el nivel de preparación de tu práctica de IA y dónde trabajar.» (textosExactosAprobados, id autodiagnostico-quince): el check 01 la retira antes de buscar plazos y el check 05 la enmascara. «15 minutos» en cualquier otra frase sigue fallando.",
+  "_plazosAprobados_NOTA": "Reglas vigentes: sin plazos ni duraciones. El centinela activa el check (incluye \"24/7\"). El check 01 retira, antes de buscar plazos, cada entrada de textosExactosAprobados que contenga un plazo, y el check 05 enmascara esos textos. Hoy son: «Conoce en 15 minutos el nivel de preparación de tu práctica de IA y dónde trabajar.» (autodiagnostico-quince), «15 minutos. Sin registro. Y la primera consultoría corre por nuestra cuenta.» (hero-nota-quince) y «En 15 minutos sabrás dónde estás y cuál es el primer paso con más valor.» (hero-situacion-quince). Estas dos últimas vienen del brief del home del 17 nov 2026. «15 minutos» en cualquier otra frase sigue fallando.",
   "preciosAprobados": [
     "__NINGUNA_APROBADA__",
     "$4,900",
@@ -601,6 +601,14 @@
     {
       "id": "autodiagnostico-quince",
       "texto": "Conoce en 15 minutos el nivel de preparación de tu práctica de IA y dónde trabajar."
+    },
+    {
+      "id": "hero-nota-quince",
+      "texto": "15 minutos. Sin registro. Y la primera consultoría corre por nuestra cuenta."
+    },
+    {
+      "id": "hero-situacion-quince",
+      "texto": "En 15 minutos sabrás dónde estás y cuál es el primer paso con más valor."
     }
   ],
   "rutasConSectorPermitido": [
