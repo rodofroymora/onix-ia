@@ -61,10 +61,13 @@ for (const f of L.listarHtml()) {
   const texto = L.textoAuditable(html);
   // Sin los formatos visibles aprobados del WhatsApp (p. ej. "+52 222 709 7945") para no detectarlos como cifra
   const textoCifras = L.quitarFormatosWhatsapp(texto, (reglas.whatsapp && reglas.whatsapp.formatosVisiblesPermitidos) || []);
-  // «15 minutos» solo se admite dentro de la frase exacta del autodiagnóstico. Fuera de ella sigue fallando.
+  // Un texto exacto aprobado que contiene un plazo se retira antes de buscar plazos.
+  // Fuera de esas frases, «15 minutos» y cualquier otro plazo siguen fallando.
   let textoPlazos = textoCifras;
   for (const t of reglas.textosExactosAprobados || []) {
-    if (!t || t.id !== 'autodiagnostico-quince' || !t.texto) continue;
+    if (!t || !t.texto) continue;
+    PLAZO.lastIndex = 0;
+    if (!PLAZO.test(t.texto)) continue;
     const esc = t.texto.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+');
     textoPlazos = textoPlazos.replace(new RegExp(esc, 'gu'), (m) => ' '.repeat(m.length));
   }
