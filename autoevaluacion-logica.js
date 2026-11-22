@@ -1,7 +1,7 @@
 /**
  * Autodiagnóstico de IA. Cálculo en el navegador, copiado de la especificación aprobada.
  * Decisiones pendientes (no son copy público):
- * 1. El enlace «Revisión de riesgos de IA» se deja como en el prototipo: /servicios/estrategia-de-ia#riesgos.
+ * 1. «Revisión de riesgos de IA» ya no es un enlace. Si el cálculo lo nombra, se muestra como texto.
  * 2. «Evaluación completa» se muestra como en el prototipo (sin «próximamente»).
  * 3. No hay sección de leyes.
  * 4. La ficha documental sigue en /servicios/documentos-vivos.
@@ -112,5 +112,5 @@ export function reportOf(R) {
   const prio = R.allTie ? 'las dimensiones empatan; no hay una brecha única' : R.low3.map((k) => R.D[k]).join(', ');
   const rutaTxt = R.noElegida ? 'la ruta ' + R.ruta + ' es una referencia y no queda elegida' : 'ruta ' + R.ruta;
   const msg = 'Hola, hice el autodiagnóstico de IA de ÓNIX. Resultado orientativo según mis respuestas: nivel ' + R.level + ' (índice ' + R.index + ' de 100); caso de uso ' + low(R.tipo) + ' con riesgo estimado ' + low(R.risk) + ', ' + rutaTxt + '. Prioridades: ' + prio + '. Me interesa ' + (R.svcRisk ? 'Revisión de riesgos de IA' : 'Ruta IA') + '. Aviso de privacidad: https://www.onix-ia.com/aviso-de-privacidad';
-  return { summary, bullets: [b1, b2, b3], RD, pri, plan, msg, svc: R.svcRisk ? 'Revisión de riesgos de IA' : 'Ruta IA', svcHref: R.svcRisk ? '/servicios/estrategia-de-ia#riesgos' : '/servicios/estrategia-de-ia' };
+  return { summary, bullets: [b1, b2, b3], RD, pri, plan, msg, svc: R.svcRisk ? 'Revisión de riesgos de IA' : 'Ruta IA', svcHref: R.svcRisk ? '' : '/servicios/estrategia-de-ia' };
 }

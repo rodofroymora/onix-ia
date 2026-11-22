@@ -5,9 +5,12 @@
     "__NINGUNA_APROBADA__",
     "+52",
     "0%",
-    "25%"
+    "25%",
+    "01 Casos",
+    "03 Personas",
+    "04 Personas"
   ],
-  "_cifrasAprobadas_NOTA": "Reglas vigentes: no hay cifras aprobadas. El centinela activa el check. \"+52\" solo se admite como parte de los formatos visibles del WhatsApp oficial (whatsapp.formatosVisiblesPermitidos, p. ej. \"+52 222 709 7945\"): el check 01 los excluye antes de buscar cifras. \"+52 clientes\", \"+52%\" u otro \"+NN\" siguen fallando.",
+  "_cifrasAprobadas_NOTA": "Reglas vigentes: no hay cifras de métricas aprobadas. El centinela activa el check. \"+52\" solo se admite como parte de los formatos visibles del WhatsApp oficial (whatsapp.formatosVisiblesPermitidos, p. ej. \"+52 222 709 7945\"): el check 01 los excluye antes de buscar cifras. \"+52 clientes\", \"+52%\" u otro \"+NN\" siguen fallando. Rodolfo Mora, 22 nov 2026: allowlist exacta de las etiquetas de paso que el check pega al título («01 Casos», «03 Personas», «04 Personas»). «02 Casos», «05 Personas» u otra cifra siguen fallando.",
   "plazosAprobados": [
     "__NINGUNA_APROBADA__"
   ],
@@ -21,9 +24,10 @@
   ],
   "_preciosAprobados_NOTA": "Precios del estimador de la landing, aprobados por el dueño del sitio (Rodolfo Mora) el 2026-10-11: implementación desde $4,900 (Arranque) y desde $9,900 (Negocio); mensualidad desde $1,490 (Arranque) y desde $2,990 (Negocio). Siempre con la leyenda «Desde» y «más IVA». El centinela se conserva para que cualquier otro monto siga fallando. Pendiente: revisión legal del texto de rango e IVA.",
   "sectoresPermitidos": [
-    "__NINGUNO_APROBADO__"
+    "__NINGUNO_APROBADO__",
+    "construcción"
   ],
-  "_sectoresPermitidos_NOTA": "Sin sectores aprobados: el centinela \"__NINGUNO_APROBADO__\" mantiene ACTIVO el check 01 para todo el vocabulario sin aprobar nada. \"clínica\" y \"clínicas\" no pasan en ninguna ruta (regla \"clinica\" del check 05, y vocabulario del check 01). Los términos de salud (\"salud\", \"consultorio\", \"paciente\"…) se permiten SOLO en /salud mediante rutasConSectorPermitido (check 05; por eso salen de sectoresVocabulario); en cualquier otra ruta, incluida /aviso-de-privacidad, son bloqueantes. Los sectores se comparan de forma exacta (sin acentos ni mayúsculas, sin quitar plural).",
+  "_sectoresPermitidos_NOTA": "El centinela \"__NINGUNO_APROBADO__\" mantiene ACTIVO el check 01. Rodolfo Mora, 22 nov 2026: se permite solo la palabra exacta \"construcción\" (el verbo de «La construcción de agentes es la fase 03», no un sector). \"construcciones\", \"clínica\" y \"clínicas\" no pasan en ninguna ruta. Los términos de salud (\"salud\", \"consultorio\", \"paciente\"…) se permiten SOLO en /salud mediante rutasConSectorPermitido (check 05; por eso salen de sectoresVocabulario); en cualquier otra ruta, incluida /aviso-de-privacidad, son bloqueantes. Los sectores se comparan de forma exacta (sin acentos ni mayúsculas, sin quitar plural).",
   "sectoresVocabulario": [
     "escuelas",
     "escuela",
@@ -641,9 +645,17 @@
     {
       "id": "fase-04-minuscula",
       "texto": "fase 04"
+    },
+    {
+      "id": "fase-02-minuscula",
+      "texto": "fase 02"
+    },
+    {
+      "id": "nist-publicado-estados-unidos",
+      "texto": "publicado por el NIST de Estados Unidos"
     }
   ],
-  "_homeFasesYQuince_NOTA": "Aprobado por escrito por Rodolfo Mora el 21 nov 2026. Allowlist exacta (mayúsculas y puntuación): la frase home-quince-orientativo y las etiquetas «Fase 01»…«Fase 04». El enmascarado distingue mayúsculas, así que también quedan las formas en minúscula que el home usa en «Ir a la fase 01/03/04». «Fase 0», «Fase 05», «fase 02» y «15 minutos» en cualquier otra frase siguen bloqueados.",
+  "_homeFasesYQuince_NOTA": "Aprobado por escrito por Rodolfo Mora el 21 nov 2026, y el 22 nov 2026 la forma exacta «fase 02» y la frase exacta «publicado por el NIST de Estados Unidos». Allowlist exacta (mayúsculas y puntuación): la frase home-quince-orientativo, las etiquetas «Fase 01»…«Fase 04», «fase 02» y esa frase de NIST. El enmascarado distingue mayúsculas. «Fase 0», «Fase 05», «fase 2» (sin el cero) y «NIST» fuera de «NIST AI RMF» o de «publicado por el NIST de Estados Unidos» siguen bloqueados. «15 minutos» en cualquier otra frase sigue bloqueado.",
   "rutasConSectorPermitido": [
     {
       "ruta": "/salud",
