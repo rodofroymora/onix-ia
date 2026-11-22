@@ -11,7 +11,7 @@
   "plazosAprobados": [
     "__NINGUNA_APROBADA__"
   ],
-  "_plazosAprobados_NOTA": "Reglas vigentes: sin plazos ni duraciones. El centinela activa el check (incluye \"24/7\"). El check 01 retira, antes de buscar plazos, cada entrada de textosExactosAprobados que contenga un plazo, y el check 05 enmascara esos textos. Hoy son: «Conoce en 15 minutos el nivel de preparación de tu práctica de IA y dónde trabajar.» (autodiagnostico-quince), «15 minutos. Sin registro. Y la primera consultoría corre por nuestra cuenta.» (hero-nota-quince) y «En 15 minutos sabrás dónde estás y cuál es el primer paso con más valor.» (hero-situacion-quince). Estas dos últimas vienen del brief del home del 17 nov 2026. «15 minutos» en cualquier otra frase sigue fallando.",
+  "_plazosAprobados_NOTA": "Reglas vigentes: sin plazos ni duraciones. El centinela activa el check (incluye \"24/7\"). El check 01 retira, antes de buscar plazos, cada entrada de textosExactosAprobados que contenga un plazo, y el check 05 enmascara esos textos. Hoy son: «Conoce en 15 minutos el nivel de preparación de tu práctica de IA y dónde trabajar.» (autodiagnostico-quince), «15 minutos. Sin registro. Y la primera consultoría corre por nuestra cuenta.» (hero-nota-quince), «En 15 minutos sabrás dónde estás y cuál es el primer paso con más valor.» (hero-situacion-quince) y «15 minutos. Sin registro. Resultado orientativo, no es asesoría legal.» (home-quince-orientativo, Rodolfo Mora, 21 nov 2026). «15 minutos» en cualquier otra frase sigue fallando.",
   "preciosAprobados": [
     "__NINGUNA_APROBADA__",
     "$4,900",
@@ -609,8 +609,41 @@
     {
       "id": "hero-situacion-quince",
       "texto": "En 15 minutos sabrás dónde estás y cuál es el primer paso con más valor."
+    },
+    {
+      "id": "home-quince-orientativo",
+      "texto": "15 minutos. Sin registro. Resultado orientativo, no es asesoría legal."
+    },
+    {
+      "id": "fase-01",
+      "texto": "Fase 01"
+    },
+    {
+      "id": "fase-02",
+      "texto": "Fase 02"
+    },
+    {
+      "id": "fase-03",
+      "texto": "Fase 03"
+    },
+    {
+      "id": "fase-04",
+      "texto": "Fase 04"
+    },
+    {
+      "id": "fase-01-minuscula",
+      "texto": "fase 01"
+    },
+    {
+      "id": "fase-03-minuscula",
+      "texto": "fase 03"
+    },
+    {
+      "id": "fase-04-minuscula",
+      "texto": "fase 04"
     }
   ],
+  "_homeFasesYQuince_NOTA": "Aprobado por escrito por Rodolfo Mora el 21 nov 2026. Allowlist exacta (mayúsculas y puntuación): la frase home-quince-orientativo y las etiquetas «Fase 01»…«Fase 04». El enmascarado distingue mayúsculas, así que también quedan las formas en minúscula que el home usa en «Ir a la fase 01/03/04». «Fase 0», «Fase 05», «fase 02» y «15 minutos» en cualquier otra frase siguen bloqueados.",
   "rutasConSectorPermitido": [
     {
       "ruta": "/salud",
