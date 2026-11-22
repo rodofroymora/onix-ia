@@ -230,7 +230,25 @@ details[open] .pm::after{transform:rotate(0)}
 .faq details p{padding:0 0 20px;color:var(--ink2);max-width:720px}
 
 /* contacto */
-.ct{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:64px;align-items:end}
+.ct{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:64px;align-items:start}
+.ct-side{display:flex;flex-direction:column;gap:28px;min-width:0}
+.form{display:flex;flex-direction:column;gap:16px;min-width:0;background:var(--bg);border-top:3px solid var(--acc);padding:22px}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field label{font-size:14px;font-weight:600}
+.field input,.field textarea{font:inherit;font-size:16px;line-height:1.45;color:var(--ink);background:var(--bg);border:1px solid var(--ink2);border-radius:2px;padding:12px 14px;min-height:48px;width:100%}
+.field textarea{min-height:140px;resize:vertical}
+.field input::placeholder,.field textarea::placeholder{color:var(--ink2)}
+.err{margin:0;font-size:14px;line-height:1.45;color:var(--ink)}
+.err[hidden]{display:none}
+.form__notice{margin:0;font-size:13px;line-height:1.6;color:var(--ink2)}
+.form__notice a{color:var(--acc2)}
+.form__check{display:grid;grid-template-columns:44px minmax(0,1fr);align-items:center;column-gap:8px;min-height:44px;font-size:14px;line-height:1.45;cursor:pointer}
+.form__check input{width:22px;height:22px;margin:0;justify-self:center;accent-color:var(--acc)}
+.form .btn{width:100%}
+.form__error{margin:0;font-size:14px;line-height:1.45;color:var(--ink);background:var(--bg);border:1px solid var(--ink);border-radius:2px;padding:12px 14px}
+.form__error[hidden]{display:none}
+.form__status{margin:0;font-size:14px;line-height:1.45;color:var(--ink);background:var(--bg);border-left:3px solid var(--acc);border-radius:2px;padding:12px 14px}
+.form__status:empty{display:none}
 .ct .h2{margin-top:18px}
 
 /* pie */
@@ -665,11 +683,41 @@ html{scroll-behavior:auto}
 <h2 id="ct-h" class="h2">¿En qué fase está tu empresa?</h2>
 <p class="lead" style="margin-top:18px;font-size:17px">Cuéntanos qué quieres resolver y qué herramientas tienes hoy. O empieza por el autodiagnóstico.</p>
 </div>
+<div class="ct-side">
 <div class="stack">
 <a class="btn btn--accent" href="https://wa.me/522227097945?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20los%20servicios%20de%20%C3%93NIX.%20Aviso%20de%20privacidad%3A%20https%3A%2F%2Fwww.onix-ia.com%2Faviso-de-privacidad" target="_blank" rel="noopener" style="width:100%">Escríbenos por WhatsApp<span class="vh sr-only"> (abre WhatsApp)</span></a>
 <a class="btn-o" href="/autodiagnostico" style="width:100%">Haz tu autodiagnóstico gratis</a>
 <p class="wa-note">Al escribirnos por WhatsApp, Ónix (Rodolfo Mora) usará tu número y tu mensaje para responderte y darte seguimiento. WhatsApp (Meta) trata los datos de la conversación bajo sus propias condiciones. <a href="/aviso-de-privacidad">Aviso de privacidad de Ónix</a></p>
 <p class="small">WhatsApp: 222 709 7945 · <a href="mailto:info@onix-ia.com">info@onix-ia.com</a></p>
+</div>
+<form class="form" id="contacto-form" action="https://api.web3forms.com/submit" method="post" aria-label="Formulario de contacto">
+<input type="hidden" name="access_key" value="f0221177-88c3-4d11-ba01-5848158fcd9c" />
+<input type="hidden" name="subject" value="Nuevo mensaje desde onix-ia.com" />
+<input type="hidden" name="from_name" value="Formulario onix-ia.com" />
+<input type="checkbox" name="botcheck" class="vh" tabindex="-1" autocomplete="off" aria-hidden="true" />
+<div class="field">
+<label for="f-nombre">Nombre</label>
+<input id="f-nombre" name="nombre" type="text" autocomplete="name" placeholder="Tu nombre" required aria-describedby="e-nombre" />
+<p class="err" id="e-nombre" hidden>Escribe tu nombre.</p>
+</div>
+<div class="field">
+<label for="f-contacto">Email o WhatsApp</label>
+<input id="f-contacto" name="contacto" type="text" autocomplete="off" spellcheck="false" placeholder="Para responderte" required aria-describedby="e-contacto" />
+<p class="err" id="e-contacto" hidden>Escribe un correo válido o un número de WhatsApp con diez dígitos o más.</p>
+</div>
+<div class="field">
+<label for="f-msg">¿Qué necesitas?</label>
+<textarea id="f-msg" name="mensaje" rows="4" placeholder="Tu empresa y qué quieres resolver…" required aria-describedby="e-msg"></textarea>
+<p class="err" id="e-msg" hidden>Cuéntanos qué necesitas.</p>
+</div>
+<p class="form__notice" id="form-privacy">Ónix (Rodolfo Mora, Av. Haras 517, Col. Encinos, C.P. 72300, Puebla, Puebla) usará tu nombre, tus datos de contacto y tu mensaje para responder tu solicitud y darte seguimiento. Si lo autorizas con la casilla de abajo, también para enviarte información de nuestros servicios. Puedes negarte a esto último sin que afecte tu solicitud. Conoce el <a href="/aviso-de-privacidad">Aviso de privacidad integral</a>, incluidos tus derechos de acceso, rectificación, cancelación y oposición.</p>
+<label class="form__check"><input type="checkbox" name="consentimiento_comercial" value="1" /> <span>Quiero recibir información de servicios y novedades de Ónix.</span></label>
+<input type="hidden" name="aviso_version" value="v3" />
+<noscript><p class="form__status form__noscript">Activa JavaScript para enviar el formulario o escríbenos por WhatsApp.</p></noscript>
+<button type="submit" class="btn" disabled>Enviar</button>
+<p class="form__error" id="form-error" role="alert" aria-live="assertive" hidden></p>
+<p class="form__status" id="form-status" role="status" aria-live="polite"></p>
+</form>
 </div>
 </div>
 </section>
@@ -872,6 +920,51 @@ html{scroll-behavior:auto}
   }
   window.addEventListener('hashchange', fromHash);
   sel(0); fromHash();
+})();
+</script>
+<script>
+(function(){
+  var f = document.getElementById('contacto-form');
+  if (f) { var b0 = f.querySelector('button[type="submit"]'); if (b0) b0.disabled = false; }
+  if (f) f.addEventListener('submit', function(e){
+    e.preventDefault();
+    var s = document.getElementById('form-status'), btn = f.querySelector('button[type="submit"]'), er = document.getElementById('form-error');
+    function say(t){ if (s) { s.hidden = false; s.textContent = t; } }
+    if (f.botcheck && f.botcheck.checked) return;
+    var fields = ['nombre', 'contacto', 'mensaje'];
+    fields.forEach(function(n){ var el = f.elements[n]; if (el) { el.value = el.value.trim(); el.removeAttribute('aria-invalid'); el.removeAttribute('aria-describedby'); } });
+    if (er) { er.hidden = true; er.textContent = ''; }
+    var cv = f.contacto.value, digits = cv.replace(/\D/g, ''), mailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cv), phoneOk = digits.length > 9 && /^[+()\d\s.\-]+$/.test(cv);
+    var bad = null, msg = '';
+    if (!f.nombre.value) { bad = f.nombre; msg = 'Escribe tu nombre.'; }
+    else if (!mailOk && !phoneOk) { bad = f.contacto; msg = 'Escribe un correo válido o un número de WhatsApp con diez dígitos o más.'; }
+    else if (!f.mensaje.value) { bad = f.mensaje; msg = 'Cuéntanos qué necesitas.'; }
+    ['e-nombre','e-contacto','e-msg'].forEach(function(id){ var n = document.getElementById(id); if (n) n.hidden = true; });
+    if (bad) {
+      bad.setAttribute('aria-invalid', 'true');
+      var eid = bad === f.nombre ? 'e-nombre' : bad === f.contacto ? 'e-contacto' : 'e-msg';
+      bad.setAttribute('aria-describedby', eid);
+      var note = document.getElementById(eid);
+      if (note) { note.hidden = false; note.textContent = msg; }
+      if (s) s.textContent = '';
+      if (er) { er.hidden = false; er.textContent = msg; }
+      bad.focus();
+      return;
+    }
+    var d = new FormData(f), c = String(d.get('contacto') || '').trim();
+    if (mailOk) d.append('replyto', c);
+    d.set('consentimiento_comercial_valor', f.consentimiento_comercial && f.consentimiento_comercial.checked ? 'Sí' : 'No');
+    d.set('consentimiento_fecha_hora', new Date().toISOString());
+    btn.disabled = true; say('Enviando…');
+    fetch(f.action, { method: 'POST', body: d, headers: { 'Accept': 'application/json' } })
+      .then(function(r){ return r.json().catch(function(){ return {}; }).then(function(j){ return r.ok && j.success; }); })
+      .then(function(ok){
+        if (ok) { f.reset(); say('Gracias, recibimos tu mensaje. Te contactaremos por el medio que nos dejaste.'); }
+        else { say('No se pudo enviar. Escríbenos a info@onix-ia.com o por WhatsApp al 222 709 7945.'); }
+      })
+      .catch(function(){ say('No se pudo enviar. Escríbenos a info@onix-ia.com o por WhatsApp al 222 709 7945.'); })
+      .then(function(){ btn.disabled = false; });
+  });
 })();
 </script>
 </body>
