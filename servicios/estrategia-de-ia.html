@@ -1,510 +1,137 @@
-<!DOCTYPE html>
-<html lang="es-MX" class="no-sv">
+<!doctype html>
+<html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Estrategia de IA para PYMES: revisión inicial y ruta | Ónix</title>
-  <meta name="description" content="Ruta IA: revisión inicial de tu operación, casos de uso priorizados, hoja de ruta por fases y política de uso responsable de IA para tu PYME." />
-  <meta name="theme-color" content="#FFFFFF" />
-  <meta name="color-scheme" content="light" />
-  <link rel="canonical" href="https://www.onix-ia.com/servicios/estrategia-de-ia" />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://www.onix-ia.com/servicios/estrategia-de-ia" />
-  <meta property="og:locale" content="es_MX" />
-  <meta property="og:title" content="Estrategia de IA para PYMES: revisión inicial y ruta | Ónix" />
-  <meta property="og:description" content="Ruta IA: revisión inicial de tu operación, casos de uso priorizados, hoja de ruta por fases y política de uso responsable de IA para tu PYME." />
-  <meta property="og:image" content="https://www.onix-ia.com/og-onix.jpg" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="Ónix: Todos usan IA. Haz que tu negocio la rentabilice." />
-  <meta name="twitter:image" content="https://www.onix-ia.com/og-onix.jpg" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Estrategia de IA para PYMES: revisión inicial y ruta | Ónix" />
-  <meta name="twitter:description" content="Ruta IA: revisión inicial de tu operación, casos de uso priorizados, hoja de ruta por fases y política de uso responsable de IA para tu PYME." />
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230B0B0C'/><circle cx='16' cy='16' r='7' fill='none' stroke='%23FFFFFF' stroke-width='3'/><circle cx='23.5' cy='8.5' r='2.4' fill='%237C3AED'/></svg>" />
-  <script>/* motion gate: hidden initial states only exist when JS runs and motion is allowed */(function(d){if(window.matchMedia&&!matchMedia('(prefers-reduced-motion: reduce)').matches){d.classList.add('js');setTimeout(function(){if(!d.classList.contains('motion-ready'))d.classList.remove('js');},3000);}})(document.documentElement);</script>
-  <link rel="preload" href="/fonts/geist-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/site.css" />
-  <link rel="stylesheet" href="/servicios.css" />
-  <link rel="stylesheet" href="/sistema.css" />
-  <link rel="stylesheet" href="/servicio-vivo.css" />
-  <link rel="stylesheet" href="/sv/estrategia-de-ia.css" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Service","name":"Ruta IA","description":"Ruta IA: revisión inicial de tu operación, casos de uso priorizados, hoja de ruta por fases y política de uso responsable de IA para tu PYME.","serviceType":"Ruta IA","provider":{"@type":"Organization","name":"Ónix","url":"https://www.onix-ia.com"},"url":"https://www.onix-ia.com/servicios/estrategia-de-ia"}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"¿Necesito saber de tecnología?","acceptedAnswer":{"@type":"Answer","text":"No. Hablamos en términos de tu operación; la parte técnica la traducimos nosotros."}},{"@type":"Question","name":"¿Al final me obligan a contratar más servicios?","acceptedAnswer":{"@type":"Answer","text":"No. Te quedas con un plan propio que puedes ejecutar con quien quieras."}},{"@type":"Question","name":"¿Y si la conclusión es que no necesito IA?","acceptedAnswer":{"@type":"Answer","text":"También es un buen resultado. Te diremos qué conviene automatizar y qué no."}},{"@type":"Question","name":"¿Qué incluye la política de uso de IA?","acceptedAnswer":{"@type":"Answer","text":"Qué herramientas se pueden usar, qué información no se comparte, quién aprueba nuevos usos y cómo se revisan."}}]}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"https://www.onix-ia.com/"},{"@type":"ListItem","position":2,"name":"Servicios","item":"https://www.onix-ia.com/servicios"},{"@type":"ListItem","position":3,"name":"Ruta IA","item":"https://www.onix-ia.com/servicios/estrategia-de-ia"}]}</script>
-  <link rel="stylesheet" href="/editorial.css" />
-  <link rel="stylesheet" href="/visual.css" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estrategia de IA | ÓNIX</title>
+<meta name="description" content="Analizamos qué tan lista está tu organización para la IA en gobierno, gestión de riesgos y seguridad. Con Ruta IA te decimos qué hacer, en qué orden y con qué reglas.">
+<meta name="theme-color" content="#FFFDF7">
+<meta name="color-scheme" content="light">
+<link rel="canonical" href="https://www.onix-ia.com/servicios/estrategia-de-ia">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.onix-ia.com/servicios/estrategia-de-ia">
+<meta property="og:locale" content="es_MX">
+<meta property="og:title" content="Estrategia de IA | ÓNIX">
+<meta property="og:description" content="Analizamos qué tan lista está tu organización para la IA en gobierno, gestión de riesgos y seguridad. Con Ruta IA te decimos qué hacer, en qué orden y con qué reglas.">
+<meta property="og:image" content="https://www.onix-ia.com/og-onix.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Ónix">
+<meta name="twitter:image" content="https://www.onix-ia.com/og-onix.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Estrategia de IA | ÓNIX">
+<meta name="twitter:description" content="Analizamos qué tan lista está tu organización para la IA en gobierno, gestión de riesgos y seguridad. Con Ruta IA te decimos qué hacer, en qué orden y con qué reglas.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%2326262C'/><circle cx='16' cy='16' r='7' fill='none' stroke='%23FFFDF7' stroke-width='3'/><circle cx='23.5' cy='8.5' r='2.4' fill='%237C3AED'/></svg>" />
+<link rel="preload" href="/fonts/geist-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/geist-mono-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/onix-g.css">
+<link rel="stylesheet" href="/onix-pages.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"ÓNIX","url":"https://www.onix-ia.com"}</script>
+
 </head>
-<body class="ed">
+<body>
 <a class="skip" href="#main">Saltar al contenido</a>
-<header class="nav">
-  <div class="wrap nav__inner">
-    <a href="/" class="logo" aria-label="ÓNIX, inicio">ÓNIX</a>
-    <nav class="nav__links" aria-label="Principal">
-      <a href="/">Inicio</a>
-      <a href="/ruta-ia">Ruta IA</a>
-      <div class="nav__item">
-        <button type="button" class="nav__trigger" id="svc-trigger" aria-expanded="false" aria-controls="svc-mega" aria-haspopup="true" aria-current="page">Servicios <svg class="nav-chev" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6.2 8 10.8 13 6.2"/></svg></button>
-        <div class="mega" id="svc-mega" hidden>
-          <div class="mega__panel">
-            <div>
-              <p class="mega__title" id="mega-lineas">Líneas de trabajo</p>
-              <ul class="mega__list" aria-labelledby="mega-lineas">
-                <li><a href="/servicios/estrategia-de-ia">Estrategia y gobernanza de IA<small>Ruta de impacto organizacional de la IA</small></a></li>
-                <li><a href="/servicios/auditoria-de-ia">Revisión de riesgos de la IA</a></li>
-                <li><a href="/servicios">Desarrollo de agentes y soluciones de IA</a></li>
-                <li><a href="/#agentes">Especialidad de gobierno y seguridad de agentes</a></li>
-                <li><a href="/como-trabajamos">Acompañamiento de la operación de IA</a></li>
-              </ul>
-            </div>
-            <div>
-              <p class="mega__title" id="mega-demos">Soluciones y demos</p>
-              <ul class="mega__list" aria-labelledby="mega-demos">
-                <li><a href="/servicios">Catálogo de soluciones</a></li>
-                <li><a href="/servicios/agentes-de-operacion">Agentes de operación</a></li>
-                <li><a href="/servicios/asistentes-whatsapp-y-voz">Asistentes de WhatsApp y voz</a></li>
-                <li><a href="/servicios/documentos-vivos">Conocimiento documental</a></li>
-                <li><a href="/servicios/radar-de-leads">Radar de Leads</a></li>
-                <li><a href="/servicios/contabilidad-asistida">Contabilidad asistida</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-      <a href="/como-trabajamos">Cómo trabajamos</a>
-      <a href="/confianza-y-gobierno">Confianza y gobierno</a>
-      <a href="/#contacto">Contacto</a>
-    </nav>
-    <button class="burger" id="burger" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="mmenu"><span></span></button>
-  </div>
-</header>
-<nav class="mmenu" id="mmenu" aria-label="Menú móvil" hidden>
-  <a href="/">Inicio</a>
-      <a href="/ruta-ia">Ruta IA</a>
-  <button type="button" class="mm-acc" id="mm-acc" aria-expanded="false" aria-controls="mm-svc" aria-haspopup="true" aria-current="page">Servicios <svg class="nav-chev" width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 8.5 11 14.5 17.5 8.5"/></svg></button>
-  <div class="mm-sub" id="mm-svc" hidden>
-    <p class="mm-sub__title" id="mm-lineas">Líneas de trabajo</p>
-    <ul class="mm-list" aria-labelledby="mm-lineas">
-      <li><a href="/servicios/estrategia-de-ia">Estrategia y gobernanza de IA<small>Ruta de impacto organizacional de la IA</small></a></li>
-      <li><a href="/servicios/auditoria-de-ia">Revisión de riesgos de la IA</a></li>
-      <li><a href="/servicios">Desarrollo de agentes y soluciones de IA</a></li>
-      <li><a href="/#agentes">Especialidad de gobierno y seguridad de agentes</a></li>
-      <li><a href="/como-trabajamos">Acompañamiento de la operación de IA</a></li>
-    </ul>
-    <p class="mm-sub__title" id="mm-demos">Soluciones y demos</p>
-    <ul class="mm-list" aria-labelledby="mm-demos">
-      <li><a href="/servicios">Catálogo de soluciones</a></li>
-      <li><a href="/servicios/agentes-de-operacion">Agentes de operación</a></li>
-      <li><a href="/servicios/asistentes-whatsapp-y-voz">Asistentes de WhatsApp y voz</a></li>
-      <li><a href="/servicios/documentos-vivos">Conocimiento documental</a></li>
-      <li><a href="/servicios/radar-de-leads">Radar de Leads</a></li>
-      <li><a href="/servicios/contabilidad-asistida">Contabilidad asistida</a></li>
-    </ul>
-  </div>
-  <a href="/como-trabajamos">Cómo trabajamos</a>
-  <a href="/confianza-y-gobierno">Confianza y gobierno</a>
-  <a href="/#contacto">Contacto</a>
+<div class="site">
+<header class="hdr">
+<div class="wrap hdr-in">
+<a class="logo" href="/" aria-label="ÓNIX, inicio">ÓNIX</a>
+<nav class="nav" aria-label="Principal">
+<a class="nl" href="/">Inicio</a>
+<button class="nl" type="button" id="svc-btn" aria-expanded="false" aria-controls="panel-servicios" aria-current="page">Servicios <svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></button>
+<a class="nl" href="/confianza-y-gobierno">Confianza y gobierno</a>
+<a class="nl" href="/#contacto">Contacto</a>
+<a class="btn hdr-cta" href="/autodiagnostico">Autodiagnóstico gratis</a>
 </nav>
-<main id="main" class="sv">
+<button class="burger" id="burger" type="button" aria-expanded="false" aria-controls="menu-movil"><span class="vh">Abrir menú</span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M4 9h16M4 15h16"></path></svg></button>
+</div>
+<button class="backdrop" id="svc-backdrop" type="button" tabindex="-1" aria-hidden="true" hidden></button>
+<div id="panel-servicios" class="svc-panel" hidden>
+<div class="wrap svc-cols">
+<div><p class="svc-k">Modelo de trabajo</p><a class="svc-a" href="/servicios/estrategia-de-ia"><span class="n num">01</span><span><b>Estrategia</b><small>Readiness de IA, Ruta IA y Ónix Govern</small></span></a><a class="svc-a" href="/servicios/plataforma-agentica"><span class="n num">02</span><span><b>Plataforma agéntica</b><small>Diseño con el gobierno integrado</small></span></a><a class="svc-a" href="/servicios"><span class="n num">03</span><span><b>Fábrica de agentes</b><small>Agentes gobernados, seguros y observados</small></span></a><a class="svc-a" href="/servicios/operacion-de-ia"><span class="n num">04</span><span><b>Operación de IA</b><small>Control de uso, accesos y costos</small></span></a></div>
+<div><p class="svc-k">Soluciones plug and play</p><a class="svc-b" href="/servicios/agentes-de-operacion">Agentes de operación</a><a class="svc-b" href="/servicios/asistentes-whatsapp-y-voz">Asistentes de WhatsApp y voz</a><a class="svc-b" href="/servicios/documentos-vivos">Conocimiento documental</a><a class="svc-b" href="/servicios/radar-de-leads">Radar de Leads</a><a class="svc-b" href="/servicios/contabilidad-asistida">Contabilidad asistida</a><a class="svc-b" href="/servicios">Todo el catálogo</a></div>
+</div>
+</div>
+</header>
+<div id="menu-movil" class="mmenu" role="dialog" aria-modal="true" aria-label="Menú" hidden>
+<div class="wrap">
+<div class="mm-top"><span class="logo">ÓNIX</span><button class="burger" id="mm-close" type="button" style="display:inline-flex"><span class="vh">Cerrar menú</span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div>
+<nav aria-label="Principal">
+<a class="mm-l" href="/">Inicio</a>
+<button class="mm-l" id="mm-svc" type="button" aria-expanded="false" aria-controls="mm-servicios">Servicios <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></button>
+<div id="mm-servicios" class="mm-sub" hidden>
+<p class="svc-k">Modelo de trabajo</p><a class="svc-a" href="/servicios/estrategia-de-ia"><span class="n num">01</span><span><b>Estrategia</b><small>Readiness de IA, Ruta IA y Ónix Govern</small></span></a><a class="svc-a" href="/servicios/plataforma-agentica"><span class="n num">02</span><span><b>Plataforma agéntica</b><small>Diseño con el gobierno integrado</small></span></a><a class="svc-a" href="/servicios"><span class="n num">03</span><span><b>Fábrica de agentes</b><small>Agentes gobernados, seguros y observados</small></span></a><a class="svc-a" href="/servicios/operacion-de-ia"><span class="n num">04</span><span><b>Operación de IA</b><small>Control de uso, accesos y costos</small></span></a>
+<p class="svc-k">Soluciones plug and play</p><a class="svc-b" href="/servicios/agentes-de-operacion">Agentes de operación</a><a class="svc-b" href="/servicios/asistentes-whatsapp-y-voz">Asistentes de WhatsApp y voz</a><a class="svc-b" href="/servicios/documentos-vivos">Conocimiento documental</a><a class="svc-b" href="/servicios/radar-de-leads">Radar de Leads</a><a class="svc-b" href="/servicios/contabilidad-asistida">Contabilidad asistida</a><a class="svc-b" href="/servicios">Todo el catálogo</a>
+</div>
+<a class="mm-l" href="/confianza-y-gobierno">Confianza y gobierno</a>
+<a class="mm-l" href="/#contacto">Contacto</a>
+</nav>
+<div class="mm-cta">
+<a class="btn" href="/autodiagnostico">Haz tu autodiagnóstico gratis</a>
+<a class="btn-s btn--accent" href="https://wa.me/522227097945?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20Ruta%20IA%20de%20%C3%93NIX.%20Aviso%20de%20privacidad%3A%20https%3A%2F%2Fwww.onix-ia.com%2Faviso-de-privacidad" target="_blank" rel="noopener">Escríbenos por WhatsApp<span class="vh sr-only"> (abre WhatsApp)</span></a>
+<p class="wa-note">Al escribirnos por WhatsApp, ÓNIX (Rodolfo Mora) usará tu número y tu mensaje para responderte y darte seguimiento. WhatsApp (Meta) trata los datos de la conversación bajo sus propias condiciones. <a href="/aviso-de-privacidad" id="mm-last">Aviso de privacidad de ÓNIX</a></p>
+</div>
+</div>
+</div>
+<main id="main">
 
-<!-- 1 · Hero -->
-<section class="sv-hero sv-hero--stack" aria-labelledby="sv-h1">
-  <div class="wrap">
-    <nav class="crumbs" aria-label="Migas de pan"><ol><li><a href="/">Inicio</a>
-      <a href="/ruta-ia">Ruta IA</a></li><li><a href="/servicios">Servicios</a></li><li><span aria-current="page">Ruta IA</span></li></ol></nav>
-    <div class="sv-hero__grid">
-      <div>
-        <p class="sv-eyebrow rise" style="--i:0">Estrategia y gobernanza de IA</p>
-        <h1 id="sv-h1" class="sv-title rise" style="--i:1">Mucha IA suelta. Una sola ruta.</h1>
-        <p class="sv-lead rise" style="--i:2">Ruta IA te dice qué hacer con inteligencia artificial, en qué orden y con qué reglas.</p><details class="mas"><summary>Leer el detalle completo<span class="sr-only">: Ruta IA</span></summary><p>Ruta IA te dice qué hacer con inteligencia artificial, en qué orden y con qué reglas, a partir de una revisión inicial de cómo trabaja tu PYME hoy.</p></details>
-        <div class="sv-hero__actions rise" style="--i:3">
-          <a href="#escribenos" class="btn btn--go">Contáctanos</a>
-          <a class="link" href="#recorrido">Ver cómo funciona <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a>
-        </div>
-        <p class="sv-hero__note rise" style="--i:4"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5" stroke-opacity=".35"/><path d="M7.8 12.3l3 3 5.4-6"/></svg>Te quedas con un plan propio que puedes ejecutar con quien quieras.</p>
-      </div>
-      </div>
-    </div>
-  </div>
+<section class="hero" aria-labelledby="h1"><div class="wrap"><nav class="crumb" aria-label="Ruta de navegación"><a href="/">Inicio</a><span aria-hidden="true">/</span><a href="/servicios">Servicios</a><span aria-hidden="true">/</span><span aria-current="page">01 Estrategia</span></nav>
+<div class="hero-g" style="margin-top:28px"><div>
+<p class="kicker">Fase 01 · Estrategia</p>
+<h1 id="h1" class="h1">Mucha IA suelta. <span class="soft">Una sola ruta.</span></h1>
+<p class="lead">Analizamos qué tan lista está tu organización para la IA en gobierno, gestión de riesgos y seguridad. Con Ruta IA te decimos qué hacer, en qué orden y con qué reglas. Con Ónix Govern le das seguimiento.</p>
+<div class="hero-act"><a class="btn" href="/autodiagnostico">Haz tu autodiagnóstico gratis</a><a class="btn-s" href="https://wa.me/522227097945?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20Ruta%20IA%20de%20%C3%93NIX.%20Aviso%20de%20privacidad%3A%20https%3A%2F%2Fwww.onix-ia.com%2Faviso-de-privacidad" target="_blank" rel="noopener">Platícanos por WhatsApp<span class="vh sr-only"> (abre WhatsApp)</span></a><p class="wa-note">Al escribirnos por WhatsApp, ÓNIX (Rodolfo Mora) usará tu número y tu mensaje para responderte y darte seguimiento. WhatsApp (Meta) trata los datos de la conversación bajo sus propias condiciones. <a href="/aviso-de-privacidad">Aviso de privacidad de ÓNIX</a></p></div>
+</div><aside class="keys" aria-labelledby="keys-h"><h2 id="keys-h">En esta fase</h2><ul>
+<li><b>Readiness de IA</b><span>Gobierno, gestión de riesgos y seguridad.</span></li>
+<li><b>Ruta IA</b><span>Personas, procesos, tecnología y valor.</span></li>
+<li><b>Ónix Govern</b><span>Estrategia, gobernanza, seguridad y monitoreo en una sola plataforma.</span></li>
+</ul></aside></div></div></section>
+<nav class="subnav" aria-label="En esta página"><div class="wrap subnav-in"><b>01 Estrategia</b><a href="#ruta">Ruta</a><a href="#readiness">Readiness</a><a href="#govern">Ónix Govern</a><a href="#preguntas">Preguntas</a></div></nav>
+<section id="ruta" class="sec tight" aria-labelledby="ru-h" style="border-top:0"><div class="wrap">
+<div class="sec-hd" style="margin-bottom:40px"><div><p class="kicker">Cómo avanza</p><h2 id="ru-h" class="h2">Del autodiagnóstico <span class="soft">al plan vivo.</span></h2></div><p class="mut">Tres pasos que se conectan. Puedes empezar gratis y avanzar solo cuando tenga sentido para tu empresa.</p></div>
+<ol class="flow"><li class="on"><p class="fk">Foto rápida</p><h3>Autodiagnóstico</h3><p class="ft">Gratis · sin registro</p><p class="fd">19 preguntas y un reporte con tu nivel en seis dimensiones, el riesgo de tu caso principal y un plan por etapas.</p><a class="lnk" href="/autodiagnostico">Hacer el autodiagnóstico</a></li>
+<li><p class="fk">Decidir con evidencia</p><h3>Ruta IA</h3><p class="ft">Consultoría</p><p class="fd">Consultoría enfocada en personas, procesos, tecnología y valor. Incluye el readiness de tu organización en gobierno, riesgos y seguridad.</p><p class="ppv"><span>Personas</span><span>Procesos</span><span>Tecnología</span><span>Valor</span></p><a class="lnk" href="#readiness">Ver qué revisamos</a></li>
+<li><p class="fk">Ponerlo en marcha</p><h3>Ónix Govern</h3><p class="ft">Nuestro aplicativo</p><p class="fd">Operacionaliza la estrategia, la gobernanza, la seguridad y el monitoreo de tus agentes en una sola plataforma pensada para ti.</p><a class="lnk" href="#govern">Recorrer Ónix Govern</a></li>
+</ol></div></section>
+<section id="readiness" class="sec light" aria-labelledby="rd-h"><div class="wrap pp-g"><div>
+<p class="kicker">Readiness de IA y modelo operativo</p>
+<h2 id="rd-h" class="h2">Sabes dónde estás. Y qué va primero.</h2>
+<p style="margin-top:18px">Revisamos perfiles, roles, responsables, procesos y casos de uso. Ordenamos las ideas por impacto y factibilidad, y lo que no se hará también queda escrito. Toca un componente del modelo y presiona «+» para ver qué revisamos.</p>
+<div class="gets"><h3>Qué obtienes</h3><ul><li>Nivel de readiness por capacidad</li><li>Perfiles, roles y responsables de la IA</li><li>Política de uso responsable de IA</li><li>Casos de uso priorizados y hoja de ruta por olas</li><li>Marco general del modelo operativo de IA</li></ul></div>
+<div class="call"><p>Te quedas con un plan propio que puedes ejecutar con quien quieras.</p></div>
+</div><div data-figuras><figure class="fig" aria-labelledby="fr-t"><p class="fig-t" id="fr-t">Modelo de readiness de IA</p><div class="fig-b"><p class="inputs"><b>Insumos</b><span>Contexto de negocio y casos de uso</span><span>Entorno tecnológico</span><span>Principios de IA de tu organización</span></p><div class="layer"><p class="layer-h">Gobierno <small>Quién decide y con qué reglas</small></p><div class="cells"><div class="cw"><button class="cmp" type="button" aria-pressed="false"><b>Principios</b>Acordamos para qué se puede usar la IA en tu empresa, para qué no y qué información nunca se comparte. Escrito en un lenguaje que todo el equipo entiende.</button><button class="plus" type="button" hidden aria-expanded="false" aria-label="Más información sobre Principios"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button><div class="pop " role="dialog" aria-label="Principios" hidden><button class="pop-x" type="button" aria-label="Cerrar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button><p class="pop-k">Gobierno</p><p class="pop-t">Principios</p><p class="pop-d">Acordamos para qué se puede usar la IA en tu empresa, para qué no y qué información nunca se comparte. Escrito en un lenguaje que todo el equipo entiende.</p><ul class="pop-l"><li>Usos permitidos y no permitidos</li><li>Información confidencial fuera de cuentas personales</li><li>Revisión periódica de las reglas</li></ul></div></div><div class="cw"><button class="cmp" type="button" aria-pressed="false"><b>Perfiles y roles</b>Definimos quién es dueño de cada caso de uso, quién lo opera y quién responde si algo sale mal. Sin responsables no hay gobierno.</button><button class="plus" type="button" hidden aria-expanded="false" aria-label="Más información sobre Perfiles y roles"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button><div class="pop " role="dialog" aria-label="Perfiles y roles" hidden><button class="pop-x" type="button" aria-label="Cerrar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button><p class="pop-k">Gobierno</p><p class="pop-t">Perfiles y roles</p><p class="pop-d">Definimos quién es dueño de cada caso de uso, quién lo opera y quién responde si algo sale mal. Sin responsables no hay gobierno.</p><ul class="pop-l"><li>Dueño de cada caso de uso</li><li>Perfiles que operan y supervisan</li><li>Responsable de riesgos y seguridad</li></ul></div></div><div class="cw"><button class="cmp" type="button" aria-pressed="false"><b>Aprobaciones</b>Acordamos qué decisiones necesitan aprobación, quién la da y qué estándares se cumplen antes de lanzar algo nuevo.</button><button class="plus" type="button" hidden aria-expanded="false" aria-label="Más información sobre Aprobaciones"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button><div class="pop r" role="dialog" aria-label="Aprobaciones" hidden><button class="pop-x" type="button" aria-label="Cerrar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button><p class="pop-k">Gobierno</p><p class="pop-t">Aprobaciones</p><p class="pop-d">Acordamos qué decisiones necesitan aprobación, quién la da y qué estándares se cumplen antes de lanzar algo nuevo.</p><ul class="pop-l"><li>Qué requiere aprobación</li><li>Quién autoriza</li><li>Estándares mínimos antes de lanzar</li></ul></div></div></div></div><div class="layer l2"><p class="layer-h">Gestión de riesgos <small>Qué puede salir mal y qué atender primero</small></p><div class="cells"><div class="cw"><button class="cmp" type="button" aria-pressed="false"><b>Identificación</b>Comparamos cómo se usa hoy la IA con la evidencia disponible para encontrar brechas: datos expuestos, herramientas sin control y decisiones sin dueño.</button><button class="plus" type="button" hidden aria-expanded="false" aria-label="Más información sobre Identificación"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button><div class="pop " role="dialog" aria-label="Identificación" hidden><button class="pop-x" type="button" aria-label="Cerrar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button><p class="pop-k">Gestión de riesgos</p><p class="pop-t">Identificación</p><p class="pop-d">Comparamos cómo se usa hoy la IA con la evidencia disponible para encontrar brechas: datos expuestos, herramientas sin control y decisiones sin dueño.</p><ul class="pop-l"><li>Inventario de herramientas en uso</li><li>Brechas frente a la evidencia</li><li>Hallazgos explicados sin tecnicismos</li></ul></div></div><div class="cw"><button class="cmp" type="button" aria-pressed="false"><b>Perfil de riesgo</b>Calificamos cada caso de uso según su propósito, los datos que toca, su autonomía y su alcance. Así sabes qué atender primero.</button><button class="plus" type="button" hidden aria-expanded="false" aria-label="Más información sobre Perfil de riesgo"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button><div class="pop " role="dialog" aria-label="Perfil de riesgo" hidden><button class="pop-x" type="button" aria-label="Cerrar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button><p class="pop-k">Gestión de riesgos</p><p class="pop-t">Perfil de riesgo</p><p class="pop-d">Calificamos cada caso de uso según su propósito, los datos que toca, su autonomía y su alcance. Así sabes qué atender primero.</p><ul class="pop-l"><li>Propósito y datos</li><li>Autonomía y alcance</li><li>Prioridad por caso de uso</li></ul></div></div><div class="cw"><button class="cmp" type="button" aria-pressed="false"><b>Mitigación</b>Convertimos los hallazgos en una hoja de ruta por olas, con acciones concretas y un responsable para cada una.</button><button class="plus" type="button" hidden aria-expanded="false" aria-label="Más información sobre Mitigación"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button><div class="pop r" role="dialog" aria-label="Mitigación" hidden><button class="pop-x" type="button" aria-label="Cerrar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button><p class="pop-k">Gestión de riesgos</p><p class="pop-t">Mitigación</p><p class="pop-d">Convertimos los hallazgos en una hoja de ruta por olas, con acciones concretas y un responsable para cada una.</p><ul class="pop-l"><li>Ola 1 · Bases</li><li>Ola 2 · Controles</li><li>Ola 3 · Mejora continua</li></ul></div></div></div></div><div class="layer l3"><p class="layer-h">Seguridad <small>Cómo se protege lo que la IA toca</small></p><div class="cells"><div class="cw"><button class="cmp" type="button" aria-pressed="false"><b>Accesos</b>Cada agente tiene su propia identidad y solo los permisos que necesita. Nada de cuentas compartidas ni accesos de más.</button><button class="plus" type="button" hidden aria-expanded="false" aria-label="Más información sobre Accesos"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button><div class="pop " role="dialog" aria-label="Accesos" hidden><button class="pop-x" type="button" aria-label="Cerrar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button><p class="pop-k">Seguridad</p><p class="pop-t">Accesos</p><p class="pop-d">Cada agente tiene su propia identidad y solo los permisos que necesita. Nada de cuentas compartidas ni accesos de más.</p><ul class="pop-l"><li>Una identidad por agente</li><li>Mínimo privilegio</li><li>Revisión de permisos</li></ul></div></div><div class="cw"><button class="cmp" type="button" aria-pressed="false"><b>Datos y modelos</b>Revisamos cómo se clasifican y protegen los datos que usa la IA, y cómo se vigilan los modelos y las aplicaciones.</button><button class="plus" type="button" hidden aria-expanded="false" aria-label="Más información sobre Datos y modelos"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button><div class="pop " role="dialog" aria-label="Datos y modelos" hidden><button class="pop-x" type="button" aria-label="Cerrar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button><p class="pop-k">Seguridad</p><p class="pop-t">Datos y modelos</p><p class="pop-d">Revisamos cómo se clasifican y protegen los datos que usa la IA, y cómo se vigilan los modelos y las aplicaciones.</p><ul class="pop-l"><li>Etiquetas de confidencialidad</li><li>Controles contra fuga de información</li><li>Monitoreo de modelos y aplicaciones</li></ul></div></div><div class="cw"><button class="cmp" type="button" aria-pressed="false"><b>Trazabilidad</b>Seguimos el recorrido del dato desde su origen hasta la respuesta, para saber de dónde sale cada resultado.</button><button class="plus" type="button" hidden aria-expanded="false" aria-label="Más información sobre Trazabilidad"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button><div class="pop r" role="dialog" aria-label="Trazabilidad" hidden><button class="pop-x" type="button" aria-label="Cerrar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button><p class="pop-k">Seguridad</p><p class="pop-t">Trazabilidad</p><p class="pop-d">Seguimos el recorrido del dato desde su origen hasta la respuesta, para saber de dónde sale cada resultado.</p><ul class="pop-l"><li>Origen de los datos</li><li>Fuente visible en la respuesta</li><li>Registro de cambios</li></ul></div></div></div></div><p class="result"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg>Resultado: marco general del modelo operativo de IA</p><p class="refs"><span>Referencias: ISO/IEC 42001</span><span>NIST AI RMF</span><span>OWASP Top 10 para LLM</span></p></div><p class="cap2">Fuente: ÓNIX. Los marcos se usan como referencia de trabajo. No implican certificación ni garantía de cumplimiento.</p></figure></div></div>
+<p class="home-note" data-solo-dev="autoevaluacion"><a href="/autoevaluacion">Autodiagnóstico de IA</a>. Prototipo · no publicado. Las respuestas no pasan a Ónix Govern.</p>
 </section>
-
-<section class="v-sec" id="govern" aria-labelledby="gv-h">
-  <div class="wrap">
-    <p class="v-k">Plataforma de apoyo</p>
-    <h2 id="gv-h" class="display h2">Ónix Govern, de un vistazo.</h2>
-    <h3>Ruta IA + Ónix Govern</h3>
-    <p>Tu estrategia de IA se traza con consultoría y se lleva a resultados con nuestra plataforma Ónix Govern.</p>
-    <p class="v-lead">Evaluación, inventario, priorización y plan por etapas.</p>
-    <p>Ónix Govern y Ruta IA se contratan como consultoría personalizada, después del autodiagnóstico.</p>
-    <details class="mas"><summary>Leer el detalle completo<span class="sr-only">: Ónix Govern</span></summary><p>La aplicación con la que acompañamos el trabajo de estrategia y gobierno de IA: evaluación, inventario, priorización y plan por etapas.</p></details>
-    <p><a class="link" href="https://onix-govern.vercel.app" target="_blank" rel="noopener noreferrer">Ónix Govern (requiere cuenta)<span class="sr-only"> (abre la aplicación)</span></a></p>
-  </div>
-  <div data-v-car>
-    <div class="wrap">
-      <div class="v-tabs" role="tablist" aria-label="Vistas de Ónix Govern">
-        <button class="v-tab" type="button" role="tab" id="tab-evaluacion" aria-selected="true" aria-controls="tp-evaluacion" tabindex="0">Evaluación</button>
-        <button class="v-tab" type="button" role="tab" id="tab-inventario" aria-selected="false" aria-controls="tp-inventario" tabindex="-1">Inventario</button>
-        <button class="v-tab" type="button" role="tab" id="tab-priorizacion" aria-selected="false" aria-controls="tp-priorizacion" tabindex="-1">Priorización</button>
-        <button class="v-tab" type="button" role="tab" id="tab-plan" aria-selected="false" aria-controls="tp-plan" tabindex="-1">Plan por etapas</button>
-      </div>
-    </div>
-    <div class="v-rail" data-v-rail tabindex="0" aria-label="Capturas de Ónix Govern">
-      <article class="v-card" data-v-card id="tp-evaluacion" role="tabpanel" aria-labelledby="tab-evaluacion">
-        <div class="v-card__top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 12l4.5-3"/><path d="M12 3.5v2M20.5 12h-2M12 20.5v-2M3.5 12h2"/></svg><div><h3>Entiende dónde está tu empresa y qué necesita atender.</h3><details class="mas"><summary>Leer el detalle completo<span class="sr-only">: Evaluación</span></summary><p>Resultados por dimensión, brechas entre las respuestas de cada persona y puntos ciegos.</p></details></div></div>
-        <div class="v-shot"><picture><source media="(max-width: 700px)" srcset="/imagenes/govern/evaluacion-m.png"><img src="/imagenes/govern/evaluacion.png" alt="Pantalla de demostración de Evaluación en Ónix Govern: madurez por capa, radar, barras por dimensión, mapa de respuestas y brechas. Datos de ejemplo." width="1410" height="1432"></picture></div>
-      </article>
-      <article class="v-card" data-v-card id="tp-inventario" role="tabpanel" aria-labelledby="tab-inventario">
-        <div class="v-card__top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 12h8M8 15h5"/></svg><div><h3>Ten a la vista dónde usas IA y quién responde por ella.</h3><details class="mas"><summary>Leer el detalle completo<span class="sr-only">: Inventario</span></summary><p>Cada caso con su dueño, tipo y tecnología, nivel de riesgo y estatus.</p></details></div></div>
-        <div class="v-shot"><picture><source media="(max-width: 700px)" srcset="/imagenes/govern/inventario-m.png"><img src="/imagenes/govern/inventario.png" alt="Pantalla de demostración de Inventario en Ónix Govern: casos con dueño, tipo, tecnología, riesgo y estatus. Datos de ejemplo." width="1397" height="1359"></picture></div>
-      </article>
-      <article class="v-card" data-v-card id="tp-priorizacion" role="tabpanel" aria-labelledby="tab-priorizacion">
-        <div class="v-card__top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 18h3V11H5zM10.5 18h3V7h-3zM16 18h3V4h-3z"/></svg><div><h3>Decide qué iniciativas conviene abordar primero.</h3><details class="mas"><summary>Leer el detalle completo<span class="sr-only">: Priorización</span></summary><p>El orden de las iniciativas, con criterios ponderados que se pueden revisar.</p></details></div></div>
-        <div class="v-shot"><picture><source media="(max-width: 700px)" srcset="/imagenes/govern/priorizacion-m.png"><img src="/imagenes/govern/priorizacion.png" alt="Pantalla de demostración de Priorización en Ónix Govern: orden de iniciativas con criterios ponderados. Datos de ejemplo." width="1410" height="1847"></picture></div>
-      </article>
-      <article class="v-card" data-v-card id="tp-plan" role="tabpanel" aria-labelledby="tab-plan">
-        <div class="v-card__top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/><path d="M7 12h3M14 12h3"/></svg><div><h3>Convierte prioridades en un plan por etapas.</h3><details class="mas"><summary>Leer el detalle completo<span class="sr-only">: Plan por etapas</span></summary><p>Convierte prioridades en un plan por etapas y da seguimiento al avance.</p><p>Acciones en Bases, Controles y Mejora continua, con sus relaciones y su avance.</p></details></div></div>
-        <div class="v-shot"><picture><source media="(max-width: 700px)" srcset="/imagenes/govern/plan-m.png"><img src="/imagenes/govern/plan.png" alt="Pantalla de demostración del plan por etapas en Ónix Govern: acciones en Bases, Controles y Mejora continua. Datos de ejemplo." width="1398" height="1072"></picture></div>
-      </article>
-    </div>
-    <div class="v-dots">
-      <button type="button" data-v-dot aria-label="Evaluación"></button>
-      <button type="button" data-v-dot aria-label="Inventario"></button>
-      <button type="button" data-v-dot aria-label="Priorización"></button>
-      <button type="button" data-v-dot aria-label="Plan por etapas"></button>
-    </div>
-    <p class="v-note">Capturas de la aplicación con datos de demostración. Grupo Altamar no es un cliente.</p>
-  </div>
-  <div class="wrap">
-    <p class="home-note" data-solo-dev="autoevaluacion"><a href="/autoevaluacion">Autodiagnóstico de IA</a>. Prototipo · no publicado. Las respuestas no pasan a Ónix Govern.</p>
-  </div>
-</section>
-<script src="/visual.js" defer></script>
-<script src="/govern-tabs.js" defer></script>
-
-<!-- 2 · El problema -->
-<section class="sv-sec band sv-problem" aria-labelledby="prob-t">
-  <div class="wrap sv-problem__grid">
-    <div>
-      <p class="sv-eyebrow reveal">El problema</p>
-      <h2 id="prob-t" class="sv-h2 reveal" style="margin-top:1.25rem">Todos hablan de IA. <em>Cada quien la usa por su lado.</em></h2>
-      <ol class="sv-pains">
-        <li class="reveal"><span>01</span>Se pospone porque «esto es para empresas grandes».</li>
-        <li class="reveal"><span>02</span>Cada quien usa herramientas por su cuenta, sin reglas sobre qué información se comparte.</li>
-        <li class="reveal"><span>03</span>Se prueban cosas, pero no queda claro si funcionan ni quién las aprobó.</li>
-      </ol>
-    </div>
-    <div class="sv-scatter" aria-label="Ejemplo de usos de IA ficticios regados en distintas áreas">
-      <article class="msg" style="--x:4%;--y:2%;--r:-2deg;--p:1.2"><div class="msg__top"><span class="ch ch--ig"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg></span><strong>Ana Ejemplo · Ventas</strong><time>09:12</time></div><p>Uso un chat de IA con mi cuenta personal para redactar correos.</p><span class="msg__state">Sin reglas</span></article>
-      <article class="msg" style="--x:48%;--y:16%;--r:2.5deg;--p:.6"><div class="msg__top"><span class="ch ch--web"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3.5" width="14" height="17" rx="2.5"/><path d="M9 8h6M9 12h6M9 16h4"/></svg></span><strong>Luis Ejemplo · Compras</strong><time>10:05</time></div><p>Pegué el reporte del mes en una herramienta para que me lo resuma. ¿Se puede?</p><span class="msg__state">¿Qué se compartió?</span></article>
-      <article class="msg" style="--x:10%;--y:42%;--r:1.5deg;--p:1.6"><div class="msg__top"><span class="ch ch--tel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></span><strong>Equipo de operación</strong><time>11:30</time></div><p>Probamos una app para transcribir juntas. Ya no la usamos.</p><span class="msg__state msg__state--wait">Sin seguimiento</span></article>
-      <article class="msg" style="--x:52%;--y:56%;--r:-3deg;--p:.9"><div class="msg__top"><span class="ch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><strong>Dirección</strong><time>12:48</time></div><p>La IA es para empresas grandes. Lo vemos después.</p><span class="msg__state msg__state--wait">Pospuesto</span></article>
-      <article class="msg" style="--x:20%;--y:79%;--r:-1deg;--p:1.3"><div class="msg__top"><span class="ch ch--wa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></span><strong>Marta Ejemplo · Atención</strong><time>13:15</time></div><p>¿Quién aprobó esta herramienta nueva?</p><span class="msg__state">Sin responsable</span></article>
-    </div>
-  </div>
-</section>
-
-<!-- 3 · Recorrido -->
-<section class="sv-sec sv-story" id="recorrido" aria-labelledby="rec-t">
-  <div class="wrap">
-    <div class="sv-head">
-      <p class="sv-eyebrow reveal">Cómo funciona</p>
-      <h2 id="rec-t" class="sv-h2 reveal">De las ideas sueltas <em>a un plan con reglas.</em></h2>
-    </div>
-    <div class="sv-story__grid">
-      <div class="sv-steps">
-        <article class="sv-step is-active" data-step="1">
-          <span class="sv-step__n">01 · Revisión inicial</span>
-          <h3>Primero, entender cómo trabajas hoy.</h3>
-          <p>Entrevistas con el equipo y revisión de tus procesos, herramientas e información.</p><details class="mas"><summary>Leer el detalle completo<span class="sr-only">: Primero, entender cómo trabajas hoy.</span></summary><p>Entrevistas con el equipo y revisión de tus procesos, herramientas e información. Sabes qué se usa, quién lo usa y qué tan lista está tu operación en datos e IA.</p></details>
-        </article>
-        <article class="sv-step" data-step="2">
-          <span class="sv-step__n">02 · Mapa de casos de uso</span>
-          <h3>Todas las ideas, en un solo mapa.</h3>
-          <p>Reunimos lo que cada área quiere resolver con IA y lo que ya se está probando.</p><details class="mas"><summary>Leer el detalle completo<span class="sr-only">: Todas las ideas, en un solo mapa.</span></summary><p>Reunimos lo que cada área quiere resolver con IA y lo que ya se está probando. Cada idea queda escrita, con el área que la propone.</p></details>
-        </article>
-        <article class="sv-step" data-step="3">
-          <span class="sv-step__n">03 · Priorización</span>
-          <h3>Primero lo que más impacta y es más fácil.</h3>
-          <p>Ordenamos los casos de uso por impacto y factibilidad.</p><details class="mas"><summary>Leer el detalle completo<span class="sr-only">: Primero lo que más impacta y es más fácil.</span></summary><p>Ordenamos los casos de uso por impacto y factibilidad. Elegimos juntos qué hacer primero y qué no hacer. Así nace tu hoja de ruta por fases.</p></details>
-        </article>
-        <article class="sv-step" data-step="4">
-          <span class="sv-step__n">04 · Reglas de uso</span>
-          <h3>Reglas claras, escritas y comunicadas.</h3>
-          <p>Una política de uso responsable de IA: qué herramientas se pueden usar, qué información no se comparte, quién aprueba nuevos usos y cómo se revisan.</p>
-        </article>
-        <article class="sv-step" data-step="5">
-          <span class="sv-step__n">05 · Seguimiento</span>
-          <h3>Revisas el avance y ajustas el rumbo.</h3>
-          <p>Damos seguimiento al portafolio de iniciativas con revisiones de avance.</p><details class="mas"><summary>Leer el detalle completo<span class="sr-only">: Revisas el avance y ajustas el rumbo.</span></summary><p>Damos seguimiento al portafolio de iniciativas con revisiones de avance. Lo que funciona sigue; lo que no, se ajusta o se pausa.</p></details>
-        </article>
-      </div>
-
-      <div class="sv-stage">
-        <div class="sv-rail" aria-hidden="true"><i></i></div>
-        <div class="panel" data-step="1" role="group" aria-label="Panel ilustrativo de Ruta IA con datos ficticios">
-          <div class="panel__bar">
-            <span class="panel__dots" aria-hidden="true"><i></i><i></i><i></i></span>
-            <span class="panel__name">Ruta IA <span>· Negocio Ejemplo</span></span>
-            
-          </div>
-          <div class="panel__body">
-
-            <div class="scene scene--1">
-              <span class="scene__label">Revisión inicial · lo que se usa hoy</span>
-              <ul class="inbox">
-                <li class="inrow"><span class="ch ch--ig"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg></span><span><strong>Chat de IA gratuito</strong><small>Ventas y Administración lo usan por su cuenta</small></span><span class="ri-st ri-st--alto">Sin reglas</span></li>
-                <li class="inrow"><span class="ch ch--tel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></span><span><strong>App para transcribir juntas</strong><small>Se probó en operación y se dejó de usar</small></span><span class="ri-st ri-st--rev">Sin seguimiento</span></li>
-                <li class="inrow"><span class="ch ch--web"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M10 10v9.5"/></svg></span><span><strong>Hojas de cálculo de operación</strong><small>Información útil, en varias versiones</small></span><span class="ri-st ri-st--rev">Por ordenar</span></li>
-                <li class="inrow"><span class="ch ch--wa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/></svg></span><span><strong>Manuales y procesos</strong><small>Existen, pero cuesta encontrarlos</small></span><span class="ri-st ri-st--ok">Disponible</span></li>
-              </ul>
-              <div class="ri-mat">
-                <div class="ri-mat__head"><strong>Madurez en datos e IA</strong><span>Ejemplo</span></div>
-                <div class="ri-mat__bar" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i><i></i></div>
-                <div class="ri-mat__lbl"><span>Empezando</span><span>Ordenando</span><span>Usando</span><span>Aprovechando</span></div>
-              </div>
-            </div>
-
-            <div class="scene scene--2">
-              <span class="scene__label">Mapa de casos de uso · ideas del equipo</span>
-              <ul class="ri-ideas">
-                <li><span class="ri-area">Atención</span>Responder preguntas frecuentes</li>
-                <li><span class="ri-area">Comercial</span>Dar seguimiento a cotizaciones</li>
-                <li><span class="ri-area">Operación</span>Buscar en manuales internos</li>
-                <li><span class="ri-area">Dirección</span>Resumir juntas del equipo</li>
-                <li><span class="ri-area">Administración</span>Preparar el reporte mensual</li>
-                <li><span class="ri-area">Operación</span>Pronosticar la demanda</li>
-              </ul>
-              <p class="merge"><span>Ideas de varias áreas</span><b>Un solo mapa</b></p>
-            </div>
-
-            <div class="scene scene--3">
-              <span class="scene__label">Priorización · impacto y factibilidad</span>
-              <div class="ri-prio">
-                <div class="ri-mini" aria-hidden="true">
-                  <span class="ri-mini__go">Primero</span>
-                  <i class="hot" style="--x:76%;--y:22%">1</i><i class="hot" style="--x:64%;--y:38%">2</i><i style="--x:28%;--y:28%">3</i><i style="--x:74%;--y:70%">4</i><i style="--x:34%;--y:62%">5</i><i style="--x:24%;--y:80%">6</i>
-                  <span class="ri-mini__y">Impacto</span><span class="ri-mini__x">Facilidad</span>
-                </div>
-                <ol class="ri-order">
-                  <li><span class="prio prio--alta">Primero</span>Responder preguntas frecuentes</li>
-                  <li><span class="prio prio--alta">Primero</span>Dar seguimiento a cotizaciones</li>
-                  <li><span class="prio prio--media">Después</span>Buscar en manuales internos</li>
-                  <li><span class="prio prio--media">Después</span>Resumir juntas del equipo</li>
-                  <li><span class="prio prio--baja">Por ahora no</span>Preparar el reporte mensual</li>
-                  <li><span class="prio prio--baja">Por ahora no</span>Pronosticar la demanda</li>
-                </ol>
-              </div>
-              <div class="verdict"><span class="verdict__p">Decisión del equipo</span><span>Empezar por preguntas frecuentes</span><code>Criterio: más impacto + más fácil · lo que no se hará también queda escrito</code></div>
-            </div>
-
-            <div class="scene scene--4">
-              <span class="scene__label">Política de uso de IA · Negocio Ejemplo</span>
-              <ul class="signals ri-policy">
-                <li class="sig"><span class="sig__ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span><strong>Herramientas que se pueden usar</strong><q>las aprobadas, con cuenta de la empresa</q></span></li>
-                <li class="sig"><span class="sig__ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span><strong>Información que no se comparte</strong><q>datos personales de clientes y del equipo</q></span></li>
-                <li class="sig"><span class="sig__ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span><strong>Quién aprueba nuevos usos</strong><q>Laura Ejemplo, dirección general</q></span></li>
-                <li class="sig"><span class="sig__ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span><strong>Cómo se revisan</strong><q>en cada revisión de avance, con el equipo</q></span></li>
-              </ul>
-              <p class="guard"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/></svg>La política queda por escrito y se comunica a todo el equipo.</p>
-            </div>
-
-            <div class="scene scene--5">
-              <span class="scene__label">Portafolio de iniciativas · revisión de avance</span>
-              <ul class="ri-port">
-                <li><span>Preguntas frecuentes</span><span class="ri-st ri-st--ok">En marcha</span><i style="--w:78%"></i></li>
-                <li><span>Seguimiento a cotizaciones</span><span class="ri-st ri-st--acc">En prueba</span><i style="--w:46%"></i></li>
-                <li><span>Manuales internos</span><span class="ri-st">Por iniciar</span><i style="--w:12%"></i></li>
-                <li><span>Pronóstico de demanda</span><span class="ri-st ri-st--rev">En pausa</span><i style="--w:4%"></i></li>
-              </ul>
-              <ol class="log ri-log">
-                <li><b>Avance</b>El equipo de atención ya usa las respuestas a preguntas frecuentes.</li>
-                <li><b>Ajuste</b>Manuales internos sube de prioridad.</li>
-                <li><b>Decisión</b>Pronóstico de demanda se queda en pausa por ahora.</li>
-              </ol>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- 4 · Pruébalo -->
-<section class="sv-sec band sv-try" aria-labelledby="try-t">
-  <div class="wrap">
-    <div class="sv-head">
-      <p class="sv-eyebrow reveal">Pruébalo</p>
-      <h2 id="try-t" class="sv-h2 reveal">Tú decides. <em>La ruta se reordena.</em></h2>
-      <p class="sv-lead reveal">Marca qué casos de uso tendrían más impacto y cuáles serían más fáciles en tu negocio.</p><details class="mas"><summary>Leer el detalle completo<span class="sr-only">: esta sección</span></summary><p>Marca qué casos de uso tendrían más impacto y cuáles serían más fáciles en tu negocio. Mira cómo cambia qué va primero. Es el mismo principio de Ruta IA: priorizar por impacto y factibilidad.</p></details>
-    </div>
-    <div class="sv-try__grid">
-      <div class="rules-box reveal">
-        <h3>¿Qué tendría más impacto? ¿Qué sería más fácil?</h3>
-        <p>Activa o desactiva cada criterio en cada caso de uso.</p>
-        <div class="ri-ctrls" data-ri-ctrls>
-          <div class="ri-row"><span class="ri-row__name" id="ri-n1">Responder preguntas frecuentes</span><div class="ri-row__btns" role="group" aria-labelledby="ri-n1"><button type="button" class="ri-pill" aria-pressed="true" data-c="1" data-k="imp">Más impacto</button><button type="button" class="ri-pill" aria-pressed="true" data-c="1" data-k="facil">Más fácil</button></div></div>
-          <div class="ri-row"><span class="ri-row__name" id="ri-n2">Dar seguimiento a cotizaciones</span><div class="ri-row__btns" role="group" aria-labelledby="ri-n2"><button type="button" class="ri-pill" aria-pressed="true" data-c="2" data-k="imp">Más impacto</button><button type="button" class="ri-pill" aria-pressed="true" data-c="2" data-k="facil">Más fácil</button></div></div>
-          <div class="ri-row"><span class="ri-row__name" id="ri-n3">Buscar en manuales internos</span><div class="ri-row__btns" role="group" aria-labelledby="ri-n3"><button type="button" class="ri-pill" aria-pressed="true" data-c="3" data-k="imp">Más impacto</button><button type="button" class="ri-pill" aria-pressed="false" data-c="3" data-k="facil">Más fácil</button></div></div>
-          <div class="ri-row"><span class="ri-row__name" id="ri-n4">Resumir juntas del equipo</span><div class="ri-row__btns" role="group" aria-labelledby="ri-n4"><button type="button" class="ri-pill" aria-pressed="false" data-c="4" data-k="imp">Más impacto</button><button type="button" class="ri-pill" aria-pressed="true" data-c="4" data-k="facil">Más fácil</button></div></div>
-          <div class="ri-row"><span class="ri-row__name" id="ri-n5">Preparar el reporte mensual</span><div class="ri-row__btns" role="group" aria-labelledby="ri-n5"><button type="button" class="ri-pill" aria-pressed="false" data-c="5" data-k="imp">Más impacto</button><button type="button" class="ri-pill" aria-pressed="false" data-c="5" data-k="facil">Más fácil</button></div></div>
-          <div class="ri-row"><span class="ri-row__name" id="ri-n6">Pronosticar la demanda</span><div class="ri-row__btns" role="group" aria-labelledby="ri-n6"><button type="button" class="ri-pill" aria-pressed="false" data-c="6" data-k="imp">Más impacto</button><button type="button" class="ri-pill" aria-pressed="false" data-c="6" data-k="facil">Más fácil</button></div></div>
-        </div>
-        <p class="legend"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 8v5M12 16.5v.01"/></svg>Demostración con información de ejemplo. Por favor, no incluyas datos personales reales.</p>
-      </div>
-
-      <div class="queue ri-route reveal" data-ri-route>
-        <div class="queue__bar"><strong>Tu ruta</strong><span>Negocio Ejemplo · ordenada por impacto y facilidad</span></div>
-        <div class="ri-board" aria-hidden="true">
-          <span class="ri-board__q ri-board__q--go">Primero</span>
-          <span class="ri-board__q ri-board__q--tl">Después</span>
-          <span class="ri-board__q ri-board__q--br">Después</span>
-          <span class="ri-board__q ri-board__q--bl">Por ahora no</span>
-          <span class="ri-board__ax ri-board__ax--y">Más impacto</span>
-          <span class="ri-board__ax ri-board__ax--x">Más fácil</span>
-          <i class="ri-dot hot" data-c="1" style="--x:64;--y:22">1</i>
-          <i class="ri-dot hot" data-c="2" style="--x:75;--y:38">2</i>
-          <i class="ri-dot" data-c="3" style="--x:36;--y:22">3</i>
-          <i class="ri-dot" data-c="4" style="--x:64;--y:78">4</i>
-          <i class="ri-dot" data-c="5" style="--x:25;--y:62">5</i>
-          <i class="ri-dot" data-c="6" style="--x:36;--y:78">6</i>
-        </div>
-        <ol class="queue__list ri-list">
-          <li class="qcard is-top" data-c="1"><span class="qcard__rank">01</span><span class="qcard__who"><strong>Responder preguntas frecuentes</strong><small>Atención</small></span><span class="prio prio--alta">Primero</span><span class="qcard__why"><span class="on">Más impacto</span><span class="on">Más fácil</span></span></li>
-          <li class="qcard" data-c="2"><span class="qcard__rank">02</span><span class="qcard__who"><strong>Dar seguimiento a cotizaciones</strong><small>Comercial</small></span><span class="prio prio--alta">Primero</span><span class="qcard__why"><span class="on">Más impacto</span><span class="on">Más fácil</span></span></li>
-          <li class="qcard" data-c="3"><span class="qcard__rank">03</span><span class="qcard__who"><strong>Buscar en manuales internos</strong><small>Operación</small></span><span class="prio prio--media">Después</span><span class="qcard__why"><span class="on">Más impacto</span><span>Más fácil</span></span></li>
-          <li class="qcard" data-c="4"><span class="qcard__rank">04</span><span class="qcard__who"><strong>Resumir juntas del equipo</strong><small>Dirección</small></span><span class="prio prio--media">Después</span><span class="qcard__why"><span>Más impacto</span><span class="on">Más fácil</span></span></li>
-          <li class="qcard" data-c="5"><span class="qcard__rank">05</span><span class="qcard__who"><strong>Preparar el reporte mensual</strong><small>Administración</small></span><span class="prio prio--baja">Por ahora no</span><span class="qcard__why"><span>Más impacto</span><span>Más fácil</span></span></li>
-          <li class="qcard" data-c="6"><span class="qcard__rank">06</span><span class="qcard__who"><strong>Pronosticar la demanda</strong><small>Operación</small></span><span class="prio prio--baja">Por ahora no</span><span class="qcard__why"><span>Más impacto</span><span>Más fácil</span></span></li>
-        </ol>
-        <p class="ri-status" aria-live="polite" data-ri-status>Primero: Responder preguntas frecuentes y Dar seguimiento a cotizaciones.</p>
-        <div class="queue__foot"><span>Es un ejemplo. En Ruta IA la priorización se decide contigo y con tu equipo.</span></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- 5 · Capacidades -->
-<section class="sv-sec" aria-labelledby="cap-t">
-  <div class="wrap">
-    <div class="sv-head">
-      <p class="sv-eyebrow reveal">Capacidades</p>
-      <h2 id="cap-t" class="sv-h2 reveal">Lo que te llevas, <em>en una línea cada cosa.</em></h2>
-    </div>
-    <div class="bento">
-      <article class="tile tile--wide reveal">
-        <h3>Sabes dónde estás hoy.</h3>
-        <p>Revisión inicial de procesos y madurez en datos e IA, con el inventario de herramientas e información disponibles.</p>
-        <div class="tile__vis ri-v-inv" aria-hidden="true">
-          <div class="ri-v-inv__list"><span><i class="alto"></i>Chat de IA gratuito</span><span><i class="rev"></i>Hojas de cálculo</span><span><i class="ok"></i>Manuales y procesos</span></div>
-          <div class="ri-v-inv__mat"><small>Madurez en datos e IA</small><div class="ri-mat__bar"><i class="on"></i><i class="on"></i><i></i><i></i></div></div>
-        </div>
-      </article>
-      <article class="tile reveal">
-        <h3>Todas las ideas, en un mapa.</h3>
-        <p>Casos de uso priorizados por impacto y factibilidad.</p>
-        <div class="tile__vis" aria-hidden="true"><div class="ri-v-quad"><span></span><span class="go"><i></i><i></i></span><span><i></i></span><span><i></i></span></div></div>
-      </article>
-      <article class="tile tile--ink reveal">
-        <h3>Reglas que todo el equipo entiende.</h3>
-        <p>Una política de uso responsable de IA.</p>
-        <div class="tile__vis" aria-hidden="true"><p class="v-rule">se usa → <b>lo aprobado</b><br>no se comparte → <b>datos personales</b><br>nuevos usos → <b>aprueba dirección</b></p></div>
-      </article>
-      <article class="tile reveal">
-        <h3>Un orden claro, por fases.</h3>
-        <p>Una hoja de ruta que dice qué va primero y qué después.</p>
-        <div class="tile__vis ri-v-road" aria-hidden="true"><span style="--w:92%"><b>Primero</b></span><span style="--w:70%"><b>Después</b></span><span style="--w:48%"><b>Más adelante</b></span></div>
-      </article>
-      <article class="tile reveal">
-        <h3>Tu equipo, acompañado.</h3>
-        <p>Acompañamiento y capacitación para que el cambio se adopte.</p>
-        <div class="tile__vis v-route" aria-hidden="true"><span class="v-av v-av--on">AE</span><span class="v-av">LE</span><span class="v-av">ME</span><span class="v-av">JE</span><span class="v-chip">Sesión con el equipo</span></div>
-      </article>
-      <article class="tile tile--wide reveal" style="grid-column: 1 / -1">
-        <h3>El avance, siempre a la vista.</h3>
-        <p>Reporte de seguimiento del portafolio de iniciativas, con revisiones de avance y ajuste de prioridades.</p>
-        <div class="tile__vis ri-v-port" aria-hidden="true"><span><b>Preguntas frecuentes</b><i style="--w:78%"></i><em class="ok">En marcha</em></span><span><b>Cotizaciones</b><i style="--w:46%"></i><em class="acc">En prueba</em></span><span><b>Manuales internos</b><i style="--w:12%"></i><em>Por iniciar</em></span></div>
-      </article>
-    </div>
-  </div>
-</section>
-
-<!-- 6 · Control -->
-<section class="sv-sec dark sv-control" aria-labelledby="ctrl-t">
-  <div class="wrap">
-    <div class="sv-head">
-      <p class="sv-eyebrow reveal">Control</p>
-      <h2 id="ctrl-t" class="sv-h2 reveal">El plan es tuyo. <em>Las reglas, también.</em></h2>
-    </div>
-    <ul class="ctrl">
-      <li class="reveal"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="6" r="2.5"/><path d="M8.5 18H13a3 3 0 0 0 0-6h-2a3 3 0 0 1 0-6h4.5"/></svg><h3>Te quedas con tu plan.</h3><p>Un plan propio que puedes ejecutar con quien quieras.</p><details class="mas"><summary>Leer el detalle completo<span class="sr-only">: Te quedas con tu plan.</span></summary><p>Un plan propio que puedes ejecutar con quien quieras. No te obligamos a contratar más servicios.</p></details></li>
-      <li class="reveal"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.5 12h7"/></svg><h3>Si no conviene, te lo decimos.</h3><p>Si la conclusión es que no necesitas IA, también es un buen resultado.</p><details class="mas"><summary>Leer el detalle completo<span class="sr-only">: Si no conviene, te lo decimos.</span></summary><p>Si la conclusión es que no necesitas IA, también es un buen resultado. Te decimos qué conviene automatizar y qué no.</p></details></li>
-      <li class="reveal"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/></svg><h3>Tu información, con reglas.</h3><p>La política define qué herramientas se pueden usar, qué información no se comparte, quién aprueba nuevos usos y cómo se revisan.</p></li>
-    </ul>
-    <p class="sv-control__foot reveal">Hablamos en términos de tu operación; la parte técnica la traducimos nosotros. <a class="link" href="/confianza-y-gobierno">Confianza y gobierno <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
-  </div>
-</section>
-
-<!-- 7 · Cómo trabajamos -->
-<section class="sv-sec" aria-labelledby="fase-t">
-  <div class="wrap">
-    <div class="sv-head">
-      <p class="sv-eyebrow reveal">Cómo trabajamos</p>
-      <h2 id="fase-t" class="sv-h2 reveal">Empezamos por escucharte. <em>Seguimos con lo que funciona.</em></h2>
-    </div>
-    <ol class="rail">
-      <li class="reveal"><h3>Conversación inicial</h3><p>Entendemos tu negocio y lo que más duele.</p></li>
-      <li class="reveal"><h3>Revisión inicial</h3><p>Entrevistas con el equipo y revisión de procesos, herramientas e información.</p></li>
-      <li class="reveal"><h3>Priorización y ruta</h3><p>Elegimos juntos qué hacer primero y qué no hacer.</p></li>
-      <li class="reveal"><h3>Reglas de uso</h3><p>Política clara y comunicada al equipo.</p></li>
-      <li class="reveal"><h3>Seguimiento</h3><p>Revisión del avance y ajuste de prioridades.</p></li>
-    </ol>
-    <p class="more-links"><a class="link" href="/como-trabajamos">Ver cómo trabajamos <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
-  </div>
-</section>
-
-<!-- 8 · Preguntas frecuentes -->
-<section class="sv-sec band" aria-labelledby="faq-t"><div class="wrap">
-  <h2 id="faq-t" class="sv-h2 reveal">Preguntas frecuentes</h2>
-  <div class="faq reveal"><details><summary><h3>¿Necesito saber de tecnología?</h3></summary><p>No. Hablamos en términos de tu operación; la parte técnica la traducimos nosotros.</p></details><details><summary><h3>¿Al final me obligan a contratar más servicios?</h3></summary><p>No. Te quedas con un plan propio que puedes ejecutar con quien quieras.</p></details><details><summary><h3>¿Y si la conclusión es que no necesito IA?</h3></summary><p>También es un buen resultado. Te diremos qué conviene automatizar y qué no.</p></details><details><summary><h3>¿Qué incluye la política de uso de IA?</h3></summary><p>Qué herramientas se pueden usar, qué información no se comparte, quién aprueba nuevos usos y cómo se revisan.</p></details></div>
+<section id="govern" class="sec dark" aria-labelledby="gv-h"><div class="wrap">
+<div class="sec-hd"><div><p class="kicker">Nuestro aplicativo</p><h2 id="gv-h" class="h2">Ónix Govern. <span class="soft">Llega a tus objetivos.</span></h2></div><p class="lead" style="font-size:17px">Operacionaliza la estrategia, la gobernanza, la seguridad y el monitoreo de tus agentes en una sola plataforma pensada para ti.</p></div>
+<div data-keynote data-ms="10200" role="region" aria-roledescription="carrusel" aria-label="Capacidades de Ónix Govern">
+<div class="tk"><div><div class="kn-panes"><div data-kn-pane="0" data-ms="10200"><div class="win"><div class="win-bar" aria-hidden="true"><i></i><i></i><i></i><span class="small soft" style="margin-left:8px">Ónix Govern · Evaluación</span></div><div class="clw"><div class="clip"><video class="cv" autoplay muted loop playsinline preload="metadata" poster="/clips/govern-01-madurez-poster.jpg"><source src="/clips/govern-01-madurez.webm" type="video/webm"><source src="/clips/govern-01-madurez.mp4" type="video/mp4"></video><img class="cp" src="/clips/govern-01-madurez-poster.jpg" alt=""></div></div></div></div><div data-kn-pane="1" data-ms="7800" hidden><div class="win"><div class="win-bar" aria-hidden="true"><i></i><i></i><i></i><span class="small soft" style="margin-left:8px">Ónix Govern · Evaluación</span></div><div class="clw"><div class="clip"><video class="cv" autoplay muted loop playsinline preload="metadata" poster="/clips/govern-02-radar-brechas-poster.jpg"><source src="/clips/govern-02-radar-brechas.webm" type="video/webm"><source src="/clips/govern-02-radar-brechas.mp4" type="video/mp4"></video><img class="cp" src="/clips/govern-02-radar-brechas-poster.jpg" alt=""></div></div></div></div><div data-kn-pane="2" data-ms="9600" hidden><div class="win"><div class="win-bar" aria-hidden="true"><i></i><i></i><i></i><span class="small soft" style="margin-left:8px">Ónix Govern · Evaluación</span></div><div class="clw"><div class="clip"><video class="cv" autoplay muted loop playsinline preload="metadata" poster="/clips/govern-03-comparativo-poster.jpg"><source src="/clips/govern-03-comparativo.webm" type="video/webm"><source src="/clips/govern-03-comparativo.mp4" type="video/mp4"></video><img class="cp" src="/clips/govern-03-comparativo-poster.jpg" alt=""></div></div></div></div><div data-kn-pane="3" data-ms="9000" hidden><div class="win"><div class="win-bar" aria-hidden="true"><i></i><i></i><i></i><span class="small soft" style="margin-left:8px">Ónix Govern · Inventario</span></div><div class="clw"><div class="clip"><video class="cv" autoplay muted loop playsinline preload="metadata" poster="/clips/govern-04-inventario-casos-poster.jpg"><source src="/clips/govern-04-inventario-casos.webm" type="video/webm"><source src="/clips/govern-04-inventario-casos.mp4" type="video/mp4"></video><img class="cp" src="/clips/govern-04-inventario-casos-poster.jpg" alt=""></div></div></div></div><div data-kn-pane="4" data-ms="9000" hidden><div class="win"><div class="win-bar" aria-hidden="true"><i></i><i></i><i></i><span class="small soft" style="margin-left:8px">Ónix Govern · Inventario</span></div><div class="clw"><div class="clip"><video class="cv" autoplay muted loop playsinline preload="metadata" poster="/clips/govern-05-inventario-portafolio-poster.jpg"><source src="/clips/govern-05-inventario-portafolio.webm" type="video/webm"><source src="/clips/govern-05-inventario-portafolio.mp4" type="video/mp4"></video><img class="cp" src="/clips/govern-05-inventario-portafolio-poster.jpg" alt=""></div></div></div></div><div data-kn-pane="5" data-ms="10200" hidden><div class="win"><div class="win-bar" aria-hidden="true"><i></i><i></i><i></i><span class="small soft" style="margin-left:8px">Ónix Govern · Priorización</span></div><div class="clw"><div class="clip"><video class="cv" autoplay muted loop playsinline preload="metadata" poster="/clips/govern-06-priorizacion-orbita-poster.jpg"><source src="/clips/govern-06-priorizacion-orbita.webm" type="video/webm"><source src="/clips/govern-06-priorizacion-orbita.mp4" type="video/mp4"></video><img class="cp" src="/clips/govern-06-priorizacion-orbita-poster.jpg" alt=""></div></div></div></div><div data-kn-pane="6" data-ms="12600" hidden><div class="win"><div class="win-bar" aria-hidden="true"><i></i><i></i><i></i><span class="small soft" style="margin-left:8px">Ónix Govern · Priorización</span></div><div class="clw"><div class="clip"><video class="cv" autoplay muted loop playsinline preload="metadata" poster="/clips/govern-07-priorizacion-criterios-poster.jpg"><source src="/clips/govern-07-priorizacion-criterios.webm" type="video/webm"><source src="/clips/govern-07-priorizacion-criterios.mp4" type="video/mp4"></video><img class="cp" src="/clips/govern-07-priorizacion-criterios-poster.jpg" alt=""></div></div></div></div><div data-kn-pane="7" data-ms="15000" hidden><div class="win"><div class="win-bar" aria-hidden="true"><i></i><i></i><i></i><span class="small soft" style="margin-left:8px">Ónix Govern · Plan por etapas</span></div><div class="clw"><div class="clip"><video class="cv" autoplay muted loop playsinline preload="metadata" poster="/clips/govern-08-plan-etapas-poster.jpg"><source src="/clips/govern-08-plan-etapas.webm" type="video/webm"><source src="/clips/govern-08-plan-etapas.mp4" type="video/mp4"></video><img class="cp" src="/clips/govern-08-plan-etapas-poster.jpg" alt=""></div></div></div></div></div>
+<div class="cl-ctl"><button class="car-b" type="button" data-kn-prev aria-label="Anterior"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg></button>
+<button class="car-b" type="button" data-kn-play aria-pressed="false" aria-label="Pausar el recorrido"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"></path></svg></button>
+<button class="car-b" type="button" data-kn-next aria-label="Siguiente"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></button><button class="zoom" type="button" data-kn-zoom style="color:#FFFDF7;margin-left:8px">Ver en grande</button><span class="small" style="color:#A5A2A9;margin-left:auto">Grabaciones reales con datos de demostración.</span></div></div>
+<div class="kn-live" aria-live="polite"><div class="kn kn-in" data-kn-copy="0"><p class="kn-c"><span>01 / 08</span><span>Evaluación</span></p><p class="kn-h">Sabes en qué nivel estás.</p><p class="kn-p">Un puntaje de madurez para toda la empresa y otro por capa: gobierno, riesgo y seguridad. Con la misma escala del autodiagnóstico.</p><i class="kn-pr" style="animation-duration:10200ms" aria-hidden="true"></i></div><div class="kn kn-in" data-kn-copy="1" hidden><p class="kn-c"><span>02 / 08</span><span>Evaluación</span></p><p class="kn-h">Ves dónde están las brechas.</p><p class="kn-p">Un radar de seis dimensiones que muestra dónde no coinciden las respuestas del equipo y qué funciones no tienen responsable.</p><i class="kn-pr" style="animation-duration:7800ms" aria-hidden="true"></i></div><div class="kn kn-in" data-kn-copy="2" hidden><p class="kn-c"><span>03 / 08</span><span>Evaluación</span></p><p class="kn-h">Mides cuánto avanzaste.</p><p class="kn-p">Comparas la evaluación anterior con la actual, dimensión por dimensión.</p><i class="kn-pr" style="animation-duration:9600ms" aria-hidden="true"></i></div><div class="kn kn-in" data-kn-copy="3" hidden><p class="kn-c"><span>04 / 08</span><span>Inventario</span></p><p class="kn-h">Todos tus casos de IA, en una lista.</p><p class="kn-p">Cada caso con su responsable y su nivel de riesgo. Con un filtro ves al momento los de riesgo alto.</p><i class="kn-pr" style="animation-duration:9000ms" aria-hidden="true"></i></div><div class="kn kn-in" data-kn-copy="4" hidden><p class="kn-c"><span>05 / 08</span><span>Inventario</span></p><p class="kn-h">Tu portafolio de IA, resumido.</p><p class="kn-p">Los casos agrupados por nivel de riesgo, tipo de IA, tipo de valor y área.</p><i class="kn-pr" style="animation-duration:9000ms" aria-hidden="true"></i></div><div class="kn kn-in" data-kn-copy="5" hidden><p class="kn-c"><span>06 / 08</span><span>Priorización</span></p><p class="kn-h">Decides qué va primero.</p><p class="kn-p">Una vista en órbita: entre más cerca del centro, más prioridad. Cada caso muestra su puntaje y su cuadrante.</p><i class="kn-pr" style="animation-duration:10200ms" aria-hidden="true"></i></div><div class="kn kn-in" data-kn-copy="6" hidden><p class="kn-c"><span>07 / 08</span><span>Priorización</span></p><p class="kn-h">Entiendes por qué va primero.</p><p class="kn-p">Los criterios y sus pesos están a la vista, y el ranking muestra el puntaje de cada caso.</p><i class="kn-pr" style="animation-duration:12600ms" aria-hidden="true"></i></div><div class="kn kn-in" data-kn-copy="7" hidden><p class="kn-c"><span>08 / 08</span><span>Plan por etapas</span></p><p class="kn-h">Conviertes todo en un plan.</p><p class="kn-p">Acciones por etapa con sus dependencias, y la madurez que vas a alcanzar en cada dimensión.</p><i class="kn-pr" style="animation-duration:15000ms" aria-hidden="true"></i></div></div></div>
+<ol class="cl-l strip"><li><button class="cl-b on" type="button" data-kn-go="0" aria-current="step"><span class="num">01</span><span><b>Madurez global y por capa</b><small>Evaluación</small></span><i class="cl-pr" style="animation-duration:10200ms" hidden aria-hidden="true"></i></button></li><li><button class="cl-b" type="button" data-kn-go="1"><span class="num">02</span><span><b>Radar, brechas y puntos ciegos</b><small>Evaluación</small></span><i class="cl-pr" style="animation-duration:7800ms" aria-hidden="true"></i></button></li><li><button class="cl-b" type="button" data-kn-go="2"><span class="num">03</span><span><b>Lo que avanzó</b><small>Evaluación</small></span><i class="cl-pr" style="animation-duration:9600ms" aria-hidden="true"></i></button></li><li><button class="cl-b" type="button" data-kn-go="3"><span class="num">04</span><span><b>Cada caso con su dueño y su riesgo</b><small>Inventario</small></span><i class="cl-pr" style="animation-duration:9000ms" aria-hidden="true"></i></button></li><li><button class="cl-b" type="button" data-kn-go="4"><span class="num">05</span><span><b>El portafolio de un vistazo</b><small>Inventario</small></span><i class="cl-pr" style="animation-duration:9000ms" aria-hidden="true"></i></button></li><li><button class="cl-b" type="button" data-kn-go="5"><span class="num">06</span><span><b>Órbita de prioridad</b><small>Priorización</small></span><i class="cl-pr" style="animation-duration:10200ms" aria-hidden="true"></i></button></li><li><button class="cl-b" type="button" data-kn-go="6"><span class="num">07</span><span><b>Un cálculo que se puede revisar</b><small>Priorización</small></span><i class="cl-pr" style="animation-duration:12600ms" aria-hidden="true"></i></button></li><li><button class="cl-b" type="button" data-kn-go="7"><span class="num">08</span><span><b>Dependencias y madurez proyectada</b><small>Plan por etapas</small></span><i class="cl-pr" style="animation-duration:15000ms" aria-hidden="true"></i></button></li></ol></div>
+<a class="lnk" href="https://onix-govern.vercel.app" target="_blank" rel="noopener" style="margin-top:40px;margin-left:29px">Entrar a Ónix Govern (requiere cuenta)<span class="vh sr-only"> (abre otro sitio)</span></a>
 </div></section>
-
-<!-- 9 · Cierre (CTA único) -->
-<section class="cta dark" aria-labelledby="cta-title"><div class="wrap cta__in"><div><h2 id="cta-title">¿Quieres saber por dónde empezar con IA?</h2><p>Platiquemos tu caso.</p></div><div class="cta__act" id="escribenos"><a href="https://wa.me/522227097945?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20Ruta%20IA%20de%20%C3%93nix.%20Aviso%20de%20privacidad%3A%20https%3A%2F%2Fwww.onix-ia.com%2Faviso-de-privacidad" class="btn btn--accent" target="_blank" rel="noopener noreferrer">Escríbenos por WhatsApp<span class="sr-only"> (abre WhatsApp)</span></a><p class="priv-note">Al escribirnos por WhatsApp, Ónix (Rodolfo Mora) usará tu número y tu mensaje para responderte y darte seguimiento. WhatsApp (Meta) trata los datos de la conversación bajo sus propias condiciones. <a href="/aviso-de-privacidad">Aviso de privacidad de Ónix</a></p></div></div></section>
-
-<!-- 10 · Relacionados -->
-<section class="sv-sec" aria-labelledby="rel-t"><div class="wrap">
-  <h2 id="rel-t" class="sv-h2 reveal">Servicios relacionados</h2>
-  <div class="rel"><article class="scard reveal"><h3>Auditoría IA Confiable</h3><p>Revisamos cómo usa IA tu empresa y te damos un plan de mejora priorizado, con base en buenas prácticas de marcos como ISO/IEC 42001, ISO/IEC 27001 y OWASP.</p><details class="mas"><summary>Leer el detalle completo<span class="sr-only">: Auditoría IA Confiable</span></summary><p>Revisamos cómo usa IA tu empresa y te damos un plan de mejora priorizado, con base en buenas prácticas de marcos como ISO/IEC 42001, ISO/IEC 27001 y OWASP. Ónix no es organismo certificador y no está certificado.</p></details><a class="scard__go" href="/servicios/auditoria-de-ia">Conocer el servicio <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span class="sr-only">: Auditoría IA Confiable</span></a></article><article class="scard reveal"><h3>Base de Conocimiento Inteligente</h3><p>Convertimos tus manuales, contratos y archivos en conocimiento que se puede consultar fácilmente, con la fuente a la vista.</p><a class="scard__go" href="/servicios/documentos-vivos">Conocer el servicio <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span class="sr-only">: Base de Conocimiento Inteligente</span></a></article></div>
-</div></section>
+<section id="preguntas" class="sec light" aria-labelledby="fq-h"><div class="wrap split"><div>
+<p class="kicker">Preguntas frecuentes</p><h2 id="fq-h" class="h2">¿Quieres saber por dónde empezar con IA?</h2>
+<div class="cta-block" style="margin-top:28px"><a class="btn" href="/autodiagnostico">Haz tu autodiagnóstico gratis</a><a class="btn-s btn--accent" href="https://wa.me/522227097945?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20Ruta%20IA%20de%20%C3%93NIX.%20Aviso%20de%20privacidad%3A%20https%3A%2F%2Fwww.onix-ia.com%2Faviso-de-privacidad" target="_blank" rel="noopener">Escríbenos por WhatsApp<span class="vh sr-only"> (abre WhatsApp)</span></a><p class="wa-note">Al escribirnos por WhatsApp, ÓNIX (Rodolfo Mora) usará tu número y tu mensaje para responderte y darte seguimiento. WhatsApp (Meta) trata los datos de la conversación bajo sus propias condiciones. <a href="/aviso-de-privacidad">Aviso de privacidad de ÓNIX</a></p></div>
+</div><div class="faq"><details><summary>¿Necesito saber de tecnología?<span class="pm" aria-hidden="true"></span></summary><p>No. Hablamos en términos de tu operación; la parte técnica la traducimos nosotros.</p></details><details><summary>¿Al final me obligan a contratar más servicios?<span class="pm" aria-hidden="true"></span></summary><p>No. Te quedas con un plan propio que puedes ejecutar con quien quieras.</p></details><details><summary>¿Y si la conclusión es que no necesito IA?<span class="pm" aria-hidden="true"></span></summary><p>También es un buen resultado. Te diremos qué conviene automatizar y qué no.</p></details><details><summary>¿Qué incluye la política de uso de IA?<span class="pm" aria-hidden="true"></span></summary><p>Qué herramientas se pueden usar, qué información no se comparte, quién aprueba nuevos usos y cómo se revisan.</p></details></div></div>
+<div class="wrap light"><div class="pnav"><a class="pbtn hide" href="#" tabindex="-1" aria-hidden="true"><span><small>Fase anterior</small><span></span></span></a><a class="pbtn nx" href="/servicios/plataforma-agentica"><span><small>Fase siguiente</small><span>02 Plataforma agéntica</span></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></a></div></div>
+</section>
+<div class="lb" id="clip-lb" role="dialog" aria-modal="true" aria-label="Clip de Ónix Govern" hidden>
+<div class="lb-bar"><span data-lb-cap>Ónix Govern · datos de demostración</span><button class="lb-x" type="button" data-lb-x aria-label="Cerrar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div>
+<div class="lb-sc" data-lb-slot style="display:grid;place-items:center"></div></div>
 </main>
-<footer class="footer">
-  <div class="wrap">
-    <div class="footer__top">
-      <p class="footer__brand">ÓNIX<span>Estrategia, gobernanza y seguridad de IA</span></p>
-      <nav aria-label="Pie de página">
-        <ul>
-          <li><a href="/">Inicio</a>
-      <a href="/ruta-ia">Ruta IA</a></li>
-          <li><a href="/servicios" aria-current="page">Servicios</a></li>
-          <li><a href="/como-trabajamos">Cómo trabajamos</a></li>
-          <li><a href="/confianza-y-gobierno">Confianza y gobierno</a></li>
-          <li><a href="/#contacto">Contacto</a></li>
-          <li><a href="/aviso-de-privacidad">Aviso de privacidad de Ónix</a></li>
-        </ul>
-      </nav>
-    </div>
-    <div class="footer__map"><h2 class="sr-only">Servicios</h2><div class="footer__layers footer__layers--duo"><div><h3>Líneas de trabajo</h3><ul><li><a href="/servicios/estrategia-de-ia">Estrategia y gobernanza de IA</a></li><li><a href="/servicios/auditoria-de-ia">Revisión de riesgos de la IA</a></li><li><a href="/servicios">Desarrollo de agentes y soluciones de IA</a></li><li><a href="/#agentes">Especialidad de gobierno y seguridad de agentes</a></li><li><a href="/como-trabajamos">Acompañamiento de la operación de IA</a></li></ul></div><div><h3>Soluciones y demos</h3><ul><li><a href="/servicios">Catálogo de soluciones</a></li><li><a href="/servicios/agentes-de-operacion">Agentes de operación</a></li><li><a href="/servicios/asistentes-whatsapp-y-voz">Asistentes de WhatsApp y voz</a></li><li><a href="/servicios/documentos-vivos">Conocimiento documental</a></li><li><a href="/servicios/radar-de-leads">Radar de Leads</a></li><li><a href="/servicios/contabilidad-asistida">Contabilidad asistida</a></li></ul></div></div></div>
-    <div class="footer__bottom">
-      <p>© 2026 Ónix. Todos los derechos reservados.</p>
-      <p class="footer__wa">WhatsApp: 222 709 7945</p>
-      <p class="footer__wa">Escríbenos: <a href="mailto:info@onix-ia.com">info@onix-ia.com</a></p>
-      <p class="footer__wa"><a href="https://www.instagram.com/onixia.mx/" target="_blank" rel="noopener noreferrer">Instagram @onixia.mx<span class="sr-only"> (abre Instagram)</span></a></p>
-    </div>
-  </div>
-</footer>
-<script src="/nav.js" defer></script>
-<script src="/motion.js" defer></script>
-<script src="/servicio-vivo.js" defer></script>
-<script src="/sv/estrategia-de-ia.js" defer></script>
-</body>
-</html>
+<footer class="ftr"><div class="wrap">
+<div class="ftr-g">
+<div><p style="font-weight:600;letter-spacing:.26em;font-size:14px">ÓNIX</p><p class="small soft" style="margin-top:8px">Estrategia, gobernanza y seguridad de IA</p></div>
+<nav aria-label="Sitio"><h2>Sitio</h2><ul><li><a href="/">Inicio</a></li><li><a href="/autodiagnostico">Autodiagnóstico gratis</a></li><li><a href="/confianza-y-gobierno">Confianza y gobierno</a></li><li><a href="/#contacto">Contacto</a></li><li><a href="/aviso-de-privacidad">Aviso de privacidad de ÓNIX</a></li></ul></nav>
+<nav aria-label="Modelo de trabajo"><h2>Modelo de trabajo</h2><ul><li><a href="/servicios/estrategia-de-ia">01 Estrategia</a></li><li><a href="/servicios/plataforma-agentica">02 Plataforma agéntica</a></li><li><a href="/servicios">03 Fábrica de agentes</a></li><li><a href="/servicios/operacion-de-ia">04 Operación de IA</a></li></ul></nav>
+<nav aria-label="Soluciones"><h2>Soluciones plug and play</h2><ul><li><a href="/servicios/agentes-de-operacion">Agentes de operación</a></li><li><a href="/servicios/asistentes-whatsapp-y-voz">Asistentes de WhatsApp y voz</a></li><li><a href="/servicios/documentos-vivos">Conocimiento documental</a></li><li><a href="/servicios/radar-de-leads">Radar de Leads</a></li><li><a href="/servicios/contabilidad-asistida">Contabilidad asistida</a></li><li><a href="/servicios">Todo el catálogo</a></li></ul></nav>
+</div>
+<div class="ftr-b"><span>© 2026 ÓNIX. Todos los derechos reservados.</span><span>WhatsApp: 222 709 7945</span><span>Escríbenos: <a href="mailto:info@onix-ia.com" target="_blank" rel="noopener">info@onix-ia.com</a></span><a href="https://www.instagram.com/onixia.mx/" target="_blank" rel="noopener">Instagram @onixia.mx<span class="vh sr-only"> (abre Instagram)</span></a></div>
+</div></footer>
+</div>
+<script src="/onix-ui.js" defer></script>
+
+</body></html>

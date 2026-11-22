@@ -159,7 +159,7 @@ for (const [etiqueta, env] of [['DEPLOY_ENV=prod', { DEPLOY_ENV: 'prod' }], ['si
   prueba('PROD: ninguna página enlaza la ruta /autoevaluacion', htmlProd.map((f) => path.relative(prod, f)), []);
   prueba('PROD: /autodiagnostico sigue cargando el instrumento', /src="\/autoevaluacion\.js"/.test(fs.readFileSync(path.join(prod, 'autodiagnostico.html'), 'utf8')), true);
   const estProd = fs.readFileSync(path.join(prod, 'servicios', 'estrategia-de-ia.html'), 'utf8');
-  prueba('PROD: Estrategia sigue teniendo Govern y sus capturas', /id="govern"/.test(estProd) && /imagenes\/govern\/evaluacion\.png/.test(estProd), true);
+  prueba('PROD: Estrategia sigue teniendo Govern y sus clips', /id="govern"/.test(estProd) && /clips\/govern-01-madurez\.webm/.test(estProd), true);
   prueba('PROD: el fuente del repo sigue enlazando la autoevaluación', /href="\/autoevaluacion"/.test(fs.readFileSync(path.join(raiz, 'servicios', 'estrategia-de-ia.html'), 'utf8')), true);
 }
 

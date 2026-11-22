@@ -141,14 +141,15 @@ prueba('05: «Fase 01» a «Fase 04» pasan', ['Fase 01', 'Fase 02', 'Fase 03', 
 prueba('05: «fase 01/03/04» del home pasan', ['Ir a la fase 01 · Estrategia', 'Ir a la fase 03 · Fábrica de agentes', 'Ir a la fase 04 · Operación de IA'].map((t) => c05(t)), [0, 0, 0]);
 prueba('05: «Fase 0» sigue bloqueado', c05('Pedir diagnóstico Fase 0'), 1);
 prueba('05: «Fase 05» sigue bloqueado', c05('Fase 05'), 1);
-prueba('05: «fase 02» sigue bloqueado', c05('Ir a la fase 02'), 1);
+prueba('05: «fase 02» exacta pasa (Rodolfo, 22 nov 2026)', c05('Ir a la fase 02'), 0);
+prueba('05: «fase 2» sin el cero sigue bloqueado', c05('Ir a la fase 2'), 1);
 prueba('01: 24/7 falla con centinela', c01('Atención 24/7.'), 1);
 prueba('01: precio falla con centinela', c01('Desde $5,000 MXN.'), 1);
 prueba('01: sin centinela y lista vacía, no se valida', c01('Mejora de 30%.', (r) => { r.cifrasAprobadas = []; }), 0);
 prueba('01: "clínica" BLOQUEADA en todo el sitio (sin sectores aprobados)', c01('Una clínica.'), 1);
 prueba('01: la línea «Entregado a una clínica · Publicado con autorización del cliente» BLOQUEADA', c01('Entregado a una clínica · Publicado con autorización del cliente.'), 1);
 prueba('01: "clínicas" BLOQUEADA', c01('Servicios para clínicas.'), 1);
-prueba('01: sectoresPermitidos solo con centinela (validación activa, nada aprobado)', base.sectoresPermitidos, ['__NINGUNO_APROBADO__']);
+prueba('01: sectoresPermitidos: centinela más «construcción» exacta (Rodolfo, 22 nov 2026)', base.sectoresPermitidos, ['__NINGUNO_APROBADO__', 'construcción']);
 prueba('01: aprobar "clínica" explícitamente NO aprueba "clínicas" (comparación exacta)', c01('Servicios para clínicas.', (r) => { r.sectoresPermitidos = ['clínica']; }), 1);
 prueba('01: aprobar "clínica" explícitamente sí aprueba "clínica"', c01('Una clínica.', (r) => { r.sectoresPermitidos = ['clínica']; }), 0);
 prueba('01: sector no aprobado falla', c01('Servicios para despachos.'), 1);
