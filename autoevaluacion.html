@@ -1,72 +1,105 @@
-<!DOCTYPE html>
-<html lang="es-MX">
+<!doctype html>
+<html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Autoevaluación de IA | Ónix</title>
-  <meta name="description" content="Contesta 19 preguntas y recibe una orientación sobre tu preparación para IA, posibles riesgos y acciones por etapas, según tus respuestas. Gratis y sin registro." />
-  <meta name="theme-color" content="#FFFDF7" />
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%2326262C'/><circle cx='16' cy='16' r='7' fill='none' stroke='%23FFFDF7' stroke-width='3'/><circle cx='23.5' cy='8.5' r='2.4' fill='%237C3AED'/></svg>" />
-  <link rel="preload" href="/fonts/geist-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/site.css" />
-  <link rel="stylesheet" href="/sistema.css" />
-  <link rel="stylesheet" href="/editorial.css" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Autodiagnóstico de IA, prototipo | ÓNIX</title>
+<meta name="description" content="Contesta 19 preguntas y obtén un reporte con tu nivel de preparación en seis dimensiones, el riesgo estimado de tu caso de uso principal y un plan por etapas.">
+<meta name="theme-color" content="#FFFDF7">
+<meta name="color-scheme" content="light">
+<link rel="canonical" href="https://www.onix-ia.com/autoevaluacion">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.onix-ia.com/autoevaluacion">
+<meta property="og:locale" content="es_MX">
+<meta property="og:title" content="Autodiagnóstico de IA, prototipo | ÓNIX">
+<meta property="og:description" content="Contesta 19 preguntas y obtén un reporte con tu nivel de preparación en seis dimensiones, el riesgo estimado de tu caso de uso principal y un plan por etapas.">
+<meta property="og:image" content="https://www.onix-ia.com/og-onix.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Ónix">
+<meta name="twitter:image" content="https://www.onix-ia.com/og-onix.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Autodiagnóstico de IA, prototipo | ÓNIX">
+<meta name="twitter:description" content="Contesta 19 preguntas y obtén un reporte con tu nivel de preparación en seis dimensiones, el riesgo estimado de tu caso de uso principal y un plan por etapas.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%2326262C'/><circle cx='16' cy='16' r='7' fill='none' stroke='%23FFFDF7' stroke-width='3'/><circle cx='23.5' cy='8.5' r='2.4' fill='%237C3AED'/></svg>" />
+<link rel="preload" href="/fonts/geist-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/geist-mono-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/onix-g.css">
+<link rel="stylesheet" href="/onix-pages.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"ÓNIX","url":"https://www.onix-ia.com"}</script>
+
 </head>
-<body class="ed">
+<body>
 <a class="skip" href="#main">Saltar al contenido</a>
-<header class="nav"><div class="wrap nav__inner"><a href="/" class="logo" aria-label="ÓNIX, inicio">ÓNIX</a><nav class="nav__links" aria-label="Principal"><a href="/">Inicio</a>
-      <a href="/ruta-ia">Ruta IA</a><a href="/servicios">Servicios</a><a href="/como-trabajamos">Cómo trabajamos</a><a href="/confianza-y-gobierno">Confianza y gobierno</a><a href="/#contacto">Contacto</a></nav></div></header>
+<div class="site">
+<header class="hdr">
+<div class="wrap hdr-in">
+<a class="logo" href="/" aria-label="ÓNIX, inicio">ÓNIX</a>
+<nav class="nav" aria-label="Principal">
+<a class="nl" href="/">Inicio</a>
+<button class="nl" type="button" id="svc-btn" aria-expanded="false" aria-controls="panel-servicios">Servicios <svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></button>
+<a class="nl" href="/confianza-y-gobierno">Confianza y gobierno</a>
+<a class="nl" href="/#contacto">Contacto</a>
+<a class="btn hdr-cta" href="/autodiagnostico" aria-current="page">Autodiagnóstico gratis</a>
+</nav>
+<button class="burger" id="burger" type="button" aria-expanded="false" aria-controls="menu-movil"><span class="vh">Abrir menú</span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M4 9h16M4 15h16"></path></svg></button>
+</div>
+<button class="backdrop" id="svc-backdrop" type="button" tabindex="-1" aria-hidden="true" hidden></button>
+<div id="panel-servicios" class="svc-panel" hidden>
+<div class="wrap svc-cols">
+<div><p class="svc-k">Modelo de trabajo</p><a class="svc-a" href="/servicios/estrategia-de-ia"><span class="n num">01</span><span><b>Estrategia</b><small>Readiness de IA, Ruta IA y Ónix Govern</small></span></a><a class="svc-a" href="/servicios/plataforma-agentica"><span class="n num">02</span><span><b>Plataforma agéntica</b><small>Diseño con el gobierno integrado</small></span></a><a class="svc-a" href="/servicios"><span class="n num">03</span><span><b>Fábrica de agentes</b><small>Agentes gobernados, seguros y observados</small></span></a><a class="svc-a" href="/servicios/operacion-de-ia"><span class="n num">04</span><span><b>Operación de IA</b><small>Control de uso, accesos y costos</small></span></a></div>
+<div><p class="svc-k">Soluciones plug and play</p><a class="svc-b" href="/servicios/agentes-de-operacion">Agentes de operación</a><a class="svc-b" href="/servicios/asistentes-whatsapp-y-voz">Asistentes de WhatsApp y voz</a><a class="svc-b" href="/servicios/documentos-vivos">Conocimiento documental</a><a class="svc-b" href="/servicios/radar-de-leads">Radar de Leads</a><a class="svc-b" href="/servicios/contabilidad-asistida">Contabilidad asistida</a><a class="svc-b" href="/servicios">Todo el catálogo</a></div>
+</div>
+</div>
+</header>
+<div id="menu-movil" class="mmenu" role="dialog" aria-modal="true" aria-label="Menú" hidden>
+<div class="wrap">
+<div class="mm-top"><span class="logo">ÓNIX</span><button class="burger" id="mm-close" type="button" style="display:inline-flex"><span class="vh">Cerrar menú</span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div>
+<nav aria-label="Principal">
+<a class="mm-l" href="/">Inicio</a>
+<button class="mm-l" id="mm-svc" type="button" aria-expanded="false" aria-controls="mm-servicios">Servicios <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></button>
+<div id="mm-servicios" class="mm-sub" hidden>
+<p class="svc-k">Modelo de trabajo</p><a class="svc-a" href="/servicios/estrategia-de-ia"><span class="n num">01</span><span><b>Estrategia</b><small>Readiness de IA, Ruta IA y Ónix Govern</small></span></a><a class="svc-a" href="/servicios/plataforma-agentica"><span class="n num">02</span><span><b>Plataforma agéntica</b><small>Diseño con el gobierno integrado</small></span></a><a class="svc-a" href="/servicios"><span class="n num">03</span><span><b>Fábrica de agentes</b><small>Agentes gobernados, seguros y observados</small></span></a><a class="svc-a" href="/servicios/operacion-de-ia"><span class="n num">04</span><span><b>Operación de IA</b><small>Control de uso, accesos y costos</small></span></a>
+<p class="svc-k">Soluciones plug and play</p><a class="svc-b" href="/servicios/agentes-de-operacion">Agentes de operación</a><a class="svc-b" href="/servicios/asistentes-whatsapp-y-voz">Asistentes de WhatsApp y voz</a><a class="svc-b" href="/servicios/documentos-vivos">Conocimiento documental</a><a class="svc-b" href="/servicios/radar-de-leads">Radar de Leads</a><a class="svc-b" href="/servicios/contabilidad-asistida">Contabilidad asistida</a><a class="svc-b" href="/servicios">Todo el catálogo</a>
+</div>
+<a class="mm-l" href="/confianza-y-gobierno">Confianza y gobierno</a>
+<a class="mm-l" href="/#contacto">Contacto</a>
+</nav>
+<div class="mm-cta">
+<a class="btn" href="/autodiagnostico">Haz tu autodiagnóstico gratis</a>
+<a class="btn-s btn--accent" href="https://wa.me/522227097945?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20los%20servicios%20de%20%C3%93NIX.%20Aviso%20de%20privacidad%3A%20https%3A%2F%2Fwww.onix-ia.com%2Faviso-de-privacidad" target="_blank" rel="noopener">Escríbenos por WhatsApp<span class="vh sr-only"> (abre WhatsApp)</span></a>
+<p class="wa-note">Al escribirnos por WhatsApp, ÓNIX (Rodolfo Mora) usará tu número y tu mensaje para responderte y darte seguimiento. WhatsApp (Meta) trata los datos de la conversación bajo sus propias condiciones. <a href="/aviso-de-privacidad" id="mm-last">Aviso de privacidad de ÓNIX</a></p>
+</div>
+</div>
+</div>
 <main id="main">
-<section class="hero home-hero">
-  <div class="wrap">
-    <p class="badge">Prototipo · no publicado</p>
-    <h1 id="ae-h1">¿Tu empresa está lista para usar IA con control?</h1>
-    <p class="lead">Contesta 19 preguntas y obtén una primera orientación sobre tu preparación en seis dimensiones, posibles riesgos de tu caso de uso principal y acciones por etapas, según tus respuestas. No sustituye una auditoría ni una evaluación técnica y no acredita seguridad o cumplimiento.</p>
-    <p>Tus respuestas se procesan en tu navegador. Si eliges escribirnos por WhatsApp, puedes revisar y enviar un resumen del resultado. No hay traspaso de datos a Ónix Govern.</p>
-    <p id="quiz-part" class="kicker">Parte 1 de 2</p>
-    <div class="prog" aria-hidden="true"><i></i></div>
-    <div id="quiz" aria-live="polite"></div>
-    <p id="quiz-live" class="sr-only" aria-live="polite"></p>
-    <noscript><p>Esta autoevaluación se calcula en tu navegador y necesita JavaScript. Sin JavaScript no se envían tus respuestas ni se arma el reporte. El botón de WhatsApp de esta página no incluye un resultado.</p></noscript>
-  </div>
-</section>
-<section class="section" id="escribenos">
-  <div class="wrap">
-    <h2>Platiquemos tu resultado.</h2>
-    <p>Te ayudamos a decidir qué hacer con IA, en qué orden y con qué reglas. Tu consultoría inicial es gratis. Es una conversación, no una contratación.</p>
-    <label class="form__check" for="waIncluir"><input type="checkbox" id="waIncluir" disabled /> <span id="waConsentText">El resumen orientativo se puede incluir después de contestar el cuestionario.</span></label>
-    <p class="wa-preview" id="waPreview" hidden><span>Mensaje que se abrirá en WhatsApp</span> <span id="waPreviewText"></span></p>
-    <p><a id="waCta" class="btn btn--primary" href="https://wa.me/522227097945?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20la%20autoevaluaci%C3%B3n%20de%20IA%20de%20%C3%93nix.%20Aviso%20de%20privacidad%3A%20https%3A%2F%2Fwww.onix-ia.com%2Faviso-de-privacidad" target="_blank" rel="noopener noreferrer">Escríbenos por WhatsApp<span class="sr-only"> (abre WhatsApp)</span></a></p>
-    <p class="priv-note">Si marcas la casilla, el mensaje incluye un resumen orientativo (nivel, ruta y prioridades), sin el nombre del caso ni las respuestas; puedes leerlo aquí y editarlo en WhatsApp antes de enviarlo. Si no la marcas, el mensaje no lleva el resultado. Al escribirnos por WhatsApp, Ónix (Rodolfo Mora) usará tu número y tu mensaje para responderte y darte seguimiento. WhatsApp (Meta) trata los datos de la conversación bajo sus propias condiciones. <a href="/aviso-de-privacidad">Aviso de privacidad de Ónix</a></p>
-    <p class="home-note">Resultado orientativo basado en tus respuestas; no sustituye una auditoría ni una evaluación técnica. Diseñamos y revisamos nuestras soluciones con base en buenas prácticas de referencias como ISO/IEC 42001, ISO/IEC 27001 y las guías de OWASP. Ónix no es organismo certificador ni está certificado, y nuestro trabajo no constituye una certificación ni asegura el cumplimiento de esas normas.</p>
-  </div>
-</section>
-</main>
+<section id="ae-intro" class="hero ae-hero" aria-labelledby="h1"><div class="wrap hero-g"><div>
+<p class="kicker">Autodiagnóstico de IA · gratis</p>
+<h1 id="h1" class="h1">¿Tu empresa está lista para usar IA <span class="soft">con control?</span></h1>
+<p class="lead">Contesta 19 preguntas y obtén un reporte con tu nivel de preparación en seis dimensiones, el riesgo estimado de tu caso de uso principal y un plan por etapas.</p>
+<div class="hero-act"><button class="btn" id="ae-start" type="button">Empezar el autodiagnóstico <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button><button class="btn-s" id="ae-sample" type="button">Ver reporte de ejemplo</button></div>
+<div class="facts"><div><b class="num">6</b><span>dimensiones de preparación</span></div><div><b class="num">3</b><span>capas: gobierno, riesgo y seguridad</span></div><div><b class="num">3</b><span>rutas de gobierno según el riesgo</span></div></div>
+<p class="small soft" style="margin-top:28px;max-width:680px">Resultado orientativo según tus respuestas. No sustituye una auditoría ni una evaluación técnica y no acredita seguridad o cumplimiento.</p>
+</div><aside class="keys" aria-labelledby="ae-keys"><h2 id="ae-keys">Tu reporte incluye</h2><ul>
+<li><b>Resumen ejecutivo e indicadores</b><span>Índice, nivel, tipo de caso, riesgo y ruta.</span></li>
+<li><b>Perfil por dimensión y por capa</b><span>Dónde estás fuerte y dónde está la brecha.</span></li>
+<li><b>Ruta de gobierno de tu caso</b><span>Matriz de tipo y riesgo, con lo que implica.</span></li>
+<li><b>Prioridades y plan por etapas</b><span>Acciones para marcar conforme avanzas.</span></li>
+<li><b>Privado</b><span>Sin registro. Se calcula en tu navegador.</span></li>
+</ul></aside></div></section>
+<section id="ae-q" class="sec alt" style="padding-top:64px" hidden></section>
+<section id="ae-res" class="sec" hidden></section>
+<noscript><section class="hero"><div class="wrap" style="max-width:900px"><p class="kicker">Autodiagnóstico de IA · gratis</p><p class="fmsg" style="margin-top:32px"><b>Este autodiagnóstico se calcula en tu navegador y necesita JavaScript. Sin JavaScript no se envían tus respuestas ni se arma el reporte. El botón de WhatsApp de esta página no incluye un resultado.</b></p><p style="margin-top:24px"><a class="btn btn--accent" href="https://wa.me/522227097945?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20el%20autodiagn%C3%B3stico%20de%20IA%20de%20%C3%93NIX.%20Aviso%20de%20privacidad%3A%20https%3A%2F%2Fwww.onix-ia.com%2Faviso-de-privacidad" target="_blank" rel="noopener">Escríbenos por WhatsApp<span class="vh sr-only"> (abre WhatsApp)</span></a><p class="wa-note">Al escribirnos por WhatsApp, ÓNIX (Rodolfo Mora) usará tu número y tu mensaje para responderte y darte seguimiento. WhatsApp (Meta) trata los datos de la conversación bajo sus propias condiciones. <a href="/aviso-de-privacidad">Aviso de privacidad de ÓNIX</a></p></p><p class="wa-note">Al escribirnos por WhatsApp, ÓNIX (Rodolfo Mora) usará tu número y tu mensaje para responderte y darte seguimiento. WhatsApp (Meta) trata los datos de la conversación bajo sus propias condiciones. <a href="/aviso-de-privacidad">Aviso de privacidad de ÓNIX</a></p></div></section></noscript></main>
+<footer class="ftr"><div class="wrap">
+<div class="ftr-g">
+<div><p style="font-weight:600;letter-spacing:.26em;font-size:14px">ÓNIX</p><p class="small soft" style="margin-top:8px">Estrategia, gobernanza y seguridad de IA</p></div>
+<nav aria-label="Sitio"><h2>Sitio</h2><ul><li><a href="/">Inicio</a></li><li><a href="/autodiagnostico">Autodiagnóstico gratis</a></li><li><a href="/confianza-y-gobierno">Confianza y gobierno</a></li><li><a href="/#contacto">Contacto</a></li><li><a href="/aviso-de-privacidad">Aviso de privacidad de ÓNIX</a></li></ul></nav>
+<nav aria-label="Modelo de trabajo"><h2>Modelo de trabajo</h2><ul><li><a href="/servicios/estrategia-de-ia">01 Estrategia</a></li><li><a href="/servicios/plataforma-agentica">02 Plataforma agéntica</a></li><li><a href="/servicios">03 Fábrica de agentes</a></li><li><a href="/servicios/operacion-de-ia">04 Operación de IA</a></li></ul></nav>
+<nav aria-label="Soluciones"><h2>Soluciones plug and play</h2><ul><li><a href="/servicios/agentes-de-operacion">Agentes de operación</a></li><li><a href="/servicios/asistentes-whatsapp-y-voz">Asistentes de WhatsApp y voz</a></li><li><a href="/servicios/documentos-vivos">Conocimiento documental</a></li><li><a href="/servicios/radar-de-leads">Radar de Leads</a></li><li><a href="/servicios/contabilidad-asistida">Contabilidad asistida</a></li><li><a href="/servicios">Todo el catálogo</a></li></ul></nav>
+</div>
+<div class="ftr-b"><span>© 2026 ÓNIX. Todos los derechos reservados.</span><span>WhatsApp: 222 709 7945</span><span>Escríbenos: <a href="mailto:info@onix-ia.com" target="_blank" rel="noopener">info@onix-ia.com</a></span><a href="https://www.instagram.com/onixia.mx/" target="_blank" rel="noopener">Instagram @onixia.mx<span class="vh sr-only"> (abre Instagram)</span></a></div>
+</div></footer>
+</div>
+<script src="/onix-ui.js" defer></script>
 <script type="module" src="/autoevaluacion.js"></script>
-<footer class="footer">
-  <div class="wrap">
-    <div class="footer__top">
-      <p class="footer__brand">ÓNIX<span>Estrategia, gobernanza y seguridad de IA</span></p>
-      <nav aria-label="Pie de página">
-        <ul>
-          <li><a href="/">Inicio</a>
-      <a href="/ruta-ia">Ruta IA</a></li>
-          <li><a href="/servicios">Servicios</a></li>
-          <li><a href="/como-trabajamos">Cómo trabajamos</a></li>
-          <li><a href="/confianza-y-gobierno">Confianza y gobierno</a></li>
-          <li><a href="/#contacto">Contacto</a></li>
-          <li><a href="/aviso-de-privacidad">Aviso de privacidad de Ónix</a></li>
-        </ul>
-      </nav>
-    </div>
-    <div class="footer__map"><h2 class="sr-only">Servicios</h2><div class="footer__layers"><div><h3>Líneas de trabajo</h3><ul><li><a href="/servicios/estrategia-de-ia">Estrategia y gobernanza de IA</a></li><li><a href="/servicios/auditoria-de-ia">Revisión de riesgos de la IA</a></li><li><a href="/servicios">Desarrollo de agentes y soluciones de IA</a></li><li><a href="/#agentes">Especialidad de gobierno y seguridad de agentes</a></li><li><a href="/como-trabajamos">Acompañamiento de la operación de IA</a></li></ul></div><div><h3>Soluciones y demos</h3><ul><li><a href="/servicios">Catálogo de soluciones</a></li><li><a href="/servicios/agentes-de-operacion">Agentes de operación</a></li><li><a href="/servicios/asistentes-whatsapp-y-voz">Asistentes de WhatsApp y voz</a></li><li><a href="/servicios/documentos-vivos">Conocimiento documental</a></li><li><a href="/servicios/radar-de-leads">Radar de Leads</a></li><li><a href="/servicios/contabilidad-asistida">Contabilidad asistida</a></li></ul></div></div></div>
-    <div class="footer__bottom">
-      <p>© 2026 Ónix. Todos los derechos reservados.</p>
-      <p class="footer__wa">WhatsApp: 222 709 7945</p>
-      <p class="footer__wa">Escríbenos: <a href="mailto:info@onix-ia.com">info@onix-ia.com</a></p>
-      <p class="footer__wa"><a href="https://www.instagram.com/onixia.mx/" target="_blank" rel="noopener noreferrer">Instagram @onixia.mx<span class="sr-only"> (abre Instagram)</span></a></p>
-    </div>
-  </div>
-</footer>
-</body>
-</html>
+</body></html>

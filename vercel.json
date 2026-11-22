@@ -9,5 +9,32 @@
     "deploymentEnabled": {
       "main": false
     }
-  }
+  },
+  "redirects": [
+    {
+      "source": "/como-trabajamos",
+      "destination": "/#modelo",
+      "permanent": false
+    },
+    {
+      "source": "/como",
+      "destination": "/#modelo",
+      "permanent": false
+    },
+    {
+      "source": "/servicios/auditoria-de-ia",
+      "destination": "/servicios/estrategia-de-ia",
+      "permanent": false
+    },
+    {
+      "source": "/auditoria",
+      "destination": "/servicios/estrategia-de-ia",
+      "permanent": false
+    },
+    {
+      "source": "/ruta-ia",
+      "destination": "/servicios/estrategia-de-ia",
+      "permanent": false
+    }
+  ]
 }
