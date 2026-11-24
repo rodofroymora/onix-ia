@@ -1,0 +1,325 @@
+/* Entrega 1 del home: tokens, barra y hero. Solo aplica en body.home.
+   Geist ya está en /fonts. Respaldo: Inter, system-ui, sans-serif. */
+
+body.home {
+  --hx-fondo: #FFFDF7;
+  --hx-arena: #F3F0E8;
+  --hx-tinta: #1E1D22;
+  --hx-violeta: #5B21B6;
+  --hx-violeta-hover: #3B0F80;
+  --hx-violeta-claro: #EDE9FE;
+  --hx-secundario: #44403C;
+  --hx-terciario: #57534E;
+  --hx-borde-tarjeta: #E7E2D6;
+  --hx-divisor: #ECE7DA;
+  --hx-borde-campo: #A8A29E;
+  --hx-punto: #D6D3CB;
+  --hx-blanco: #FFFFFF;
+  --hx-oscuro: #1E1D22;
+  --hx-etiqueta: #C4B5FD;
+  --hx-texto: #FFFDF7;
+  --hx-texto-2: #E7E5EC;
+  --nav-h: 72px;
+  font-family: 'Geist', Inter, system-ui, sans-serif;
+  background: var(--hx-fondo);
+  color: var(--hx-tinta);
+  overflow-x: clip;
+}
+
+html:has(body.home) { scroll-padding-top: 88px; overflow-x: clip; }
+
+body.home :focus-visible {
+  outline: 2px solid var(--hx-violeta);
+  outline-offset: 3px;
+}
+
+body.home .wrap { width: min(1200px, calc(100% - 48px)); }
+
+body.home #servicios,
+body.home #agentes,
+body.home #metodo,
+body.home #govern,
+body.home #nosotros,
+body.home #contacto,
+body.home .hx-ancla { scroll-margin-top: 88px; }
+
+.hx-ancla { height: 0; overflow: hidden; }
+
+/* Barra */
+body.home .nav {
+  height: auto;
+  min-height: var(--nav-h);
+  background: var(--hx-fondo);
+  border-bottom: 1px solid var(--hx-divisor);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+body.home .nav__inner { min-height: var(--nav-h); gap: 12px; }
+body.home .logo {
+  min-height: 44px;
+  padding-left: 0.24em;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: normal;
+  letter-spacing: 0.24em;
+  color: var(--hx-tinta);
+}
+body.home .nav__links {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+body.home .nav__links a:not(.hx-btn) {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--hx-tinta);
+  text-decoration: none;
+}
+body.home .nav__links a:not(.hx-btn):hover { color: var(--hx-violeta-hover); text-decoration: none; }
+
+body.home .mmenu { background: var(--hx-fondo); }
+body.home .mmenu a:not(.hx-btn) { color: var(--hx-tinta); }
+body.home .mmenu .hx-btn--nav { align-self: flex-start; margin-top: 16px; }
+
+@media (max-width: 1120px) {
+  body.home .nav__links { display: none; }
+  body.home .burger { display: inline-flex; }
+}
+@media (min-width: 1121px) {
+  body.home .nav__links { display: flex; }
+  body.home .burger { display: none; }
+}
+
+/* Botones de esta entrega. No usan btn--primary ni btn--accent. */
+.hx-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 44px;
+  border-radius: 999px;
+  border: 0;
+  font-family: inherit;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+.hx-btn--principal {
+  padding: 16px 26px;
+  background: var(--hx-violeta);
+  color: var(--hx-blanco);
+  font-size: 16px;
+  font-weight: 600;
+}
+.hx-btn--principal:hover { background: var(--hx-violeta-hover); color: var(--hx-blanco); }
+.hx-btn--secundario {
+  padding: 15px 24px;
+  background: transparent;
+  color: var(--hx-tinta);
+  border: 1px solid var(--hx-tinta);
+  font-size: 16px;
+  font-weight: 500;
+}
+.hx-btn--secundario:hover { background: var(--hx-arena); color: var(--hx-tinta); }
+body.home a.hx-btn--nav {
+  margin-left: 8px;
+  padding: 12px 20px;
+  background: var(--hx-tinta);
+  color: var(--hx-texto);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-decoration: none;
+}
+body.home a.hx-btn--nav:hover { background: var(--hx-tinta); color: var(--hx-texto); }
+body.home .mmenu a.hx-btn--nav { margin-left: 0; }
+
+/* El enlace de WhatsApp de contacto conserva su aspecto. La clase btn--primary
+   solo mantiene el CTA único que exigen los checks. */
+body.home a.link.btn--primary {
+  background: transparent;
+  color: inherit;
+  min-height: 44px;
+  padding: 0;
+  border-radius: 0;
+  font-size: inherit;
+  font-weight: 500;
+  letter-spacing: inherit;
+  box-shadow: none;
+  white-space: normal;
+}
+body.home a.link.btn--primary:hover {
+  background: transparent;
+  color: inherit;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Hero */
+.hx-hero {
+  padding: 96px 0;
+  background: var(--hx-fondo);
+  color: var(--hx-tinta);
+}
+.hx-hero__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 48px 56px;
+  align-items: start;
+}
+.hx-eyebrow {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: normal;
+  letter-spacing: 0;
+  color: var(--hx-violeta);
+}
+.hx-hero h1 {
+  margin-top: 12px;
+  font-size: 64px;
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  color: var(--hx-tinta);
+  text-wrap: balance;
+}
+.hx-lead {
+  margin-top: 20px;
+  max-width: 36em;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.55;
+  letter-spacing: 0;
+  color: var(--hx-secundario);
+}
+.hx-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 28px;
+}
+.hx-note {
+  margin-top: 16px;
+  max-width: 36em;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0;
+  color: var(--hx-terciario);
+}
+
+.hx-situaciones__title {
+  margin-bottom: 16px;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: 0;
+  color: var(--hx-tinta);
+}
+.hx-card {
+  background: var(--hx-oscuro);
+  border-radius: 24px;
+  padding: 28px 24px 32px;
+  color: var(--hx-texto);
+}
+.hx-stage { display: flex; flex-direction: column; gap: 28px; }
+.hx-situaciones.is-ready .hx-stage { display: grid; gap: 0; }
+.hx-situaciones.is-ready .hx-slide {
+  grid-area: 1 / 1;
+  visibility: hidden;
+}
+.hx-situaciones.is-ready .hx-slide.is-on { visibility: visible; }
+.hx-slide__label {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: normal;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--hx-etiqueta);
+}
+.hx-slide__quote {
+  margin: 14px 0 0;
+  font-size: 26px;
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: 0;
+  color: var(--hx-texto);
+  text-wrap: balance;
+}
+.hx-slide__help {
+  margin-top: 28px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: normal;
+  letter-spacing: 0;
+  color: var(--hx-etiqueta);
+}
+.hx-slide__answer {
+  margin-top: 8px;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.55;
+  letter-spacing: 0;
+  color: var(--hx-texto-2);
+}
+
+.hx-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 8px;
+}
+.hx-dots, .hx-arrows { display: flex; align-items: center; }
+.hx-arrows { gap: 4px; }
+.hx-dot, .hx-arrow {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--hx-tinta);
+  cursor: pointer;
+  flex: none;
+}
+.hx-dot::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--hx-punto);
+}
+.hx-dot[aria-current="true"]::before {
+  width: 32px;
+  height: 10px;
+  background: var(--hx-violeta);
+}
+.hx-arrow {
+  border: 1px solid var(--hx-tinta);
+  border-radius: 999px;
+  font-size: 22px;
+  line-height: 1;
+}
+.hx-arrow:hover { background: var(--hx-arena); }
+
+@media (max-width: 900px) {
+  .hx-hero__grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 600px) {
+  .hx-hero__actions { align-items: stretch; }
+  .hx-hero__actions .hx-btn { width: 100%; white-space: normal; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hx-slide { transition: none; }
+}

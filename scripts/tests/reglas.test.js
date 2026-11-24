@@ -57,7 +57,7 @@ const casos = [
   ['verificamos que tus CFDI estén vigentes', 'fiscal-juicio:b'], ['compártenos tu e.firma', 'credenciales-sat-pedir:b'],
   ['calculamos tus impuestos', 'impuestos-calculo:b'], ['calculamos tu IVA', 'impuestos-calculo:b'], ['clasificación fiscal automática', 'clasificacion-contable-fiscal:b'],
   ['Secretaria AI', 'secretaria:b'], ['Atención con IA por voz', 'nombre-anterior:a'], ['certificados en ISO/IEC 42001', 'certificacion-afirmada:b'],
-  ['alineado a NIST AI RMF', 'nist-publico:b'], ['resultados garantizados', 'garantia:b'], ['Pedido confirmado', 'ventas-cobros-inventario:b'],
+  ['según NIST', 'nist-publico:b'], ['resultados garantizados', 'garantia:b'], ['Pedido confirmado', 'ventas-cobros-inventario:b'],
   ['se integra automáticamente con tu CRM', 'integracion-automatica:b'], ['operamos contigo en tus oficinas', 'personal-en-sitio:b'],
   ['soluciones para clínicas', 'clinica:b'], ['XAXX010101000', 'rfc-formato-real:b'], ['folio 123e4567-e89b-12d3-a456-426614174000', 'uuid-real:b'],
   ['pipeline STT + LLM', 'jerga-tecnica:a'], ['el asistente virtual', 'asistente-masculino:a'],
@@ -127,13 +127,29 @@ prueba('01: "222 709 7945" visible pasa', c01('Escríbenos al 222 709 7945.'), 0
 prueba('01: otro "+NN" sí falla (centinela)', c01('Más de +50 aliados.'), 1);
 prueba('01: porcentaje falla con centinela', c01('Mejora de 30%.'), 1);
 prueba('01: plazo falla con centinela', c01('Listo en 2 semanas.'), 1);
+prueba('01: la frase exacta de 15 minutos pasa', c01('Conoce en 15 minutos el nivel de preparación de tu práctica de IA y dónde trabajar.'), 0);
+prueba('01: la nota del hero con 15 minutos pasa', c01('15 minutos. Sin registro. Y la primera consultoría corre por nuestra cuenta.'), 0);
+prueba('01: la respuesta del carrusel con 15 minutos pasa', c01('En 15 minutos sabrás dónde estás y cuál es el primer paso con más valor.'), 0);
+prueba('01: «15 minutos» fuera de esas frases falla', c01('Listo en 15 minutos.'), 1);
+prueba('01: la frase del home (Rodolfo, 21 nov 2026) pasa', c01('15 minutos. Sin registro. Resultado orientativo, no es asesoría legal.'), 0);
+prueba('05: la frase exacta de 15 minutos no dispara plazo', c05('Conoce en 15 minutos el nivel de preparación de tu práctica de IA y dónde trabajar.'), 0);
+prueba('05: la nota del hero con 15 minutos no dispara plazo', c05('15 minutos. Sin registro. Y la primera consultoría corre por nuestra cuenta.'), 0);
+prueba('05: la respuesta del carrusel con 15 minutos no dispara plazo', c05('En 15 minutos sabrás dónde estás y cuál es el primer paso con más valor.'), 0);
+prueba('05: la frase del home (Rodolfo, 21 nov 2026) no dispara plazo', c05('15 minutos. Sin registro. Resultado orientativo, no es asesoría legal.'), 0);
+prueba('05: «15 minutos» suelto sigue bloqueado', c05('Listo en 15 minutos.'), 1);
+prueba('05: «Fase 01» a «Fase 04» pasan', ['Fase 01', 'Fase 02', 'Fase 03', 'Fase 04'].map((t) => c05(t)), [0, 0, 0, 0]);
+prueba('05: «fase 01/03/04» del home pasan', ['Ir a la fase 01 · Estrategia', 'Ir a la fase 03 · Fábrica de agentes', 'Ir a la fase 04 · Operación de IA'].map((t) => c05(t)), [0, 0, 0]);
+prueba('05: «Fase 0» sigue bloqueado', c05('Pedir diagnóstico Fase 0'), 1);
+prueba('05: «Fase 05» sigue bloqueado', c05('Fase 05'), 1);
+prueba('05: «fase 02» exacta pasa (Rodolfo, 22 nov 2026)', c05('Ir a la fase 02'), 0);
+prueba('05: «fase 2» sin el cero sigue bloqueado', c05('Ir a la fase 2'), 1);
 prueba('01: 24/7 falla con centinela', c01('Atención 24/7.'), 1);
 prueba('01: precio falla con centinela', c01('Desde $5,000 MXN.'), 1);
 prueba('01: sin centinela y lista vacía, no se valida', c01('Mejora de 30%.', (r) => { r.cifrasAprobadas = []; }), 0);
 prueba('01: "clínica" BLOQUEADA en todo el sitio (sin sectores aprobados)', c01('Una clínica.'), 1);
 prueba('01: la línea «Entregado a una clínica · Publicado con autorización del cliente» BLOQUEADA', c01('Entregado a una clínica · Publicado con autorización del cliente.'), 1);
 prueba('01: "clínicas" BLOQUEADA', c01('Servicios para clínicas.'), 1);
-prueba('01: sectoresPermitidos solo con centinela (validación activa, nada aprobado)', base.sectoresPermitidos, ['__NINGUNO_APROBADO__']);
+prueba('01: sectoresPermitidos: centinela más «construcción» exacta (Rodolfo, 22 nov 2026)', base.sectoresPermitidos, ['__NINGUNO_APROBADO__', 'construcción']);
 prueba('01: aprobar "clínica" explícitamente NO aprueba "clínicas" (comparación exacta)', c01('Servicios para clínicas.', (r) => { r.sectoresPermitidos = ['clínica']; }), 1);
 prueba('01: aprobar "clínica" explícitamente sí aprueba "clínica"', c01('Una clínica.', (r) => { r.sectoresPermitidos = ['clínica']; }), 0);
 prueba('01: sector no aprobado falla', c01('Servicios para despachos.'), 1);
