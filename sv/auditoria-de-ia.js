@@ -1,4 +1,4 @@
-/* ÓNIX · Auditoría IA Confiable: «Pruébalo» (prácticas sí/no → brechas por prioridad).
+/* ÓNIX · Auditoría de IA: «Pruébalo» (prácticas sí/no → brechas por prioridad).
    Vanilla, sin dependencias. Sin JS la página muestra todas las brechas (todas las respuestas en «No»). */
 (function () {
   'use strict';
