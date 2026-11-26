@@ -1,4 +1,4 @@
-/* ÓNIX · Auditoría IA Confiable: estilos propios de la página (se apoyan en servicio-vivo.css). */
+/* ÓNIX · Auditoría de IA: estilos propios de la página (se apoyan en servicio-vivo.css). */
 
 /* Glifo genérico de herramienta (no son logotipos) */
 .au-ic { flex: none; display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 8px; background: var(--paper-2); color: var(--ink-2); border: 1px solid var(--line); }

@@ -446,22 +446,6 @@ body{margin:0}
 /* formulario de contacto aprobado (Web3Forms), dentro del sistema del prototipo */
 .ct{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:64px;align-items:start}
 .ct-side{display:flex;flex-direction:column;gap:28px;min-width:0}
-.form{display:flex;flex-direction:column;gap:16px;min-width:0;background:var(--bg);border-top:3px solid var(--acc);padding:22px}
-.field{display:flex;flex-direction:column;gap:6px;min-width:0}
-.field label{font-size:14px;font-weight:600}
-.field input,.field textarea{font:inherit;font-size:16px;line-height:1.45;color:var(--ink);background:var(--bg);border:1px solid var(--ink2);border-radius:2px;padding:12px 14px;min-height:48px;width:100%}
-.field textarea{min-height:140px;resize:vertical}
-.field input::placeholder,.field textarea::placeholder{color:var(--ink2)}
-.err{margin:0;font-size:14px;line-height:1.45;color:var(--ink)}
-.err[hidden],.form__error[hidden]{display:none}
-.form__notice{margin:0;font-size:13px;line-height:1.6;color:var(--ink2)}
-.form__notice a{color:var(--acc2)}
-.form__check{display:grid;grid-template-columns:44px minmax(0,1fr);align-items:center;column-gap:8px;min-height:44px;font-size:14px;line-height:1.45;cursor:pointer}
-.form__check input{width:22px;height:22px;margin:0;justify-self:center;accent-color:var(--acc)}
-.form .btn{width:100%}
-.form__error{margin:0;font-size:14px;line-height:1.45;color:var(--ink);background:var(--bg);border:1px solid var(--ink);border-radius:2px;padding:12px 14px}
-.form__status{margin:0;font-size:14px;line-height:1.45;color:var(--ink);background:var(--bg);border-left:3px solid var(--acc);border-radius:2px;padding:12px 14px}
-.form__status:empty{display:none}
 .lb[hidden]{display:none !important}
 .win .soft,.win-bar,.win-bar .soft{color:#4A4A52}
 .cmp > b{display:block}
