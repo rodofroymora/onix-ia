@@ -183,16 +183,6 @@
 .cap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px 20px;margin-top:16px;font-size:14px;color:var(--ink2)}
 .swipe{display:none;font-size:14px;color:var(--ink2);margin-bottom:10px}
 
-/* formulario */
-.form{display:flex;flex-direction:column;gap:18px}
-.fld{display:flex;flex-direction:column;gap:8px;font-size:15px;font-weight:500}
-.inp{font:inherit;font-size:16px;font-weight:400;min-height:50px;padding:12px 14px;border-radius:12px;border:1px solid var(--ink2);background:var(--bg);color:var(--ink);width:100%}
-.inp::placeholder{color:var(--ink2)}
-.inp:focus{outline:2px solid var(--acc);outline-offset:2px;border-color:var(--ink)}
-.inp[aria-invalid="true"]{border-color:var(--ink);border-width:2px}
-textarea.inp{min-height:132px;resize:vertical}
-.err{display:flex;gap:8px;align-items:flex-start;font-size:14px;font-weight:500;color:var(--ink)}
-.err svg{flex:none;margin-top:2px}
 .chk{display:flex;gap:12px;align-items:flex-start;font-size:15px;font-weight:400;cursor:pointer;min-height:44px}
 .chk input{width:20px;height:20px;margin:2px 0 0;accent-color:var(--acc);flex:none}
 .chk.dis{cursor:not-allowed;color:var(--ink2)}
